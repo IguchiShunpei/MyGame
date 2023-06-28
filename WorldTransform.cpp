@@ -50,7 +50,6 @@ void WorldTransform::Map()
 
 void WorldTransform::UpdateMatrix()
 {
-	HRESULT result;
 
 	Matrix4 matScale, matRot, matTrans;
 	Matrix4 matRotX, matRotY, matRotZ;
