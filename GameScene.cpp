@@ -52,6 +52,10 @@ void GameScene::Finalize()
 	//FBX‰ğ•ú
 	FbxLoader::GetInstance()->Finalize();
 
+	//ƒJƒƒ‰‰ğ•ú
+	delete viewProjection;
+	delete xmViewProjection;
+
 	SIFrameWork::Finalize();
 }
 

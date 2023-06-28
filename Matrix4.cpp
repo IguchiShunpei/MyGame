@@ -328,7 +328,9 @@ Matrix4& Matrix4::operator*=(const Matrix4& m1)
 // ２項演算子　*　のオーバーロード関数（行列と行列の積）
 Matrix4 Matrix4::operator*(const Matrix4& m1)
 {
-	return *this *= m1;
+	Matrix4 result = *this;
+
+	return result *= m1;
 }
 
 // ２項演算子　*　のオーバーロード関数（ベクトルと行列の積）
