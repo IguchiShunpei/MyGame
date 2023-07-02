@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "CollisionManager.h"
 
 void GameScene::Initialize()
 {
@@ -7,50 +8,31 @@ void GameScene::Initialize()
 	input = Input::GetInstance();
 	dxCommon = DirectXCommon::GetInstance();
 
+	//当たり判定
+	collisionManager = CollisionManager::GetInstance();
+
 	//カメラ初期化
 	viewProjection = new ViewProjection();
 	xmViewProjection = new XMViewProjection();
 
 	viewProjection->Initialize();
 
-	fbxModel_1 = FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
+	//player 
+	player = new Player;
+	player->PlayerInitialize();
 
-	//3Dオブジェクト生成
-	fbxObject3d_1 = FbxObject3d::Create();
-	//オブジェクトにモデルを紐付ける
-	fbxObject3d_1->SetModel(fbxModel_1);
-	fbxObject3d_1->SetPosition({ 0,-5,20 });
-	fbxObject3d_1->SetScale({ 1,1,1 });
-
-	//パーティクル
-	particle_1 = Particle::LoadParticleTexture("effect1.png");
-	pm_1 = ParticleManager::Create();
-	particle_2 = Particle::LoadParticleTexture("effect2.png");
-	pm_2 = ParticleManager::Create();
-	//オブジェクトにモデルを紐付ける
-	pm_1->SetParticleModel(particle_1);
-	pm_2->SetParticleModel(particle_2);
-	//カメラをセット
-	pm_1->SetXMViewProjection(xmViewProjection);
-	pm_2->SetXMViewProjection(xmViewProjection);
+	//enemy
+	enemy = new Enemy;
+	enemy->EnemyInitialize();
 }
 
 void GameScene::Finalize()
 {
-	//3Dモデル解放
-	delete fbxModel_1;
+	player->~Player();
+	delete player;
 
-	//3Dオブジェクト解放
-	delete fbxObject3d_1;
-
-	//パーティクル
-	delete particle_1;
-	delete pm_1;
-	delete particle_2;
-	delete pm_2;
-
-	//FBX解放
-	FbxLoader::GetInstance()->Finalize();
+	enemy->~Enemy();
+	delete enemy;
 
 	//カメラ解放
 	delete viewProjection;
@@ -81,23 +63,12 @@ void GameScene::Update()
 			viewProjection->SetEye(cameraPos);
 		}
 
-		//パーティクル発生
-		if (input->PushKey(DIK_SPACE))
-		{
-			pm_1->Fire(particle_1, 30, 0.2f, 0, 2, { 8.0f, 0.0f });
-			pm_2->Fire(particle_2, 70, 0.2f, 0, 5, { 4.0f,0.0f });
-		}
-
 		//カメラ
 		viewProjection->UpdateMatrix();
 		xmViewProjection->Update();
 
-		//fbx更新
-		/*fbxObject3d_1->Update();*/
-
-		//パーティクル
-		pm_1->Update();
-		pm_2->Update();
+		player->Update();
+		enemy->Update();
 }
 
 void GameScene::Draw()
@@ -107,20 +78,16 @@ void GameScene::Draw()
 
 #pragma region 最初のシーンの描画
 
-	//3Dオブジェクト描画前処理
-	FbxObject3d::PreDraw(dxCommon->GetCommandList());
+	Object3d::PreDraw(dxCommon->GetCommandList());
 
-	/*fbxObject3d_1->Draw(viewProjection);*/
+	player->Draw(viewProjection);
+	player->BulletDraw();
+	enemy->Draw(viewProjection);
 
-	//3Dオブジェクト描画前処理
-	FbxObject3d::PostDraw();
+	Object3d::PostDraw();
 
 	//エフェクト描画前処理
 	ParticleManager::PreDraw(dxCommon->GetCommandList());
-
-	//パーティクル
-	pm_1->Draw();
-	pm_2->Draw();
 
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();
