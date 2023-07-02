@@ -9,6 +9,9 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Model.h"
+#include "CollisionInfo.h"
+
+class BaseCollider;
 
 /// 3Dオブジェクト
 class Object3d
@@ -23,6 +26,7 @@ public: // 静的メンバ関数
 
 	/// 描画前処理
 	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+	static void PreLineDraw(ID3D12GraphicsCommandList* cmdList);
 
 	/// 描画後処理
 	static void PostDraw();
@@ -39,6 +43,10 @@ private: // 静的メンバ変数
 	static ComPtr<ID3D12RootSignature> rootsignature;
 	// パイプラインステートオブジェクト
 	static ComPtr<ID3D12PipelineState> pipelinestate;
+	// ルートシグネチャ
+	static ComPtr<ID3D12RootSignature> lineRootsignature;
+	// パイプラインステートオブジェクト
+	static ComPtr<ID3D12PipelineState> linePipelinestate;
 
 private:// 静的メンバ関数
 
@@ -47,17 +55,28 @@ private:// 静的メンバ関数
 
 public: // メンバ関数
 
+	//コンストラクタ
+	Object3d() = default;
+
+	//デストラクタ
+	virtual ~Object3d();
+
 	//初期化
-	bool Initialize();
+	virtual bool Initialize();
 
 	/// 毎フレーム処理
-	void Update();
+	virtual void Update();
 
 	/// 描画
 	void Draw(ViewProjection* viewProjection);
+	void Draw(ViewProjection* viewProjection, float alpha_);
 
-	//ワールド行列の取得
-	const Matrix4& GetMatWorld() { return matWorld; }
+	//コライダーのセット
+	void SetCollider(BaseCollider* collider);
+
+	//衝突時コールバック関数
+	virtual void OnCollision(const CollisionInfo& info) {}
+	virtual void OffCollision(const CollisionInfo& info) {}
 
 	// モデルの設定
 	void SetModel(Model* model) { this->model = model; }
@@ -75,16 +94,18 @@ public: // メンバ関数
 	void SetRotationX(const float& rotation) { this->worldTransform_.rotation_.x = rotation; }
 	void SetRotationY(const float& rotation) { this->worldTransform_.rotation_.y = rotation; }
 
+	const char* GetName() const { return name; }
 public:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
+	const char* toCollisionName = nullptr;
 
 protected: // メンバ変数
 	//クラス名
 	const char* name = nullptr;
+	//コライダー
+	BaseCollider* collider = nullptr;
 	// モデル
 	Model* model = nullptr;
-	// ローカルワールド変換行列
-	Matrix4 matWorld;
-};
 
+};

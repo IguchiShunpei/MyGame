@@ -4,6 +4,9 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "Sprite.h"
+#include "Player.h"
+#include "Enemy.h"
+#include "ParticleManager.h"
 
 #include<cassert>
 #include<vector>
@@ -14,6 +17,9 @@
 
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib,"dxguid.lib")
+
+class CollisionManager;
+class Player;
 
 class GameScene : public SIFrameWork
 {
@@ -36,13 +42,14 @@ private:
 	//カメラ
 	ViewProjection* viewProjection = nullptr;
 	XMViewProjection* xmViewProjection = nullptr;
-	//FBX読み込み
-	FbxModel* fbxModel_1 = nullptr;
-	//FBXモデル
-	FbxObject3d* fbxObject3d_1 = nullptr;
-	//パーティクル
-	Particle* particle_1 = nullptr;
-	ParticleManager* pm_1 = nullptr;
-	Particle* particle_2 = nullptr;
-	ParticleManager* pm_2 = nullptr;
+
+	//プレイヤー
+	Player* player = nullptr;
+	//敵
+	Enemy* enemy = nullptr;
+
+	//座標
+	WorldTransform* worldTransform = nullptr;
+	//当たり判定
+	CollisionManager* collisionManager = nullptr;
 };

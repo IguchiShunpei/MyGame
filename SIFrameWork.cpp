@@ -13,6 +13,8 @@ void SIFrameWork::Initialize()
 	//入力の初期化
 	input = Input::GetInstance();
 	input->Initialize(winApp);
+	// 3Dオブジェクト静的初期化
+	Object3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_height);
 	//FBX
 	FbxObject3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_height);
 	// パーティクル静的初期化
