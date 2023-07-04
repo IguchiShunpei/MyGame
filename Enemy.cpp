@@ -19,7 +19,18 @@ void Enemy::EnemyInitialize()
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyModel);
 	SetPosition(Vector3(0, 0, 100));
+	//半径分だけ足元から浮いた座標を球の中心にする
+	SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.0f));
 	isDead_ = false;
+}
+
+void Enemy::ColliderUpdate()
+{
+	//当たり判定更新
+	if (collider)
+	{
+		collider->Update();
+	}
 }
 
 void Enemy::OnCollision(const CollisionInfo& info)

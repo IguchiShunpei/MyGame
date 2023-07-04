@@ -15,6 +15,9 @@ public:
 	//初期化
 	void EnemyInitialize();
 
+	//当たり判定更新
+	void ColliderUpdate();
+
 	////敵リスト
 	//const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
 
@@ -23,6 +26,7 @@ public:
 
 	bool GetIsDead() const { return isDead_; }
 	
+	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
 
 private:

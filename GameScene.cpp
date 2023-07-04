@@ -1,10 +1,11 @@
 #include "GameScene.h"
 #include "CollisionManager.h"
+#include "SphereCollider.h"
 
 void GameScene::Initialize()
 {
 	SIFrameWork::Initialize();
-	
+
 	input = Input::GetInstance();
 	dxCommon = DirectXCommon::GetInstance();
 
@@ -28,10 +29,7 @@ void GameScene::Initialize()
 
 void GameScene::Finalize()
 {
-	player->~Player();
 	delete player;
-
-	enemy->~Enemy();
 	delete enemy;
 
 	//カメラ解放
@@ -45,30 +43,34 @@ void GameScene::Update()
 {
 	SIFrameWork::Update();
 
-		//入力の更新
-		input->Update();
+	//入力の更新
+	input->Update();
 
-		if (input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D))
-		{
-			// 現在の座標を取得
-			Vector3 cameraPos = viewProjection->GetEye();
+	if (input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D))
+	{
+		// 現在の座標を取得
+		Vector3 cameraPos = viewProjection->GetEye();
 
-			// 移動後の座標を計算
-			if (input->PushKey(DIK_W)) { cameraPos.y += 0.1f; }
-			else if (input->PushKey(DIK_S)) { cameraPos.y -= 0.1f; }
-			if (input->PushKey(DIK_A)) { cameraPos.x += 0.1f; }
-			else if (input->PushKey(DIK_D)) { cameraPos.x -= 0.1f; }
+		// 移動後の座標を計算
+		if (input->PushKey(DIK_W)) { cameraPos.y += 0.1f; }
+		else if (input->PushKey(DIK_S)) { cameraPos.y -= 0.1f; }
+		if (input->PushKey(DIK_A)) { cameraPos.x += 0.1f; }
+		else if (input->PushKey(DIK_D)) { cameraPos.x -= 0.1f; }
 
-			// 座標の変更を反映
-			viewProjection->SetEye(cameraPos);
-		}
+		// 座標の変更を反映
+		viewProjection->SetEye(cameraPos);
+	}
 
-		//カメラ
-		viewProjection->UpdateMatrix();
-		xmViewProjection->Update();
+	//カメラ
+	viewProjection->UpdateMatrix();
+	xmViewProjection->Update();
 
-		player->Update();
-		enemy->Update();
+	player->Update();
+	enemy->Update();
+	enemy->ColliderUpdate();
+
+	//全ての衝突をチェック
+	collisionManager->CheckAllCollisions();
 }
 
 void GameScene::Draw()
@@ -77,12 +79,15 @@ void GameScene::Draw()
 	dxCommon->PreDraw();
 
 #pragma region 最初のシーンの描画
-
+	 
 	Object3d::PreDraw(dxCommon->GetCommandList());
 
 	player->Draw(viewProjection);
-	player->BulletDraw();
-	enemy->Draw(viewProjection);
+	player->BulletDraw(viewProjection);
+	if (enemy->GetIsDead() == false)
+	{
+		enemy->Draw(viewProjection);
+	}
 
 	Object3d::PostDraw();
 

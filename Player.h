@@ -5,8 +5,8 @@
 #include "input.h"
 #include "Model.h"
 #include "PlayerBullet.h"
-#include<memory>
-#include<list>
+#include <memory>
+#include <list>
 
 class Player : public Object3d
 {
@@ -22,10 +22,10 @@ public:
 
 	void Attack();
 
-	void BulletDraw();
+	void BulletDraw(ViewProjection* viewProjection_);
 
 	//弾リスト
-	/*const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }*/
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
@@ -39,10 +39,8 @@ private:
 	// モデル
 	Model* playerModel = nullptr;
 
-	ViewProjection* viewProjection = nullptr;
-
 	//弾
-	/*std::list<std::unique_ptr<PlayerBullet>> bullets_;*/
+	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 
 	//打ち出すまでの時間
 	float dalayTimer = 0.0f;
