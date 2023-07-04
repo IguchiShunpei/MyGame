@@ -39,16 +39,17 @@ void Player::Update()
 	Attack();
 
 	//弾更新
-	/*for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
 		bullet->Update();
-	}*/
+		bullet->ColliderUpdate();
+	}
 
 	//デスフラグの立った弾を削除
-	/*bullets_.remove_if([](std::unique_ptr < PlayerBullet>& bullet)
+	bullets_.remove_if([](std::unique_ptr < PlayerBullet>& bullet)
 	{
 		return bullet->IsDelete();
-	});*/
+	});
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -107,8 +108,11 @@ void Player::Attack()
 			//球の初期化
 			newBullet->PlayerBulletInitialize(position, velocity);
 
+			//コライダーの追加
+			newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.0f));
+
 			//球の登録
-			/*bullets_.push_back(std::move(newBullet));*/
+			bullets_.push_back(std::move(newBullet));
 
 			dalayTimer = 1.0f;
 		}
@@ -116,12 +120,12 @@ void Player::Attack()
 	}
 }
 
-void Player::BulletDraw()
+void Player::BulletDraw(ViewProjection* viewProjection_)
 {
-	/*for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
-		bullet->Draw(viewProjection);
-	}*/
+		bullet->Draw(viewProjection_);
+	}
 }
 
 Vector3 Player::GetWorldPosition()
