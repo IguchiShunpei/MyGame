@@ -14,7 +14,6 @@ void GameScene::Initialize()
 
 	//カメラ初期化
 	viewProjection = new ViewProjection();
-	xmViewProjection = new XMViewProjection();
 
 	viewProjection->Initialize();
 
@@ -22,9 +21,12 @@ void GameScene::Initialize()
 	player = new Player;
 	player->PlayerInitialize();
 
-	//enemy
-	enemy = new Enemy;
-	enemy->EnemyInitialize();
+	//球の生成
+	std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+	//球の初期化
+	newEnemy->EnemyInitialize();
+	//球の登録
+	enemys_.push_back(std::move(newEnemy));
 }
 
 void GameScene::Finalize()
@@ -34,7 +36,6 @@ void GameScene::Finalize()
 
 	//カメラ解放
 	delete viewProjection;
-	delete xmViewProjection;
 
 	SIFrameWork::Finalize();
 }
@@ -46,28 +47,49 @@ void GameScene::Update()
 	//入力の更新
 	input->Update();
 
-	if (input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D))
+	//デスフラグの立った弾を削除
+	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+		{
+			return enemy->GetIsDead();
+		});
+
+	if (input->PushKey(DIK_UP))
 	{
-		// 現在の座標を取得
-		Vector3 cameraPos = viewProjection->GetEye();
-
-		// 移動後の座標を計算
-		if (input->PushKey(DIK_W)) { cameraPos.y += 0.1f; }
-		else if (input->PushKey(DIK_S)) { cameraPos.y -= 0.1f; }
-		if (input->PushKey(DIK_A)) { cameraPos.x += 0.1f; }
-		else if (input->PushKey(DIK_D)) { cameraPos.x -= 0.1f; }
-
-		// 座標の変更を反映
-		viewProjection->SetEye(cameraPos);
+		viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.01f, 0));
 	}
+	if (input->PushKey(DIK_RIGHT))
+	{
+		viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.01f, 0, 0));
+	}
+	if (input->PushKey(DIK_LEFT))
+	{
+		viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.01f, 0, 0));
+	}
+	if (input->PushKey(DIK_DOWN))
+	{
+		viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.01f, 0));
+	}
+
+	//移動限界座標
+	const float kCameraLimitX = 0.28f;
+	const float kCameraLimitY = 0.2f;
+
+	//範囲を超えない処理
+	viewProjection->eye.x = max(viewProjection->eye.x, -kCameraLimitX);
+	viewProjection->eye.x = min(viewProjection->eye.x, +kCameraLimitX);
+	viewProjection->eye.y = max(viewProjection->eye.y, -kCameraLimitY);
+	viewProjection->eye.y = min(viewProjection->eye.y, +kCameraLimitY);
 
 	//カメラ
 	viewProjection->UpdateMatrix();
-	xmViewProjection->Update();
-
+	//プレイヤー
 	player->Update();
-	enemy->Update();
-	enemy->ColliderUpdate();
+	//敵
+	for (std::unique_ptr<Enemy>& enemy : enemys_)
+	{
+		enemy->Update();
+		enemy->ColliderUpdate();
+	}
 
 	//全ての衝突をチェック
 	collisionManager->CheckAllCollisions();
@@ -79,14 +101,16 @@ void GameScene::Draw()
 	dxCommon->PreDraw();
 
 #pragma region 最初のシーンの描画
-	 
+
 	Object3d::PreDraw(dxCommon->GetCommandList());
 
 	player->Draw(viewProjection);
 	player->BulletDraw(viewProjection);
-	if (enemy->GetIsDead() == false)
+	//敵
+	for (std::unique_ptr<Enemy>& enemy : enemys_)
 	{
 		enemy->Draw(viewProjection);
+		enemy->BulletDraw(viewProjection);
 	}
 
 	Object3d::PostDraw();

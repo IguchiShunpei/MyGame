@@ -6,6 +6,7 @@
 //デストラクタ
 Player::~Player() {
 	delete playerModel;
+	delete playerBullet;
 }
 
 //初期化
@@ -48,7 +49,7 @@ void Player::Update()
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr < PlayerBullet>& bullet)
 	{
-		return bullet->IsDelete();
+		return bullet->GetIsDelete();
 	});
 
 	// ワールドトランスフォームの行列更新と転送
@@ -109,7 +110,7 @@ void Player::Attack()
 			newBullet->PlayerBulletInitialize(position, velocity);
 
 			//コライダーの追加
-			newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.0f));
+			newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.0f));
 
 			//球の登録
 			bullets_.push_back(std::move(newBullet));

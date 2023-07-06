@@ -18,7 +18,7 @@ public:
 	void OnCollision(const CollisionInfo& info) override;
 
 	//isDead‚Ìgetter
-	bool IsDelete() const { return isDelete_; }
+	bool GetIsDelete() const { return isDelete_; }
 
 private:
 
