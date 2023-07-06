@@ -33,7 +33,12 @@ public:
 	//•`‰æ
 	void Draw() override;
 
+	//“GƒŠƒXƒg
+	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
+
 private:
+	//”wŒi
+	Sprite* sprite_01;
 	//“ü—Í
 	Input* input = nullptr;
 	//DxCommon
@@ -44,9 +49,13 @@ private:
 	XMViewProjection* xmViewProjection = nullptr;
 
 	//ƒvƒŒƒCƒ„[
-	Player* player = nullptr;
+	Player* player;
+
 	//“G
-	Enemy* enemy = nullptr;
+	Enemy* enemy;
+
+	//“G
+	std::list<std::unique_ptr<Enemy>> enemys_;
 
 	//À•W
 	WorldTransform* worldTransform = nullptr;

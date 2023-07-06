@@ -40,6 +40,9 @@ private:
 	Model* playerModel = nullptr;
 
 	//’e
+	PlayerBullet* playerBullet;
+
+	//’e
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 
 	//‘Å‚¿o‚·‚Ü‚Å‚ÌŠÔ
