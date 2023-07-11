@@ -1,6 +1,7 @@
 #pragma once
 #include "Object3d.h"
 #include "Model.h"
+#include "MathFunc.h"
 
 class PlayerBullet : public Object3d
 {
@@ -26,8 +27,16 @@ private:
 	Model* playerBulletModel_ = nullptr;
 	//削除フラグ
 	bool isDelete_ = false;
+	//弾種類
+	int bulletNum = 0;
 	//削除タイマー
 	float deleteTimer_ = 150.0f;
 	//速度
 	Vector3 velocity_;
+
+	const float G = 0.08f;
+
+	Vector3 startSpeed = { 0.0f,0.0f,0.0f };
+
+	float flame = 0.0f;
 };

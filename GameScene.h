@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "ParticleManager.h"
+#include "SkyDome.h"
 
 #include<cassert>
 #include<vector>
@@ -36,9 +37,12 @@ public:
 	//敵リスト
 	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
 
+	//敵データ読み込み
+	void LoadEnemy();
+
 private:
 	//背景
-	Sprite* sprite_01;
+	SkyDome* sky;
 	//入力
 	Input* input = nullptr;
 	//DxCommon
@@ -61,4 +65,8 @@ private:
 	WorldTransform* worldTransform = nullptr;
 	//当たり判定
 	CollisionManager* collisionManager = nullptr;
+
+	//パーティクル
+	Particle* p_dmg = nullptr;
+	ParticleManager* pm_dmg = nullptr;
 };

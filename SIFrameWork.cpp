@@ -16,7 +16,7 @@ void SIFrameWork::Initialize()
 	// 3Dオブジェクト静的初期化
 	Object3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_height);
 	//FBX
-	FbxObject3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_height);
+	/*FbxObject3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_height);*/
 	// パーティクル静的初期化
 	ParticleManager::StaticInitialize(dxCommon->GetDevice());
 	// ビュープロジェクションの初期化

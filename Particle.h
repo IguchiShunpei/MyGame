@@ -52,6 +52,9 @@ public://サブクラス
 private://定数
 	static const int vertexCount = 1024;		// 頂点数
 
+public:
+	static Particle* GetInstance();
+
 public://メンバ関数
 
 	//OBJファイルからパーティクルモデルを読み込む

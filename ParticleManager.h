@@ -65,7 +65,8 @@ public: // メンバ関数
 	void Draw();
 
 	/// パーティクル発射
-	void Fire(Particle* particle, const float& setpos, const float& setvel, const float& setacc, const int& setnum, const XMFLOAT2& setscale);
+	void Fire(Particle* particle, int life, const XMFLOAT3& pos_, float setpos_x, float setpos_x1, float setpos_y, float setpos_y1, float setpos_z, float setpos_z1,
+		float setvel_x, float setvel_x1, float setvel_y, float setvel_y1, float setvel_z, float setvel_z1, float setAcc, int setNum, const XMFLOAT2& setscale);
 
 private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuff; // 定数バッファ
