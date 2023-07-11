@@ -10,29 +10,33 @@ Player::~Player() {
 }
 
 //初期化
-bool Player::PlayerInitialize() {
-	if (!Object3d::Initialize()) {
-		return false;
-	}
-
+void Player::PlayerInitialize() 
+{
 	Initialize();
 
 	// OBJからモデルデータを読み込む
-	playerModel = Model::LoadFromOBJ("player");
+	playerModel = Model::LoadFromOBJ("fighter");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerModel);
+	//半径分だけ足元から浮いた座標を球の中心にする
+	SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.0f));
 	SetPosition(Vector3(0, -2, 0));
+	SetScale(Vector3(0.5f, 0.5f, 0.5f));
 
 	//フラグ
-	isAttack = false;
-
-	return true;
+	isBurst = false;
 }
 
 void Player::Update()
 {
+	//デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr < PlayerBullet>& bullet)
+	{
+		return bullet->GetIsDelete();
+	});
+
 	input = Input::GetInstance();
 
 	Move();
@@ -46,14 +50,18 @@ void Player::Update()
 		bullet->ColliderUpdate();
 	}
 
-	//デスフラグの立った弾を削除
-	bullets_.remove_if([](std::unique_ptr < PlayerBullet>& bullet)
-	{
-		return bullet->GetIsDelete();
-	});
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
+}
+
+void Player::ColliderUpdate()
+{
+	//当たり判定更新
+	if (collider)
+	{
+		collider->Update();
+	}
 }
 
 void Player::Move()
@@ -78,8 +86,8 @@ void Player::Move()
 	}
 
 	//移動限界座標
-	const float kMoveLimitX = 6.4f;
-	const float kMoveLimitY = 3.25f;
+	const float kMoveLimitX = 6.4f * 1.7f;
+	const float kMoveLimitY = 3.25f * 1.7f;
 
 	//範囲を超えない処理
 	worldTransform_.position_.x = max(worldTransform_.position_.x, -kMoveLimitX);
@@ -110,7 +118,7 @@ void Player::Attack()
 			newBullet->PlayerBulletInitialize(position, velocity);
 
 			//コライダーの追加
-			newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.0f));
+			newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
 
 			//球の登録
 			bullets_.push_back(std::move(newBullet));
@@ -119,6 +127,11 @@ void Player::Attack()
 		}
 
 	}
+}
+
+void Player::ChangeBullet()
+{
+
 }
 
 void Player::BulletDraw(ViewProjection* viewProjection_)

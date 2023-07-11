@@ -14,14 +14,24 @@ public:
 	//デストラクタ
 	~Player();
 	//初期化
-	bool PlayerInitialize();
+	void PlayerInitialize();
 
+	//更新
 	void Update();
 
+	//当たり判定更新
+	void ColliderUpdate();
+
+	//移動
 	void Move();
 
+	//攻撃
 	void Attack();
 
+	//弾切り替え
+	void ChangeBullet();
+
+	//弾描画
 	void BulletDraw(ViewProjection* viewProjection_);
 
 	//弾リスト
@@ -29,9 +39,6 @@ public:
 
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
-
-	//Getter
-	bool GetIsAttack() { return isAttack; }
 
 private:
 	//入力
@@ -49,5 +56,5 @@ private:
 	float dalayTimer = 0.0f;
 
 	//攻撃
-	bool isAttack;
+	bool isBurst;
 };

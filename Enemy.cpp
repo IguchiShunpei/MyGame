@@ -4,7 +4,8 @@
 #include "string.h"
 
 //デストラクタ
-Enemy::~Enemy() {
+Enemy::~Enemy() 
+{
 	delete enemyModel;
 	delete enemyBullet;
 }
@@ -19,14 +20,17 @@ void Enemy::EnemyInitialize()
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyModel);
-	SetPosition(Vector3(0, 0,100));
-	//半径分だけ足元から浮いた座標を球の中心にする
-	SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.0f));
 	isDead_ = false;
 }
 
 void Enemy::Update()
 {
+	//デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
+		{
+			return bullet->GetIsDelete();
+		});
+
 	Attack();
 
 	//弾更新
@@ -36,11 +40,6 @@ void Enemy::Update()
 		bullet->ColliderUpdate();
 	}
 
-	//デスフラグの立った弾を削除
-	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
-		{
-			return bullet->GetIsDelete();
-		});
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -60,7 +59,8 @@ void Enemy::OnCollision(const CollisionInfo& info)
 	const char* str1 = "class PlayerBullet";
 
 	//相手がplayerBullet
-	if (strcmp(toCollisionName, str1) == 0) {
+	if (strcmp(toCollisionName, str1) == 0) 
+	{
 		isDead_ = true;
 	}
 }
@@ -85,7 +85,7 @@ void Enemy::Attack()
 		newBullet->EnemyBulletInitialize(position, velocity);
 
 		//コライダーの追加
-		newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.0f));
+		newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
 
 		//球の登録
 		bullets_.push_back(std::move(newBullet));

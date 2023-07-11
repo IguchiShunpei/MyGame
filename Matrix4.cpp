@@ -320,7 +320,7 @@ Matrix4& Matrix4::operator*=(const Matrix4& m1)
 		for (int j = 0; j < 4; j++) {
 			m[i][j] = result.m[i][j];
 		}
-	}
+	} 
 
 	return *this;
 }

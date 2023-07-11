@@ -15,7 +15,7 @@ void EnemyBullet::EnemyBulletInitialize(const Vector3& position, const Vector3& 
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyBulletModel_);
-	SetScale(Vector3(0.5f, 0.5f, 0.5f));
+	SetScale(Vector3(0.25f, 0.25f, 0.25f));
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入

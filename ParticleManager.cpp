@@ -298,28 +298,33 @@ void ParticleManager::Draw()
 	particle->Draw(cmdList);
 }
 
-void ParticleManager::Fire(Particle* particle, const float& setpos, const float& setvel, const float& setacc, const int& setnum, const XMFLOAT2& setscale)
+void ParticleManager::Fire(Particle* particle, int life, const XMFLOAT3& pos_, float setpos_x, float setpos_x1, float setpos_y, float setpos_y1, float setpos_z, float setpos_z1,
+	float setvel_x, float setvel_x1, float setvel_y, float setvel_y1, float setvel_z, float setvel_z1, float setAcc, int setNum, const XMFLOAT2& setscale)
 {
-	for (int i = 0; i < setnum; i++)
+	for (int i = 0; i < setNum; i++)
 	{
 		//X,Y,Z全て{-20.0f,20.0f}でランダムに分布
-		const float md_pos = setpos;
-		XMFLOAT3 pos{};
-		pos.x = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
-		pos.y = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
-		pos.z = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
+		const float md_pos_x = setpos_x;
+		const float md_pos_y = setpos_y;
+		const float md_pos_z = setpos_z;
+		XMFLOAT3 pos = pos_;
+		pos.x = (float)rand() / RAND_MAX * setpos_x - setpos_x1 / 2.0f;
+		pos.y = (float)rand() / RAND_MAX * setpos_y - setpos_y1 / 2.0f;
+		pos.z = (float)rand() / RAND_MAX * setpos_z - setpos_z1 / 2.0f;
 		//X,Y,Z全て{0.1f,0.1f}でランダムに分布
-		const float md_vel = setvel;
+		const float md_vel_x = setvel_x;
+		const float md_vel_y = setvel_y;
+		const float md_vel_z = setvel_z;
 		XMFLOAT3 vel{};
-		vel.x = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
-		vel.y = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
-		vel.z = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
+		vel.x = (float)rand() / RAND_MAX * setvel_x - setvel_x1 / 2.0f;
+		vel.y = (float)rand() / RAND_MAX * setvel_y - setvel_y1 / 2.0f;
+		vel.z = (float)rand() / RAND_MAX * setvel_z - setvel_z1 / 2.0f;
 		//重力に見立ててYのみ{0.001f,0}でランダムに分布
 		XMFLOAT3 acc{};
-		const float md_acc = setacc;
+		const float md_acc = setAcc;
 		acc.y = -(float)rand() / RAND_MAX * md_acc;
 
 		//追加
-		particle->Add(60, pos, vel, acc, setscale.x, setscale.y);
+		particle->Add(life, pos, vel, acc, setscale.x, setscale.y);
 	}
 }

@@ -14,6 +14,13 @@ using namespace std;
 ID3D12Device* Particle::device_ = nullptr;
 std::string Particle::defaultTextureDirectoryPath_ = "Resources/particle/";
 
+Particle* Particle::GetInstance()
+{
+	static Particle instance;
+
+	return &instance;
+}
+
 Particle* Particle::LoadParticleTexture(const std::string& fileName)
 {
 	//新たなModel型のインスタンスのメモリを確保

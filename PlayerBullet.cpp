@@ -15,12 +15,13 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_);
-	SetScale(Vector3(0.5f,0.5f,0.5f));
+	SetScale(Vector3(0.25f, 0.25f, 0.25f));
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入
 	velocity_ = velocity;
 	isDelete_ = false;
+	bulletNum = 0;
 }
 
 void PlayerBullet::ColliderUpdate()
@@ -31,11 +32,12 @@ void PlayerBullet::ColliderUpdate()
 		collider->Update();
 	}
 }
-	
+
 
 void PlayerBullet::Update()
 {
 	worldTransform_.UpdateMatrix();
+	/*MathFunc::HorizontalProjection(worldTransform_, startSpeed, G, flame);*/
 
 	//座標を移動させる
 	worldTransform_.position_ += velocity_;
@@ -53,7 +55,7 @@ void PlayerBullet::OnCollision(const CollisionInfo& info)
 	const char* str2 = "class EnemyBullet";
 
 	//相手がEnemy
-	if (strcmp(toCollisionName, str1) == 0|| strcmp(toCollisionName, str2) == 0) {
+	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0) {
 		isDelete_ = true;
 	}
 }

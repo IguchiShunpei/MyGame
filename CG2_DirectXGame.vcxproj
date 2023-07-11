@@ -168,6 +168,7 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MathFunc.cpp" />
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Object3d.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="SIFrameWork.cpp" />
+    <ClCompile Include="SkyDome.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Vector2.cpp" />
@@ -282,6 +284,7 @@
     <ClInclude Include="FPSFixed.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="MathFunc.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Object3d.h" />
@@ -291,6 +294,7 @@
     <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="SIFrameWork.h" />
+    <ClInclude Include="SkyDome.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Vector2.h" />
