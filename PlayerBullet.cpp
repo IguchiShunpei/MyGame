@@ -21,7 +21,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 	//引数で受け取った速度をメンバ変数に代入
 	velocity_ = velocity;
 	isDelete_ = false;
-	bulletNum = 0;
+	chargeTime = 0;
 }
 
 void PlayerBullet::ColliderUpdate()
@@ -36,16 +36,30 @@ void PlayerBullet::ColliderUpdate()
 
 void PlayerBullet::Update()
 {
-	worldTransform_.UpdateMatrix();
-	/*MathFunc::HorizontalProjection(worldTransform_, startSpeed, G, flame);*/
-
-	//座標を移動させる
-	worldTransform_.position_ += velocity_;
-
-	//時間経過で弾が消える
-	if (--deleteTimer_ <= 0)
+	if (isCharge_ == false)
 	{
-		isDelete_ = true;
+		if (bulletNum_ == 0)
+		{
+			worldTransform_.UpdateMatrix();
+		}
+		else if (bulletNum_ == 1)
+		{
+			MathFunc::HorizontalProjection(worldTransform_, startSpeed, G, flame);
+		}
+		else if (bulletNum_ == 2)
+		{
+			isCharge_ = true;
+			worldTransform_.scale_ += scaleNum;
+		}
+
+		//座標を移動させる
+		worldTransform_.position_ += velocity_;
+
+		//時間経過で弾が消える
+		if (--deleteTimer_ <= 0)
+		{
+			isDelete_ = true;
+		}
 	}
 }
 

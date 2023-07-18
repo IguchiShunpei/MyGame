@@ -41,7 +41,10 @@ void GameScene::Initialize()
 void GameScene::Finalize()
 {
 	delete player;
-	delete enemy;
+	for (std::unique_ptr<Enemy>& enemys : enemys_)
+	{
+		delete enemy;
+	}
 	delete p_dmg;
 	delete pm_dmg;
 
@@ -56,8 +59,14 @@ void GameScene::Update()
 {
 	SIFrameWork::Update();
 
-	//入力の更新
-	input->Update();
+	//天球
+	sky->Update();
+
+	player->IntitMotion();
+	player->SetPosition(Vector3(player->worldTransform_.position_));
+
+	//カメラ
+	viewProjection->UpdateMatrix();
 
 	//デスフラグの立った敵を削除
 	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
@@ -65,63 +74,63 @@ void GameScene::Update()
 			return enemy->GetIsDead();
 		});
 
-	if (input->PushKey(DIK_UP))
+	if (player->GetIsInit() == true)
 	{
-		viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.01f, 0));
-	}
-	if (input->PushKey(DIK_RIGHT))
-	{
-		viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.01f, 0, 0));
-	}
-	if (input->PushKey(DIK_LEFT))
-	{
-		viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.01f, 0, 0));
-	}
-	if (input->PushKey(DIK_DOWN))
-	{
-		viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.01f, 0));
-	}
-
-	//移動限界座標
-	const float kCameraLimitX = 0.28f * 1.7f;
-	const float kCameraLimitY = 0.2f * 1.7f;
-
-	//範囲を超えない処理
-	viewProjection->eye.x = max(viewProjection->eye.x, -kCameraLimitX);
-	viewProjection->eye.x = min(viewProjection->eye.x, +kCameraLimitX);
-	viewProjection->eye.y = max(viewProjection->eye.y, -kCameraLimitY);
-	viewProjection->eye.y = min(viewProjection->eye.y, +kCameraLimitY);
-
-	//カメラ
-	viewProjection->UpdateMatrix();
-
-	//天球
-	sky->Update();
-
-	//プレイヤー
-	player->Update();
-	player->ColliderUpdate();
-	//敵
-	for (std::unique_ptr<Enemy>& enemy : enemys_)
-	{
-		enemy->Update();
-		enemy->ColliderUpdate();
-	}
-	
-
-	//全ての衝突をチェック
-	collisionManager->CheckAllCollisions();
-
-	for (std::unique_ptr<Enemy>& enemy : enemys_)
-	{
-		if (enemy->GetIsDead() == true)
+		if (input->PushKey(DIK_UP))
 		{
-			pm_dmg->Fire(p_dmg, 50, { enemy->GetWorldPosition().x,enemy->GetWorldPosition().y,enemy->GetWorldPosition().z
-				}, 30.0f, 30.0f, 30.0f, 30.0f, 0, 0, 0, 0, 0.2f, 0.2f, 0, 0, 0, 3, { 4.0f, 0.0f });
+			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.01f, 0));
 		}
-	}
+		if (input->PushKey(DIK_RIGHT))
+		{
+			viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.01f, 0, 0));
+		}
+		if (input->PushKey(DIK_LEFT))
+		{
+			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.01f, 0, 0));
+		}
+		if (input->PushKey(DIK_DOWN))
+		{
+			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.01f, 0));
+		}
 
-	pm_dmg->Update();
+		//移動限界座標
+		const float kCameraLimitX = 0.3f * 1.7f;
+		const float kCameraLimitY = 0.22f * 1.7f;
+
+		//範囲を超えない処理
+		viewProjection->eye.x = max(viewProjection->eye.x, -kCameraLimitX);
+		viewProjection->eye.x = min(viewProjection->eye.x, +kCameraLimitX);
+		viewProjection->eye.y = max(viewProjection->eye.y, -kCameraLimitY);
+		viewProjection->eye.y = min(viewProjection->eye.y, +kCameraLimitY);
+
+
+		//プレイヤー
+		player->Update();
+		player->ColliderUpdate();
+		//敵
+		for (std::unique_ptr<Enemy>& enemys : enemys_)
+		{
+			enemys->Update();
+			enemys->ColliderUpdate();
+		}
+
+		//全ての衝突をチェック
+		collisionManager->CheckAllCollisions();
+
+		for (std::unique_ptr<Enemy>& enemys : enemys_)
+		{
+			if (enemys->GetIsDead() == true)
+			{
+				Vector3 deadPos{};
+				deadPos = enemys->GetWorldPosition();
+				pm_dmg->Fire(p_dmg, 50,
+					{ deadPos.x,deadPos.y,deadPos.z },
+					30.0f, 30.0f, 30.0f, 30.0f, 0, 0, 0, 0, 0.2f, 0.2f, 0, 0, 0, 3, { 4.0f, 0.0f });
+			}
+		}
+
+		pm_dmg->Update();
+	}
 }
 
 void GameScene::Draw()
@@ -137,10 +146,10 @@ void GameScene::Draw()
 	player->Draw(viewProjection);
 	player->BulletDraw(viewProjection);
 	//敵
-	for (std::unique_ptr<Enemy>& enemy : enemys_)
+	for (std::unique_ptr<Enemy>& enemys : enemys_)
 	{
-		enemy->Draw(viewProjection);
-		enemy->BulletDraw(viewProjection);
+		enemys->Draw(viewProjection);
+		enemys->BulletDraw(viewProjection);
 	}
 
 	Object3d::PostDraw();
@@ -194,7 +203,7 @@ void GameScene::LoadEnemy()
 			//敵の初期化
 			newEnemy->EnemyInitialize();
 			//コライダーの追加
-			newEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.0f));
+			newEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
 			// X,Y,Z座標読み込み
 			Vector3 position{};
 			line_stream >> position.x;
@@ -202,6 +211,8 @@ void GameScene::LoadEnemy()
 			line_stream >> position.z;
 			// 座標データに追加
 			newEnemy->SetPosition(position);
+			newEnemy->SetScale(Vector3(0.8f,0.8f,0.8f));
+			newEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			enemys_.push_back(std::move(newEnemy));
 		}

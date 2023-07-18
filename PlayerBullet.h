@@ -18,8 +18,12 @@ public:
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
 
-	//isDeadのgetter
+	//getter
 	bool GetIsDelete() const { return isDelete_; }
+	bool GetIsCharge() const { return isCharge_; }
+
+	//bulletNumのsetter
+	void SetBulletNum(int bulletNum) { this->bulletNum_ = bulletNum; }
 
 private:
 
@@ -28,15 +32,23 @@ private:
 	//削除フラグ
 	bool isDelete_ = false;
 	//弾種類
-	int bulletNum = 0;
+	int bulletNum_ = 0;
 	//削除タイマー
 	float deleteTimer_ = 150.0f;
 	//速度
 	Vector3 velocity_;
 
-	const float G = 0.08f;
-
+	//重力
+	const float G = 0.3f;
+	//初速
 	Vector3 startSpeed = { 0.0f,0.0f,0.0f };
-
+	//落下時間
 	float flame = 0.0f;
+
+	//溜め時間
+	float chargeTime;
+	//溜めているか
+	bool isCharge_ = false;
+	//拡大数値
+	Vector3 scaleNum;
 };

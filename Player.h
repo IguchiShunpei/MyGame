@@ -5,6 +5,7 @@
 #include "input.h"
 #include "Model.h"
 #include "PlayerBullet.h"
+#include "MathFunc.h"
 #include <memory>
 #include <list>
 
@@ -22,8 +23,14 @@ public:
 	//当たり判定更新
 	void ColliderUpdate();
 
+	//登場モーション
+	void IntitMotion();
+
 	//移動
 	void Move();
+
+	//傾き
+	void Rotate();
 
 	//攻撃
 	void Attack();
@@ -40,11 +47,17 @@ public:
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
 
+	//getter
+	bool GetIsInit() const { return isInit; }
+
 private:
 	//入力
 	Input* input = nullptr;
 	// モデル
 	Model* playerModel = nullptr;
+
+	//弾種類
+	int bulletNum = 0;
 
 	//弾
 	PlayerBullet* playerBullet;
@@ -55,6 +68,17 @@ private:
 	//打ち出すまでの時間
 	float dalayTimer = 0.0f;
 
+	//登場モーションの時間
+	float initMotionTime;
+
 	//攻撃
-	bool isBurst;
+	bool isBurst = false;
+
+	bool isInit = false;
+
+	//移動時の傾き
+	bool isRightRotation;
+	bool isLeftRotation;
+	bool isUpRotation;
+	bool isDownRotation;
 };

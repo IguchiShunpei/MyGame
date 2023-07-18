@@ -6,8 +6,9 @@
 #include "Matrix4.h"
 #include <math.h>
 
-namespace MathFunc
+class MathFunc
 {
+public:
 	struct AffinMat 
 	{
 		Matrix4 scale     = Matrix4::identity();
@@ -25,6 +26,6 @@ namespace MathFunc
 	static float easeInOutSine(float a);
 
 	//êÖïΩìäéÀ
-	void HorizontalProjection(WorldTransform& worldTransform, Vector3& startSpeed, float G, float& flame);
+	static void HorizontalProjection(WorldTransform& worldTransform, Vector3& startSpeed, float G, float& flame);
 };
 

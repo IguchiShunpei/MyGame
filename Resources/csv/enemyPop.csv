@@ -1,3 +1,5 @@
 enemy 0 0 100
-enemy 10 0 100
-enemy -10 0 100
+enemy 8 0 100
+enemy -8 0 100
+enemy 0 8 100
+enemy 0 -8 100
