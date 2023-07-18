@@ -7,7 +7,10 @@
 Enemy::~Enemy() 
 {
 	delete enemyModel;
-	delete enemyBullet;
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
+	{
+		delete enemyBullet;
+	}
 }
 
 //初期化
@@ -31,6 +34,8 @@ void Enemy::Update()
 			return bullet->GetIsDelete();
 		});
 
+	Move();
+
 	Attack();
 
 	//弾更新
@@ -39,7 +44,6 @@ void Enemy::Update()
 		bullet->Update();
 		bullet->ColliderUpdate();
 	}
-
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -92,6 +96,49 @@ void Enemy::Attack()
 
 		dalayTimer = 5.0f;
 	}
+}
+
+void Enemy::Move()
+{
+	switch (phase_)
+	{
+	case Phase::Approach: //接近フェーズ
+	default:
+		//移動(ベクトルを加算)
+		Approach();
+		break;
+	case Phase::Leave:   //離脱フェーズ
+		Leave();
+		break;
+
+	}
+}
+
+void Enemy::Approach()
+{
+	worldTransform_.position_ += approach_;
+
+	//既定の位置に着いたら離脱へ
+	if (worldTransform_.position_.z <= 30.0f)
+	{
+		phase_ = Phase::Leave;
+	}
+}
+
+void Enemy::Leave()
+{
+	worldTransform_.position_ += leave_;
+
+	//既定の位置に着いたら接近へ
+	if (worldTransform_.position_.z >= 80.0f)
+	{
+		phase_ = Phase::Approach;
+	}
+}
+
+void Enemy::Curve()
+{
+
 }
 
 void Enemy::BulletDraw(ViewProjection* viewProjection_)
