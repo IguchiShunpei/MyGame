@@ -10,7 +10,7 @@ void EnemyBullet::EnemyBulletInitialize(const Vector3& position, const Vector3& 
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	enemyBulletModel_ = Model::LoadFromOBJ("ironSphere_01");
+	enemyBulletModel_ = Model::LoadFromOBJ("triangle_mat");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける

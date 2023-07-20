@@ -21,6 +21,8 @@ public:
 	//getter
 	bool GetIsDelete() const { return isDelete_; }
 	bool GetIsCharge() const { return isCharge_; }
+	bool GetISHit() const { return isHit_; }
+	bool GetIsBurst() const { return isBurst_; }
 
 	//bulletNumÇÃsetter
 	void SetBulletNum(int bulletNum) { this->bulletNum_ = bulletNum; }
@@ -37,6 +39,10 @@ private:
 	float deleteTimer_ = 150.0f;
 	//ë¨ìx
 	Vector3 velocity_;
+	//ìñÇΩÇ¡ÇΩÇ©
+	bool isHit_ = false;
+	//ì|ÇµÇΩÇ©
+	bool isBurst_ = false;
 
 	//èdóÕ
 	const float G = 0.3f;

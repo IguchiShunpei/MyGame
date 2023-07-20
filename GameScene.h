@@ -6,6 +6,7 @@
 #include "Sprite.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "WeakEnemy.h"
 #include "ParticleManager.h"
 #include "SkyDome.h"
 
@@ -13,6 +14,7 @@
 #include<vector>
 #include<string>
 #include<d3dcompiler.h>
+#include <sstream>
 
 #include<DirectXTex.h>
 
@@ -36,9 +38,13 @@ public:
 
 	//敵リスト
 	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
+	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
 
 	//敵データ読み込み
-	void LoadEnemy();
+	void LoadEnemyPop();
+	void UpdateEnemyPop();
+	void LoadWeakEnemyPop();
+	void UpdateWeakEnemyPop();
 
 private:
 	//背景
@@ -57,9 +63,14 @@ private:
 
 	//敵
 	Enemy* enemy;
+	WeakEnemy* wEnemy;
 
 	//敵
 	std::list<std::unique_ptr<Enemy>> enemys_;
+	std::list<std::unique_ptr<WeakEnemy>> wEnemys_;
+	
+	//敵発生コマンド
+	std::stringstream enemyPopCommands;
 
 	//座標
 	WorldTransform* worldTransform = nullptr;
@@ -69,4 +80,11 @@ private:
 	//パーティクル
 	Particle* p_dmg = nullptr;
 	ParticleManager* pm_dmg = nullptr;
+
+	//打ち出すまでの時間
+	float delayTimer = 0.0f;
+
+	bool isWait_ = false;
+
+	int waitTimer = 10;
 };

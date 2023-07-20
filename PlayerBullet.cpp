@@ -66,10 +66,11 @@ void PlayerBullet::Update()
 void PlayerBullet::OnCollision(const CollisionInfo& info)
 {
 	const char* str1 = "class Enemy";
-	const char* str2 = "class EnemyBullet";
+	const char* str2 = "class WeakEnemy";
+	const char* str3 = "class EnemyBullet";
 
 	//‘ŠŽè‚ªEnemy
-	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0) {
+	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 || strcmp(toCollisionName, str3) == 0) {
 		isDelete_ = true;
 	}
 }

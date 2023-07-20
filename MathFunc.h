@@ -26,6 +26,9 @@ public:
 	static float easeInOutSine(float a);
 
 	//êÖïΩìäéÀ
-	static void HorizontalProjection(WorldTransform& worldTransform, Vector3& startSpeed, float G, float& flame);
+	static void HorizontalProjection(WorldTransform& worldTransform, const Vector3& startSpeed, float G, float& flame);
+
+	//ÉJÅ[Éu
+	static void CurveProjection(WorldTransform& worldTransform, const Vector3& startSpeed, float G, float& flame);
 };
 

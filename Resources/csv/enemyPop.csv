@@ -3,3 +3,7 @@ enemy 8 0 100
 enemy -8 0 100
 enemy 0 8 100
 enemy 0 -8 100
+enemy -8 8 100
+enemy 8 -8 100
+enemy 8 8 100
+enemy -8 -8 100

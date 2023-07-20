@@ -2,7 +2,6 @@
 #include "CollisionManager.h"
 #include "SphereCollider.h"
 #include <fstream>
-#include <sstream>
 
 void GameScene::Initialize()
 {
@@ -29,7 +28,8 @@ void GameScene::Initialize()
 	player = new Player;
 	player->PlayerInitialize();
 
-	LoadEnemy();
+	//LoadEnemyPop();
+	LoadWeakEnemyPop();
 
 	//パーティクル
 	p_dmg = Particle::LoadParticleTexture("effect1.png");
@@ -41,10 +41,8 @@ void GameScene::Initialize()
 void GameScene::Finalize()
 {
 	delete player;
-	for (std::unique_ptr<Enemy>& enemys : enemys_)
-	{
-		delete enemy;
-	}
+	delete enemy;
+	delete wEnemy;
 	delete p_dmg;
 	delete pm_dmg;
 
@@ -59,6 +57,16 @@ void GameScene::Update()
 {
 	SIFrameWork::Update();
 
+	//デスフラグの立った敵を削除
+	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+		{
+			return enemy->GetIsDead();
+		});
+	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
+		{
+			return wEnemy->GetIsDead();
+		});
+
 	//天球
 	sky->Update();
 
@@ -68,14 +76,11 @@ void GameScene::Update()
 	//カメラ
 	viewProjection->UpdateMatrix();
 
-	//デスフラグの立った敵を削除
-	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
-		{
-			return enemy->GetIsDead();
-		});
-
 	if (player->GetIsInit() == true)
 	{
+		//更新コマンド
+		UpdateWeakEnemyPop();
+
 		if (input->PushKey(DIK_UP))
 		{
 			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.01f, 0));
@@ -103,15 +108,20 @@ void GameScene::Update()
 		viewProjection->eye.y = max(viewProjection->eye.y, -kCameraLimitY);
 		viewProjection->eye.y = min(viewProjection->eye.y, +kCameraLimitY);
 
-
 		//プレイヤー
 		player->Update();
 		player->ColliderUpdate();
+
 		//敵
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
 			enemys->Update();
 			enemys->ColliderUpdate();
+		}
+		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+		{
+			wEnemys->Update();
+			wEnemys->ColliderUpdate();
 		}
 
 		//全ての衝突をチェック
@@ -122,10 +132,22 @@ void GameScene::Update()
 			if (enemys->GetIsDead() == true)
 			{
 				Vector3 deadPos{};
-				deadPos = enemys->GetWorldPosition();
+				deadPos = enemys->GetPosition();
 				pm_dmg->Fire(p_dmg, 50,
 					{ deadPos.x,deadPos.y,deadPos.z },
-					30.0f, 30.0f, 30.0f, 30.0f, 0, 0, 0, 0, 0.2f, 0.2f, 0, 0, 0, 3, { 4.0f, 0.0f });
+					7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 8, { 4.0f, 0.0f });
+			}
+		}
+
+		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+		{
+			if (wEnemys->GetIsDead() == true)
+			{
+				Vector3 deadPos{};
+				deadPos = wEnemys->GetPosition();
+				pm_dmg->Fire(p_dmg, 50,
+					{ deadPos.x,deadPos.y,deadPos.z },
+					7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 8, { 4.0f, 0.0f });
 			}
 		}
 
@@ -145,11 +167,17 @@ void GameScene::Draw()
 	sky->Draw(viewProjection);
 	player->Draw(viewProjection);
 	player->BulletDraw(viewProjection);
+
 	//敵
 	for (std::unique_ptr<Enemy>& enemys : enemys_)
 	{
 		enemys->Draw(viewProjection);
 		enemys->BulletDraw(viewProjection);
+	}
+
+	for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+	{
+		wEnemys->Draw(viewProjection);
 	}
 
 	Object3d::PostDraw();
@@ -172,7 +200,7 @@ void GameScene::Draw()
 	dxCommon->PostDraw();
 }
 
-void GameScene::LoadEnemy()
+void GameScene::LoadEnemyPop()
 {
 	enemys_.clear();
 
@@ -196,7 +224,7 @@ void GameScene::LoadEnemy()
 		std::string key;
 		getline(line_stream, key, ' ');
 
-		// 先頭文字列がｖなら頂点座標
+		// 先頭文字列がenemyなら頂点座標
 		if (key == "enemy") {
 			//敵の生成
 			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
@@ -211,7 +239,7 @@ void GameScene::LoadEnemy()
 			line_stream >> position.z;
 			// 座標データに追加
 			newEnemy->SetPosition(position);
-			newEnemy->SetScale(Vector3(0.8f,0.8f,0.8f));
+			newEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
 			newEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			enemys_.push_back(std::move(newEnemy));
@@ -219,4 +247,88 @@ void GameScene::LoadEnemy()
 	}
 	// ファイルと閉じる
 	file.close();
+}
+
+void GameScene::UpdateEnemyPop()
+{
+}
+
+void GameScene::LoadWeakEnemyPop()
+{
+	//ファイルを開く
+	std::ifstream file;
+	file.open("Resources/csv/wEnemyPop.csv");
+	assert(file.is_open());
+
+	//ファイルの内容を文字列ストリームにコピー
+	enemyPopCommands << file.rdbuf();
+
+	// ファイルと閉じる
+	file.close();
+}
+
+void GameScene::UpdateWeakEnemyPop()
+{
+	//待機処理
+	if (isWait_ == true)
+	{
+		waitTimer--;
+		if (waitTimer <= 0)
+		{
+			//待機完了
+			isWait_ = false;
+		}
+		return;
+	}
+
+	// １行ずつ読み込む
+	std::string line;
+
+	while (getline(enemyPopCommands, line))
+	{
+
+		// １行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream line_stream(line);
+
+		// 半角スパース区切りで行の先頭文字列を取得
+		std::string key;
+		getline(line_stream, key, ' ');
+
+		// 先頭文字列がwEnemyなら頂点座標
+		if (key == "wEnemy")
+		{
+			//敵の生成
+			std::unique_ptr<WeakEnemy> newWEnemy = std::make_unique<WeakEnemy>();
+			//敵の初期化
+			newWEnemy->WEnemyInitialize();
+			//コライダーの追加
+			newWEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			// X,Y,Z座標読み込み
+			Vector3 position{};
+			line_stream >> position.x;
+			line_stream >> position.y;
+			line_stream >> position.z;
+			// 座標データに追加
+			newWEnemy->SetPosition(position);
+			newWEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
+			newWEnemy->worldTransform_.UpdateMatrix();
+			//登録
+			wEnemys_.push_back(std::move(newWEnemy));
+		}
+
+		else if (key == "wait")
+		{
+			getline(line_stream, key, ' ');
+
+			//待ち時間
+			int32_t waitTime = atoi(key.c_str());
+
+			//待機開始
+			isWait_ = true;
+			waitTimer = waitTime;
+
+			//コマンドループを抜ける
+			break;
+		}
+	}
 }
