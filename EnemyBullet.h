@@ -27,7 +27,7 @@ private:
 	//削除フラグ
 	bool isDelete_ = false;
 	//削除タイマー
-	float deleteTimer_ = 200.0f;
+	float deleteTimer_ = 100.0f;
 	//速度
 	Vector3 velocity_;
 };

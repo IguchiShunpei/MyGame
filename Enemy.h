@@ -19,6 +19,7 @@ class Enemy : public Object3d
 		Approach,//接近
 		Leave,   //離脱
 		Curve,   //カーブ
+		ReCurve, //逆方向カーブ
 	};
 
 public:
@@ -55,6 +56,7 @@ public:
 	void Leave();
 	//カーブ
 	void Curve();
+	void ReCurve();
 
 	//弾を描画
 	void BulletDraw(ViewProjection* viewProjection_);
@@ -66,7 +68,7 @@ public:
 	void SetPhaseNum(int phaseNum) { this->phaseNum_ = phaseNum; }
 
 	//ワールド座標を取得
-	Vector3 GetWorldPosition();
+	Vector3 GetPosition();
 
 private:
 	//ゲームシーン
@@ -101,4 +103,11 @@ private:
 	
 	//敵の移動パターン
 	Phase phase_ = Phase::None;
+
+	//曲がる大きさ
+	const float C = 0.5f;
+	//初速
+	Vector3 startSpeed = { -0.5f,0.0f,-0.5f };
+	//落下時間
+	float flame = 0.0f;
 };

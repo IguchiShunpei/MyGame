@@ -4,12 +4,10 @@
 #include "GameScene.h"
 
 //デストラクタ
-Player::~Player() {
+Player::~Player() 
+{
 	delete playerModel;
-	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
-	{
-		delete playerBullet;
-	}
+	delete playerBullet;
 }
 
 //初期化
@@ -167,14 +165,14 @@ void Player::Rotate()
 	{
 		if (worldTransform_.rotation_.x > -20.0f)
 		{
-			SetRotation(GetRotation() - Vector3(1.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(3.0f, 0.0f, 0.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.x < 0.0f)
 		{
-			SetRotation(GetRotation() + Vector3(1.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(3.0f, 0.0f, 0.0f));
 		}
 	}
 	//下キーを押したときの傾き処理
@@ -182,14 +180,14 @@ void Player::Rotate()
 	{
 		if (worldTransform_.rotation_.x < 20.0f)
 		{
-			SetRotation(GetRotation() + Vector3(1.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(3.0f, 0.0f, 0.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.x > 0.0f)
 		{
-			SetRotation(GetRotation() - Vector3(1.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(3.0f, 0.0f, 0.0f));
 		}
 	}
 	//右キーを押したとき
@@ -197,14 +195,14 @@ void Player::Rotate()
 	{
 		if (worldTransform_.rotation_.z > -20.0f)
 		{
-			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 1.0f));
+			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 3.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.z < 0.0f)
 		{
-			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 1.0f));
+			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 3.0f));
 		}
 	}
 	//左キーを押したとき
@@ -212,14 +210,14 @@ void Player::Rotate()
 	{
 		if (worldTransform_.rotation_.z < 20.0f)
 		{
-			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 1.0f));
+			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 3.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.z > 0.0f)
 		{
-			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 1.0f));
+			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 3.0f));
 		}
 	}
 }
