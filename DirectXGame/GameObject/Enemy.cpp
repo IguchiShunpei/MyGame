@@ -100,6 +100,7 @@ void Enemy::Move()
 	switch (phase_)
 	{
 	case Phase::Approach: //接近フェーズ
+	default:
 		//移動(ベクトルを加算)
 		Approach();
 		break;
@@ -110,7 +111,6 @@ void Enemy::Move()
 		Curve();
 		break;
 	case Phase::ReCurve:   //カーブフェーズ
-	default:
 		ReCurve();
 		break;
 	}
@@ -134,7 +134,7 @@ void Enemy::Leave()
 	//既定の位置に着いたらカーブへ
 	if (worldTransform_.position_.z >= 100.0f)
 	{
-		phase_ = Phase::Curve;
+		phase_ = Phase::Approach;
 	}
 }
 

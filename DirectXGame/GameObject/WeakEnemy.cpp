@@ -55,10 +55,10 @@ void WeakEnemy::Move()
 	switch (phase_)
 	{
 	case Phase::Curve:   //カーブフェーズ
+	default:
 		Curve();
 		break;
 	case Phase::ReCurve:   //カーブフェーズ
-	default:
 		ReCurve();
 		break;
 	}
