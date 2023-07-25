@@ -123,6 +123,7 @@
       <ConformanceMode>true</ConformanceMode>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,6 +146,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,39 +157,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="CollisionPrimitive.cpp" />
-    <ClCompile Include="DirectXCommon.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemyBullet.cpp" />
-    <ClCompile Include="FbxLoader.cpp" />
-    <ClCompile Include="FbxModel.cpp" />
-    <ClCompile Include="FbxObject3d.cpp" />
-    <ClCompile Include="FPSFixed.cpp" />
-    <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MathFunc.cpp" />
-    <ClCompile Include="Matrix4.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Object3d.cpp" />
-    <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleManager.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerBullet.cpp" />
-    <ClCompile Include="SIFrameWork.cpp" />
-    <ClCompile Include="SkyDome.cpp" />
-    <ClCompile Include="SphereCollider.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="Vector2.cpp" />
-    <ClCompile Include="Vector3.cpp" />
-    <ClCompile Include="Vector4.cpp" />
-    <ClCompile Include="ViewProjection.cpp" />
-    <ClCompile Include="WeakEnemy.cpp" />
-    <ClCompile Include="WinApp.cpp" />
-    <ClCompile Include="WorldTransform.cpp" />
-    <ClCompile Include="XMViewProjection.cpp" />
+    <ClCompile Include="DirectXGame\2D\Sprite.cpp" />
+    <ClCompile Include="DirectXGame\3D\FbxLoader.cpp" />
+    <ClCompile Include="DirectXGame\3D\FbxModel.cpp" />
+    <ClCompile Include="DirectXGame\3D\FbxObject3d.cpp" />
+    <ClCompile Include="DirectXGame\3D\Model.cpp" />
+    <ClCompile Include="DirectXGame\3D\Object3d.cpp" />
+    <ClCompile Include="DirectXGame\3D\Particle.cpp" />
+    <ClCompile Include="DirectXGame\3D\ParticleManager.cpp" />
+    <ClCompile Include="DirectXGame\3D\WorldTransform.cpp" />
+    <ClCompile Include="DirectXGame\Base\DirectXCommon.cpp" />
+    <ClCompile Include="DirectXGame\Base\FPSFixed.cpp" />
+    <ClCompile Include="DirectXGame\Base\WinApp.cpp" />
+    <ClCompile Include="DirectXGame\Camera\ViewProjection.cpp" />
+    <ClCompile Include="DirectXGame\Camera\XMViewProjection.cpp" />
+    <ClCompile Include="DirectXGame\Collision\Collision.cpp" />
+    <ClCompile Include="DirectXGame\Collision\CollisionManager.cpp" />
+    <ClCompile Include="DirectXGame\Collision\CollisionPrimitive.cpp" />
+    <ClCompile Include="DirectXGame\Collision\SphereCollider.cpp" />
+    <ClCompile Include="DirectXGame\GameObject\Enemy.cpp" />
+    <ClCompile Include="DirectXGame\GameObject\EnemyBullet.cpp" />
+    <ClCompile Include="DirectXGame\GameObject\Player.cpp" />
+    <ClCompile Include="DirectXGame\GameObject\PlayerBullet.cpp" />
+    <ClCompile Include="DirectXGame\GameObject\SkyDome.cpp" />
+    <ClCompile Include="DirectXGame\GameObject\WeakEnemy.cpp" />
+    <ClCompile Include="DirectXGame\Input\Input.cpp" />
+    <ClCompile Include="DirectXGame\main.cpp" />
+    <ClCompile Include="DirectXGame\Math\MathFunc.cpp" />
+    <ClCompile Include="DirectXGame\Math\Matrix4.cpp" />
+    <ClCompile Include="DirectXGame\Math\Vector2.cpp" />
+    <ClCompile Include="DirectXGame\Math\Vector3.cpp" />
+    <ClCompile Include="DirectXGame\Math\Vector4.cpp" />
+    <ClCompile Include="DirectXGame\Scene\GameScene.cpp" />
+    <ClCompile Include="DirectXGame\Scene\SIFrameWork.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -270,42 +272,42 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseCollider.h" />
-    <ClInclude Include="Collision.h" />
-    <ClInclude Include="CollisionInfo.h" />
-    <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="CollisionPrimitive.h" />
-    <ClInclude Include="CollisionTypes.h" />
-    <ClInclude Include="DirectXCommon.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyBullet.h" />
-    <ClInclude Include="FbxLoader.h" />
-    <ClInclude Include="FbxModel.h" />
-    <ClInclude Include="FbxObject3d.h" />
-    <ClInclude Include="FPSFixed.h" />
-    <ClInclude Include="GameScene.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="MathFunc.h" />
-    <ClInclude Include="Matrix4.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Object3d.h" />
-    <ClInclude Include="ParticleManager.h" />
-    <ClInclude Include="Particle.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerBullet.h" />
-    <ClInclude Include="RaycastHit.h" />
-    <ClInclude Include="SIFrameWork.h" />
-    <ClInclude Include="SkyDome.h" />
-    <ClInclude Include="SphereCollider.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="Vector2.h" />
-    <ClInclude Include="Vector3.h" />
-    <ClInclude Include="Vector4.h" />
-    <ClInclude Include="ViewProjection.h" />
-    <ClInclude Include="WeakEnemy.h" />
-    <ClInclude Include="WinApp.h" />
-    <ClInclude Include="WorldTransform.h" />
-    <ClInclude Include="XMViewProjection.h" />
+    <ClInclude Include="DirectXGame\2D\Sprite.h" />
+    <ClInclude Include="DirectXGame\3D\FbxLoader.h" />
+    <ClInclude Include="DirectXGame\3D\FbxModel.h" />
+    <ClInclude Include="DirectXGame\3D\FbxObject3d.h" />
+    <ClInclude Include="DirectXGame\3D\Model.h" />
+    <ClInclude Include="DirectXGame\3D\Object3d.h" />
+    <ClInclude Include="DirectXGame\3D\Particle.h" />
+    <ClInclude Include="DirectXGame\3D\ParticleManager.h" />
+    <ClInclude Include="DirectXGame\3D\WorldTransform.h" />
+    <ClInclude Include="DirectXGame\Base\DirectXCommon.h" />
+    <ClInclude Include="DirectXGame\Base\FPSFixed.h" />
+    <ClInclude Include="DirectXGame\Base\WinApp.h" />
+    <ClInclude Include="DirectXGame\Camera\ViewProjection.h" />
+    <ClInclude Include="DirectXGame\Camera\XMViewProjection.h" />
+    <ClInclude Include="DirectXGame\Collision\BaseCollider.h" />
+    <ClInclude Include="DirectXGame\Collision\Collision.h" />
+    <ClInclude Include="DirectXGame\Collision\CollisionInfo.h" />
+    <ClInclude Include="DirectXGame\Collision\CollisionManager.h" />
+    <ClInclude Include="DirectXGame\Collision\CollisionPrimitive.h" />
+    <ClInclude Include="DirectXGame\Collision\CollisionTypes.h" />
+    <ClInclude Include="DirectXGame\Collision\RaycastHit.h" />
+    <ClInclude Include="DirectXGame\Collision\SphereCollider.h" />
+    <ClInclude Include="DirectXGame\GameObject\Enemy.h" />
+    <ClInclude Include="DirectXGame\GameObject\EnemyBullet.h" />
+    <ClInclude Include="DirectXGame\GameObject\Player.h" />
+    <ClInclude Include="DirectXGame\GameObject\PlayerBullet.h" />
+    <ClInclude Include="DirectXGame\GameObject\SkyDome.h" />
+    <ClInclude Include="DirectXGame\GameObject\WeakEnemy.h" />
+    <ClInclude Include="DirectXGame\Input\Input.h" />
+    <ClInclude Include="DirectXGame\Math\MathFunc.h" />
+    <ClInclude Include="DirectXGame\Math\Matrix4.h" />
+    <ClInclude Include="DirectXGame\Math\Vector2.h" />
+    <ClInclude Include="DirectXGame\Math\Vector3.h" />
+    <ClInclude Include="DirectXGame\Math\Vector4.h" />
+    <ClInclude Include="DirectXGame\Scene\GameScene.h" />
+    <ClInclude Include="DirectXGame\Scene\SIFrameWork.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

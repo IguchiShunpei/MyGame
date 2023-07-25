@@ -80,7 +80,9 @@ void Player::IntitMotion()
 {
 	if (isInit == false)
 	{
+		//前進
 		worldTransform_.position_.z += 0.5f;
+		//イージングを使った回転
 		worldTransform_.rotation_.z = 360 * -MathFunc::easeOutSine(initMotionTime / 40.0f);
 		initMotionTime++;
 		// ワールドトランスフォームの行列更新と転送
@@ -163,61 +165,61 @@ void Player::Rotate()
 	//上キーを押したときの傾き処理
 	if (isUpRotation == true)
 	{
-		if (worldTransform_.rotation_.x > -20.0f)
+		if (worldTransform_.rotation_.x > -45.0f)
 		{
-			SetRotation(GetRotation() - Vector3(3.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(1.0f, 0.0f, 0.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.x < 0.0f)
 		{
-			SetRotation(GetRotation() + Vector3(3.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(2.0f, 0.0f, 0.0f));
 		}
 	}
 	//下キーを押したときの傾き処理
 	if (isDownRotation == true)
 	{
-		if (worldTransform_.rotation_.x < 20.0f)
+		if (worldTransform_.rotation_.x < 45.0f)
 		{
-			SetRotation(GetRotation() + Vector3(3.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(1.0f, 0.0f, 0.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.x > 0.0f)
 		{
-			SetRotation(GetRotation() - Vector3(3.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(2.0f, 0.0f, 0.0f));
 		}
 	}
 	//右キーを押したとき
 	if (isRightRotation == true)
 	{
-		if (worldTransform_.rotation_.z > -20.0f)
+		if (worldTransform_.rotation_.z > -45.0f)
 		{
-			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 3.0f));
+			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 1.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.z < 0.0f)
 		{
-			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 3.0f));
+			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 2.0f));
 		}
 	}
 	//左キーを押したとき
 	if (isLeftRotation == true)
 	{
-		if (worldTransform_.rotation_.z < 20.0f)
+		if (worldTransform_.rotation_.z < 45.0f)
 		{
-			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 3.0f));
+			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 1.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.z > 0.0f)
 		{
-			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 3.0f));
+			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 2.0f));
 		}
 	}
 }

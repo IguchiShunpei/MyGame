@@ -25,7 +25,6 @@ void SIFrameWork::Initialize()
 
 void SIFrameWork::Finalize()
 {
-
 	// WindowsAPI‚ÌI—¹ˆ—
 	winApp->Finalize();
 
