@@ -11,12 +11,13 @@ class GamePlayScene;
 
 class WeakEnemy : public Object3d
 {
+public:
 	//移動パターン
-	enum class Phase
+	enum Phase
 	{
 		None,
-		Curve,   //カーブ
-		ReCurve, //逆方向カーブ
+		R,   //右カーブ
+		L,   //左カーブ
 	};
 
 public:
@@ -31,8 +32,12 @@ public:
 	//当たり判定更新
 	void ColliderUpdate();
 
-	//gameSceneのsetter
+	//setter
+	//gameScene
 	void SetGameScene(GamePlayScene* gameScene) { gameScene_ = gameScene; }
+
+	//phase
+	void SetPhase(Phase phase) { phase_ = phase; }
 
 	bool GetIsDead() const { return isDead_; }
 
@@ -45,8 +50,8 @@ public:
 	void Move();
 
 	//カーブ
-	void Curve();
-	void ReCurve();
+	void RCurve();
+	void LCurve();
 
 	//ワールド座標を取得
 	Vector3 GetPosition();

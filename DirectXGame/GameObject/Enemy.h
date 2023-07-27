@@ -34,8 +34,12 @@ public:
 	//“–‚½‚è”»’èXV
 	void ColliderUpdate();
 
-	//gameScene‚Ìsetter
+	//setter
+	//gameScene
 	void SetGameScene(GamePlayScene* gameScene) { gameScene_ = gameScene; }
+
+	//phase
+	void SetPhase(Phase phase) { phase_ = phase; }
 
 	bool GetIsDead() const { return isDead_; }
 
