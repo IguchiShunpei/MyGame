@@ -54,37 +54,25 @@ void WeakEnemy::Move()
 {
 	switch (phase_)
 	{
-	case Phase::Curve:   //カーブフェーズ
-	default:
-		Curve();
+	case Phase::None:
 		break;
-	case Phase::ReCurve:   //カーブフェーズ
-		ReCurve();
+	case Phase::R:   //カーブフェーズ
+		RCurve();
+		break;
+	case Phase::L:   //カーブフェーズ
+		LCurve();
 		break;
 	}
 }
 
-void WeakEnemy::Curve()
+void WeakEnemy::RCurve()
 {
 	MathFunc::CurveProjection(worldTransform_, startSpeed, C, flame);
-
-	////既定の位置に着いたら逆カーブへ
-	//if (worldTransform_.position_.z <= 0.0f)
-	//{
-	//	phase_ = Phase::ReCurve;
-	//}
-
 }
 
-void WeakEnemy::ReCurve()
+void WeakEnemy::LCurve()
 {
 	MathFunc::CurveProjection(worldTransform_, { -startSpeed.x,startSpeed.y,startSpeed.z }, -C, flame);
-
-	////既定の位置に着いたら逆カーブへ
-	//if (worldTransform_.position_.z >= 100.0f)
-	//{
-	//	phase_ = Phase::Approach;
-	//}
 }
 
 Vector3 WeakEnemy::GetPosition()

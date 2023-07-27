@@ -1,46 +1,62 @@
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L 0 0 100 
+wait 150
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
-wait 300
-wEnemy 0 0 100
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy R 10 5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy R 10 5 100 
+wait 150
+wEnemy L -10 -5 100 
 wait 20
-wEnemy 0 0 100
+wEnemy L -10 -5 100 
 wait 20
-wEnemy 0 0 100
-wait 300
+wEnemy L -10 -5 100 
+wait 20
+wEnemy L -10 -5 100 
+wait 20
+wEnemy L -10 -5 100 
+wait 20
+wEnemy L -10 -5 100 
+wait 20
+wEnemy L -10 -5 100 
+wait 20
+wEnemy L -10 -5 100 
+wait 20
+wEnemy L -10 -5 100 
+wait 20
+wEnemy L -10 -5 100 
+wait 150
 
 

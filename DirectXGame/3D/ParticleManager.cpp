@@ -303,14 +303,15 @@ void ParticleManager::Fire(Particle* particle, int life, const XMFLOAT3& pos_, f
 {
 	for (int i = 0; i < setNum; i++)
 	{
-		//X,Y,Z全て{-20.0f,20.0f}でランダムに分布
-		const float md_pos_x = setpos_x;
-		const float md_pos_y = setpos_y;
-		const float md_pos_z = setpos_z;
+		//乱数生成装置
+		std::random_device seed_gen;
+		std::mt19937_64 engine(seed_gen());
+		std::uniform_real_distribution<float>dist(-4.5f, 4.5f);
+
 		XMFLOAT3 pos = pos_;
-		pos.x = (float)rand() / RAND_MAX * setpos_x - setpos_x1 / 2.0f;
-		pos.y = (float)rand() / RAND_MAX * setpos_y - setpos_y1 / 2.0f;
-		pos.z = (float)rand() / RAND_MAX * setpos_z - setpos_z1 / 2.0f;
+		pos.x += dist(engine);
+		pos.y += dist(engine);
+		pos.z += dist(engine);
 		//X,Y,Z全て{0.1f,0.1f}でランダムに分布
 		const float md_vel_x = setvel_x;
 		const float md_vel_y = setvel_y;

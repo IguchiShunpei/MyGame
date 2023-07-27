@@ -28,7 +28,7 @@ void GameScene::Initialize()
 	player = new Player;
 	player->PlayerInitialize();
 
-	//LoadEnemyPop();
+	/*LoadEnemyPop();*/
 	LoadWeakEnemyPop();
 
 	//パーティクル
@@ -294,6 +294,9 @@ void GameScene::UpdateWeakEnemyPop()
 		std::string key;
 		getline(line_stream, key, ' ');
 
+		std::string word;
+		getline(line_stream, word, ' ');
+
 		// 先頭文字列がwEnemyなら頂点座標
 		if (key == "wEnemy")
 		{
@@ -303,6 +306,16 @@ void GameScene::UpdateWeakEnemyPop()
 			newWEnemy->WEnemyInitialize();
 			//コライダーの追加
 			newWEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			//移動向き 
+			if (word.find("L") == 0)
+			{
+				newWEnemy->SetPhase(newWEnemy->L);
+			}
+			else if (word.find("R") == 0)
+			{
+				newWEnemy->SetPhase(newWEnemy->R);
+			}
+
 			// X,Y,Z座標読み込み
 			Vector3 position{};
 			line_stream >> position.x;
@@ -310,6 +323,7 @@ void GameScene::UpdateWeakEnemyPop()
 			line_stream >> position.z;
 			// 座標データに追加
 			newWEnemy->SetPosition(position);
+
 			newWEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
 			newWEnemy->worldTransform_.UpdateMatrix();
 			//登録
@@ -318,10 +332,10 @@ void GameScene::UpdateWeakEnemyPop()
 
 		else if (key == "wait")
 		{
-			getline(line_stream, key, ' ');
+			getline(line_stream, word, ' ');
 
 			//待ち時間
-			int32_t waitTime = atoi(key.c_str());
+			int32_t waitTime = atoi(word.c_str());
 
 			//待機開始
 			isWait_ = true;
