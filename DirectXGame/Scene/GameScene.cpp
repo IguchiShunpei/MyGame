@@ -28,14 +28,21 @@ void GameScene::Initialize()
 	player = new Player;
 	player->PlayerInitialize();
 
-	/*LoadEnemyPop();*/
-	LoadWeakEnemyPop();
+	LoadEnemyPop();
 
 	//パーティクル
 	p_dmg = Particle::LoadParticleTexture("effect1.png");
 	pm_dmg = ParticleManager::Create();
 	pm_dmg->SetParticleModel(p_dmg);
 	pm_dmg->SetXMViewProjection(xmViewProjection);
+
+	//メンバ変数の初期化
+	bossCameraPos = { 0,0,0 };
+
+	//フラグ
+	isBossScene = false;
+	sceneNum = 0;
+	bossAppTimer = 0;
 }
 
 void GameScene::Finalize()
@@ -71,7 +78,8 @@ void GameScene::Update()
 	sky->Update();
 
 	player->IntitMotion();
-	player->SetPosition(Vector3(player->worldTransform_.position_));
+
+	BossAppears();
 
 	//カメラ
 	viewProjection->UpdateMatrix();
@@ -79,79 +87,85 @@ void GameScene::Update()
 	if (player->GetIsInit() == true)
 	{
 		//更新コマンド
-		UpdateWeakEnemyPop();
+		UpdateEnemyPop();
 
-		if (input->PushKey(DIK_UP))
+		if (isBossScene == false)
 		{
-			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.01f, 0));
-		}
-		if (input->PushKey(DIK_RIGHT))
-		{
-			viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.01f, 0, 0));
-		}
-		if (input->PushKey(DIK_LEFT))
-		{
-			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.01f, 0, 0));
-		}
-		if (input->PushKey(DIK_DOWN))
-		{
-			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.01f, 0));
-		}
-
-		//移動限界座標
-		const float kCameraLimitX = 0.3f * 1.7f;
-		const float kCameraLimitY = 0.22f * 1.7f;
-
-		//範囲を超えない処理
-		viewProjection->eye.x = max(viewProjection->eye.x, -kCameraLimitX);
-		viewProjection->eye.x = min(viewProjection->eye.x, +kCameraLimitX);
-		viewProjection->eye.y = max(viewProjection->eye.y, -kCameraLimitY);
-		viewProjection->eye.y = min(viewProjection->eye.y, +kCameraLimitY);
-
-		//プレイヤー
-		player->Update();
-		player->ColliderUpdate();
-
-		//敵
-		for (std::unique_ptr<Enemy>& enemys : enemys_)
-		{
-			enemys->Update();
-			enemys->ColliderUpdate();
-		}
-		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
-		{
-			wEnemys->Update();
-			wEnemys->ColliderUpdate();
-		}
-
-		//全ての衝突をチェック
-		collisionManager->CheckAllCollisions();
-
-		for (std::unique_ptr<Enemy>& enemys : enemys_)
-		{
-			if (enemys->GetIsDead() == true)
+			if (input->PushKey(DIK_UP))
 			{
-				Vector3 deadPos{};
-				deadPos = enemys->GetPosition();
-				pm_dmg->Fire(p_dmg, 50,
-					{ deadPos.x,deadPos.y,deadPos.z },
-					7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 8, { 4.0f, 0.0f });
+				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.05f, 0));
 			}
-		}
-
-		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
-		{
-			if (wEnemys->GetIsDead() == true)
+			if (input->PushKey(DIK_RIGHT))
 			{
-				Vector3 deadPos{};
-				deadPos = wEnemys->GetPosition();
-				pm_dmg->Fire(p_dmg, 50,
-					{ deadPos.x,deadPos.y,deadPos.z },
-					7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 8, { 4.0f, 0.0f });
+				viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.05f, 0, 0));
 			}
-		}
+			if (input->PushKey(DIK_LEFT))
+			{
+				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.05f, 0, 0));
+			}
+			if (input->PushKey(DIK_DOWN))
+			{
+				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.05f, 0));
+			}
 
-		pm_dmg->Update();
+			//移動限界座標
+			const float kCameraLimitX = 1.5f * 1.7f;
+			const float kCameraLimitY = 1.1f * 1.7f;
+
+			//範囲を超えない処理
+			viewProjection->eye.x = max(viewProjection->eye.x, -kCameraLimitX);
+			viewProjection->eye.x = min(viewProjection->eye.x, +kCameraLimitX);
+			viewProjection->eye.y = max(viewProjection->eye.y, -kCameraLimitY);
+			viewProjection->eye.y = min(viewProjection->eye.y, +kCameraLimitY);
+
+			//プレイヤー
+			player->Update();
+			player->ColliderUpdate();
+
+			//敵
+			for (std::unique_ptr<Enemy>& enemys : enemys_)
+			{
+				enemys->Update();
+				enemys->ColliderUpdate();
+			}
+			for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+			{
+				wEnemys->Update();
+				wEnemys->ColliderUpdate();
+			}
+
+			//全ての衝突をチェック
+			collisionManager->CheckAllCollisions();
+
+			for (std::unique_ptr<Enemy>& enemys : enemys_)
+			{
+				if (enemys->GetIsDead() == true)
+				{
+					Vector3 deadPos{};
+					deadPos = enemys->GetPosition();
+					pm_dmg->Fire(p_dmg, 50,
+						{ deadPos.x,deadPos.y,deadPos.z },
+						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 8, { 4.0f, 0.0f });
+				}
+			}
+
+			for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+			{
+				if (wEnemys->GetIsDead() == true)
+				{
+					Vector3 deadPos{};
+					deadPos = wEnemys->GetPosition();
+					pm_dmg->Fire(p_dmg, 50,
+						{ deadPos.x,deadPos.y,deadPos.z },
+						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 8, { 4.0f, 0.0f });
+				}
+			}
+			pm_dmg->Update();
+		}
+		else
+		{
+			player->BulletUpdate();
+		}
 	}
 }
 
@@ -202,62 +216,9 @@ void GameScene::Draw()
 
 void GameScene::LoadEnemyPop()
 {
-	enemys_.clear();
-
 	//ファイルを開く
 	std::ifstream file;
 	file.open("Resources/csv/enemyPop.csv");
-	assert(file.is_open());
-
-	HRESULT result = S_FALSE;
-
-	std::string num;
-
-	// １行ずつ読み込む
-	std::string line;
-	while (getline(file, line)) {
-
-		// １行分の文字列をストリームに変換して解析しやすくする
-		std::istringstream line_stream(line);
-
-		// 半角スパース区切りで行の先頭文字列を取得
-		std::string key;
-		getline(line_stream, key, ' ');
-
-		// 先頭文字列がenemyなら頂点座標
-		if (key == "enemy") {
-			//敵の生成
-			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
-			//敵の初期化
-			newEnemy->EnemyInitialize();
-			//コライダーの追加
-			newEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
-			// X,Y,Z座標読み込み
-			Vector3 position{};
-			line_stream >> position.x;
-			line_stream >> position.y;
-			line_stream >> position.z;
-			// 座標データに追加
-			newEnemy->SetPosition(position);
-			newEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
-			newEnemy->worldTransform_.UpdateMatrix();
-			//登録
-			enemys_.push_back(std::move(newEnemy));
-		}
-	}
-	// ファイルと閉じる
-	file.close();
-}
-
-void GameScene::UpdateEnemyPop()
-{
-}
-
-void GameScene::LoadWeakEnemyPop()
-{
-	//ファイルを開く
-	std::ifstream file;
-	file.open("Resources/csv/wEnemyPop.csv");
 	assert(file.is_open());
 
 	//ファイルの内容を文字列ストリームにコピー
@@ -267,7 +228,7 @@ void GameScene::LoadWeakEnemyPop()
 	file.close();
 }
 
-void GameScene::UpdateWeakEnemyPop()
+void GameScene::UpdateEnemyPop()
 {
 	//待機処理
 	if (isWait_ == true)
@@ -330,6 +291,27 @@ void GameScene::UpdateWeakEnemyPop()
 			wEnemys_.push_back(std::move(newWEnemy));
 		}
 
+		// 先頭文字列がenemyなら頂点座標
+		else if (key == "enemy") {
+			//敵の生成
+			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+			//敵の初期化
+			newEnemy->EnemyInitialize();
+			//コライダーの追加
+			newEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			// X,Y,Z座標読み込み
+			Vector3 position{};
+			line_stream >> position.x;
+			line_stream >> position.y;
+			line_stream >> position.z;
+			// 座標データに追加
+			newEnemy->SetPosition(position);
+			newEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
+			newEnemy->worldTransform_.UpdateMatrix();
+			//登録
+			enemys_.push_back(std::move(newEnemy));
+		}
+
 		else if (key == "wait")
 		{
 			getline(line_stream, word, ' ');
@@ -343,6 +325,40 @@ void GameScene::UpdateWeakEnemyPop()
 
 			//コマンドループを抜ける
 			break;
+		}
+
+		else if (key == "BOSS")
+		{
+			isBossScene = true;
+			bossCameraPos = viewProjection->GetEye();
+		}
+	}
+}
+
+void GameScene::BossAppears()
+{
+	if (isBossScene == true)
+	{
+		bossAppTimer++;
+		if (viewProjection->eye.z <= 10)
+		{
+			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0, 0.5f));
+		}
+		if (bossAppTimer >= 180)
+		{
+			isBossScene = false;
+		}
+	}
+	else if (isBossScene == false && bossAppTimer >= 180)
+	{
+		if (viewProjection->eye.z > -20)
+		{
+			viewProjection->SetEye(viewProjection->GetEye() - Vector3(0, 0, 1.0f));
+		}
+		else
+		{
+			viewProjection->SetEye(bossCameraPos);
+			bossAppTimer = 0;
 		}
 	}
 }

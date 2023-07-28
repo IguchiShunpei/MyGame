@@ -27,6 +27,16 @@ class Player;
 class GameScene : public SIFrameWork
 {
 public:
+	enum SceneNum
+	{
+		Title,
+		Game,
+		Clear,
+		GameOver,
+		Pose,
+	};
+
+public:
 	//初期化
 	void Initialize() override;
 	//終了
@@ -43,8 +53,9 @@ public:
 	//敵データ読み込み
 	void LoadEnemyPop();
 	void UpdateEnemyPop();
-	void LoadWeakEnemyPop();
-	void UpdateWeakEnemyPop();
+
+	//BOSS戦前の演出
+	void BossAppears();
 
 private:
 	//背景
@@ -80,6 +91,17 @@ private:
 	//パーティクル
 	Particle* p_dmg = nullptr;
 	ParticleManager* pm_dmg = nullptr;
+
+	//シーン番号
+	int sceneNum;
+	//wave番号
+	int waveNum;
+	//ボス戦に入ったか
+	bool isBossScene;
+	//ボス演出のタイマー
+	int bossAppTimer;
+	//ボス戦のカメラワーク前の座標を入れる変数
+	Vector3 bossCameraPos;
 
 	//打ち出すまでの時間
 	float delayTimer = 0.0f;

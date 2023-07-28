@@ -9,6 +9,9 @@
 #include <memory>
 #include <list>
 
+//GameScene‚Ì‘O•ûéŒ¾
+class GamePlayScene;
+
 class Player : public Object3d
 {
 public:
@@ -37,6 +40,9 @@ public:
 
 	//’eØ‚è‘Ö‚¦
 	void ChangeBullet();
+
+	//’eXV
+	void BulletUpdate();
 
 	//’e•`‰æ
 	void BulletDraw(ViewProjection* viewProjection_);
