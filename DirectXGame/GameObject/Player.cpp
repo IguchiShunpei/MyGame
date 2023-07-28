@@ -40,12 +40,6 @@ void Player::PlayerInitialize()
 
 void Player::Update()
 {
-	//デスフラグの立った弾を削除
-	bullets_.remove_if([](std::unique_ptr < PlayerBullet>& bullet)
-		{
-			return bullet->GetIsDelete();
-		});
-
 	input = Input::GetInstance();
 
 	Move();
@@ -56,12 +50,7 @@ void Player::Update()
 
 	Attack();
 
-	//弾更新
-	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
-	{
-		bullet->Update();
-		bullet->ColliderUpdate();
-	}
+	BulletUpdate();
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -150,7 +139,7 @@ void Player::Move()
 	}
 
 	//移動限界座標
-	const float kMoveLimitX = 6.8f * 1.7f;
+	const float kMoveLimitX = 6.0f * 1.7f;
 	const float kMoveLimitY = 4.0f * 1.7f;
 
 	//範囲を超えない処理
@@ -259,7 +248,7 @@ void Player::Attack()
 			//球の登録
 			bullets_.push_back(std::move(newBullet));
 
-			dalayTimer = 1.0f;
+			dalayTimer = 1.2f;
 		}
 	}
 }
@@ -282,6 +271,23 @@ void Player::ChangeBullet()
 			bulletNum = 0;
 		}
 	}
+}
+
+void Player::BulletUpdate()
+{
+	//デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr < PlayerBullet>& bullet)
+		{
+			return bullet->GetIsDelete();
+		});
+
+	//弾更新
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
+	{
+		bullet->Update();
+		bullet->ColliderUpdate();
+	}
+
 }
 
 void Player::BulletDraw(ViewProjection* viewProjection_)

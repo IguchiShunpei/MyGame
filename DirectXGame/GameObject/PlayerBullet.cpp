@@ -15,7 +15,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_);
-	SetScale(Vector3(1.5f, 1.5f, 1.5f));
+	SetScale(Vector3(3.5f, 3.5f, 3.5f));
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入
@@ -50,6 +50,11 @@ void PlayerBullet::Update()
 		{
 			isCharge_ = true;
 			worldTransform_.scale_ += scaleNum;
+		}
+
+		if (worldTransform_.scale_.x >= 1.5f)
+		{
+			worldTransform_.scale_ -= Vector3(0.3f, 0.3f, 0.3f);
 		}
 
 		//座標を移動させる

@@ -36,7 +36,7 @@ private:
 	//弾種類
 	int bulletNum_ = 0;
 	//削除タイマー
-	float deleteTimer_ = 150.0f;
+	float deleteTimer_ = 110.0f;
 	//速度
 	Vector3 velocity_;
 	//当たったか

@@ -51,7 +51,7 @@ public:// パブリック変数
 	// 視点座標
 	Vector3 eye = { 0, 0, -10.0f };
 	// 注視点座標
-	Vector3 target = { 0, 0, 0 };
+	Vector3 target = { 0, 0, 100 };
 	// 上方向ベクトル
 	Vector3 up = { 0, 1, 0 };
 #pragma endregion
