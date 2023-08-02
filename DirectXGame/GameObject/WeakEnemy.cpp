@@ -46,7 +46,12 @@ void WeakEnemy::OnCollision(const CollisionInfo& info)
 	//‘ŠŽè‚ªplayerBullet
 	if (strcmp(toCollisionName, str1) == 0)
 	{
-		isDead_ = true;
+		isHit_ = true;
+		hp_--;
+		if (hp_ == 0)
+		{
+			isDead_ = true;
+		}
 	}
 }
 

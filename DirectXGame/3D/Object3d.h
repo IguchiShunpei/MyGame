@@ -81,6 +81,9 @@ public: // メンバ関数
 	// モデルの設定
 	void SetModel(Model* model) { this->model = model; }
 
+	//色
+	void SetColor(const Vector4& color) { this->worldTransform_.color_; }
+
 	// オブジェクトの座標
 	const Vector3& GetPosition() const { return worldTransform_.position_; }
 	const float& GetPositionZ() const { return worldTransform_.position_.z; }

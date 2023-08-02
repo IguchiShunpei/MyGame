@@ -15,6 +15,7 @@ private:
 public:// サブクラス
 	//定数バッファ用データ構造体
 	struct ConstBufferDataB0 {
+		Vector4 Color;
 		Matrix4 matWorld;// 行列
 	};
 public:// メンバ関数

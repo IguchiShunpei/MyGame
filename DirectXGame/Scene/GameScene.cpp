@@ -31,7 +31,7 @@ void GameScene::Initialize()
 	LoadEnemyPop();
 
 	//パーティクル
-	p_dmg = Particle::LoadParticleTexture("effect1.png");
+	p_dmg = Particle::LoadParticleTexture("effect.png");
 	pm_dmg = ParticleManager::Create();
 	pm_dmg->SetParticleModel(p_dmg);
 	pm_dmg->SetXMViewProjection(xmViewProjection);
@@ -83,6 +83,8 @@ void GameScene::Update()
 
 	//カメラ
 	viewProjection->UpdateMatrix();
+
+	pm_dmg->Update();
 
 	if (player->GetIsInit() == true)
 	{
@@ -145,7 +147,7 @@ void GameScene::Update()
 					deadPos = enemys->GetPosition();
 					pm_dmg->Fire(p_dmg, 50,
 						{ deadPos.x,deadPos.y,deadPos.z },
-						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 8, { 4.0f, 0.0f });
+						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
 				}
 			}
 
@@ -157,10 +159,9 @@ void GameScene::Update()
 					deadPos = wEnemys->GetPosition();
 					pm_dmg->Fire(p_dmg, 50,
 						{ deadPos.x,deadPos.y,deadPos.z },
-						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 8, { 4.0f, 0.0f });
+						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
 				}
 			}
-			pm_dmg->Update();
 		}
 		else
 		{
@@ -185,7 +186,10 @@ void GameScene::Draw()
 	//敵
 	for (std::unique_ptr<Enemy>& enemys : enemys_)
 	{
-		enemys->Draw(viewProjection);
+		if (enemys->GetIsHit() == false)
+		{
+			enemys->Draw(viewProjection);
+		}
 		enemys->BulletDraw(viewProjection);
 	}
 
@@ -203,10 +207,6 @@ void GameScene::Draw()
 
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();
-
-	//ここにポリゴンなどの描画処理を書く
-	/*sprite_1->Draw(dxCommon);
-	sprite_2->Draw(dxCommon);*/
 
 #pragma endregion 最初のシーンの描画
 
@@ -258,7 +258,7 @@ void GameScene::UpdateEnemyPop()
 		std::string word;
 		getline(line_stream, word, ' ');
 
-		// 先頭文字列がwEnemyなら頂点座標
+		// wEnemyを読み取って座標をセットする
 		if (key == "wEnemy")
 		{
 			//敵の生成
@@ -267,7 +267,7 @@ void GameScene::UpdateEnemyPop()
 			newWEnemy->WEnemyInitialize();
 			//コライダーの追加
 			newWEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
-			//移動向き 
+			//移動向きを読み取ってセットする
 			if (word.find("L") == 0)
 			{
 				newWEnemy->SetPhase(newWEnemy->L);
@@ -291,7 +291,7 @@ void GameScene::UpdateEnemyPop()
 			wEnemys_.push_back(std::move(newWEnemy));
 		}
 
-		// 先頭文字列がenemyなら頂点座標
+		// enemyを読み取って座標をセットする
 		else if (key == "enemy") {
 			//敵の生成
 			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
@@ -299,6 +299,14 @@ void GameScene::UpdateEnemyPop()
 			newEnemy->EnemyInitialize();
 			//コライダーの追加
 			newEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			if (word.find("HP") == 0)
+			{
+				std::string num;
+				getline(line_stream, num, ' ');
+				//hpを保存
+				int32_t hpNum = atoi(num.c_str());
+				newEnemy->SetHp(hpNum);
+			}
 			// X,Y,Z座標読み込み
 			Vector3 position{};
 			line_stream >> position.x;
@@ -311,7 +319,7 @@ void GameScene::UpdateEnemyPop()
 			//登録
 			enemys_.push_back(std::move(newEnemy));
 		}
-
+		//待機時間を読み取る
 		else if (key == "wait")
 		{
 			getline(line_stream, word, ' ');
@@ -326,7 +334,7 @@ void GameScene::UpdateEnemyPop()
 			//コマンドループを抜ける
 			break;
 		}
-
+		//"BOSS"を読み取ってボス戦に移行
 		else if (key == "BOSS")
 		{
 			isBossScene = true;
@@ -337,18 +345,20 @@ void GameScene::UpdateEnemyPop()
 
 void GameScene::BossAppears()
 {
+	//接近するカメラワーク
 	if (isBossScene == true)
 	{
-		bossAppTimer++;
 		if (viewProjection->eye.z <= 10)
 		{
-			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0, 0.5f));
+			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0, 10) * MathFunc::easeInSine(bossAppTimer / 180.0f));
 		}
 		if (bossAppTimer >= 180)
 		{
 			isBossScene = false;
 		}
+		bossAppTimer++;
 	}
+	//引くカメラワーク
 	else if (isBossScene == false && bossAppTimer >= 180)
 	{
 		if (viewProjection->eye.z > -20)
