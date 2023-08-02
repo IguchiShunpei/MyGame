@@ -65,6 +65,8 @@ private:
 	bool isDead_ = false;
 	//デスポーンしたか
 	bool isDelete_ = false;
+	//弾が当たったか
+	bool isHit_ = false;
 
 	// モデル
 	Model* wEnemyModel = nullptr;
@@ -78,4 +80,6 @@ private:
 	Vector3 startSpeed = { -0.5f,0.0f,-0.5f };
 	//落下時間
 	float flame = 0.0f;
+	//体力
+	int hp_ = 1;
 };

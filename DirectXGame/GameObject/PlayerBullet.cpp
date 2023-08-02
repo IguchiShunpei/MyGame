@@ -10,12 +10,12 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	playerBulletModel_ = Model::LoadFromOBJ("triangle_mat");
+	playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_);
-	SetScale(Vector3(3.5f, 3.5f, 3.5f));
+	SetScale(Vector3(2.5f, 2.5f, 2.5f));
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入
@@ -52,7 +52,7 @@ void PlayerBullet::Update()
 			worldTransform_.scale_ += scaleNum;
 		}
 
-		if (worldTransform_.scale_.x >= 1.5f)
+		if (worldTransform_.scale_.x >= 1.0f)
 		{
 			worldTransform_.scale_ -= Vector3(0.3f, 0.3f, 0.3f);
 		}
