@@ -26,6 +26,9 @@ public:
 	//当たり判定更新
 	void ColliderUpdate();
 
+	//当たり判定コールバック
+	void OnCollision(const CollisionInfo& info) override;
+
 	//登場モーション
 	void IntitMotion();
 
@@ -54,37 +57,47 @@ public:
 	Vector3 GetWorldPosition();
 
 	//getter
-	bool GetIsInit() const { return isInit; }
+	//IsInit
+	bool GetIsInit() const { return isInit_; }
+	//IsHit
+	bool GetIsHit() const { return isHit_; }
+
+	//setter
+	//IsHit
+	void SetIsHit(bool isHit) { isHit_ = isHit; }
 
 private:
 	//入力
-	Input* input = nullptr;
+	Input* input_ = nullptr;
 	// モデル
-	Model* playerModel = nullptr;
-
-	//弾種類
-	int bulletNum = 0;
+	Model* playerModel_ = nullptr;
 
 	//弾
-	PlayerBullet* playerBullet;
+	PlayerBullet* playerBullet_ = nullptr;
 
 	//弾
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 
+	//弾種類
+	int bulletNum_;
+
+	//タイマー
 	//打ち出すまでの時間
-	float dalayTimer = 0.0f;
-
+	float dalayTimer_;
 	//登場モーションの時間
-	float initMotionTime;
+	float initMotionTime_;
 
-	//攻撃
-	bool isBurst = false;
-
-	bool isInit = false;
+	//フラグ
+	//倒したか
+	bool isBurst_;
+	//登場したか
+	bool isInit_;
+	//敵の攻撃に当たったか
+	bool isHit_;
 
 	//移動時の傾き
-	bool isRightRotation;
-	bool isLeftRotation;
-	bool isUpRotation;
-	bool isDownRotation;
+	bool isRightRotation_;
+	bool isLeftRotation_;
+	bool isUpRotation_;
+	bool isDownRotation_;
 };

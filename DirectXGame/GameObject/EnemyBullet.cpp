@@ -21,6 +21,7 @@ void EnemyBullet::EnemyBulletInitialize(const Vector3& position, const Vector3& 
 	//ˆø”‚Åó‚¯æ‚Á‚½‘¬“x‚ğƒƒ“ƒo•Ï”‚É‘ã“ü
 	velocity_ = velocity;
 	isDelete_ = false;
+	deleteTimer_ = 300.0f;
 }
 
 void EnemyBullet::ColliderUpdate()

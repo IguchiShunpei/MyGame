@@ -34,18 +34,15 @@ public:
 	//当たり判定更新
 	void ColliderUpdate();
 
-	//setter
-	//gameScene
-	void SetGameScene(GamePlayScene* gameScene) { gameScene_ = gameScene; }
-
-	//phase
-	void SetPhase(Phase phase) { phase_ = phase; }
-
+	//getter
+	//IsDead
 	bool GetIsDead() const { return isDead_; }
-
+	//IsDelete
 	bool GetIsDelete() const { return isDelete_; }
-
+	//IsHit
 	bool GetIsHit() const { return isHit_; }
+	//HP
+	int GetHP() const { return hp_; };
 	
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
@@ -71,10 +68,12 @@ public:
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
 	//Setter
-	//phaseNum
-	void SetPhaseNum(int phaseNum) { this->phaseNum_ = phaseNum; }
 	//HP
 	void SetHp(int hp) { this->hp_ = hp; }
+	//gameScene
+	void SetGameScene(GamePlayScene* gameScene) { gameScene_ = gameScene; }
+	//phase
+	void SetPhase(Phase phase) { phase_ = phase; }
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -101,10 +100,7 @@ private:
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
 	//弾を打ち出すまでの時間
-	float dalayTimer = 5.0f;
-
-	//行動パターン
-	int phaseNum_ = 0;
+	float dalayTimer_ = 15.0f;
 
 	//接近速度
 	Vector3 approach_ = { 0.0f,0.0f,-0.3f };

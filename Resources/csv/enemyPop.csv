@@ -58,27 +58,28 @@ wait 20
 wEnemy L -10 -5 100 
 wait 20
 wEnemy L -10 -5 100 
+
 wait 180
 
 BOSS
 
 wait 150
 
-enemy HP 5 -8 8 100
+enemy HP 5 -6 6 100
 wait 0
-enemy HP 5 0 8 100
+enemy HP 5 0 6 100
 wait 0
-enemy HP 5 8 8 100
+enemy HP 5 6 6 100
 wait 0
-enemy HP 5 8 0 100
+enemy HP 5 6 0 100
 wait 0
-enemy HP 5 8 -8 100
+enemy HP 5 6 -6 100
 wait 0
-enemy HP 5 0 -8 100
+enemy HP 5 0 -6 100
 wait 0
-enemy HP 5 -8 -8 100
+enemy HP 5 -6 -6 100
 wait 0
-enemy HP 5 -8 0 100
+enemy HP 5 -6 0 100
 wait 0
 enemy HP 5 0 0 100
 wait 50

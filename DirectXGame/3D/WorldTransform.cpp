@@ -77,6 +77,5 @@ void WorldTransform::UpdateMatrix()
 	}
 
 	//定数バッファに転送
-	constMap->Color = color_;
 	constMap->matWorld = matWorld_;
 }

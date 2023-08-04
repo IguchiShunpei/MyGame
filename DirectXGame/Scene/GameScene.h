@@ -36,6 +36,12 @@ public:
 		Pose,
 	};
 
+	enum GameNum
+	{
+		wEnemyScene,
+		BossScene,
+	};
+
 public:
 	//初期化
 	void Initialize() override;
@@ -50,6 +56,8 @@ public:
 	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
 	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
 
+	const int GetBossNum() { return bossNum; }
+
 	//敵データ読み込み
 	void LoadEnemyPop();
 	void UpdateEnemyPop();
@@ -57,7 +65,13 @@ public:
 	//BOSS戦前の演出
 	void BossAppears();
 
-private:
+	//Clear画面への演出
+	void ToClearScene();
+
+	//カメラシェイク
+	void CameraShake();
+
+private://メンバ変数
 	//背景
 	SkyDome* sky;
 	//入力
@@ -94,19 +108,33 @@ private:
 
 	//シーン番号
 	int sceneNum;
+	int gameNum;
 	//wave番号
 	int waveNum;
+	//カメラワーク前の座標を入れる変数
+	Vector3 cameraWorkPos_;
+	//ボスの数
+	int bossNum;
+
+	//フラグ
 	//ボス戦に入ったか
-	bool isBossScene;
-	//ボス演出のタイマー
-	int bossAppTimer;
-	//ボス戦のカメラワーク前の座標を入れる変数
-	Vector3 bossCameraPos;
+	bool isBossScene_;
+	//敵を発生させるときの待機フラグ
+	bool isWait_;
+	//クリア演出フラグ
+	bool isClearScene_;
 
+	//タイマー
 	//打ち出すまでの時間
-	float delayTimer = 0.0f;
+	float delayTimer_;
+	//ボス演出のタイマー
+	float bossAppTimer_;
+	//敵を発生させるときの待機時間
+	int waitTimer_;
+	//Clearに移行する演出のタイマー
+	float clearTimer_;
+	//敵の攻撃に当たった時の演出時間
+	int hitTimer_;
 
-	bool isWait_ = false;
 
-	int waitTimer = 10;
 };
