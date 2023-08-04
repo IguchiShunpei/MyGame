@@ -282,8 +282,7 @@ void Object3d::Update()
 	if (collider)
 	{
 		collider->Update();
-	}
-
+	}   
 }
 
 void Object3d::Draw(ViewProjection* viewProjection)

@@ -25,9 +25,9 @@ private:
 	// モデル
 	Model* enemyBulletModel_ = nullptr;
 	//削除フラグ
-	bool isDelete_ = false;
+	bool isDelete_;
 	//削除タイマー
-	float deleteTimer_ = 100.0f;
+	float deleteTimer_;
 	//速度
 	Vector3 velocity_;
 };

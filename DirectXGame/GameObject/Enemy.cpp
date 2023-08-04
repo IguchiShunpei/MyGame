@@ -25,7 +25,6 @@ void Enemy::EnemyInitialize()
 
 void Enemy::Update()
 {
-
 	isHit_ = false;
 
 	//デスフラグの立った弾を削除
@@ -65,6 +64,7 @@ void Enemy::OnCollision(const CollisionInfo& info)
 	//相手がplayerBullet
 	if (strcmp(toCollisionName, str1) == 0)
 	{
+
 		isHit_ = true;
 		hp_--;
 		if (hp_ == 0)
@@ -76,17 +76,17 @@ void Enemy::OnCollision(const CollisionInfo& info)
 
 void Enemy::Attack()
 {
-	dalayTimer -= 0.1f;
+	dalayTimer_ -= 0.1f;
 
 	//自キャラの座標をコピー
 	Vector3 position = GetPosition();
 
 	//弾の速度
-	const float kBulletSpeed = 1.0f;
+	const float kBulletSpeed = 0.5f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
 	//クールタイムが０になったとき
-	if (dalayTimer <= 0)
+	if (dalayTimer_ <= 0)
 	{
 		//球の生成
 		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
@@ -99,7 +99,7 @@ void Enemy::Attack()
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
 
-		dalayTimer = 5.0f;
+		dalayTimer_ = 15.0f;
 	}
 }
 
@@ -149,24 +149,11 @@ void Enemy::Leave()
 void Enemy::Curve()
 {
 	MathFunc::CurveProjection(worldTransform_, startSpeed, C, flame);
-
-	////既定の位置に着いたら逆カーブへ
-	//if (worldTransform_.position_.z <= 0.0f)
-	//{
-	//	phase_ = Phase::ReCurve;
-	//}
-
 }
 
 void Enemy::ReCurve()
 {
 	MathFunc::CurveProjection(worldTransform_, { -startSpeed.x,startSpeed.y,startSpeed.z }, -C, flame);
-
-	////既定の位置に着いたら逆カーブへ
-	//if (worldTransform_.position_.z >= 100.0f)
-	//{
-	//	phase_ = Phase::Approach;
-	//}
 }
 
 void Enemy::BulletDraw(ViewProjection* viewProjection_)

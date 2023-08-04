@@ -37,12 +37,22 @@ void GameScene::Initialize()
 	pm_dmg->SetXMViewProjection(xmViewProjection);
 
 	//メンバ変数の初期化
-	bossCameraPos = { 0,0,0 };
+	cameraWorkPos_ = { 0,0,0 };
+	//シーン番号
+	sceneNum = SceneNum::Title;
+	//ゲーム中のシーン番号
+	gameNum = GameNum::wEnemyScene;
 
 	//フラグ
-	isBossScene = false;
-	sceneNum = 0;
-	bossAppTimer = 0;
+	isBossScene_ = false;
+	isWait_ = false;
+	isClearScene_ = false;
+
+	//タイマー
+	delayTimer_ = 0.0f;
+	bossAppTimer_ = 0.0f;
+	waitTimer_ = 0;
+	clearTimer_ = 0.0f;
 }
 
 void GameScene::Finalize()
@@ -63,111 +73,192 @@ void GameScene::Finalize()
 void GameScene::Update()
 {
 	SIFrameWork::Update();
-
-	//デスフラグの立った敵を削除
-	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
-		{
-			return enemy->GetIsDead();
-		});
-	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
-		{
-			return wEnemy->GetIsDead();
-		});
-
-	//天球
-	sky->Update();
-
-	player->IntitMotion();
-
-	BossAppears();
-
-	//カメラ
-	viewProjection->UpdateMatrix();
-
-	pm_dmg->Update();
-
-	if (player->GetIsInit() == true)
+	switch (sceneNum)
 	{
-		//更新コマンド
-		UpdateEnemyPop();
-
-		if (isBossScene == false)
+	case Title:
+		if (input->TriggerKey(DIK_SPACE))
 		{
-			if (input->PushKey(DIK_UP))
-			{
-				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.05f, 0));
-			}
-			if (input->PushKey(DIK_RIGHT))
-			{
-				viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.05f, 0, 0));
-			}
-			if (input->PushKey(DIK_LEFT))
-			{
-				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.05f, 0, 0));
-			}
-			if (input->PushKey(DIK_DOWN))
-			{
-				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.05f, 0));
-			}
+			sceneNum = Game;
+		}
+		break;
+	case Game:
+		//天球
+		sky->Update();
+		//自機の登場演出
+		player->IntitMotion();
+		//ボスの登場演出
+		BossAppears();
 
-			//移動限界座標
-			const float kCameraLimitX = 1.5f * 1.7f;
-			const float kCameraLimitY = 1.1f * 1.7f;
+		//カメラ
+		viewProjection->UpdateMatrix();
 
-			//範囲を超えない処理
-			viewProjection->eye.x = max(viewProjection->eye.x, -kCameraLimitX);
-			viewProjection->eye.x = min(viewProjection->eye.x, +kCameraLimitX);
-			viewProjection->eye.y = max(viewProjection->eye.y, -kCameraLimitY);
-			viewProjection->eye.y = min(viewProjection->eye.y, +kCameraLimitY);
+		switch (gameNum)
+		{
+		case wEnemyScene://雑魚敵戦専用の処理
 
-			//プレイヤー
-			player->Update();
-			player->ColliderUpdate();
+			wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
+				{
+					return wEnemy->GetIsDead();
+				});
 
-			//敵
-			for (std::unique_ptr<Enemy>& enemys : enemys_)
-			{
-				enemys->Update();
-				enemys->ColliderUpdate();
-			}
 			for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 			{
 				wEnemys->Update();
 				wEnemys->ColliderUpdate();
 			}
 
-			//全ての衝突をチェック
-			collisionManager->CheckAllCollisions();
+			break;
+			
+		case BossScene://ボス戦専用の処理
 
-			for (std::unique_ptr<Enemy>& enemys : enemys_)
+			//ボス登場演出フラグがfalseになったらボス戦開始
+			if (isBossScene_ == false)
 			{
-				if (enemys->GetIsDead() == true)
+				//デスフラグの立った敵を削除
+				enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+					{
+						return enemy->GetIsDead();
+					});
+
+				//敵
+				for (std::unique_ptr<Enemy>& enemys : enemys_)
 				{
-					Vector3 deadPos{};
-					deadPos = enemys->GetPosition();
-					pm_dmg->Fire(p_dmg, 50,
-						{ deadPos.x,deadPos.y,deadPos.z },
-						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
+					enemys->Update();
+					enemys->ColliderUpdate();
 				}
+
+				//もし攻撃に当たって無かったら
+				if (player->GetIsHit() == false)
+				{
+					cameraWorkPos_ = viewProjection->GetEye();
+				}
+				else
+				{
+					hitTimer_++;
+					if (hitTimer_ < 8)
+					{
+						CameraShake();
+					}
+					else
+					{
+						//保存していた位置にカメラを戻す
+						viewProjection->SetEye(cameraWorkPos_);
+						player->SetIsHit(false);
+						hitTimer_ = 0;
+					}
+				}
+
+				//ボス戦で敵の残り数が0になったら
+				if (bossNum == 0)
+				{
+					//クリア演出フラグをtrue
+					isClearScene_ = true;
+				}
+
+				ToClearScene();
 			}
 
-			for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
-			{
-				if (wEnemys->GetIsDead() == true)
-				{
-					Vector3 deadPos{};
-					deadPos = wEnemys->GetPosition();
-					pm_dmg->Fire(p_dmg, 50,
-						{ deadPos.x,deadPos.y,deadPos.z },
-						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
-				}
-			}
+			break;
 		}
-		else
+
+		if (player->GetIsInit() == true)
 		{
-			player->BulletUpdate();
+			//更新コマンド
+			UpdateEnemyPop();
+
+			if (isBossScene_ == false && isClearScene_ == false)
+			{
+				if (input->PushKey(DIK_UP))
+				{
+					viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.05f, 0));
+				}
+				if (input->PushKey(DIK_RIGHT))
+				{
+					viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.05f, 0, 0));
+				}
+				if (input->PushKey(DIK_LEFT))
+				{
+					viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.05f, 0, 0));
+				}
+				if (input->PushKey(DIK_DOWN))
+				{
+					viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.05f, 0));
+				}
+
+				//移動限界座標
+				const float kCameraLimitX = 1.5f * 1.7f;
+				const float kCameraLimitY = 1.1f * 1.7f;
+
+				//範囲を超えない処理
+				viewProjection->eye.x = max(viewProjection->eye.x, -kCameraLimitX);
+				viewProjection->eye.x = min(viewProjection->eye.x, +kCameraLimitX);
+				viewProjection->eye.y = max(viewProjection->eye.y, -kCameraLimitY);
+				viewProjection->eye.y = min(viewProjection->eye.y, +kCameraLimitY);
+
+				player->Update();
+				player->ColliderUpdate();
+
+				//全ての衝突をチェック
+				collisionManager->CheckAllCollisions();
+
+				//敵死亡時のパーティクル
+				for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+				{
+					if (wEnemys->GetIsDead() == true)
+					{
+						Vector3 deadPos{};
+						deadPos = wEnemys->GetPosition();
+						pm_dmg->Fire(p_dmg, 50,
+							{ deadPos.x,deadPos.y,deadPos.z },
+							7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
+					}
+				}
+			
+				for (std::unique_ptr<Enemy>& enemys : enemys_)
+				{
+					if (enemys->GetIsDead() == true)
+					{
+						Vector3 deadPos{};
+						deadPos = enemys->GetPosition();
+						pm_dmg->Fire(p_dmg, 50,
+							{ deadPos.x,deadPos.y,deadPos.z },
+							7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
+						bossNum--;
+					}
+				}
+
+				//パーティクル更新
+				pm_dmg->Update();
+			}
+			else
+			{
+				//パーティクル更新
+				pm_dmg->Update();
+				player->BulletUpdate();
+			}
 		}
+
+		break;
+	case Clear:
+		if (input->TriggerKey(DIK_SPACE))
+		{
+			sceneNum = Title;
+		}
+		break;
+	case GameOver:
+		if (input->TriggerKey(DIK_SPACE))
+		{
+			sceneNum = Title;
+		}
+		break;
+	case Pose:
+		if (input->TriggerKey(DIK_SPACE))
+		{
+			sceneNum = Game;
+		}
+		break;
 	}
+
 }
 
 void GameScene::Draw()
@@ -179,23 +270,46 @@ void GameScene::Draw()
 
 	Object3d::PreDraw(dxCommon->GetCommandList());
 
-	sky->Draw(viewProjection);
-	player->Draw(viewProjection);
-	player->BulletDraw(viewProjection);
-
-	//敵
-	for (std::unique_ptr<Enemy>& enemys : enemys_)
+	switch (sceneNum)
 	{
-		if (enemys->GetIsHit() == false)
+	case Title:
+		break;
+	case Game:
+
+		sky->Draw(viewProjection);
+
+		player->Draw(viewProjection);
+		player->BulletDraw(viewProjection);
+
+		switch (gameNum)
 		{
-			enemys->Draw(viewProjection);
-		}
-		enemys->BulletDraw(viewProjection);
-	}
+		case wEnemyScene:
+			//雑魚敵
+			for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+			{
+				wEnemys->Draw(viewProjection);
+			}
+			break;
 
-	for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
-	{
-		wEnemys->Draw(viewProjection);
+		case BossScene:
+			//ボス敵
+			for (std::unique_ptr<Enemy>& enemys : enemys_)
+			{
+				if (enemys->GetIsHit() == false)
+				{
+					enemys->Draw(viewProjection);
+				}
+				enemys->BulletDraw(viewProjection);
+			}
+			break;
+		}
+		break;
+	case Clear:
+		break;
+	case GameOver:
+		break;
+	case Pose:
+		break;
 	}
 
 	Object3d::PostDraw();
@@ -233,8 +347,8 @@ void GameScene::UpdateEnemyPop()
 	//待機処理
 	if (isWait_ == true)
 	{
-		waitTimer--;
-		if (waitTimer <= 0)
+		waitTimer_--;
+		if (waitTimer_ <= 0)
 		{
 			//待機完了
 			isWait_ = false;
@@ -318,6 +432,7 @@ void GameScene::UpdateEnemyPop()
 			newEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			enemys_.push_back(std::move(newEnemy));
+			bossNum++;
 		}
 		//待機時間を読み取る
 		else if (key == "wait")
@@ -329,7 +444,7 @@ void GameScene::UpdateEnemyPop()
 
 			//待機開始
 			isWait_ = true;
-			waitTimer = waitTime;
+			waitTimer_ = waitTime;
 
 			//コマンドループを抜ける
 			break;
@@ -337,8 +452,9 @@ void GameScene::UpdateEnemyPop()
 		//"BOSS"を読み取ってボス戦に移行
 		else if (key == "BOSS")
 		{
-			isBossScene = true;
-			bossCameraPos = viewProjection->GetEye();
+			isBossScene_ = true;
+			gameNum = GameNum::BossScene;
+			cameraWorkPos_ = viewProjection->GetEye();
 		}
 	}
 }
@@ -346,20 +462,20 @@ void GameScene::UpdateEnemyPop()
 void GameScene::BossAppears()
 {
 	//接近するカメラワーク
-	if (isBossScene == true)
+	if (isBossScene_ == true)
 	{
 		if (viewProjection->eye.z <= 10)
 		{
-			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0, 10) * MathFunc::easeInSine(bossAppTimer / 180.0f));
+			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0, 10) * MathFunc::easeInSine(bossAppTimer_ / 180.0f));
 		}
-		if (bossAppTimer >= 180)
+		if (bossAppTimer_ >= 180)
 		{
-			isBossScene = false;
+			isBossScene_ = false;
 		}
-		bossAppTimer++;
+		bossAppTimer_++;
 	}
 	//引くカメラワーク
-	else if (isBossScene == false && bossAppTimer >= 180)
+	else if (isBossScene_ == false && bossAppTimer_ >= 180)
 	{
 		if (viewProjection->eye.z > -20)
 		{
@@ -367,8 +483,37 @@ void GameScene::BossAppears()
 		}
 		else
 		{
-			viewProjection->SetEye(bossCameraPos);
-			bossAppTimer = 0;
+			viewProjection->SetEye(cameraWorkPos_);
+			bossAppTimer_ = 0;
 		}
 	}
+}
+
+void GameScene::ToClearScene()
+{
+	if (isClearScene_ == true)
+	{
+		//自機を動かす
+		player->worldTransform_.position_.z++;
+		// ワールドトランスフォームの行列更新と転送
+		player->worldTransform_.UpdateMatrix();
+		//自機が移動しきったらシーン遷移
+		if (player->worldTransform_.position_.z >= 100)
+		{
+			sceneNum = SceneNum::Clear;
+			isClearScene_ = false;
+		}
+	}
+}
+
+void GameScene::CameraShake()
+{
+	//乱数生成装置
+	std::random_device seed_gen;
+	std::mt19937_64 engine(seed_gen());
+	std::uniform_real_distribution<float>dist(-0.3f, 0.3f);
+	std::uniform_real_distribution<float>dist2(-0.3f, 0.3f);
+
+	viewProjection->eye = viewProjection->eye + Vector3(dist(engine), dist2(engine), dist2(engine));
+	viewProjection->UpdateMatrix();
 }

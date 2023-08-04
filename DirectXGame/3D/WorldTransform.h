@@ -15,7 +15,6 @@ private:
 public:// サブクラス
 	//定数バッファ用データ構造体
 	struct ConstBufferDataB0 {
-		Vector4 Color;
 		Matrix4 matWorld;// 行列
 	};
 public:// メンバ関数
@@ -53,9 +52,6 @@ public:// パブリック変数
 
 	// ローカル座標
 	Vector3 position_ = { 0, 0, 0 };
-
-	// 色
-	Vector4 color_ = { 1,1,1,1 };
 
 	// ローカル → ワールド変換行列
 	Matrix4 matWorld_;

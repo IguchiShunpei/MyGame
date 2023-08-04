@@ -1,6 +1,5 @@
 cbuffer cbuff0 : register(b0)
 {
-	float4 color;
 	matrix matWorld; // ‚R‚c•ÏŠ·s—ñ
 };
 

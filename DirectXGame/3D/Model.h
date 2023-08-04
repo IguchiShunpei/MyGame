@@ -29,7 +29,7 @@ public: // サブクラス
 	// 定数バッファ用データ構造体B0
 	struct ConstBufferDataB0
 	{
-		//XMFLOAT4 color;	// 色 (RGBA)
+		//Vector4 color;	// 色 (RGBA)
 		Matrix4 mat;	// ３Ｄ変換行列
 	};
 
@@ -90,6 +90,8 @@ public: // 静的メンバ関数
 	static void SetDevice(ID3D12Device* device) { Model::device = device; }
 
 	void SetAlpha(float alpha_);
+
+	void SetColor();
 
 
 private: // 静的メンバ変数
