@@ -9,17 +9,21 @@
 #include "WeakEnemy.h"
 #include "ParticleManager.h"
 #include "SkyDome.h"
+#include "LevelLoader.h"
 
 #include<cassert>
 #include<vector>
 #include<string>
 #include<d3dcompiler.h>
 #include <sstream>
+#include <map>
 
 #include<DirectXTex.h>
 
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib,"dxguid.lib")
+
+struct LevelData;
 
 class CollisionManager;
 class Player;
@@ -27,6 +31,7 @@ class Player;
 class GameScene : public SIFrameWork
 {
 public:
+	//画面切り替え
 	enum SceneNum
 	{
 		Title,
@@ -36,6 +41,7 @@ public:
 		Pose,
 	};
 
+	//ゲームシーンの切り替え
 	enum GameNum
 	{
 		wEnemyScene,
@@ -70,6 +76,12 @@ public:
 
 	//カメラシェイク
 	void CameraShake();
+
+	//リセット
+	void Reset();
+
+	//タイトルシーンのカメラワーク
+	void StartCameraWork(int num);
 
 private://メンバ変数
 	//背景
@@ -106,17 +118,32 @@ private://メンバ変数
 	Particle* p_dmg = nullptr;
 	ParticleManager* pm_dmg = nullptr;
 
+	Object3d* objIronSphere = nullptr;
+
+	Model* modelIronSphere = nullptr;
+
+	//レベルデータ
+	LevelData* levelData = nullptr;
+	//モデル
+	std::map<std::string, Model*> models;
+	//オブジェクト
+	std::vector<Object3d*> objects;
+
 	//シーン番号
 	int sceneNum;
 	int gameNum;
 	//wave番号
 	int waveNum;
+	//タイトルカメラワーク
+	int titleNum;
 	//カメラワーク前の座標を入れる変数
 	Vector3 cameraWorkPos_;
 	//ボスの数
 	int bossNum;
 
 	//フラグ
+	//タイトルカメラワークのフラグ
+	bool isTitleCameraWork_;
 	//ボス戦に入ったか
 	bool isBossScene_;
 	//敵を発生させるときの待機フラグ
@@ -125,6 +152,8 @@ private://メンバ変数
 	bool isClearScene_;
 
 	//タイマー
+	//タイトルシーンのカメラワーク
+	int titleTimer_;
 	//打ち出すまでの時間
 	float delayTimer_;
 	//ボス演出のタイマー
@@ -135,6 +164,4 @@ private://メンバ変数
 	float clearTimer_;
 	//敵の攻撃に当たった時の演出時間
 	int hitTimer_;
-
-
 };

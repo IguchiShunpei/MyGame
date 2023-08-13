@@ -79,12 +79,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)DirectXTex;$(ProjectDir)lib\fbx_sdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)DirectXTex;$(ProjectDir)lib\json;$(ProjectDir)lib\fbx_sdk\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib\fbx_sdk\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)DirectXTex;$(ProjectDir)lib\fbx_sdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)DirectXTex;$(ProjectDir)lib\json;$(ProjectDir)lib\fbx_sdk\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib\fbx_sdk\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -123,7 +123,7 @@
       <ConformanceMode>true</ConformanceMode>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Level\;$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,7 +146,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Level\;$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,6 +182,7 @@
     <ClCompile Include="DirectXGame\GameObject\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\GameObject\WeakEnemy.cpp" />
     <ClCompile Include="DirectXGame\Input\Input.cpp" />
+    <ClCompile Include="DirectXGame\Level\LevelLoader.cpp" />
     <ClCompile Include="DirectXGame\main.cpp" />
     <ClCompile Include="DirectXGame\Math\MathFunc.cpp" />
     <ClCompile Include="DirectXGame\Math\Matrix4.cpp" />
@@ -301,6 +302,7 @@
     <ClInclude Include="DirectXGame\GameObject\SkyDome.h" />
     <ClInclude Include="DirectXGame\GameObject\WeakEnemy.h" />
     <ClInclude Include="DirectXGame\Input\Input.h" />
+    <ClInclude Include="DirectXGame\Level\LevelLoader.h" />
     <ClInclude Include="DirectXGame\Math\MathFunc.h" />
     <ClInclude Include="DirectXGame\Math\Matrix4.h" />
     <ClInclude Include="DirectXGame\Math\Vector2.h" />
