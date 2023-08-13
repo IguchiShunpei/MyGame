@@ -70,6 +70,12 @@
     <Filter Include="ヘッダー ファイル\Camera">
       <UniqueIdentifier>{c33c88d6-f11e-4b88-8792-97d8c66b43d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Level">
+      <UniqueIdentifier>{011869e4-9089-4b53-93f2-7e5a8f655516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Level">
+      <UniqueIdentifier>{b64fa00d-0316-4fe1-b88d-2599b87730de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame\2D\Sprite.cpp">
@@ -170,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Scene\SIFrameWork.cpp">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Level\LevelLoader.cpp">
+      <Filter>ソース ファイル\Level</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -332,6 +341,9 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Scene\SIFrameWork.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Level\LevelLoader.h">
+      <Filter>ヘッダー ファイル\Level</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

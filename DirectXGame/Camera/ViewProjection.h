@@ -32,6 +32,8 @@ public:// メンバ関数
 
 	void SetEye(const Vector3& eye) { this->eye = eye; }
 
+	void SetTarget(const Vector3& target) { this->target = target; }
+
 private:// プライベート関数
 	// 円周率
 	const float PI = 3.141592f;
@@ -49,11 +51,11 @@ private:// プライベート関数
 public:// パブリック変数
 #pragma region ビュー行列の設定
 	// 視点座標
-	Vector3 eye = { 0, 0, -20.0f };
+	Vector3 eye = { 0.0f, 0.0f, -20.0f };
 	// 注視点座標
-	Vector3 target = { 0, 0, 100 };
+	Vector3 target = { 0.0f, 0.0f, 100.0f };
 	// 上方向ベクトル
-	Vector3 up = { 0, 1, 0 };
+	Vector3 up = { 0.0f, 1.0f, 0.0f };
 #pragma endregion
 
 #pragma region 射影行列の設定

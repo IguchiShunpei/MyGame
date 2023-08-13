@@ -4,7 +4,7 @@
 #include "GameScene.h"
 
 //デストラクタ
-Player::~Player() 
+Player::~Player()
 {
 	delete playerModel_;
 	delete playerBullet_;
@@ -70,7 +70,7 @@ void Player::OnCollision(const CollisionInfo& info)
 {
 	const char* str1 = "class EnemyBullet";
 	//相手がEnemyBullet
-	if (strcmp(toCollisionName, str1) == 0) 
+	if (strcmp(toCollisionName, str1) == 0)
 	{
 		isHit_ = true;
 	}
@@ -78,22 +78,34 @@ void Player::OnCollision(const CollisionInfo& info)
 
 void Player::IntitMotion()
 {
-	if (isInit_ == false)
+	if (isInit_ == false && isInitAfter_ == false)
 	{
 		//前進
 		worldTransform_.position_.z += 0.5f;
 		//イージングを使った回転
-		worldTransform_.rotation_.z = 360 * -MathFunc::easeOutSine(initMotionTime_ / 40.0f);
+		worldTransform_.rotation_.z = 400.0f * -MathFunc::easeOutSine(initMotionTime_ / 40.0f);
 		initMotionTime_++;
-		// ワールドトランスフォームの行列更新と転送
-		worldTransform_.UpdateMatrix();
-		if (worldTransform_.position_.z >= 0)
+		//初期座標に来たら固定
+		if (worldTransform_.position_.z >= 0.0f)
 		{
-			SetPosition(Vector3(0, -2, 0));
-			SetRotation(Vector3(0, 0, 0));
+			SetPosition(Vector3(0.0f, -2.0f, 0.0f));
+			isInitAfter_ = true;
+			initMotionTime_ = 10.0f;
+		}
+	}
+	//余分に回転した分を戻す処理
+	if (isInitAfter_ == true)
+	{
+		worldTransform_.rotation_.z += 4.0f;
+		if (worldTransform_.rotation_.z >= -360.0f)
+		{
+			SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+			isInitAfter_ = false;
 			isInit_ = true;
 		}
 	}
+	// ワールドトランスフォームの行列更新と転送
+	worldTransform_.UpdateMatrix();
 }
 
 void Player::Move()

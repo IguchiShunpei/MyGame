@@ -92,6 +92,7 @@ private:
 	bool isBurst_;
 	//“oê‚µ‚½‚©
 	bool isInit_;
+	bool isInitAfter_;
 	//“G‚ÌUŒ‚‚É“–‚½‚Á‚½‚©
 	bool isHit_;
 

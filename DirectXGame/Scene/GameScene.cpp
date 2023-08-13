@@ -17,9 +17,6 @@ void GameScene::Initialize()
 	viewProjection = new ViewProjection();
 	xmViewProjection = new XMViewProjection();
 
-	viewProjection->Initialize();
-	viewProjection->SetEye(Vector3(0.0f, 0.0f, -20.0f));
-
 	//天球
 	sky = new SkyDome;
 	sky->SkyDomeInitialize();
@@ -27,6 +24,10 @@ void GameScene::Initialize()
 	//player 
 	player = new Player;
 	player->PlayerInitialize();
+
+	viewProjection->Initialize();
+	viewProjection->SetEye(Vector3(0.0f, 0.0f, 20.0f));
+	viewProjection->SetTarget(player->GetWorldPosition());
 
 	LoadEnemyPop();
 
@@ -36,14 +37,70 @@ void GameScene::Initialize()
 	pm_dmg->SetParticleModel(p_dmg);
 	pm_dmg->SetXMViewProjection(xmViewProjection);
 
+	// レベルデータの読み込み
+	levelData = LevelLoader::LoadFile("backGround");
+
+	//モデル読み込み
+	modelIronSphere = Model::LoadFromOBJ("ironSphere");
+
+	models.insert(std::make_pair("ironSphere", modelIronSphere));
+
+	// レベルデータからオブジェクトを生成、配置
+	for (auto& objectData : levelData->objects) {
+		// ファイル名から登録済みモデルを検索
+		Model* model = nullptr;
+		decltype(models)::iterator it = models.find(objectData.fileName);
+		if (it != models.end()) {
+			model = it->second;
+		}
+
+		// モデルを指定して3Dオブジェクトを生成
+		Object3d* newObject = Object3d::Create();
+		newObject->Initialize();
+		newObject->SetModel(model);
+
+		// 座標
+		Vector3 pos;
+		//データの値を代入
+		pos.x = objectData.translation.m128_f32[0];
+		pos.y = objectData.translation.m128_f32[1];
+		pos.z = objectData.translation.m128_f32[2];
+		//newObjectにセット
+		newObject->SetPosition(pos);
+
+		// 回転角
+		Vector3 rot;
+		//データの値を代入
+		rot.x = objectData.rotation.m128_f32[0];
+		rot.y = objectData.rotation.m128_f32[1];
+		rot.z = objectData.rotation.m128_f32[2];
+		//newObjectにセット
+		newObject->SetRotation(rot);
+
+		// 座標
+		Vector3 scale;
+		//データの値を代入
+		scale.x = objectData.scaling.m128_f32[0];
+		scale.y = objectData.scaling.m128_f32[1];
+		scale.z = objectData.scaling.m128_f32[2];
+		//newObjectにセット
+		newObject->SetScale(scale);
+
+		// 配列に登録
+		objects.push_back(newObject);
+	}
+
 	//メンバ変数の初期化
 	cameraWorkPos_ = { 0,0,0 };
 	//シーン番号
 	sceneNum = SceneNum::Title;
 	//ゲーム中のシーン番号
 	gameNum = GameNum::wEnemyScene;
+	//タイトルカメラワーク
+	titleNum = 0;
 
 	//フラグ
+	isTitleCameraWork_ = false;
 	isBossScene_ = false;
 	isWait_ = false;
 	isClearScene_ = false;
@@ -57,6 +114,10 @@ void GameScene::Initialize()
 
 void GameScene::Finalize()
 {
+	for (Object3d*& object : objects) {
+		delete(object);
+	}
+
 	delete player;
 	delete enemy;
 	delete wEnemy;
@@ -76,12 +137,64 @@ void GameScene::Update()
 	switch (sceneNum)
 	{
 	case Title:
-		if (input->TriggerKey(DIK_SPACE))
+
+		viewProjection->UpdateMatrix();
+
+		if (isTitleCameraWork_ == false)
 		{
-			sceneNum = Game;
+			if (input->TriggerKey(DIK_SPACE))
+			{
+				isTitleCameraWork_ = true;
+			}
+		}
+		else
+		{
+			//タイマーが60になったらtitleNumを+する
+			titleTimer_++;
+			if (titleTimer_ == 60)
+			{
+				titleNum++;
+				titleTimer_ = 0;
+				//カメラの位置を切り替える
+				switch (titleNum)
+				{
+				case 1:
+					viewProjection->SetEye(Vector3(0.0f, 0.0f, 10.0f));
+					break;
+				case 2:
+					viewProjection->SetEye(Vector3(0.0f, 2.0f, -20.0f));
+					break;
+				case 3:
+					viewProjection->SetEye(Vector3(0.0f, 0.0f, -20.0f));
+					viewProjection->SetTarget(Vector3(0.0f,0.0f,100.0f));
+					break;
+				}
+			}
+			StartCameraWork(titleNum);
+			if (titleNum == 4)
+			{
+				player->SetPosition(Vector3(0, -2, -20));
+				titleNum = 0;
+				titleTimer_ = 0;
+				isTitleCameraWork_ = false;
+				sceneNum = Game;
+			}
 		}
 		break;
 	case Game:
+		//リセット
+		if (input->TriggerKey(DIK_R))
+		{
+			Reset();
+			sceneNum = Game;
+			gameNum = wEnemyScene;
+		}
+		//ポーズ
+		if (input->TriggerKey(DIK_P))
+		{
+			sceneNum = Pose;
+		}
+
 		//天球
 		sky->Update();
 		//自機の登場演出
@@ -91,6 +204,11 @@ void GameScene::Update()
 
 		//カメラ
 		viewProjection->UpdateMatrix();
+
+		for (auto& object : objects)
+		{
+			object->Update();
+		}
 
 		switch (gameNum)
 		{
@@ -108,7 +226,7 @@ void GameScene::Update()
 			}
 
 			break;
-			
+
 		case BossScene://ボス戦専用の処理
 
 			//ボス登場演出フラグがfalseになったらボス戦開始
@@ -213,9 +331,17 @@ void GameScene::Update()
 							7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
 					}
 				}
-			
+
 				for (std::unique_ptr<Enemy>& enemys : enemys_)
 				{
+					if (enemys->GetIsHit() == true)
+					{
+						Vector3 hitPos{};
+						hitPos = enemys->GetPosition();
+						pm_dmg->Fire(p_dmg, 50,
+							{ hitPos.x,hitPos.y,hitPos.z },
+							7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 4, { 2.0f, 0.0f });
+					}
 					if (enemys->GetIsDead() == true)
 					{
 						Vector3 deadPos{};
@@ -243,16 +369,19 @@ void GameScene::Update()
 		if (input->TriggerKey(DIK_SPACE))
 		{
 			sceneNum = Title;
+			Reset();
 		}
 		break;
 	case GameOver:
 		if (input->TriggerKey(DIK_SPACE))
 		{
 			sceneNum = Title;
+			Reset();
 		}
 		break;
 	case Pose:
-		if (input->TriggerKey(DIK_SPACE))
+		//ポーズ
+		if (input->TriggerKey(DIK_P))
 		{
 			sceneNum = Game;
 		}
@@ -273,13 +402,17 @@ void GameScene::Draw()
 	switch (sceneNum)
 	{
 	case Title:
+		player->Draw(viewProjection);
 		break;
 	case Game:
 
 		sky->Draw(viewProjection);
-
 		player->Draw(viewProjection);
 		player->BulletDraw(viewProjection);
+
+		for (auto& object : objects) {
+			object->Draw(viewProjection);
+		}
 
 		switch (gameNum)
 		{
@@ -309,6 +442,36 @@ void GameScene::Draw()
 	case GameOver:
 		break;
 	case Pose:
+		sky->Draw(viewProjection);
+		player->Draw(viewProjection);
+		player->BulletDraw(viewProjection);
+
+		for (auto& object : objects) {
+			object->Draw(viewProjection);
+		}
+
+		switch (gameNum)
+		{
+		case wEnemyScene:
+			//雑魚敵
+			for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+			{
+				wEnemys->Draw(viewProjection);
+			}
+			break;
+
+		case BossScene:
+			//ボス敵
+			for (std::unique_ptr<Enemy>& enemys : enemys_)
+			{
+				if (enemys->GetIsHit() == false)
+				{
+					enemys->Draw(viewProjection);
+				}
+				enemys->BulletDraw(viewProjection);
+			}
+			break;
+		}
 		break;
 	}
 
@@ -516,4 +679,61 @@ void GameScene::CameraShake()
 
 	viewProjection->eye = viewProjection->eye + Vector3(dist(engine), dist2(engine), dist2(engine));
 	viewProjection->UpdateMatrix();
+}
+
+void GameScene::Reset()
+{
+	viewProjection->Initialize();
+	viewProjection->SetEye(Vector3(0.0f, 0.0f, -20.0f));
+
+	//player 
+	player = new Player;
+	player->PlayerInitialize();
+
+	LoadEnemyPop();
+
+	//メンバ変数の初期化
+	cameraWorkPos_ = { 0,0,0 };
+	//シーン番号
+	sceneNum = SceneNum::Title;
+	//ゲーム中のシーン番号
+	gameNum = GameNum::wEnemyScene;
+	//タイトルカメラワーク
+	titleNum = 0;
+
+	//フラグ
+	isTitleCameraWork_ = false;
+	isBossScene_ = false;
+	isWait_ = false;
+	isClearScene_ = false;
+
+	//タイマー
+	delayTimer_ = 0.0f;
+	bossAppTimer_ = 0.0f;
+	waitTimer_ = 0;
+	clearTimer_ = 0.0f;
+}
+
+void GameScene::StartCameraWork(int num)
+{
+	switch (num)
+	{
+	case 0:
+		viewProjection->eye.x = 15.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		viewProjection->eye.y = 10.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		break;
+	case 1:
+		viewProjection->eye.x = 20.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		break;
+	case 2:
+		viewProjection->eye.z = 30.0f * MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		break;
+	case 3:
+		//自機を動かす
+		player->worldTransform_.position_.z++;
+		player->worldTransform_.rotation_.z = 360.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		// ワールドトランスフォームの行列更新と転送
+		player->worldTransform_.UpdateMatrix();
+		break;
+	}
 }
