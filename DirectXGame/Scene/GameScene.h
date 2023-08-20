@@ -74,6 +74,9 @@ public:
 	//Clear画面への演出
 	void ToClearScene();
 
+	//GameOver画面への演出
+	void ToGameOverScene();
+
 	//カメラシェイク
 	void CameraShake();
 

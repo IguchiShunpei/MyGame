@@ -182,13 +182,6 @@ void GameScene::Update()
 		}
 		break;
 	case Game:
-		//リセット
-		if (input->TriggerKey(DIK_R))
-		{
-			Reset();
-			sceneNum = Game;
-			gameNum = wEnemyScene;
-		}
 		//ポーズ
 		if (input->TriggerKey(DIK_P))
 		{
@@ -274,6 +267,7 @@ void GameScene::Update()
 				}
 
 				ToClearScene();
+				ToGameOverScene();
 			}
 
 			break;
@@ -370,6 +364,8 @@ void GameScene::Update()
 		{
 			sceneNum = Title;
 			Reset();
+			viewProjection->SetEye(Vector3(0.0f, 0.0f, 20.0f));
+			viewProjection->SetTarget(player->GetWorldPosition());
 		}
 		break;
 	case GameOver:
@@ -377,9 +373,19 @@ void GameScene::Update()
 		{
 			sceneNum = Title;
 			Reset();
+			viewProjection->SetEye(Vector3(0.0f, 0.0f, 20.0f));
+			viewProjection->SetTarget(player->GetWorldPosition());
 		}
 		break;
 	case Pose:
+		//リセット
+		if (input->TriggerKey(DIK_R))
+		{
+			Reset();
+			sceneNum = Game;
+			gameNum = wEnemyScene;
+		}
+
 		//ポーズ
 		if (input->TriggerKey(DIK_P))
 		{
@@ -405,15 +411,6 @@ void GameScene::Draw()
 		player->Draw(viewProjection);
 		break;
 	case Game:
-
-		sky->Draw(viewProjection);
-		player->Draw(viewProjection);
-		player->BulletDraw(viewProjection);
-
-		for (auto& object : objects) {
-			object->Draw(viewProjection);
-		}
-
 		switch (gameNum)
 		{
 		case wEnemyScene:
@@ -436,20 +433,21 @@ void GameScene::Draw()
 			}
 			break;
 		}
+
+		sky->Draw(viewProjection);
+		player->Draw(viewProjection);
+		player->BulletDraw(viewProjection);
+
+		for (auto& object : objects) {
+			object->Draw(viewProjection);
+		}
+
 		break;
 	case Clear:
 		break;
 	case GameOver:
 		break;
 	case Pose:
-		sky->Draw(viewProjection);
-		player->Draw(viewProjection);
-		player->BulletDraw(viewProjection);
-
-		for (auto& object : objects) {
-			object->Draw(viewProjection);
-		}
-
 		switch (gameNum)
 		{
 		case wEnemyScene:
@@ -472,6 +470,15 @@ void GameScene::Draw()
 			}
 			break;
 		}
+
+		sky->Draw(viewProjection);
+		player->Draw(viewProjection);
+		player->BulletDraw(viewProjection);
+
+		for (auto& object : objects) {
+			object->Draw(viewProjection);
+		}
+
 		break;
 	}
 
@@ -669,6 +676,14 @@ void GameScene::ToClearScene()
 	}
 }
 
+void GameScene::ToGameOverScene()
+{
+	if (player->GetIsDead() == true)
+	{
+		sceneNum = SceneNum::GameOver;
+	}
+}
+
 void GameScene::CameraShake()
 {
 	//乱数生成装置
@@ -691,6 +706,8 @@ void GameScene::Reset()
 	player->PlayerInitialize();
 
 	LoadEnemyPop();
+	//更新コマンド
+	UpdateEnemyPop();
 
 	//メンバ変数の初期化
 	cameraWorkPos_ = { 0,0,0 };

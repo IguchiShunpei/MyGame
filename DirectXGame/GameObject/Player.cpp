@@ -28,6 +28,7 @@ void Player::PlayerInitialize()
 
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
+	hp_ = 10;
 
 	//ƒtƒ‰ƒO
 	isBurst_ = false;
@@ -37,6 +38,7 @@ void Player::PlayerInitialize()
 	isUpRotation_ = false;
 	isRightRotation_ = false;
 	isLeftRotation_ = false;
+	isDead_ = false;
 }
 
 void Player::Update()
@@ -73,6 +75,11 @@ void Player::OnCollision(const CollisionInfo& info)
 	if (strcmp(toCollisionName, str1) == 0)
 	{
 		isHit_ = true;
+		hp_--;
+		if (hp_ == 0)
+		{
+			isDead_ = true;
+		}
 	}
 }
 
