@@ -61,6 +61,8 @@ public:
 	bool GetIsInit() const { return isInit_; }
 	//IsHit
 	bool GetIsHit() const { return isHit_; }
+	//IsDead
+	bool GetIsDead() const { return isDead_; }
 
 	//setter
 	//IsHit
@@ -80,6 +82,8 @@ private:
 
 	//’eí—Ş
 	int bulletNum_;
+	//‘Ì—Í
+	int hp_ = 10;
 
 	//ƒ^ƒCƒ}[
 	//‘Å‚¿o‚·‚Ü‚Å‚ÌŠÔ
@@ -95,6 +99,8 @@ private:
 	bool isInitAfter_;
 	//“G‚ÌUŒ‚‚É“–‚½‚Á‚½‚©
 	bool isHit_;
+	//€–S
+	bool isDead_;
 
 	//ˆÚ“®‚ÌŒX‚«
 	bool isRightRotation_;
