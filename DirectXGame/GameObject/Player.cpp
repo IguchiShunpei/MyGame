@@ -28,7 +28,7 @@ void Player::PlayerInitialize()
 
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
-	hp_ = 10;
+	hp_ = 2;
 
 	//ƒtƒ‰ƒO
 	isBurst_ = false;

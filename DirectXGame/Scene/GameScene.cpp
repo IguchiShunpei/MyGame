@@ -137,7 +137,8 @@ void GameScene::Update()
 	switch (sceneNum)
 	{
 	case Title:
-
+		//天球
+		sky->Update();
 		viewProjection->UpdateMatrix();
 
 		if (isTitleCameraWork_ == false)
@@ -174,6 +175,7 @@ void GameScene::Update()
 			if (titleNum == 4)
 			{
 				player->SetPosition(Vector3(0, -2, -20));
+				viewProjection->SetEye(Vector3(0.0f, 0.0f, -20.0f));
 				titleNum = 0;
 				titleTimer_ = 0;
 				isTitleCameraWork_ = false;
@@ -409,6 +411,7 @@ void GameScene::Draw()
 	{
 	case Title:
 		player->Draw(viewProjection);
+		sky->Draw(viewProjection);
 		break;
 	case Game:
 		switch (gameNum)
@@ -438,9 +441,9 @@ void GameScene::Draw()
 		player->Draw(viewProjection);
 		player->BulletDraw(viewProjection);
 
-		for (auto& object : objects) {
+	/*	for (auto& object : objects) {
 			object->Draw(viewProjection);
-		}
+		}*/
 
 		break;
 	case Clear:
@@ -475,9 +478,9 @@ void GameScene::Draw()
 		player->Draw(viewProjection);
 		player->BulletDraw(viewProjection);
 
-		for (auto& object : objects) {
+	/*	for (auto& object : objects) {
 			object->Draw(viewProjection);
-		}
+		}*/
 
 		break;
 	}
@@ -680,7 +683,16 @@ void GameScene::ToGameOverScene()
 {
 	if (player->GetIsDead() == true)
 	{
-		sceneNum = SceneNum::GameOver;
+		viewProjection->SetTarget(player->worldTransform_.position_);
+		CameraShake();
+		//自機を動かす
+		player->worldTransform_.position_.y -= 0.05f;
+		// ワールドトランスフォームの行列更新と転送
+		player->worldTransform_.UpdateMatrix();
+		if (player->worldTransform_.position_.y <= -5.0f)
+		{
+			sceneNum = SceneNum::GameOver;
+		}
 	}
 }
 
@@ -748,6 +760,7 @@ void GameScene::StartCameraWork(int num)
 	case 3:
 		//自機を動かす
 		player->worldTransform_.position_.z++;
+		viewProjection->eye.z -= 1.5f;
 		player->worldTransform_.rotation_.z = 360.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		// ワールドトランスフォームの行列更新と転送
 		player->worldTransform_.UpdateMatrix();
