@@ -21,6 +21,6 @@ void Meteor::Move()
 	worldTransform_.position_.z -= 0.05f;
 	if (worldTransform_.position_.z <= -20.0f)
 	{
-		worldTransform_.position_.z = 80.0f;
+		worldTransform_.position_.z = 70.0f;
 	}
 }
