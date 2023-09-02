@@ -270,7 +270,6 @@ bool ParticleManager::Initialize()
 
 void ParticleManager::Update()
 {
-
 	HRESULT result;
 
 	particle->Update();

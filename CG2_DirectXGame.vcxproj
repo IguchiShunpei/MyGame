@@ -177,6 +177,7 @@
     <ClCompile Include="DirectXGame\Collision\SphereCollider.cpp" />
     <ClCompile Include="DirectXGame\GameObject\Enemy.cpp" />
     <ClCompile Include="DirectXGame\GameObject\EnemyBullet.cpp" />
+    <ClCompile Include="DirectXGame\GameObject\Meteor.cpp" />
     <ClCompile Include="DirectXGame\GameObject\Player.cpp" />
     <ClCompile Include="DirectXGame\GameObject\PlayerBullet.cpp" />
     <ClCompile Include="DirectXGame\GameObject\SkyDome.cpp" />
@@ -297,6 +298,7 @@
     <ClInclude Include="DirectXGame\Collision\SphereCollider.h" />
     <ClInclude Include="DirectXGame\GameObject\Enemy.h" />
     <ClInclude Include="DirectXGame\GameObject\EnemyBullet.h" />
+    <ClInclude Include="DirectXGame\GameObject\Meteor.h" />
     <ClInclude Include="DirectXGame\GameObject\Player.h" />
     <ClInclude Include="DirectXGame\GameObject\PlayerBullet.h" />
     <ClInclude Include="DirectXGame\GameObject\SkyDome.h" />
