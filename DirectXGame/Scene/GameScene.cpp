@@ -67,8 +67,7 @@ void GameScene::Initialize()
 		pos.z = objectData.translation.m128_f32[2];
 		//newObjectにセット
 		meteor->SetPosition(pos);
-		meteor->SetMeteorPosition(pos);
-
+	
 		// 回転角
 		Vector3 rot;
 		//データの値を代入
