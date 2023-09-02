@@ -19,7 +19,6 @@ public:
 	//ˆÚ“®
 	void Move();
 
-	void SetMeteorPosition(const Vector3& position) { this->position = position; }
 private:
 	Vector3 position;
 };
