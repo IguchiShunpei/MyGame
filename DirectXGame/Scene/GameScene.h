@@ -10,6 +10,7 @@
 #include "ParticleManager.h"
 #include "SkyDome.h"
 #include "LevelLoader.h"
+#include "Meteor.h"
 
 #include<cassert>
 #include<vector>
@@ -121,16 +122,18 @@ private://メンバ変数
 	Particle* p_dmg = nullptr;
 	ParticleManager* pm_dmg = nullptr;
 
-	Object3d* objIronSphere = nullptr;
+	Meteor* objMeteor = nullptr;
 
-	Model* modelIronSphere = nullptr;
+	Model* modelMeteor = nullptr;
+
+	Meteor* meteor;
 
 	//レベルデータ
 	LevelData* levelData = nullptr;
 	//モデル
-	std::map<std::string, Model*> models;
+	std::map<std::string, Model*> meteorModels;
 	//オブジェクト
-	std::vector<Object3d*> objects;
+	std::vector<Meteor*> meteorObjects;
 
 	//シーン番号
 	int sceneNum;

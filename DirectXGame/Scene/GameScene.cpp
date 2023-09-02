@@ -41,23 +41,23 @@ void GameScene::Initialize()
 	levelData = LevelLoader::LoadFile("backGround");
 
 	//モデル読み込み
-	modelIronSphere = Model::LoadFromOBJ("ironSphere");
+	modelMeteor = Model::LoadFromOBJ("meteor");
 
-	models.insert(std::make_pair("ironSphere", modelIronSphere));
+	meteorModels.insert(std::make_pair("meteor", modelMeteor));
 
 	// レベルデータからオブジェクトを生成、配置
 	for (auto& objectData : levelData->objects) {
 		// ファイル名から登録済みモデルを検索
 		Model* model = nullptr;
-		decltype(models)::iterator it = models.find(objectData.fileName);
-		if (it != models.end()) {
+		decltype(meteorModels)::iterator it = meteorModels.find(objectData.fileName);
+		if (it != meteorModels.end()) {
 			model = it->second;
 		}
 
 		// モデルを指定して3Dオブジェクトを生成
-		Object3d* newObject = Object3d::Create();
-		newObject->Initialize();
-		newObject->SetModel(model);
+		meteor = new Meteor;
+		meteor->MeteorInitialize();
+		meteor->SetModel(model);
 
 		// 座標
 		Vector3 pos;
@@ -66,7 +66,8 @@ void GameScene::Initialize()
 		pos.y = objectData.translation.m128_f32[1];
 		pos.z = objectData.translation.m128_f32[2];
 		//newObjectにセット
-		newObject->SetPosition(pos);
+		meteor->SetPosition(pos);
+		meteor->SetMeteorPosition(pos);
 
 		// 回転角
 		Vector3 rot;
@@ -75,7 +76,7 @@ void GameScene::Initialize()
 		rot.y = objectData.rotation.m128_f32[1];
 		rot.z = objectData.rotation.m128_f32[2];
 		//newObjectにセット
-		newObject->SetRotation(rot);
+		meteor->SetRotation(rot);
 
 		// 座標
 		Vector3 scale;
@@ -84,10 +85,10 @@ void GameScene::Initialize()
 		scale.y = objectData.scaling.m128_f32[1];
 		scale.z = objectData.scaling.m128_f32[2];
 		//newObjectにセット
-		newObject->SetScale(scale);
+		meteor->SetScale(scale);
 
 		// 配列に登録
-		objects.push_back(newObject);
+		meteorObjects.push_back(meteor);
 	}
 
 	//メンバ変数の初期化
@@ -114,7 +115,7 @@ void GameScene::Initialize()
 
 void GameScene::Finalize()
 {
-	for (Object3d*& object : objects) {
+	for (Meteor*& object : meteorObjects) {
 		delete(object);
 	}
 
@@ -200,9 +201,9 @@ void GameScene::Update()
 		//カメラ
 		viewProjection->UpdateMatrix();
 
-		for (auto& object : objects)
+		for (auto& object : meteorObjects)
 		{
-			object->Update();
+			object->MeteorUpdate();
 		}
 
 		switch (gameNum)
@@ -379,21 +380,6 @@ void GameScene::Update()
 			viewProjection->SetTarget(player->GetWorldPosition());
 		}
 		break;
-	case Pose:
-		//リセット
-		if (input->TriggerKey(DIK_R))
-		{
-			Reset();
-			sceneNum = Game;
-			gameNum = wEnemyScene;
-		}
-
-		//ポーズ
-		if (input->TriggerKey(DIK_P))
-		{
-			sceneNum = Game;
-		}
-		break;
 	}
 
 }
@@ -441,9 +427,9 @@ void GameScene::Draw()
 		player->Draw(viewProjection);
 		player->BulletDraw(viewProjection);
 
-	/*	for (auto& object : objects) {
+		for (auto& object : meteorObjects) {
 			object->Draw(viewProjection);
-		}*/
+		}
 
 		break;
 	case Clear:
@@ -478,10 +464,6 @@ void GameScene::Draw()
 		player->Draw(viewProjection);
 		player->BulletDraw(viewProjection);
 
-	/*	for (auto& object : objects) {
-			object->Draw(viewProjection);
-		}*/
-
 		break;
 	}
 
@@ -503,6 +485,9 @@ void GameScene::Draw()
 
 void GameScene::LoadEnemyPop()
 {
+	enemys_.clear();
+	wEnemys_.clear();
+
 	//ファイルを開く
 	std::ifstream file;
 	file.open("Resources/csv/enemyPop.csv");
@@ -683,7 +668,6 @@ void GameScene::ToGameOverScene()
 {
 	if (player->GetIsDead() == true)
 	{
-		viewProjection->SetTarget(player->worldTransform_.position_);
 		CameraShake();
 		//自機を動かす
 		player->worldTransform_.position_.y -= 0.05f;
@@ -717,9 +701,10 @@ void GameScene::Reset()
 	player = new Player;
 	player->PlayerInitialize();
 
+	enemys_.clear();
+	wEnemys_.clear();
+
 	LoadEnemyPop();
-	//更新コマンド
-	UpdateEnemyPop();
 
 	//メンバ変数の初期化
 	cameraWorkPos_ = { 0,0,0 };

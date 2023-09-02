@@ -180,6 +180,9 @@
     <ClCompile Include="DirectXGame\Level\LevelLoader.cpp">
       <Filter>ソース ファイル\Level</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXGame\GameObject\Meteor.cpp">
+      <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli">
@@ -344,6 +347,9 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Level\LevelLoader.h">
       <Filter>ヘッダー ファイル\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\GameObject\Meteor.h">
+      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
