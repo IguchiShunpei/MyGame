@@ -63,7 +63,7 @@ public:
 	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
 	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
 
-	const int GetBossNum() { return bossNum; }
+	const int GetBossNum() { return bossNum_; }
 
 	//敵データ読み込み
 	void LoadEnemyPop();
@@ -145,7 +145,9 @@ private://メンバ変数
 	//カメラワーク前の座標を入れる変数
 	Vector3 cameraWorkPos_;
 	//ボスの数
-	int bossNum;
+	int bossNum_;
+	//墜落演出の墜落量
+	float gameOverNum_;
 
 	//フラグ
 	//タイトルカメラワークのフラグ

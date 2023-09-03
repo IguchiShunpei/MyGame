@@ -98,6 +98,10 @@ void GameScene::Initialize()
 	gameNum = GameNum::wEnemyScene;
 	//タイトルカメラワーク
 	titleNum = 0;
+	//ボス
+	bossNum_ = 0;
+	//墜落量
+	gameOverNum_ = 0.0f;
 
 	//フラグ
 	isTitleCameraWork_ = false;
@@ -140,6 +144,8 @@ void GameScene::Update()
 		//天球
 		sky->Update();
 		viewProjection->UpdateMatrix();
+
+		LoadEnemyPop();
 
 		if (isTitleCameraWork_ == false)
 		{
@@ -184,12 +190,7 @@ void GameScene::Update()
 		}
 		break;
 	case Game:
-		//ポーズ
-		if (input->TriggerKey(DIK_P))
-		{
-			sceneNum = Pose;
-		}
-
+	
 		//天球
 		sky->Update();
 		//自機の登場演出
@@ -262,7 +263,7 @@ void GameScene::Update()
 				}
 
 				//ボス戦で敵の残り数が0になったら
-				if (bossNum == 0)
+				if (bossNum_ == 0)
 				{
 					//クリア演出フラグをtrue
 					isClearScene_ = true;
@@ -345,7 +346,7 @@ void GameScene::Update()
 						pm_dmg->Fire(p_dmg, 50,
 							{ deadPos.x,deadPos.y,deadPos.z },
 							7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
-						bossNum--;
+						bossNum_--;
 					}
 				}
 
@@ -589,7 +590,7 @@ void GameScene::UpdateEnemyPop()
 			newEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			enemys_.push_back(std::move(newEnemy));
-			bossNum++;
+			bossNum_++;
 		}
 		//待機時間を読み取る
 		else if (key == "wait")
@@ -670,9 +671,10 @@ void GameScene::ToGameOverScene()
 		CameraShake();
 		//自機を動かす
 		player->worldTransform_.position_.y -= 0.05f;
+		gameOverNum_ += 0.05f;
 		// ワールドトランスフォームの行列更新と転送
 		player->worldTransform_.UpdateMatrix();
-		if (player->worldTransform_.position_.y <= -5.0f)
+		if (gameOverNum_ >= 3.0f)
 		{
 			sceneNum = SceneNum::GameOver;
 		}
@@ -700,9 +702,7 @@ void GameScene::Reset()
 	player = new Player;
 	player->PlayerInitialize();
 
-	enemys_.clear();
-	wEnemys_.clear();
-
+	//敵データ読み込み
 	LoadEnemyPop();
 
 	//メンバ変数の初期化
@@ -713,6 +713,10 @@ void GameScene::Reset()
 	gameNum = GameNum::wEnemyScene;
 	//タイトルカメラワーク
 	titleNum = 0;
+	//ボス
+	bossNum_ = 0;
+	//墜落量
+	gameOverNum_ = 0.0f;
 
 	//フラグ
 	isTitleCameraWork_ = false;
