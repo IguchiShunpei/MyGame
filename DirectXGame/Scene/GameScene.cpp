@@ -29,6 +29,9 @@ void GameScene::Initialize()
 	viewProjection->SetEye(Vector3(0.0f, 0.0f, 20.0f));
 	viewProjection->SetTarget(player->GetWorldPosition());
 
+	enemys_.clear();
+	wEnemys_.clear();
+
 	LoadEnemyPop();
 
 	//パーティクル
@@ -145,7 +148,8 @@ void GameScene::Update()
 		sky->Update();
 		viewProjection->UpdateMatrix();
 
-		LoadEnemyPop();
+		enemys_.clear();
+		wEnemys_.clear();
 
 		if (isTitleCameraWork_ == false)
 		{
@@ -485,9 +489,6 @@ void GameScene::Draw()
 
 void GameScene::LoadEnemyPop()
 {
-	enemys_.clear();
-	wEnemys_.clear();
-
 	//ファイルを開く
 	std::ifstream file;
 	file.open("Resources/csv/enemyPop.csv");
@@ -701,6 +702,9 @@ void GameScene::Reset()
 	//player 
 	player = new Player;
 	player->PlayerInitialize();
+
+	enemys_.clear();
+	wEnemys_.clear();
 
 	//敵データ読み込み
 	LoadEnemyPop();
