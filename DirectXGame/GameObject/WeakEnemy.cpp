@@ -14,7 +14,7 @@ void WeakEnemy::WEnemyInitialize()
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	wEnemyModel = Model::LoadFromOBJ("enemy");
+	wEnemyModel = Model::LoadFromOBJ("wEnemy");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける

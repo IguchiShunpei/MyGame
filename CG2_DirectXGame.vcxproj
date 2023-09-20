@@ -123,7 +123,7 @@
       <ConformanceMode>true</ConformanceMode>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Level\;$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Sound\;$(ProjectDir)DirectXGame\Level\;$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,7 +146,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Level\;$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Sound\;$(ProjectDir)DirectXGame\Level\;$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -192,6 +192,7 @@
     <ClCompile Include="DirectXGame\Math\Vector4.cpp" />
     <ClCompile Include="DirectXGame\Scene\GameScene.cpp" />
     <ClCompile Include="DirectXGame\Scene\SIFrameWork.cpp" />
+    <ClCompile Include="DirectXGame\Sound\Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -312,6 +313,7 @@
     <ClInclude Include="DirectXGame\Math\Vector4.h" />
     <ClInclude Include="DirectXGame\Scene\GameScene.h" />
     <ClInclude Include="DirectXGame\Scene\SIFrameWork.h" />
+    <ClInclude Include="DirectXGame\Sound\Sound.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

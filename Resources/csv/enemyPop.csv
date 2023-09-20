@@ -1,4 +1,4 @@
-wait 30
+wait 60
 wEnemy L 0 0 100 
 wait 20
 wEnemy L 0 0 100 
