@@ -8,7 +8,7 @@
 #include <list>
 
 //GameSceneの前方宣言
-class GamePlayScene;
+class GameScene;
 
 class Enemy : public Object3d
 {
@@ -80,7 +80,7 @@ public:
 
 private:
 	//ゲームシーン
-	GamePlayScene* gameScene_ = nullptr;
+	GameScene* gameScene_ = nullptr;
 
 	//デスフラグ
 	//倒されたか

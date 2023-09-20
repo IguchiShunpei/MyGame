@@ -29,9 +29,6 @@ void GameScene::Initialize()
 	viewProjection->SetEye(Vector3(0.0f, 0.0f, 20.0f));
 	viewProjection->SetTarget(player->GetWorldPosition());
 
-	enemys_.clear();
-	wEnemys_.clear();
-
 	LoadEnemyPop();
 
 	//パーティクル
@@ -70,7 +67,7 @@ void GameScene::Initialize()
 		pos.z = objectData.translation.m128_f32[2];
 		//newObjectにセット
 		meteor->SetPosition(pos);
-	
+
 		// 回転角
 		Vector3 rot;
 		//データの値を代入
@@ -177,7 +174,7 @@ void GameScene::Update()
 					break;
 				case 3:
 					viewProjection->SetEye(Vector3(0.0f, 0.0f, -20.0f));
-					viewProjection->SetTarget(Vector3(0.0f,0.0f,100.0f));
+					viewProjection->SetTarget(Vector3(0.0f, 0.0f, 100.0f));
 					break;
 				}
 			}
@@ -194,13 +191,26 @@ void GameScene::Update()
 		}
 		break;
 	case Game:
-	
+		wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
+			{
+				return wEnemy->GetIsDead();
+			});
+		//デスフラグの立った敵を削除
+		enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+			{
+				return enemy->GetIsDead();
+			});
+
+		//更新コマンド
+		UpdateEnemyPop();
+
 		//天球
 		sky->Update();
 		//自機の登場演出
 		player->IntitMotion();
 		//ボスの登場演出
 		BossAppears();
+
 
 		//カメラ
 		viewProjection->UpdateMatrix();
@@ -213,11 +223,6 @@ void GameScene::Update()
 		switch (gameNum)
 		{
 		case wEnemyScene://雑魚敵戦専用の処理
-
-			wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
-				{
-					return wEnemy->GetIsDead();
-				});
 
 			for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 			{
@@ -232,11 +237,6 @@ void GameScene::Update()
 			//ボス登場演出フラグがfalseになったらボス戦開始
 			if (isBossScene_ == false)
 			{
-				//デスフラグの立った敵を削除
-				enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
-					{
-						return enemy->GetIsDead();
-					});
 
 				//敵
 				for (std::unique_ptr<Enemy>& enemys : enemys_)
@@ -282,8 +282,6 @@ void GameScene::Update()
 
 		if (player->GetIsInit() == true)
 		{
-			//更新コマンド
-			UpdateEnemyPop();
 
 			if (isBossScene_ == false && isClearScene_ == false)
 			{
@@ -404,6 +402,9 @@ void GameScene::Draw()
 		sky->Draw(viewProjection);
 		break;
 	case Game:
+		for (auto& object : meteorObjects) {
+			object->Draw(viewProjection);
+		}
 		switch (gameNum)
 		{
 		case wEnemyScene:
@@ -430,10 +431,6 @@ void GameScene::Draw()
 		sky->Draw(viewProjection);
 		player->Draw(viewProjection);
 		player->BulletDraw(viewProjection);
-
-		for (auto& object : meteorObjects) {
-			object->Draw(viewProjection);
-		}
 
 		break;
 	case Clear:
@@ -489,6 +486,9 @@ void GameScene::Draw()
 
 void GameScene::LoadEnemyPop()
 {
+	enemys_.clear();
+	wEnemys_.clear();
+
 	//ファイルを開く
 	std::ifstream file;
 	file.open("Resources/csv/enemyPop.csv");
@@ -696,18 +696,17 @@ void GameScene::CameraShake()
 
 void GameScene::Reset()
 {
+	delete enemy;
+	delete wEnemy;
+
 	viewProjection->Initialize();
 	viewProjection->SetEye(Vector3(0.0f, 0.0f, -20.0f));
+
+	LoadEnemyPop();
 
 	//player 
 	player = new Player;
 	player->PlayerInitialize();
-
-	enemys_.clear();
-	wEnemys_.clear();
-
-	//敵データ読み込み
-	LoadEnemyPop();
 
 	//メンバ変数の初期化
 	cameraWorkPos_ = { 0,0,0 };
@@ -728,11 +727,13 @@ void GameScene::Reset()
 	isWait_ = false;
 	isClearScene_ = false;
 
+
 	//タイマー
 	delayTimer_ = 0.0f;
 	bossAppTimer_ = 0.0f;
 	waitTimer_ = 0;
 	clearTimer_ = 0.0f;
+
 }
 
 void GameScene::StartCameraWork(int num)

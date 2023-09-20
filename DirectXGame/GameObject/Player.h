@@ -67,6 +67,7 @@ public:
 	//setter
 	//IsHit
 	void SetIsHit(bool isHit) { isHit_ = isHit; }
+	void SetIsInit(bool isInit) { isInit_ = isInit; }
 
 private:
 	//“ü—Í

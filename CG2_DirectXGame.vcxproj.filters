@@ -76,6 +76,12 @@
     <Filter Include="ヘッダー ファイル\Level">
       <UniqueIdentifier>{b64fa00d-0316-4fe1-b88d-2599b87730de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Sound">
+      <UniqueIdentifier>{42537491-ea43-4a60-877b-34b7d22dabe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Sound">
+      <UniqueIdentifier>{3dcd3570-186d-4022-bc43-613caf423728}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame\2D\Sprite.cpp">
@@ -182,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\GameObject\Meteor.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Sound\Sound.cpp">
+      <Filter>ソース ファイル\Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\GameObject\Meteor.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Sound\Sound.h">
+      <Filter>ヘッダー ファイル\Sound</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
