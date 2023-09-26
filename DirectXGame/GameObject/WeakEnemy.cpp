@@ -1,6 +1,6 @@
 #include "WeakEnemy.h"
 #include "SphereCollider.h"
-#include "GameScene.h"
+#include "GamePLayScene.h"
 #include "string.h"
 
 //デストラクタ

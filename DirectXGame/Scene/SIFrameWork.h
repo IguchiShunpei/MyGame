@@ -8,6 +8,9 @@
 #include"Model.h"
 #include "ParticleManager.h"
 #include "FbxLoader.h"
+#include "AbstractSceneFactory.h"
+#include "GameSceneManager.h"
+#include  "Sound.h"
 
 class SIFrameWork
 {
@@ -30,13 +33,17 @@ public:
 	//実行
 	void Run();
 
-private:
+protected:
 	//WindowsAPIのポインタ
 	WinApp* winApp = nullptr;
 	//DirectXのポインタ
 	DirectXCommon* dxCommon = nullptr;
 	//入力のポインタ
 	Input* input = nullptr;
+	// シーンマネージャ
+	GameSceneManager* sceneManager_ = nullptr;
+	// シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 private:
 	bool endRequest = false;
 };

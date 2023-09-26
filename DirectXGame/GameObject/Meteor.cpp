@@ -1,5 +1,5 @@
 #include "Meteor.h"
-#include "GameScene.h"
+#include "GamePLayScene.h"
 
 void Meteor::MeteorInitialize()
 {
