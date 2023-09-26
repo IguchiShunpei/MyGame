@@ -190,7 +190,14 @@
     <ClCompile Include="DirectXGame\Math\Vector2.cpp" />
     <ClCompile Include="DirectXGame\Math\Vector3.cpp" />
     <ClCompile Include="DirectXGame\Math\Vector4.cpp" />
-    <ClCompile Include="DirectXGame\Scene\GameScene.cpp" />
+    <ClCompile Include="DirectXGame\Scene\Game.cpp" />
+    <ClCompile Include="DirectXGame\Scene\GameBaseScene.cpp" />
+    <ClCompile Include="DirectXGame\Scene\GameClearScene.cpp" />
+    <ClCompile Include="DirectXGame\Scene\GameOverScene.cpp" />
+    <ClCompile Include="DirectXGame\Scene\GamePlayScene.cpp" />
+    <ClCompile Include="DirectXGame\Scene\GameSceneManager.cpp" />
+    <ClCompile Include="DirectXGame\Scene\GameTitleScene.cpp" />
+    <ClCompile Include="DirectXGame\Scene\SceneFactory.cpp" />
     <ClCompile Include="DirectXGame\Scene\SIFrameWork.cpp" />
     <ClCompile Include="DirectXGame\Sound\Sound.cpp" />
   </ItemGroup>
@@ -311,7 +318,15 @@
     <ClInclude Include="DirectXGame\Math\Vector2.h" />
     <ClInclude Include="DirectXGame\Math\Vector3.h" />
     <ClInclude Include="DirectXGame\Math\Vector4.h" />
-    <ClInclude Include="DirectXGame\Scene\GameScene.h" />
+    <ClInclude Include="DirectXGame\Scene\AbstractSceneFactory.h" />
+    <ClInclude Include="DirectXGame\Scene\Game.h" />
+    <ClInclude Include="DirectXGame\Scene\GameBaseScene.h" />
+    <ClInclude Include="DirectXGame\Scene\GameClearScene.h" />
+    <ClInclude Include="DirectXGame\Scene\GameOverScene.h" />
+    <ClInclude Include="DirectXGame\Scene\GamePlayScene.h" />
+    <ClInclude Include="DirectXGame\Scene\GameSceneManager.h" />
+    <ClInclude Include="DirectXGame\Scene\GameTitleScene.h" />
+    <ClInclude Include="DirectXGame\Scene\SceneFactory.h" />
     <ClInclude Include="DirectXGame\Scene\SIFrameWork.h" />
     <ClInclude Include="DirectXGame\Sound\Sound.h" />
   </ItemGroup>

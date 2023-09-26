@@ -71,7 +71,7 @@ public:
 	//HP
 	void SetHp(int hp) { this->hp_ = hp; }
 	//gameScene
-	void SetGameScene(GamePlayScene* gameScene) { gameScene_ = gameScene; }
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
 

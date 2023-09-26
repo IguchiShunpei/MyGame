@@ -13,6 +13,8 @@ void SIFrameWork::Initialize()
 	//入力の初期化
 	input = Input::GetInstance();
 	input->Initialize(winApp);
+	// シーンマネージャの生成
+	sceneManager_ = GameSceneManager::GetInstance();
 	// 3Dオブジェクト静的初期化
 	Object3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_height);
 	//FBX
@@ -21,10 +23,16 @@ void SIFrameWork::Initialize()
 	ParticleManager::StaticInitialize(dxCommon->GetDevice());
 	// ビュープロジェクションの初期化
 	ViewProjection::StaticInitialize(dxCommon->GetDevice());
+	// サウンドの静的初期化
+	Sound::StaticInitialize();
 }
 
 void SIFrameWork::Finalize()
 {
+	sceneManager_->Destroy();
+	//シーンファクトリの解放
+	delete sceneFactory_;
+
 	// WindowsAPIの終了処理
 	winApp->Finalize();
 
@@ -42,6 +50,9 @@ void SIFrameWork::Update()
 
 	// 入力の更新
 	input->Update();
+
+	// シーンマネージャの更新
+	sceneManager_->Update();
 }
 
 void SIFrameWork::Run()
@@ -57,6 +68,10 @@ void SIFrameWork::Run()
 		// 終了リクエストが来たらループを抜ける
 		if (IsEndRequest()) {
 			// ゲームループを抜ける
+			break;
+		}
+		//escでループを抜ける
+		if (input->TriggerKey(DIK_ESCAPE) == true) {
 			break;
 		}
 

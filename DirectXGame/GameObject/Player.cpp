@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "SphereCollider.h"
 #include "string.h"
-#include "GameScene.h"
+#include "GamePlayScene.h"
 
 //デストラクタ
 Player::~Player()

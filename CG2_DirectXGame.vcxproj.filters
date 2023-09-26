@@ -177,9 +177,6 @@
     <ClCompile Include="DirectXGame\Math\Vector4.cpp">
       <Filter>ソース ファイル\Math</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Scene\GameScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Scene\SIFrameWork.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -191,6 +188,30 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Sound\Sound.cpp">
       <Filter>ソース ファイル\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Scene\Game.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Scene\GameBaseScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Scene\GameClearScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Scene\GamePlayScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Scene\GameSceneManager.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Scene\GameTitleScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Scene\SceneFactory.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Scene\GameOverScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -348,9 +369,6 @@
     <ClInclude Include="DirectXGame\Math\Vector4.h">
       <Filter>ヘッダー ファイル\Math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Scene\GameScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Scene\SIFrameWork.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
@@ -362,6 +380,33 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Sound\Sound.h">
       <Filter>ヘッダー ファイル\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\Game.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\GameBaseScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\GameClearScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\GamePlayScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\GameSceneManager.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\GameTitleScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\SceneFactory.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\AbstractSceneFactory.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Scene\GameOverScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
