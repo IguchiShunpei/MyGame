@@ -19,12 +19,13 @@ void GameTitleScene::Initialize()
 	//player 
 	player = new Player;
 	player->PlayerInitialize();
+	player->SetPosition(Vector3(0.0f, -2.0f, 0.0f));
 
 	//カメラ初期化
 	viewProjection = new ViewProjection();
 	viewProjection->Initialize();
 	viewProjection->SetEye(Vector3(0.0f, 0.0f, 20.0f));
-	viewProjection->SetTarget(player->GetWorldPosition());
+	viewProjection->SetTarget(player->worldTransform_.GetPosition());
 
 	//天球
 	sky = new SkyDome;
@@ -34,25 +35,69 @@ void GameTitleScene::Initialize()
 	titleNum = 0;
 	isTitleCameraWork_ = false;
 	titleTimer_ = 0;
+	plRotaY = 0.0f;
+	skyRotaY = 0.0f;
+
+	//フラグ
+	isBeforeCameraWork_ = false;
+	isTitleCameraWork_ = false;
 }
 
 void GameTitleScene::Update()
 {
-	//天球
-	sky->Update();
-	viewProjection->UpdateMatrix();
-
-	if (isTitleCameraWork_ == false)
+	//待機時
+	if (isBeforeCameraWork_ == false)
 	{
-		if (input_->TriggerKey(DIK_SPACE))
+		viewProjection->SetTarget(player->GetWorldPosition());
+		if (player->worldTransform_.rotation_.y <= 360.0f)
 		{
-			isTitleCameraWork_ = true;
+			player->worldTransform_.rotation_.y += 0.4f;
+			plRotaY = player->worldTransform_.rotation_.y;
+		}
+		else
+		{
 			player->worldTransform_.rotation_.y = 0.0f;
+		}
+		if (sky->worldTransform_.rotation_.y <= 360.0f)
+		{
+			sky->worldTransform_.rotation_.y += 0.05f;
+			skyRotaY = sky->worldTransform_.rotation_.y;
+		}
+		else
+		{
 			sky->worldTransform_.rotation_.y = 0.0f;
 		}
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			isBeforeCameraWork_ = true;
+		}
+		player->worldTransform_.UpdateMatrix();
 	}
 	else
 	{
+		if (isTitleCameraWork_ == false)
+		{
+			if (titleTimer_ <= 90)
+			{
+				titleTimer_++;
+				player->worldTransform_.rotation_.y = 360 * MathFunc::easeOutSine(titleTimer_ / 90.0f);
+				sky->worldTransform_.rotation_.y = 360 * MathFunc::easeOutSine(titleTimer_ / 90.0f);
+			}
+			else
+			{
+				titleTimer_ = 0;
+				isTitleCameraWork_ = true;
+				player->worldTransform_.rotation_.y = 0.0f;
+				sky->worldTransform_.rotation_.y = 0.0f;
+			}
+			player->worldTransform_.UpdateMatrix();
+		}
+	}
+
+	//カメラワークへ
+	if (isTitleCameraWork_ == true)
+	{
+		viewProjection->SetTarget(player->GetWorldPosition());
 		//タイマーが60になったらtitleNumを+する
 		titleTimer_++;
 		if (titleTimer_ == 60)
@@ -85,6 +130,9 @@ void GameTitleScene::Update()
 			GameSceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 		}
 	}
+	//天球
+	sky->Update();
+	viewProjection->UpdateMatrix();
 }
 
 void GameTitleScene::Draw()

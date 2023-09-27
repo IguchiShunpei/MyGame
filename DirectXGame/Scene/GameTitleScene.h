@@ -52,9 +52,15 @@ private: // メンバ変数
 	//カメラ
 	ViewProjection* viewProjection = nullptr;
 
+	//自機の角度を保存
+	float plRotaY;
+	//天球の角度を保存
+	float skyRotaY;
+
 	//タイトルカメラワーク
 	int titleNum;
-
+	//カメラワーク前の演出のフラグ
+	bool isBeforeCameraWork_;
 	//タイトルカメラワークのフラグ
 	bool isTitleCameraWork_;
 	//タイトルシーンのカメラワーク
