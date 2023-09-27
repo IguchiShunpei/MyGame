@@ -106,7 +106,7 @@ void GamePlayScene::Initialize()
 	//メンバ変数の初期化
 	cameraWorkPos_ = { 0,0,0 };
 	//ゲーム中のシーン番号
-	gameNum = GameNum::wEnemyScene;
+	gameNum = GameNum::FirstScene;
 	//ボス
 	bossNum_ = 0;
 	//墜落量
@@ -130,10 +130,18 @@ void GamePlayScene::Update()
 		{
 			return wEnemy->GetIsDead();
 		});
+	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
+		{
+			return wEnemy->GetIsDelete();
+		});
 	//デスフラグの立った敵を削除
 	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
 		{
 			return enemy->GetIsDead();
+		});
+	invEnemys_.remove_if([](std::unique_ptr <InvEnemy>& invEnemy)
+		{
+			return invEnemy->GetIsDelete();
 		});
 
 	//更新コマンド
@@ -157,12 +165,17 @@ void GamePlayScene::Update()
 
 	switch (gameNum)
 	{
-	case wEnemyScene://雑魚敵戦専用の処理
+	case FirstScene://雑魚敵戦専用の処理
 
 		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 		{
 			wEnemys->Update();
 			wEnemys->ColliderUpdate();
+		}
+		for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
+		{
+			invEnemys->Update();
+			invEnemys->ColliderUpdate();
 		}
 
 		break;
@@ -172,7 +185,6 @@ void GamePlayScene::Update()
 		//ボス登場演出フラグがfalseになったらボス戦開始
 		if (isBossScene_ == false)
 		{
-
 			//敵
 			for (std::unique_ptr<Enemy>& enemys : enemys_)
 			{
@@ -314,11 +326,15 @@ void GamePlayScene::Draw()
 	}
 	switch (gameNum)
 	{
-	case wEnemyScene:
+	case FirstScene:
 		//雑魚敵
 		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 		{
 			wEnemys->Draw(viewProjection);
+		}
+		for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
+		{
+			invEnemys->Draw(viewProjection);
 		}
 		break;
 
@@ -365,6 +381,7 @@ void GamePlayScene::Finalize()
 	delete player;
 	delete enemy;
 	delete wEnemy;
+	delete invEnemy;
 	delete p_dmg;
 	delete pm_dmg;
 
@@ -422,12 +439,11 @@ void GamePlayScene::UpdateEnemyPop()
 		std::string key;
 		getline(line_stream, key, ' ');
 
-		std::string word;
-		getline(line_stream, word, ' ');
-
 		// wEnemyを読み取って座標をセットする
 		if (key == "wEnemy")
 		{
+			std::string word;
+			getline(line_stream, word, ' ');
 			//敵の生成
 			std::unique_ptr<WeakEnemy> newWEnemy = std::make_unique<WeakEnemy>();
 			//敵の初期化
@@ -460,6 +476,8 @@ void GamePlayScene::UpdateEnemyPop()
 
 		// enemyを読み取って座標をセットする
 		else if (key == "enemy") {
+			std::string word;
+			getline(line_stream, word, ' ');
 			//敵の生成
 			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
 			//敵の初期化
@@ -487,9 +505,30 @@ void GamePlayScene::UpdateEnemyPop()
 			enemys_.push_back(std::move(newEnemy));
 			bossNum_++;
 		}
+		// enemyを読み取って座標をセットする
+		else if (key == "invEnemy") {
+			//敵の生成
+			std::unique_ptr<InvEnemy> newInvEnemy = std::make_unique<InvEnemy>();
+			//敵の初期化
+			newInvEnemy->InvEnemyInitialize();
+			//コライダーの追加
+			newInvEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			// X,Y,Z座標読み込み
+			Vector3 position{};
+			line_stream >> position.x;
+			line_stream >> position.y;
+			line_stream >> position.z;
+			// 座標データに追加
+			newInvEnemy->SetPosition(position);
+			newInvEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
+			newInvEnemy->worldTransform_.UpdateMatrix();
+			//登録
+			invEnemys_.push_back(std::move(newInvEnemy));
+		}
 		//待機時間を読み取る
 		else if (key == "wait")
 		{
+			std::string word;
 			getline(line_stream, word, ' ');
 
 			//待ち時間

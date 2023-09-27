@@ -19,6 +19,7 @@ wEnemy L 0 0 100
 wait 20
 wEnemy L 0 0 100 
 wait 150
+invEnemy 10 0 100
 wEnemy R 10 5 100 
 wait 20
 wEnemy R 10 5 100 
@@ -34,11 +35,13 @@ wait 20
 wEnemy R 10 5 100 
 wait 20
 wEnemy R 10 5 100 
+invEnemy 0 -2 100
 wait 20
 wEnemy R 10 5 100 
 wait 20
 wEnemy R 10 5 100 
 wait 150
+invEnemy 0 -10 100
 wEnemy L -10 -5 100 
 wait 20
 wEnemy L -10 -5 100 
@@ -48,6 +51,7 @@ wait 20
 wEnemy L -10 -5 100 
 wait 20
 wEnemy L -10 -5 100 
+invEnemy 0 10 100
 wait 20
 wEnemy L -10 -5 100 
 wait 20

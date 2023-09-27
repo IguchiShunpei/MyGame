@@ -73,9 +73,12 @@ void PlayerBullet::OnCollision(const CollisionInfo& info)
 	const char* str1 = "class Enemy";
 	const char* str2 = "class WeakEnemy";
 	const char* str3 = "class EnemyBullet";
+	const char* str4 = "class InvEnemy";
 
 	//‘ŠŽè‚ªEnemy
-	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 || strcmp(toCollisionName, str3) == 0) {
+	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 ||
+		strcmp(toCollisionName, str3) == 0 || strcmp(toCollisionName, str4) == 0) 
+	{
 		isDelete_ = true;
 	}
 }

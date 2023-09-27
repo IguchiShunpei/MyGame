@@ -71,6 +71,7 @@ void Player::ColliderUpdate()
 void Player::OnCollision(const CollisionInfo& info)
 {
 	const char* str1 = "class EnemyBullet";
+
 	//‘ŠŽè‚ªEnemyBullet
 	if (strcmp(toCollisionName, str1) == 0)
 	{

@@ -14,6 +14,7 @@
 #include "Meteor.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "InvEnemy.h"
 #include "WeakEnemy.h"
 #include "Sound.h"
 
@@ -41,7 +42,7 @@ public:
 	//ƒQ[ƒ€ƒV[ƒ“‚ÌØ‚è‘Ö‚¦
 	enum GameNum
 	{
-		wEnemyScene,
+		FirstScene,
 		BossScene,
 	};
 public:
@@ -67,6 +68,7 @@ public:
 	//“GƒŠƒXƒg
 	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
 	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
+	const std::list<std::unique_ptr<InvEnemy>>& GetInvEnemys() { return invEnemys_; }
 
 	const int GetBossNum() { return bossNum_; }
 
@@ -105,10 +107,12 @@ private://ƒƒ“ƒo•Ï”
 	//“G
 	Enemy* enemy;
 	WeakEnemy* wEnemy;
+	InvEnemy* invEnemy;
 
 	//“G
 	std::list<std::unique_ptr<Enemy>> enemys_;
 	std::list<std::unique_ptr<WeakEnemy>> wEnemys_;
+	std::list<std::unique_ptr<InvEnemy>> invEnemys_;
 
 	//“G”­¶ƒRƒ}ƒ“ƒh
 	std::stringstream enemyPopCommands;
