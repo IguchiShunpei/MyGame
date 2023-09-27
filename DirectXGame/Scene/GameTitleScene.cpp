@@ -47,6 +47,8 @@ void GameTitleScene::Update()
 		if (input_->TriggerKey(DIK_SPACE))
 		{
 			isTitleCameraWork_ = true;
+			player->worldTransform_.rotation_.y = 0.0f;
+			sky->worldTransform_.rotation_.y = 0.0f;
 		}
 	}
 	else
@@ -96,7 +98,7 @@ void GameTitleScene::Draw()
 
 	Object3d::PostDraw();
 
-  dxCommon_->PostDraw();
+	dxCommon_->PostDraw();
 
 }
 

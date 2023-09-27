@@ -15,7 +15,7 @@ void Enemy::EnemyInitialize()
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	enemyModel = Model::LoadFromOBJ("enemy");
+	enemyModel = Model::LoadFromOBJ("enemy01");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
