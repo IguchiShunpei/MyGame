@@ -20,6 +20,7 @@ void InvEnemy::InvEnemyInitialize()
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyModel);
 	isDelete_ = false;
+	isHit_ = false;
 }
 
 void InvEnemy::Update()
@@ -36,7 +37,11 @@ void InvEnemy::Update()
 
 void InvEnemy::ColliderUpdate()
 {
-
+	//当たり判定更新
+	if (collider)
+	{
+		collider->Update();
+	}
 }
 
 void InvEnemy::OnCollision(const CollisionInfo& info)

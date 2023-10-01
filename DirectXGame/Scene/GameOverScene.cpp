@@ -22,6 +22,7 @@ void GameOverScene::Initialize()
 	//ƒJƒƒ‰‰Šú‰»
 	viewProjection = new ViewProjection();
 	viewProjection->Initialize();
+	viewProjection->SetEye(Vector3(0.0f, 0.0f, 20.0f));
 }
 
 void GameOverScene::Update()
@@ -44,7 +45,7 @@ void GameOverScene::Draw()
 
 	Object3d::PreDraw(dxCommon->GetCommandList());
 
-	/*sky->Draw(viewProjection);*/
+	sky->Draw(viewProjection);
 
 	Object3d::PostDraw();
 

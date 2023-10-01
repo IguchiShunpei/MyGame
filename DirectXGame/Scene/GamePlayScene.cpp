@@ -110,7 +110,7 @@ void GamePlayScene::Initialize()
 	//ボス
 	bossNum_ = 0;
 	//墜落量
-	gameOverNum_ = 0.0f;
+	gameOverNum_ = 0;
 
 	//フラグ
 	isBossScene_ = false;
@@ -154,7 +154,6 @@ void GamePlayScene::Update()
 	//ボスの登場演出
 	BossAppears();
 
-
 	//カメラ
 	viewProjection->UpdateMatrix();
 
@@ -177,7 +176,6 @@ void GamePlayScene::Update()
 			invEnemys->Update();
 			invEnemys->ColliderUpdate();
 		}
-
 		break;
 
 	case BossScene://ボス戦専用の処理
@@ -192,27 +190,6 @@ void GamePlayScene::Update()
 				enemys->ColliderUpdate();
 			}
 
-			//もし攻撃に当たって無かったら
-			if (player->GetIsHit() == false)
-			{
-				cameraWorkPos_ = viewProjection->GetEye();
-			}
-			else
-			{
-				hitTimer_++;
-				if (hitTimer_ < 8)
-				{
-					CameraShake();
-				}
-				else
-				{
-					//保存していた位置にカメラを戻す
-					viewProjection->SetEye(cameraWorkPos_);
-					player->SetIsHit(false);
-					hitTimer_ = 0;
-				}
-			}
-
 			//ボス戦で敵の残り数が0になったら
 			if (bossNum_ == 0)
 			{
@@ -221,7 +198,6 @@ void GamePlayScene::Update()
 			}
 
 			ToClearScene();
-			ToGameOverScene();
 		}
 
 		break;
@@ -229,7 +205,6 @@ void GamePlayScene::Update()
 
 	if (player->GetIsInit() == true)
 	{
-
 		if (isBossScene_ == false && isClearScene_ == false)
 		{
 			if (input->PushKey(DIK_UP))
@@ -262,43 +237,6 @@ void GamePlayScene::Update()
 			player->Update();
 			player->ColliderUpdate();
 
-			//全ての衝突をチェック
-			collisionManager->CheckAllCollisions();
-
-			//敵死亡時のパーティクル
-			for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
-			{
-				if (wEnemys->GetIsDead() == true)
-				{
-					Vector3 deadPos{};
-					deadPos = wEnemys->GetPosition();
-					pm_dmg->Fire(p_dmg, 50,
-						{ deadPos.x,deadPos.y,deadPos.z },
-						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
-				}
-			}
-
-			for (std::unique_ptr<Enemy>& enemys : enemys_)
-			{
-				if (enemys->GetIsHit() == true)
-				{
-					Vector3 hitPos{};
-					hitPos = enemys->GetPosition();
-					pm_dmg->Fire(p_dmg, 50,
-						{ hitPos.x,hitPos.y,hitPos.z },
-						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 4, { 2.0f, 0.0f });
-				}
-				if (enemys->GetIsDead() == true)
-				{
-					Vector3 deadPos{};
-					deadPos = enemys->GetPosition();
-					pm_dmg->Fire(p_dmg, 50,
-						{ deadPos.x,deadPos.y,deadPos.z },
-						7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
-					bossNum_--;
-				}
-			}
-
 			//パーティクル更新
 			pm_dmg->Update();
 		}
@@ -310,6 +248,67 @@ void GamePlayScene::Update()
 		}
 	}
 
+	//全ての衝突をチェック
+	collisionManager->CheckAllCollisions();
+
+	//もし攻撃に当たって無かったら
+	if (player->GetIsDead() == false)
+	{
+		if (player->GetIsHit() == false)
+		{
+			cameraWorkPos_ = viewProjection->GetEye();
+		}
+		else
+		{
+			hitTimer_++;
+			if (hitTimer_ < 16)
+			{
+				CameraShake();
+			}
+			else
+			{
+				//保存していた位置にカメラを戻す
+				viewProjection->SetEye(cameraWorkPos_);
+				player->SetIsHit(false);
+				hitTimer_ = 0;
+			}
+		}
+	}
+
+	//敵死亡時のパーティクル
+	for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
+	{
+		if (wEnemys->GetIsDead() == true)
+		{
+			Vector3 deadPos{};
+			deadPos = wEnemys->GetPosition();
+			pm_dmg->Fire(p_dmg, 50,
+				{ deadPos.x,deadPos.y,deadPos.z },
+				7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
+		}
+	}
+
+	for (std::unique_ptr<Enemy>& enemys : enemys_)
+	{
+		if (enemys->GetIsHit() == true)
+		{
+			Vector3 hitPos{};
+			hitPos = enemys->GetPosition();
+			pm_dmg->Fire(p_dmg, 50,
+				{ hitPos.x,hitPos.y,hitPos.z },
+				7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 4, { 2.0f, 0.0f });
+		}
+		if (enemys->GetIsDead() == true)
+		{
+			Vector3 deadPos{};
+			deadPos = enemys->GetPosition();
+			pm_dmg->Fire(p_dmg, 50,
+				{ deadPos.x,deadPos.y,deadPos.z },
+				7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
+			bossNum_--;
+		}
+	}
+	ToGameOverScene();
 }
 
 void GamePlayScene::Draw()
@@ -352,7 +351,11 @@ void GamePlayScene::Draw()
 	}
 
 	sky->Draw(viewProjection);
-	player->Draw(viewProjection);
+	//カメラシェイク中は点滅
+	if (hitTimer_ % 2 != 1)
+	{
+		player->Draw(viewProjection);
+	}
 	player->BulletDraw(viewProjection);
 
 
@@ -604,10 +607,10 @@ void GamePlayScene::ToGameOverScene()
 		CameraShake();
 		//自機を動かす
 		player->worldTransform_.position_.y -= 0.05f;
-		gameOverNum_ += 0.05f;
+		gameOverNum_++;
 		// ワールドトランスフォームの行列更新と転送
 		player->worldTransform_.UpdateMatrix();
-		if (gameOverNum_ >= 3.0f)
+		if (gameOverNum_ >= 60)
 		{
 			GameSceneManager::GetInstance()->ChangeScene("GAMEOVER");
 		}
