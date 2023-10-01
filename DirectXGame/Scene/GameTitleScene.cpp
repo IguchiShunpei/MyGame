@@ -97,9 +97,8 @@ void GameTitleScene::Update()
 	//カメラワークへ
 	if (isTitleCameraWork_ == true)
 	{
-		viewProjection->SetTarget(player->GetWorldPosition());
-		//タイマーが60になったらtitleNumを+する
 		titleTimer_++;
+		//タイマーが60になったらtitleNumを+する
 		if (titleTimer_ == 60)
 		{
 			titleNum++;
@@ -108,25 +107,23 @@ void GameTitleScene::Update()
 			switch (titleNum)
 			{
 			case 1:
-				viewProjection->SetEye(Vector3(0.0f, 0.0f, 10.0f));
+				viewProjection->SetTarget(player->GetWorldPosition());
+				viewProjection->SetEye(Vector3(0.0f, 0.0f, 7.0f));
 				break;
 			case 2:
-				viewProjection->SetEye(Vector3(0.0f, 2.0f, -20.0f));
+				viewProjection->SetTarget(player->GetWorldPosition());
+				viewProjection->SetEye(Vector3(0.0f, 2.0f, -14.0f));
 				break;
 			case 3:
-				viewProjection->SetEye(Vector3(0.0f, 0.0f, -20.0f));
 				viewProjection->SetTarget(Vector3(0.0f, 0.0f, 100.0f));
+				viewProjection->SetEye(Vector3(0.0f, -1.0f, 0.0f));
 				break;
 			}
+		
 		}
 		StartCameraWork(titleNum);
 		if (titleNum == 4)
 		{
-			player->SetPosition(Vector3(0, -2, -20));
-			viewProjection->SetEye(Vector3(0.0f, 0.0f, -20.0f));
-			titleNum = 0;
-			titleTimer_ = 0;
-			isTitleCameraWork_ = false;
 			GameSceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 		}
 	}
@@ -160,6 +157,7 @@ void GameTitleScene::StartCameraWork(int num)
 	switch (num)
 	{
 	case 0:
+		viewProjection->SetEye(Vector3(0.0f, 0.0f, 10.0f));
 		viewProjection->eye.x = 15.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		viewProjection->eye.y = 10.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		break;

@@ -41,6 +41,9 @@ public:
 	//UŒ‚
 	void Attack();
 
+	//ƒ_ƒ[ƒW
+	void Damage();
+
 	//’eØ‚è‘Ö‚¦
 	void ChangeBullet();
 
@@ -100,6 +103,7 @@ private:
 	bool isInitAfter_;
 	//“G‚ÌUŒ‚‚É“–‚½‚Á‚½‚©
 	bool isHit_;
+	bool isinv_;
 	//€–S
 	bool isDead_;
 

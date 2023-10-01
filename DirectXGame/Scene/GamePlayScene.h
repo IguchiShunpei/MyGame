@@ -149,7 +149,7 @@ private://メンバ変数
 	//ボスの数
 	int bossNum_;
 	//墜落演出の墜落量
-	float gameOverNum_;
+	int gameOverNum_;
 
 	//フラグ
 	//ボス戦に入ったか

@@ -57,4 +57,6 @@ private:
 	Model* enemyModel = nullptr;
 	
 	int waitTimer = 0;
+
+	bool isHit_ = false;
 };

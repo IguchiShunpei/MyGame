@@ -39,6 +39,7 @@ void Player::PlayerInitialize()
 	isRightRotation_ = false;
 	isLeftRotation_ = false;
 	isDead_ = false;
+	isinv_ = false;
 }
 
 void Player::Update()
@@ -71,16 +72,12 @@ void Player::ColliderUpdate()
 void Player::OnCollision(const CollisionInfo& info)
 {
 	const char* str1 = "class EnemyBullet";
+	const char* str2 = "class InvEnemy";
 
-	//‘ŠŽè‚ªEnemyBullet
-	if (strcmp(toCollisionName, str1) == 0)
+	//‘ŠŽè‚ªEnemy
+	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0)
 	{
-		isHit_ = true;
-		hp_--;
-		if (hp_ == 0)
-		{
-			isDead_ = true;
-		}
+		Damage();
 	}
 }
 
@@ -280,6 +277,19 @@ void Player::Attack()
 			bullets_.push_back(std::move(newBullet));
 
 			dalayTimer_ = 1.2f;
+		}
+	}
+}
+
+void Player::Damage()
+{
+	if (isHit_ == false)
+	{
+		isHit_ = true;
+		hp_--;
+		if (hp_ == 0)
+		{
+			isDead_ = true;
 		}
 	}
 }
