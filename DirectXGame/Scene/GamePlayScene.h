@@ -88,6 +88,8 @@ public:
 	//カメラシェイク
 	void CameraShake();
 
+	//レベルデータのロード
+	void LoadLevelData();
 
 private://メンバ変数
 	//背景
