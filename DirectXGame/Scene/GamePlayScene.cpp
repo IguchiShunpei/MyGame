@@ -31,6 +31,7 @@ void GamePlayScene::Initialize()
 	//カメラ初期化
 	viewProjection = new ViewProjection();
 	xmViewProjection = new XMViewProjection();
+	viewProjection->Initialize();
 
 	//天球
 	sky = new SkyDome;
@@ -40,8 +41,6 @@ void GamePlayScene::Initialize()
 	player = new Player;
 	player->PlayerInitialize();
 
-	viewProjection->Initialize();
-
 	LoadEnemyPop();
 
 	//パーティクル
@@ -50,58 +49,7 @@ void GamePlayScene::Initialize()
 	pm_dmg->SetParticleModel(p_dmg);
 	pm_dmg->SetXMViewProjection(xmViewProjection);
 
-	// レベルデータの読み込み
-	levelData = LevelLoader::LoadFile("backGround");
-
-	//モデル読み込み
-	modelMeteor = Model::LoadFromOBJ("meteor");
-
-	meteorModels.insert(std::make_pair("meteor", modelMeteor));
-
-	// レベルデータからオブジェクトを生成、配置
-	for (auto& objectData : levelData->objects) {
-		// ファイル名から登録済みモデルを検索
-		Model* model = nullptr;
-		decltype(meteorModels)::iterator it = meteorModels.find(objectData.fileName);
-		if (it != meteorModels.end()) {
-			model = it->second;
-		}
-
-		// モデルを指定して3Dオブジェクトを生成
-		meteor = new Meteor;
-		meteor->MeteorInitialize();
-		meteor->SetModel(model);
-
-		// 座標
-		Vector3 pos;
-		//データの値を代入
-		pos.x = objectData.translation.m128_f32[0];
-		pos.y = objectData.translation.m128_f32[1];
-		pos.z = objectData.translation.m128_f32[2];
-		//newObjectにセット
-		meteor->SetPosition(pos);
-
-		// 回転角
-		Vector3 rot;
-		//データの値を代入
-		rot.x = objectData.rotation.m128_f32[0];
-		rot.y = objectData.rotation.m128_f32[1];
-		rot.z = objectData.rotation.m128_f32[2];
-		//newObjectにセット
-		meteor->SetRotation(rot);
-
-		// 座標
-		Vector3 scale;
-		//データの値を代入
-		scale.x = objectData.scaling.m128_f32[0];
-		scale.y = objectData.scaling.m128_f32[1];
-		scale.z = objectData.scaling.m128_f32[2];
-		//newObjectにセット
-		meteor->SetScale(scale);
-
-		// 配列に登録
-		meteorObjects.push_back(meteor);
-	}
+	LoadLevelData();
 
 	//メンバ変数の初期化
 	cameraWorkPos_ = { 0,0,0 };
@@ -626,4 +574,60 @@ void GamePlayScene::CameraShake()
 
 	viewProjection->eye = viewProjection->eye + Vector3(dist(engine), dist2(engine), dist2(engine));
 	viewProjection->UpdateMatrix();
+}
+
+void GamePlayScene::LoadLevelData()
+{
+	// レベルデータの読み込み
+	levelData = LevelLoader::LoadFile("backGround");
+
+	//モデル読み込み
+	modelMeteor = Model::LoadFromOBJ("meteor");
+
+	meteorModels.insert(std::make_pair("meteor", modelMeteor));
+
+	// レベルデータからオブジェクトを生成、配置
+	for (auto& objectData : levelData->objects) {
+		// ファイル名から登録済みモデルを検索
+		Model* model = nullptr;
+		decltype(meteorModels)::iterator it = meteorModels.find(objectData.fileName);
+		if (it != meteorModels.end()) {
+			model = it->second;
+		}
+
+		// モデルを指定して3Dオブジェクトを生成
+		meteor = new Meteor;
+		meteor->MeteorInitialize();
+		meteor->SetModel(model);
+
+		// 座標
+		Vector3 pos;
+		//データの値を代入
+		pos.x = objectData.translation.m128_f32[0];
+		pos.y = objectData.translation.m128_f32[1];
+		pos.z = objectData.translation.m128_f32[2];
+		//newObjectにセット
+		meteor->SetPosition(pos);
+
+		// 回転角
+		Vector3 rot;
+		//データの値を代入
+		rot.x = objectData.rotation.m128_f32[0];
+		rot.y = objectData.rotation.m128_f32[1];
+		rot.z = objectData.rotation.m128_f32[2];
+		//newObjectにセット
+		meteor->SetRotation(rot);
+
+		// 座標
+		Vector3 scale;
+		//データの値を代入
+		scale.x = objectData.scaling.m128_f32[0];
+		scale.y = objectData.scaling.m128_f32[1];
+		scale.z = objectData.scaling.m128_f32[2];
+		//newObjectにセット
+		meteor->SetScale(scale);
+
+		// 配列に登録
+		meteorObjects.push_back(meteor);
+	}
 }

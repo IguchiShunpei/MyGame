@@ -54,7 +54,7 @@ void EnemyBullet::OnCollision(const CollisionInfo& info)
 	const char* str2 = "class PlayerBullet";
 
 	//‘ŠŽè‚ªEnemy
-	if (strcmp(toCollisionName, str1) == 0|| strcmp(toCollisionName, str2) == 0) 
+	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0) 
 	{
 		isDelete_ = true;
 	}

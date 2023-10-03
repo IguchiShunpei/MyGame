@@ -25,11 +25,16 @@ void InvEnemy::InvEnemyInitialize()
 
 void InvEnemy::Update()
 {
-	waitTimer++;
-	if (waitTimer >= 120)
+	if (isTurn_ == false && isStart_ == false)
 	{
-		Move();
+		waitTimer++;
+		if (waitTimer >= 60)
+		{
+			isTurn_ = true;
+		}
 	}
+	Turn();
+	Move();
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -57,10 +62,28 @@ void InvEnemy::OnCollision(const CollisionInfo& info)
 
 void InvEnemy::Move()
 {
-	worldTransform_.position_.z -= 3.0f;
-	if (worldTransform_.position_.z <= -20.0f)
+	if (isStart_ == true)
 	{
-		isDelete_ = true;
+		worldTransform_.position_.z -= 3.0f;
+		if (worldTransform_.position_.z <= -20.0f)
+		{
+			isDelete_ = true;
+		}
+	}
+}
+
+void InvEnemy::Turn()
+{
+	if (isTurn_ == true)
+	{
+		turnTimer_++;
+		worldTransform_.rotation_.z = 360.0f * MathFunc::easeOutSine(turnTimer_ / 30.0f);
+		if (turnTimer_ >= 30.0f)
+		{
+			worldTransform_.rotation_.z = 360.0f;
+			isTurn_ = false;
+			isStart_ = true;
+		}
 	}
 }
 

@@ -6,6 +6,7 @@
 #include "EnemyBullet.h"
 #include <memory>
 #include <list>
+#include "MathFunc.h"
 
 //GameSceneの前方宣言
 class GameScene;
@@ -30,12 +31,12 @@ public:
 	
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
-
-	//攻撃
-	void Attack();
 	
 	//移動
 	void Move();
+
+	//回転
+	void Turn();
 
 	//Setter
 	//gameScene
@@ -57,6 +58,11 @@ private:
 	Model* enemyModel = nullptr;
 	
 	int waitTimer = 0;
+	float turnTimer_ = 0.0f;
 
 	bool isHit_ = false;
+
+	bool isStart_ = false;
+
+	bool isTurn_ = false;
 };
