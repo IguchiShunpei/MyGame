@@ -144,7 +144,7 @@ void GamePlayScene::Update()
 				//クリア演出フラグをtrue
 				isClearScene_ = true;
 			}
-
+			//クリア演出の処理
 			ToClearScene();
 		}
 
@@ -208,17 +208,21 @@ void GamePlayScene::Update()
 		}
 		else
 		{
-			hitTimer_++;
-			if (hitTimer_ < 16)
+			if (player->GetIsInv() == true)
 			{
-				CameraShake();
-			}
-			else
-			{
-				//保存していた位置にカメラを戻す
-				viewProjection->SetEye(cameraWorkPos_);
-				player->SetIsHit(false);
-				hitTimer_ = 0;
+				hitTimer_++;
+				if (hitTimer_ < 16)
+				{
+					CameraShake();
+				}
+				else
+				{
+					//保存していた位置にカメラを戻す
+					viewProjection->SetEye(cameraWorkPos_);
+					player->SetIsHit(false);
+					player->SetIsInv(false);
+					hitTimer_ = 0;
+				}
 			}
 		}
 	}
@@ -268,9 +272,6 @@ void GamePlayScene::Draw()
 
 	Object3d::PreDraw(dxCommon->GetCommandList());
 
-	for (auto& object : meteorObjects) {
-		object->Draw(viewProjection);
-	}
 	switch (gameNum)
 	{
 	case FirstScene:
@@ -306,6 +307,9 @@ void GamePlayScene::Draw()
 	}
 	player->BulletDraw(viewProjection);
 
+	for (auto& object : meteorObjects) {
+		object->Draw(viewProjection);
+	}
 
 	Object3d::PostDraw();
 
@@ -329,6 +333,7 @@ void GamePlayScene::Finalize()
 		delete(object);
 	}
 
+	delete sky;
 	delete player;
 	delete enemy;
 	delete wEnemy;

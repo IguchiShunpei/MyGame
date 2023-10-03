@@ -66,11 +66,16 @@ public:
 	bool GetIsHit() const { return isHit_; }
 	//IsDead
 	bool GetIsDead() const { return isDead_; }
+	//IsInv
+	bool GetIsInv() const { return isInv_; }
 
 	//setter
 	//IsHit
 	void SetIsHit(bool isHit) { isHit_ = isHit; }
+	//IsInit
 	void SetIsInit(bool isInit) { isInit_ = isInit; }
+	//IsInv
+	void SetIsInv(bool isInv) { isInv_ = isInv; }
 
 private:
 	//“ü—Í
@@ -103,7 +108,7 @@ private:
 	bool isInitAfter_;
 	//“G‚ÌUŒ‚‚É“–‚½‚Á‚½‚©
 	bool isHit_;
-	bool isinv_;
+	bool isInv_;
 	//€–S
 	bool isDead_;
 
