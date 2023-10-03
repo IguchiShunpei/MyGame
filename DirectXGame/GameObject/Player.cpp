@@ -25,7 +25,6 @@ void Player::PlayerInitialize()
 	SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.0f));
 	SetPosition(Vector3(0, -2, -20));
 	SetScale(Vector3(0.5f, 0.5f, 0.5f));
-
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
 	hp_ = 3;
@@ -39,7 +38,7 @@ void Player::PlayerInitialize()
 	isRightRotation_ = false;
 	isLeftRotation_ = false;
 	isDead_ = false;
-	isinv_ = false;
+	isInv_ = false;
 }
 
 void Player::Update()
@@ -75,10 +74,14 @@ void Player::OnCollision(const CollisionInfo& info)
 	const char* str2 = "class InvEnemy";
 
 	//‘ŠŽè‚ªEnemy
-	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0)
+	if (isInv_ == false)
 	{
-		Damage();
+		if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0)
+		{
+			isHit_ = true;
+		}
 	}
+	Damage();
 }
 
 void Player::IntitMotion()
@@ -283,10 +286,10 @@ void Player::Attack()
 
 void Player::Damage()
 {
-	if (isHit_ == false)
+	if (isHit_ == true && isInv_ == false)
 	{
-		isHit_ = true;
 		hp_--;
+		isInv_ = true;
 		if (hp_ == 0)
 		{
 			isDead_ = true;

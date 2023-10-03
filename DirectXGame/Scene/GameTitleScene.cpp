@@ -149,7 +149,9 @@ void GameTitleScene::Draw()
 
 void GameTitleScene::Finalize()
 {
-
+	delete sky;
+	delete player;
+	delete viewProjection;
 }
 
 void GameTitleScene::StartCameraWork(int num)
