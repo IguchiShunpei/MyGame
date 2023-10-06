@@ -1,4 +1,4 @@
-#define DIRECTINPUT_VERSION    0x0800 //DirectInput‚Ìƒo[ƒWƒ‡ƒ“w’è
+ï»¿#define DIRECTINPUT_VERSION    0x0800 //DirectInputã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æŒ‡å®š
 #include "Game.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)

@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -27,19 +19,6 @@
     <ProjectName>DirectXGame</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -58,12 +37,6 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -71,12 +44,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)DirectXTex;$(ProjectDir)lib\json;$(ProjectDir)lib\fbx_sdk\include;$(IncludePath)</IncludePath>
@@ -87,34 +54,6 @@
     <IncludePath>$(SolutionDir)DirectXTex;$(ProjectDir)lib\json;$(ProjectDir)lib\fbx_sdk\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib\fbx_sdk\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -123,7 +62,9 @@
       <ConformanceMode>true</ConformanceMode>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Sound\;$(ProjectDir)DirectXGame\Level\;$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Engine\Sound\;$(ProjectDir)DirectXGame\Engine\Level\;$(ProjectDir)DirectXGame\Engine\Scene\;$(ProjectDir)DirectXGame\Application\Scene\;$(ProjectDir)DirectXGame\Engine\Input\;$(ProjectDir)DirectXGame\Engine\Math\;$(ProjectDir)DirectXGame\Application\GameObject\;$(ProjectDir)DirectXGame\Engine\Collision\;$(ProjectDir)DirectXGame\Engine\Camera\;$(ProjectDir)DirectXGame\Engine\Base\;$(ProjectDir)DirectXGame\Engine\3D\;$(ProjectDir)DirectXGame\Engine\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,7 +87,9 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Sound\;$(ProjectDir)DirectXGame\Level\;$(ProjectDir)DirectXGame\Scene\;$(ProjectDir)DirectXGame\Math\;$(ProjectDir)DirectXGame\Input\;$(ProjectDir)DirectXGame\GameObject\;$(ProjectDir)DirectXGame\Collision\;$(ProjectDir)DirectXGame\Camera\;$(ProjectDir)DirectXGame\Base\;$(ProjectDir)DirectXGame\3D\;$(ProjectDir)DirectXGame\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Engine\Sound\;$(ProjectDir)DirectXGame\Engine\Level\;$(ProjectDir)DirectXGame\Engine\Scene\;$(ProjectDir)DirectXGame\Application\Scene\;$(ProjectDir)DirectXGame\Engine\Input\;$(ProjectDir)DirectXGame\Engine\Math\;$(ProjectDir)DirectXGame\Application\GameObject\;$(ProjectDir)DirectXGame\Engine\Collision\;$(ProjectDir)DirectXGame\Engine\Camera\;$(ProjectDir)DirectXGame\Engine\Base\;$(ProjectDir)DirectXGame\Engine\3D\;$(ProjectDir)DirectXGame\Engine\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,50 +100,50 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectXGame\2D\Sprite.cpp" />
-    <ClCompile Include="DirectXGame\3D\FbxLoader.cpp" />
-    <ClCompile Include="DirectXGame\3D\FbxModel.cpp" />
-    <ClCompile Include="DirectXGame\3D\FbxObject3d.cpp" />
-    <ClCompile Include="DirectXGame\3D\Model.cpp" />
-    <ClCompile Include="DirectXGame\3D\Object3d.cpp" />
-    <ClCompile Include="DirectXGame\3D\Particle.cpp" />
-    <ClCompile Include="DirectXGame\3D\ParticleManager.cpp" />
-    <ClCompile Include="DirectXGame\3D\WorldTransform.cpp" />
-    <ClCompile Include="DirectXGame\Base\DirectXCommon.cpp" />
-    <ClCompile Include="DirectXGame\Base\FPSFixed.cpp" />
-    <ClCompile Include="DirectXGame\Base\WinApp.cpp" />
-    <ClCompile Include="DirectXGame\Camera\ViewProjection.cpp" />
-    <ClCompile Include="DirectXGame\Camera\XMViewProjection.cpp" />
-    <ClCompile Include="DirectXGame\Collision\Collision.cpp" />
-    <ClCompile Include="DirectXGame\Collision\CollisionManager.cpp" />
-    <ClCompile Include="DirectXGame\Collision\CollisionPrimitive.cpp" />
-    <ClCompile Include="DirectXGame\Collision\SphereCollider.cpp" />
-    <ClCompile Include="DirectXGame\GameObject\Enemy.cpp" />
-    <ClCompile Include="DirectXGame\GameObject\EnemyBullet.cpp" />
-    <ClCompile Include="DirectXGame\GameObject\InvEnemy.cpp" />
-    <ClCompile Include="DirectXGame\GameObject\Meteor.cpp" />
-    <ClCompile Include="DirectXGame\GameObject\Player.cpp" />
-    <ClCompile Include="DirectXGame\GameObject\PlayerBullet.cpp" />
-    <ClCompile Include="DirectXGame\GameObject\SkyDome.cpp" />
-    <ClCompile Include="DirectXGame\GameObject\WeakEnemy.cpp" />
-    <ClCompile Include="DirectXGame\Input\Input.cpp" />
-    <ClCompile Include="DirectXGame\Level\LevelLoader.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Enemy.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyBullet.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\InvEnemy.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Meteor.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Player.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\PlayerBullet.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\SkyDome.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\WeakEnemy.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\GameClearScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\GameOverScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\GamePlayScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\GameTitleScene.cpp" />
+    <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\FbxLoader.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\FbxModel.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\FbxObject3d.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Model.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Object3d.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Particle.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\ParticleManager.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\WorldTransform.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Base\DirectXCommon.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Base\FPSFixed.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Base\WinApp.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Camera\ViewProjection.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Camera\XMViewProjection.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Collision\Collision.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Collision\CollisionManager.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Collision\CollisionPrimitive.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Collision\SphereCollider.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Input\Input.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Level\LevelLoader.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\MathFunc.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Matrix4.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector2.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector3.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Scene\Game.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Scene\GameBaseScene.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Scene\GameSceneManager.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Scene\SceneFactory.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Scene\SIFrameWork.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Sound\Sound.cpp" />
     <ClCompile Include="DirectXGame\main.cpp" />
-    <ClCompile Include="DirectXGame\Math\MathFunc.cpp" />
-    <ClCompile Include="DirectXGame\Math\Matrix4.cpp" />
-    <ClCompile Include="DirectXGame\Math\Vector2.cpp" />
-    <ClCompile Include="DirectXGame\Math\Vector3.cpp" />
-    <ClCompile Include="DirectXGame\Math\Vector4.cpp" />
-    <ClCompile Include="DirectXGame\Scene\Game.cpp" />
-    <ClCompile Include="DirectXGame\Scene\GameBaseScene.cpp" />
-    <ClCompile Include="DirectXGame\Scene\GameClearScene.cpp" />
-    <ClCompile Include="DirectXGame\Scene\GameOverScene.cpp" />
-    <ClCompile Include="DirectXGame\Scene\GamePlayScene.cpp" />
-    <ClCompile Include="DirectXGame\Scene\GameSceneManager.cpp" />
-    <ClCompile Include="DirectXGame\Scene\GameTitleScene.cpp" />
-    <ClCompile Include="DirectXGame\Scene\SceneFactory.cpp" />
-    <ClCompile Include="DirectXGame\Scene\SIFrameWork.cpp" />
-    <ClCompile Include="DirectXGame\Sound\Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -283,54 +226,54 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectXGame\2D\Sprite.h" />
-    <ClInclude Include="DirectXGame\3D\FbxLoader.h" />
-    <ClInclude Include="DirectXGame\3D\FbxModel.h" />
-    <ClInclude Include="DirectXGame\3D\FbxObject3d.h" />
-    <ClInclude Include="DirectXGame\3D\Model.h" />
-    <ClInclude Include="DirectXGame\3D\Object3d.h" />
-    <ClInclude Include="DirectXGame\3D\Particle.h" />
-    <ClInclude Include="DirectXGame\3D\ParticleManager.h" />
-    <ClInclude Include="DirectXGame\3D\WorldTransform.h" />
-    <ClInclude Include="DirectXGame\Base\DirectXCommon.h" />
-    <ClInclude Include="DirectXGame\Base\FPSFixed.h" />
-    <ClInclude Include="DirectXGame\Base\WinApp.h" />
-    <ClInclude Include="DirectXGame\Camera\ViewProjection.h" />
-    <ClInclude Include="DirectXGame\Camera\XMViewProjection.h" />
-    <ClInclude Include="DirectXGame\Collision\BaseCollider.h" />
-    <ClInclude Include="DirectXGame\Collision\Collision.h" />
-    <ClInclude Include="DirectXGame\Collision\CollisionInfo.h" />
-    <ClInclude Include="DirectXGame\Collision\CollisionManager.h" />
-    <ClInclude Include="DirectXGame\Collision\CollisionPrimitive.h" />
-    <ClInclude Include="DirectXGame\Collision\CollisionTypes.h" />
-    <ClInclude Include="DirectXGame\Collision\RaycastHit.h" />
-    <ClInclude Include="DirectXGame\Collision\SphereCollider.h" />
-    <ClInclude Include="DirectXGame\GameObject\Enemy.h" />
-    <ClInclude Include="DirectXGame\GameObject\EnemyBullet.h" />
-    <ClInclude Include="DirectXGame\GameObject\InvEnemy.h" />
-    <ClInclude Include="DirectXGame\GameObject\Meteor.h" />
-    <ClInclude Include="DirectXGame\GameObject\Player.h" />
-    <ClInclude Include="DirectXGame\GameObject\PlayerBullet.h" />
-    <ClInclude Include="DirectXGame\GameObject\SkyDome.h" />
-    <ClInclude Include="DirectXGame\GameObject\WeakEnemy.h" />
-    <ClInclude Include="DirectXGame\Input\Input.h" />
-    <ClInclude Include="DirectXGame\Level\LevelLoader.h" />
-    <ClInclude Include="DirectXGame\Math\MathFunc.h" />
-    <ClInclude Include="DirectXGame\Math\Matrix4.h" />
-    <ClInclude Include="DirectXGame\Math\Vector2.h" />
-    <ClInclude Include="DirectXGame\Math\Vector3.h" />
-    <ClInclude Include="DirectXGame\Math\Vector4.h" />
-    <ClInclude Include="DirectXGame\Scene\AbstractSceneFactory.h" />
-    <ClInclude Include="DirectXGame\Scene\Game.h" />
-    <ClInclude Include="DirectXGame\Scene\GameBaseScene.h" />
-    <ClInclude Include="DirectXGame\Scene\GameClearScene.h" />
-    <ClInclude Include="DirectXGame\Scene\GameOverScene.h" />
-    <ClInclude Include="DirectXGame\Scene\GamePlayScene.h" />
-    <ClInclude Include="DirectXGame\Scene\GameSceneManager.h" />
-    <ClInclude Include="DirectXGame\Scene\GameTitleScene.h" />
-    <ClInclude Include="DirectXGame\Scene\SceneFactory.h" />
-    <ClInclude Include="DirectXGame\Scene\SIFrameWork.h" />
-    <ClInclude Include="DirectXGame\Sound\Sound.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Enemy.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyBullet.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\InvEnemy.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Meteor.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Player.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\PlayerBullet.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\SkyDome.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\WeakEnemy.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\GameClearScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\GameOverScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\GamePlayScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\GameTitleScene.h" />
+    <ClInclude Include="DirectXGame\Engine\2D\Sprite.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\FbxLoader.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\FbxModel.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\FbxObject3d.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Model.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Object3d.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Particle.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\ParticleManager.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\WorldTransform.h" />
+    <ClInclude Include="DirectXGame\Engine\Base\DirectXCommon.h" />
+    <ClInclude Include="DirectXGame\Engine\Base\FPSFixed.h" />
+    <ClInclude Include="DirectXGame\Engine\Base\WinApp.h" />
+    <ClInclude Include="DirectXGame\Engine\Camera\ViewProjection.h" />
+    <ClInclude Include="DirectXGame\Engine\Camera\XMViewProjection.h" />
+    <ClInclude Include="DirectXGame\Engine\Collision\BaseCollider.h" />
+    <ClInclude Include="DirectXGame\Engine\Collision\Collision.h" />
+    <ClInclude Include="DirectXGame\Engine\Collision\CollisionInfo.h" />
+    <ClInclude Include="DirectXGame\Engine\Collision\CollisionManager.h" />
+    <ClInclude Include="DirectXGame\Engine\Collision\CollisionPrimitive.h" />
+    <ClInclude Include="DirectXGame\Engine\Collision\CollisionTypes.h" />
+    <ClInclude Include="DirectXGame\Engine\Collision\RaycastHit.h" />
+    <ClInclude Include="DirectXGame\Engine\Collision\SphereCollider.h" />
+    <ClInclude Include="DirectXGame\Engine\Input\Input.h" />
+    <ClInclude Include="DirectXGame\Engine\Level\LevelLoader.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\MathFunc.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Matrix4.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector2.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector3.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector4.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\Game.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\GameBaseScene.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\GameSceneManager.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\SceneFactory.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\SIFrameWork.h" />
+    <ClInclude Include="DirectXGame\Engine\Sound\Sound.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
