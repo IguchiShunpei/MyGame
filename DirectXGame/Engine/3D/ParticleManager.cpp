@@ -1,4 +1,4 @@
-﻿#include "ParticleManager.h"
+#include "ParticleManager.h"
 #include <d3dcompiler.h>
 #include <DirectXTex.h>
 
@@ -9,7 +9,7 @@ using namespace Microsoft::WRL;
 
 /// 静的メンバ変数の実体
 ID3D12Device* ParticleManager::device_ = nullptr;
-ID3D12GraphicsCommandList* ParticleManager::cmdList = nullptr;
+ID3D12GraphicsCommandList* ParticleManager::cmdList_ = nullptr;
 ComPtr<ID3D12RootSignature> ParticleManager::rootsignature;
 ComPtr<ID3D12PipelineState> ParticleManager::pipelinestate;
 
@@ -29,10 +29,10 @@ void ParticleManager::StaticInitialize(ID3D12Device* device)
 void ParticleManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
-	assert(ParticleManager::cmdList == nullptr);
+	assert(ParticleManager::cmdList_ == nullptr);
 
 	// コマンドリストをセット
-	ParticleManager::cmdList = cmdList;
+	ParticleManager::cmdList_ = cmdList;
 
 	// パイプラインステートの設定
 	cmdList->SetPipelineState(pipelinestate.Get());
@@ -45,7 +45,7 @@ void ParticleManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 void ParticleManager::PostDraw()
 {
 	// コマンドリストを解除
-	ParticleManager::cmdList = nullptr;
+	ParticleManager::cmdList_ = nullptr;
 }
 
 ParticleManager* ParticleManager::Create()
@@ -273,8 +273,8 @@ void ParticleManager::Update()
 	HRESULT result;
 
 	particle->Update();
-	XMMATRIX matView = xmViewProjection->GetMatViewProjection();
-	XMMATRIX matBillboard = xmViewProjection->GetMatBillboard();
+	XMMATRIX matView = xmViewProjection_->GetMatViewProjection();
+	XMMATRIX matBillboard = xmViewProjection_->GetMatBillboard();
 
 	// 定数バッファへデータ転送
 	ConstBufferData* constMap = nullptr;
@@ -289,16 +289,16 @@ void ParticleManager::Draw()
 {
 	// nullptrチェック
 	assert(device_);
-	assert(ParticleManager::cmdList);
+	assert(ParticleManager::cmdList_);
 
 	// 定数バッファビューをセット
-	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
+	cmdList_->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
 
-	particle->Draw(cmdList);
+	particle->Draw(cmdList_);
 }
 
-void ParticleManager::Fire(Particle* particle, int life, const XMFLOAT3& pos_, float setpos_x, float setpos_x1, float setpos_y, float setpos_y1, float setpos_z, float setpos_z1,
-	float setvel_x, float setvel_x1, float setvel_y, float setvel_y1, float setvel_z, float setvel_z1, float setAcc, int setNum, const XMFLOAT2& setscale)
+void ParticleManager::Fire(Particle* particle_, int life, const XMFLOAT3& pos_, [[maybe_unused]] float setpos_x, [[maybe_unused]] float setpos_x1, [[maybe_unused]] float setpos_y, [[maybe_unused]] float setpos_y1, [[maybe_unused]] float setpos_z, [[maybe_unused]] float setpos_z1,
+	[[maybe_unused]] float setvel_x, [[maybe_unused]] float setvel_x1, [[maybe_unused]] float setvel_y, [[maybe_unused]] float setvel_y1, [[maybe_unused]] float setvel_z, [[maybe_unused]] float setvel_z1, [[maybe_unused]] float setAcc, [[maybe_unused]] int setNum, const XMFLOAT2& setscale)
 {
 	for (int i = 0; i < setNum; i++)
 	{
@@ -312,9 +312,9 @@ void ParticleManager::Fire(Particle* particle, int life, const XMFLOAT3& pos_, f
 		pos.y += dist(engine);
 		pos.z += dist(engine);
 		//X,Y,Z全て{0.1f,0.1f}でランダムに分布
-		const float md_vel_x = setvel_x;
-		const float md_vel_y = setvel_y;
-		const float md_vel_z = setvel_z;
+		[[maybe_unused]] const float md_vel_x = setvel_x;
+		[[maybe_unused]] const float md_vel_y = setvel_y;
+		[[maybe_unused]] const float md_vel_z = setvel_z;
 		XMFLOAT3 vel{};
 		vel.x = (float)rand() / RAND_MAX * setvel_x - setvel_x1 / 2.0f;
 		vel.y = (float)rand() / RAND_MAX * setvel_y - setvel_y1 / 2.0f;
@@ -325,6 +325,6 @@ void ParticleManager::Fire(Particle* particle, int life, const XMFLOAT3& pos_, f
 		acc.y = -(float)rand() / RAND_MAX * md_acc;
 
 		//追加
-		particle->Add(life, pos, vel, acc, setscale.x, setscale.y);
+		particle_->Add(life, pos, vel, acc, setscale.x, setscale.y);
 	}
 }

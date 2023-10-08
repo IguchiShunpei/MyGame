@@ -1,4 +1,4 @@
-﻿#include "WeakEnemy.h"
+#include "WeakEnemy.h"
 #include "SphereCollider.h"
 #include "GamePLayScene.h"
 #include "string.h"
@@ -39,7 +39,7 @@ void WeakEnemy::ColliderUpdate()
 	}
 }
 
-void WeakEnemy::OnCollision(const CollisionInfo& info)
+void WeakEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class PlayerBullet";
 

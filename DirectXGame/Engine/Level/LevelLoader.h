@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <vector>
@@ -8,14 +8,14 @@
 struct LevelData {
 
 	struct ObjectData {
-		// ファイル名
-		std::string fileName;
 		// 平行移動
 		DirectX::XMVECTOR translation;
 		// 回転
 		DirectX::XMVECTOR rotation;
 		// スケール
 		DirectX::XMVECTOR scaling;
+		// ファイル名
+		std::string fileName;
 	};
 
 	// オブジェクト配列

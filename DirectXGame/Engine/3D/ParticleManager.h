@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Particle.h"
 #include "XMViewProjection.h"
@@ -46,7 +46,7 @@ private: // 静的メンバ変数
 	// デバイス
 	static ID3D12Device* device_;
 	// コマンドリスト
-	static ID3D12GraphicsCommandList* cmdList;
+	static ID3D12GraphicsCommandList* cmdList_;
 	// ルートシグネチャ
 	static ComPtr<ID3D12RootSignature> rootsignature;
 	// パイプラインステートオブジェクト
@@ -75,7 +75,7 @@ private: // メンバ変数
 	XMFLOAT3 scale = { 1,1,1 };
 
 	//DirectXMathを使ったViewProjection
-	XMViewProjection* xmViewProjection;
+	XMViewProjection* xmViewProjection_;
 	//パーティクル
 	Particle* particle;
 
@@ -83,5 +83,5 @@ public://setter
 	//パーティクルモデル
 	void SetParticleModel(Particle* particlemodel) { this->particle = particlemodel; }
 	//カメラ
-	void SetXMViewProjection(XMViewProjection* xmViewProjection) { this->xmViewProjection = xmViewProjection; }
+	void SetXMViewProjection(XMViewProjection* xmViewProjection) { this->xmViewProjection_ = xmViewProjection; }
 };

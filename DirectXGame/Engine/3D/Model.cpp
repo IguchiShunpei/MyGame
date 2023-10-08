@@ -1,4 +1,4 @@
-﻿#include "Model.h"
+#include "Model.h"
 
 #include <d3dcompiler.h>
 #include <DirectXTex.h>
@@ -14,9 +14,9 @@ using namespace Microsoft::WRL;
 using namespace std;
 
 // 静的メンバ変数の実体
-ID3D12Device* Model::device = nullptr;
+ID3D12Device* Model::device_ = nullptr;
 
-Model* Model::LoadFromOBJ(const string& modelname, const string& texname)
+Model* Model::LoadFromOBJ(const string& modelname, [[maybe_unused]] const string& texname)
 {
 	// 新たなModel型のインスタンスのメモリを確保
 	Model* model = new Model();
@@ -112,7 +112,7 @@ void Model::LoadTexture(const std::string& directoryPath, const std::string& fil
 
 	// ユニコード文字列に変換する
 	wchar_t wfilepath[128];
-	int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
+	[[maybe_unused]] int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
 
 	result = LoadFromWICFile(
 		wfilepath, WIC_FLAGS_NONE,
@@ -143,7 +143,7 @@ void Model::LoadTexture(const std::string& directoryPath, const std::string& fil
 		CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 
 	// テクスチャ用バッファの生成
-	result = device->CreateCommittedResource(
+	result = device_->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
 		nullptr, IID_PPV_ARGS(&texbuff));
@@ -174,7 +174,7 @@ void Model::LoadTexture(const std::string& directoryPath, const std::string& fil
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = 1;
 
-	device->CreateShaderResourceView(texbuff.Get(), //ビューと関連付けるバッファ
+	device_->CreateShaderResourceView(texbuff.Get(), //ビューと関連付けるバッファ
 		&srvDesc, //テクスチャ設定情報
 		cpuDescHandleSRV
 	);
@@ -193,7 +193,7 @@ void Model::LoadTexture(const std::string& filename)
 
 	// ユニコード文字列に変換する
 	wchar_t wfilepath[128];
-	int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
+	[[maybe_unused]] int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
 
 	result = LoadFromWICFile(
 		wfilepath, WIC_FLAGS_NONE,
@@ -224,7 +224,7 @@ void Model::LoadTexture(const std::string& filename)
 		CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 
 	// テクスチャ用バッファの生成
-	result = device->CreateCommittedResource(
+	result = device_->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
 		nullptr, IID_PPV_ARGS(&texbuff));
@@ -255,7 +255,7 @@ void Model::LoadTexture(const std::string& filename)
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = 1;
 
-	device->CreateShaderResourceView(texbuff.Get(), //ビューと関連付けるバッファ
+	device_->CreateShaderResourceView(texbuff.Get(), //ビューと関連付けるバッファ
 		&srvDesc, //テクスチャ設定情報
 		cpuDescHandleSRV
 	);
@@ -265,7 +265,7 @@ void Model::LoadTexture(const std::string& filename)
 void Model::Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial, float alpha_)
 {
 	// nullptrチェック
-	assert(device);
+	assert(device_);
 	assert(cmdList);
 
 	// 頂点バッファビューの設定
@@ -293,8 +293,6 @@ void Model::Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial
 
 void Model::LoadFromOBJInternal(const string& modelname)
 {
-	HRESULT result = S_FALSE;
-
 	// ファイルストリーム
 	std::ifstream file;
 	// .objファイルを開く
@@ -387,10 +385,10 @@ void Model::LoadFromOBJInternal(const string& modelname)
 		if (key == "mtllib")
 		{
 			// マテリアルのファイル名読み込み
-			string filename;
-			line_stream >> filename;
+			string filename_;
+			line_stream >> filename_;
 			// マテリアル読み込み
-			LoadMaterial(directoryPath, filename);
+			LoadMaterial(directoryPath, filename_);
 		}
 	}
 	// ファイルと閉じる
@@ -399,7 +397,7 @@ void Model::LoadFromOBJInternal(const string& modelname)
 
 void Model::InitializeDescriptorHeap()
 {
-	assert(device);
+	assert(device_);
 
 	HRESULT result = S_FALSE;
 
@@ -408,13 +406,13 @@ void Model::InitializeDescriptorHeap()
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
 	descHeapDesc.NumDescriptors = 1; // シェーダーリソースビュー1つ
-	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));//生成
+	result = device_->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));//生成
 	if (FAILED(result)) {
 		assert(0);
 	}
 
 	// デスクリプタサイズを取得
-	descriptorHandleIncrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descriptorHandleIncrementSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 }
 
@@ -433,7 +431,7 @@ void Model::CreateBuffers()
 	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
 
 	// 頂点バッファ生成
-	result = device->CreateCommittedResource(
+	result = device_->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&vertBuff));
 	assert(SUCCEEDED(result));
@@ -459,7 +457,7 @@ void Model::CreateBuffers()
 	resourceDesc.Width = sizeIB;
 
 	// インデックスバッファ生成
-	result = device->CreateCommittedResource(
+	result = device_->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&indexBuff));
 
@@ -486,7 +484,7 @@ void Model::CreateBuffers()
 	ibView.SizeInBytes = sizeIB;
 
 	// nullptrチェック
-	assert(device);
+	assert(device_);
 
 	// ヒーププロパティ
 	CD3DX12_HEAP_PROPERTIES heapProps1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
@@ -497,7 +495,7 @@ void Model::CreateBuffers()
 		CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) & ~0xff);
 
 	// 定数バッファの生成
-	result = device->CreateCommittedResource(
+	result = device_->CreateCommittedResource(
 		&heapProps1,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,

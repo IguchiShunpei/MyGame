@@ -1,4 +1,4 @@
-﻿#include "Object3d.h"
+#include "Object3d.h"
 #include "BaseCollider.h"
 #include <d3dcompiler.h>
 #include <DirectXTex.h>
@@ -16,7 +16,7 @@ using namespace std;
 /// <summary>
 /// 静的メンバ変数の実体
 /// </summary>
-ID3D12Device* Object3d::device = nullptr;
+ID3D12Device* Object3d::device_ = nullptr;
 ID3D12GraphicsCommandList* Object3d::cmdList = nullptr;
 ComPtr<ID3D12RootSignature> Object3d::rootsignature;
 ComPtr<ID3D12PipelineState> Object3d::pipelinestate;
@@ -34,12 +34,12 @@ Object3d::~Object3d()
 	}
 }
 
-void Object3d::StaticInitialize(ID3D12Device* device, int window_width, int window_height)
+void Object3d::StaticInitialize(ID3D12Device* device, [[maybe_unused]] int window_width, [[maybe_unused]] int window_height)
 {
 	// nullptrチェック
 	assert(device);
 
-	Object3d::device = device;
+	Object3d::device_ = device;
 
 	// モデルにデバイスをセット
 	Model::SetDevice(device);
@@ -51,36 +51,36 @@ void Object3d::StaticInitialize(ID3D12Device* device, int window_width, int wind
 	InitializeGraphicsPipeline();
 }
 
-void Object3d::PreDraw(ID3D12GraphicsCommandList* cmdList)
+void Object3d::PreDraw(ID3D12GraphicsCommandList* cmdList_)
 {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(Object3d::cmdList == nullptr);
 
 	// コマンドリストをセット
-	Object3d::cmdList = cmdList;
+	Object3d::cmdList = cmdList_;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipelinestate.Get());
+	cmdList_->SetPipelineState(pipelinestate.Get());
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(rootsignature.Get());
+	cmdList_->SetGraphicsRootSignature(rootsignature.Get());
 	// プリミティブ形状を設定
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 //線描画
-void Object3d::PreLineDraw(ID3D12GraphicsCommandList* cmdList) {
+void Object3d::PreLineDraw(ID3D12GraphicsCommandList* cmdList_) {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(Object3d::cmdList == nullptr);
 
 	// コマンドリストをセット
-	Object3d::cmdList = cmdList;
+	Object3d::cmdList = cmdList_;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(linePipelinestate.Get());
+	cmdList_->SetPipelineState(linePipelinestate.Get());
 
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(rootsignature.Get());
+	cmdList_->SetGraphicsRootSignature(rootsignature.Get());
 	// プリミティブ形状を設定
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 }
 
 void Object3d::PostDraw()
@@ -246,19 +246,19 @@ void Object3d::InitializeGraphicsPipeline()
 	// バージョン自動判定のシリアライズ
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	// ルートシグネチャの生成
-	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
+	result = device_->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
 	assert(SUCCEEDED(result));
 
 	gpipeline.pRootSignature = rootsignature.Get();
 
 	// グラフィックスパイプラインの生成
-	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
+	result = device_->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
 	assert(SUCCEEDED(result));
 
 	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
 
 	// グラフィックスパイプラインの生成
-	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&linePipelinestate));
+	result = device_->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&linePipelinestate));
 	assert(SUCCEEDED(result));
 }
 
@@ -288,11 +288,11 @@ void Object3d::Update()
 void Object3d::Draw(ViewProjection* viewProjection)
 {
 	// nullptrチェック
-	assert(device);
+	assert(device_);
 	assert(Object3d::cmdList);
 
 	// モデルがセットされていなければ描画をスキップ
-	if (model == nullptr) return;
+	if (model_ == nullptr) return;
 
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, worldTransform_.GetBuff()->GetGPUVirtualAddress());
@@ -301,17 +301,17 @@ void Object3d::Draw(ViewProjection* viewProjection)
 	cmdList->SetGraphicsRootConstantBufferView(1, viewProjection->GetBuff()->GetGPUVirtualAddress());
 
 	// モデルを描画
-	model->Draw(cmdList, 2, 1);
+	model_->Draw(cmdList, 2, 1);
 }
 
 void Object3d::Draw(ViewProjection* viewProjection, float alpha_)
 {
 	// nullptrチェック
-	assert(device);
+	assert(device_);
 	assert(Object3d::cmdList);
 
 	// モデルがセットされていなければ描画をスキップ
-	if (model == nullptr) return;
+	if (model_ == nullptr) return;
 
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, worldTransform_.GetBuff()->GetGPUVirtualAddress());
@@ -320,15 +320,15 @@ void Object3d::Draw(ViewProjection* viewProjection, float alpha_)
 	cmdList->SetGraphicsRootConstantBufferView(1, viewProjection->GetBuff()->GetGPUVirtualAddress());
 
 	// モデルを描画
-	model->Draw(cmdList, 1, alpha_);
+	model_->Draw(cmdList, 1, alpha_);
 }
 
-void Object3d::SetCollider(BaseCollider* collider)
+void Object3d::SetCollider(BaseCollider* collider_)
 {
-	collider->SetObject(this);
-	this->collider = collider;
+	collider_->SetObject(this);
+	this->collider = collider_;
 	//コリジョンマネージャに登録
-	CollisionManager::GetInstance()->AddCollider(collider);
+	CollisionManager::GetInstance()->AddCollider(collider_);
 	//コライダーを更新しておく
-	collider->Update();
+	collider_->Update();
 }
