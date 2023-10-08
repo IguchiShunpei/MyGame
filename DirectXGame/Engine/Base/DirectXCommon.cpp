@@ -1,4 +1,4 @@
-﻿#include "DirectXCommon.h"
+#include "DirectXCommon.h"
 
 #include <cassert>
 #include <vector>
@@ -15,13 +15,13 @@ DirectXCommon* DirectXCommon::GetInstance()
 	return &instance;
 }
 
-void DirectXCommon::Initialize(WinApp*winApp)
+void DirectXCommon::Initialize(WinApp*winApp_)
 {
 	//NULL検出
-	assert(winApp);
+	assert(winApp_);
 
 	//メンバ変数に記録
-	this->winApp = winApp;
+	this->winApp = winApp_;
 
 	// FPS固定初期化
 	fpsFixed = new FPSFixed();
@@ -297,7 +297,7 @@ void DirectXCommon::PreDraw()
 void DirectXCommon::PostDraw()
 {
 	//バックバッファの番号を取得(2つなので0番か1番)
-	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+	[[maybe_unused]]UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
 	//リソースバリアを戻す
 	barrierDesc_.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET; //描画状態から
