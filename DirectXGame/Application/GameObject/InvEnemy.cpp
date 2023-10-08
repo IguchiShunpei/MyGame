@@ -1,4 +1,4 @@
-﻿#include "InvEnemy.h"
+#include "InvEnemy.h"
 #include "SphereCollider.h"
 #include "GamePlayScene.h"
 #include "string.h"
@@ -49,7 +49,7 @@ void InvEnemy::ColliderUpdate()
 	}
 }
 
-void InvEnemy::OnCollision(const CollisionInfo& info)
+void InvEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class PlayerBullet";
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <Windows.h>
 #include <wrl.h>
@@ -36,7 +36,7 @@ public: // 静的メンバ関数
 
 private: // 静的メンバ変数
 	// デバイス
-	static ID3D12Device* device;
+	static ID3D12Device* device_;
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
 	// ルートシグネチャ
@@ -75,11 +75,11 @@ public: // メンバ関数
 	void SetCollider(BaseCollider* collider);
 
 	//衝突時コールバック関数
-	virtual void OnCollision(const CollisionInfo& info) {}
-	virtual void OffCollision(const CollisionInfo& info) {}
+	virtual void OnCollision([[maybe_unused]] const CollisionInfo& info) {}
+	virtual void OffCollision([[maybe_unused]] const CollisionInfo& info) {}
 
 	// モデルの設定
-	void SetModel(Model* model) { this->model = model; }
+	void SetModel(Model* model) { this->model_ = model; }
 
 	// オブジェクトの座標
 	const Vector3& GetPosition() const { return worldTransform_.position_; }
@@ -106,6 +106,6 @@ protected: // メンバ変数
 	//コライダー
 	BaseCollider* collider = nullptr;
 	// モデル
-	Model* model = nullptr;
+	Model* model_ = nullptr;
 
 };

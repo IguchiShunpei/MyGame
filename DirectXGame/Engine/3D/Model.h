@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <Windows.h>
 #include <wrl.h>
@@ -87,7 +87,7 @@ public: // 静的メンバ関数
 	void Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial, float alpha_ = 1);
 
 	// setter
-	static void SetDevice(ID3D12Device* device) { Model::device = device; }
+	static void SetDevice(ID3D12Device* device) { Model::device_ = device; }
 
 	void SetAlpha(float alpha_);
 
@@ -96,7 +96,7 @@ public: // 静的メンバ関数
 
 private: // 静的メンバ変数
 	// デバイス
-	static ID3D12Device* device;
+	static ID3D12Device* device_;
 	// 頂点データ配列
 	std::vector<VertexPosNormalUv> vertices;
 	// 頂点インデックス配列
