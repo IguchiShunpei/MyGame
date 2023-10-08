@@ -1,4 +1,4 @@
-﻿// ========================
+// ========================
 // Matrix4 型 Matrix4.cpp
 // ========================
 #include "Matrix4.h"
@@ -109,10 +109,10 @@ Matrix4 Matrix4::MakeInverse()
 				continue;
 			}
 
-			float mul = -mat[i][n];
+			float mul_ = -mat[i][n];
 
 			for (int j = 0; j < 8; j++) {
-				mat[i][j] += mat[n][j] * mul;
+				mat[i][j] += mat[n][j] * mul_;
 			}
 		}
 	}
@@ -243,15 +243,15 @@ Matrix4 Matrix4::translate(const Vector3& t)
 }
 
 // 座標変換（ベクトルと行列の掛け算）を行うtransform関数を作成する。　（透視変換にも対応している）
-Vector3 Matrix4::transform(const Vector3& v, const Matrix4& m)
+Vector3 Matrix4::transform(const Vector3& v, const Matrix4& m_)
 {
-	float w = v.x * m.m[0][3] + v.y * m.m[1][3] + v.z * m.m[2][3] + m.m[3][3];
+	float w = v.x * m_.m[0][3] + v.y * m_.m[1][3] + v.z * m_.m[2][3] + m_.m[3][3];
 
 	Vector3 result
 	{
-		(v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + m.m[3][0]) / w,
-		(v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + m.m[3][1]) / w,
-		(v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2]) / w
+		(v.x * m_.m[0][0] + v.y * m_.m[1][0] + v.z * m_.m[2][0] + m_.m[3][0]) / w,
+		(v.x * m_.m[0][1] + v.y * m_.m[1][1] + v.z * m_.m[2][1] + m_.m[3][1]) / w,
+		(v.x * m_.m[0][2] + v.y * m_.m[1][2] + v.z * m_.m[2][2] + m_.m[3][2]) / w
 	};
 
 	return result;

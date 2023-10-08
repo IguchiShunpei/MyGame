@@ -1,4 +1,4 @@
-﻿#include "ViewProjection.h"
+#include "ViewProjection.h"
 #include <d3dx12.h>
 #include <cassert>
 #include "WinApp.h"
@@ -39,7 +39,7 @@ void ViewProjection::CreateConstBuffer()
 void ViewProjection::Map()
 {
 	// 定数バッファとのデータリンク
-	HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);
+	[[maybe_unused]] HRESULT result = constBuff->Map(0, nullptr, (void**)&constMap);
 	assert(SUCCEEDED(result));
 }
 

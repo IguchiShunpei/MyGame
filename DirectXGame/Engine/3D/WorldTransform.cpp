@@ -1,4 +1,4 @@
-﻿#include "WorldTransform.h"
+#include "WorldTransform.h"
 #include<cassert>
 #include <d3dx12.h>
 
@@ -44,7 +44,7 @@ void WorldTransform::CreateConstBuffer()
 void WorldTransform::Map()
 {
 	//定数バッファのマッピング
-	HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
+	[[maybe_unused]]HRESULT result = constBuffB0->Map(0, nullptr, (void**)&constMap);//マッピング
 	assert(SUCCEEDED(result));
 }
 
