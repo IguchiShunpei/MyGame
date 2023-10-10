@@ -1,4 +1,5 @@
-﻿#pragma once
+#pragma once
+
 #include "Object3d.h"
 #include "WinApp.h"
 #include "Vector3.h"
@@ -74,6 +75,8 @@ public:
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
+	//isDead
+	void SetIsDead(bool isDead) { this->isDead_ = isDead; }
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -112,7 +115,7 @@ private:
 	Phase phase_ = Phase::None;
 
 	//体力
-	int hp_ = 1;
+	int hp_;
 
 	//曲がる大きさ
 	const float C = 0.5f;

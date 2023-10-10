@@ -1,4 +1,4 @@
-﻿#include "GamePlayScene.h"
+#include "GamePlayScene.h"
 
 #include "CollisionManager.h"
 #include "SphereCollider.h"
@@ -55,15 +55,23 @@ void GamePlayScene::Initialize()
 	cameraWorkPos_ = { 0,0,0 };
 	//ゲーム中のシーン番号
 	gameNum = GameNum::FirstScene;
-	//ボス
-	bossNum_ = 0;
 	//墜落量
 	gameOverNum_ = 0;
+	//シェイク範囲
+	shakeRange_ = 3.0f;
+	//シェイク移動量
+	shakeNum_ = 0.1f;
+	//ボスの墜落スピード
+	bossDownSpeed_ = 0.01f;
 
 	//フラグ
 	isBossScene_ = false;
 	isWait_ = false;
 	isClearScene_ = false;
+	isBossEffect_ = false;
+	isBossEnemyDead_ = false;
+	isBossinit_ = false;
+	bossShake_ = true;
 
 	//タイマー
 	delayTimer_ = 0.0f;
@@ -136,18 +144,33 @@ void GamePlayScene::Update()
 			{
 				enemys->Update();
 				enemys->ColliderUpdate();
+				if (isBossEnemyDead_ == true)
+				{
+					enemys->SetIsDead(true);
+				}
 			}
-
-			//ボス戦で敵の残り数が0になったら
-			if (bossNum_ == 0)
+			//更新
+			if (bEnemy->GetIsDeathTimer() == false)
 			{
-				//クリア演出フラグをtrue
+				bEnemy->Update();
+				bEnemy->ColliderUpdate();
+			}
+			else
+			{
+				isBossEnemyDead_ = true;
+				//タイマーを動かす処理
+				bEnemy->ActiveDeathTimer();
+				//死亡演出
+				BossDead();
+			}
+			//死亡フラグがtrueになったら
+			if (bEnemy->GetIsDead() == true)
+			{
 				isClearScene_ = true;
 			}
 			//クリア演出の処理
 			ToClearScene();
 		}
-
 		break;
 	}
 
@@ -208,8 +231,10 @@ void GamePlayScene::Update()
 		}
 		else
 		{
+			//攻撃を受けた時の無敵フラグがtrueになったら
 			if (player->GetIsInv() == true)
 			{
+				//無敵時間
 				hitTimer_++;
 				if (hitTimer_ < 16)
 				{
@@ -239,7 +264,7 @@ void GamePlayScene::Update()
 				7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
 		}
 	}
-
+	//敵の被ダメージ処理
 	for (std::unique_ptr<Enemy>& enemys : enemys_)
 	{
 		if (enemys->GetIsHit() == true)
@@ -257,7 +282,29 @@ void GamePlayScene::Update()
 			pm_dmg->Fire(p_dmg, 50,
 				{ deadPos.x,deadPos.y,deadPos.z },
 				7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
-			bossNum_--;
+		}
+	}
+	//ボス敵の被ダメージ処理
+	if (isBossinit_ == true)
+	{
+		if (bEnemy->GetIsHit() == true)
+		{
+			Vector3 hitPos{};
+			hitPos = bEnemy->GetPosition();
+			pm_dmg->Fire(p_dmg, 50,
+				{ hitPos.x,hitPos.y,hitPos.z },
+				7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 4, { 2.0f, 0.0f });
+		}
+		if (isBossEnemyDead_ == true)
+		{
+			if (bEnemy->GetIsDead() == false)
+			{
+				Vector3 deadPos{};
+				deadPos = bEnemy->GetPosition();
+				pm_dmg->Fire(p_dmg, 50,
+					{ deadPos.x,deadPos.y,deadPos.z },
+					14.0f, 14.0f, 14.0f, 14.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
+			}
 		}
 	}
 	ToGameOverScene();
@@ -287,7 +334,7 @@ void GamePlayScene::Draw()
 		break;
 
 	case BossScene:
-		//ボス敵
+		//敵
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
 			if (enemys->GetIsHit() == false)
@@ -295,6 +342,17 @@ void GamePlayScene::Draw()
 				enemys->Draw(viewProjection);
 			}
 			enemys->BulletDraw(viewProjection);
+		}
+		//ボス敵
+		if (isBossinit_ == true)
+		{
+			if (bEnemy->GetIsDead() == false)
+			{
+				if (bEnemy->GetIsHit() == false)
+				{
+					bEnemy->Draw(viewProjection);
+				}
+			}
 		}
 		break;
 	}
@@ -337,6 +395,7 @@ void GamePlayScene::Finalize()
 	delete player;
 	delete enemy;
 	delete wEnemy;
+	delete bEnemy;
 	delete invEnemy;
 	delete p_dmg;
 	delete pm_dmg;
@@ -395,7 +454,7 @@ void GamePlayScene::UpdateEnemyPop()
 		std::string key;
 		getline(line_stream, key, ' ');
 
-		// wEnemyを読み取って座標をセットする
+		// wEnemy
 		if (key == "wEnemy")
 		{
 			std::string word;
@@ -429,8 +488,7 @@ void GamePlayScene::UpdateEnemyPop()
 			//登録
 			wEnemys_.push_back(std::move(newWEnemy));
 		}
-
-		// enemyを読み取って座標をセットする
+		// enemy
 		else if (key == "enemy") {
 			std::string word;
 			getline(line_stream, word, ' ');
@@ -459,9 +517,8 @@ void GamePlayScene::UpdateEnemyPop()
 			newEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			enemys_.push_back(std::move(newEnemy));
-			bossNum_++;
 		}
-		// enemyを読み取って座標をセットする
+		// invEnemy
 		else if (key == "invEnemy") {
 			//敵の生成
 			std::unique_ptr<InvEnemy> newInvEnemy = std::make_unique<InvEnemy>();
@@ -480,6 +537,35 @@ void GamePlayScene::UpdateEnemyPop()
 			newInvEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			invEnemys_.push_back(std::move(newInvEnemy));
+		}
+		// bossEnemy
+		else if (key == "bossEnemy") {
+			std::string word;
+			getline(line_stream, word, ' ');
+			//敵の生成
+			bEnemy = new BossEnemy;
+			//敵の初期化
+			bEnemy->BossEnemyInitialize();
+			//コライダーの追加
+			bEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			if (word.find("HP") == 0)
+			{
+				std::string num;
+				getline(line_stream, num, ' ');
+				//hpを保存
+				int32_t hpNum = atoi(num.c_str());
+				bEnemy->SetHp(hpNum);
+			}
+			// X,Y,Z座標読み込み
+			Vector3 position{};
+			line_stream >> position.x;
+			line_stream >> position.y;
+			line_stream >> position.z;
+			// 座標データに追加
+			bEnemy->SetPosition(position);
+			bEnemy->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+			bEnemy->worldTransform_.UpdateMatrix();
+			isBossinit_ = true;
 		}
 		//待機時間を読み取る
 		else if (key == "wait")
@@ -535,6 +621,35 @@ void GamePlayScene::BossAppears()
 			bossAppTimer_ = 0;
 		}
 	}
+}
+void GamePlayScene::BossDead()
+{
+	//墜落
+	bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
+	//左右にシェイク
+	if (bossShake_ == true)
+	{
+		if (bEnemy->worldTransform_.position_.x <= shakeRange_)
+		{
+			bEnemy->worldTransform_.position_.x += shakeNum_;
+		}
+		else
+		{
+			bossShake_ = false;
+		}
+	}
+	else
+	{
+		if (bEnemy->worldTransform_.position_.x >= -shakeRange_)
+		{
+			bEnemy->worldTransform_.position_.x -= shakeNum_;
+		}
+		else
+		{
+			bossShake_ = true;
+		}
+	}
+	bEnemy->worldTransform_.UpdateMatrix();
 }
 void GamePlayScene::ToClearScene()
 {

@@ -105,6 +105,7 @@
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyBullet.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\InvEnemy.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\BossEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Meteor.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\PlayerBullet.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyBullet.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\InvEnemy.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\BossEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Meteor.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\PlayerBullet.h" />

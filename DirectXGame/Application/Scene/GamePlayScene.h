@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "GameBaseScene.h"
 #include "GameSceneManager.h"
@@ -16,6 +16,7 @@
 #include "Enemy.h"
 #include "InvEnemy.h"
 #include "WeakEnemy.h"
+#include "BossEnemy.h"
 #include "Sound.h"
 
 #include<cassert>
@@ -70,14 +71,15 @@ public:
 	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
 	const std::list<std::unique_ptr<InvEnemy>>& GetInvEnemys() { return invEnemys_; }
 
-	const int GetBossNum() { return bossNum_; }
-
 	//敵データ読み込み
 	void LoadEnemyPop();
 	void UpdateEnemyPop();
 
 	//BOSS戦前の演出
 	void BossAppears();
+
+	//ボス敵の死亡演出
+	void BossDead();
 
 	//Clear画面への演出
 	void ToClearScene();
@@ -110,6 +112,7 @@ private://メンバ変数
 	Enemy* enemy;
 	WeakEnemy* wEnemy;
 	InvEnemy* invEnemy;
+	BossEnemy* bEnemy;
 
 	//敵
 	std::list<std::unique_ptr<Enemy>> enemys_;
@@ -148,10 +151,13 @@ private://メンバ変数
 
 	//カメラワーク前の座標を入れる変数
 	Vector3 cameraWorkPos_;
-	//ボスの数
-	int bossNum_;
 	//墜落演出の墜落量
 	int gameOverNum_;
+	//敵の墜落時のシェイク範囲
+	float shakeRange_;
+	float shakeNum_;
+	//敵の墜落スピード
+	float bossDownSpeed_;
 
 	//フラグ
 	//ボス戦に入ったか
@@ -160,6 +166,14 @@ private://メンバ変数
 	bool isWait_;
 	//クリア演出フラグ
 	bool isClearScene_;
+	//敵死亡時のパーティクルフラグ
+	bool isBossEffect_;
+	//ボス死亡フラグ
+	bool isBossEnemyDead_;
+	//ボスが読み込まれたか
+	bool isBossinit_;
+	//ボスのシェイク
+	bool bossShake_;
 
 	//タイマー
 	//打ち出すまでの時間
