@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Object3d.h"
 #include "WinApp.h"
 #include "Vector3.h"
@@ -38,6 +38,9 @@ public:
 	//回転
 	void Turn();
 
+	//登場モーション
+	void InitMotion();
+
 	//Setter
 	//gameScene
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
@@ -65,4 +68,6 @@ private:
 	bool isStart_ = false;
 
 	bool isTurn_ = false;
+
+	bool isInit_ = false;
 };

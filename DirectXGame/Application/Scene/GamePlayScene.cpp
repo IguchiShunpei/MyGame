@@ -728,6 +728,8 @@ void GamePlayScene::LoadLevelData()
 		pos.z = objectData.translation.m128_f32[2];
 		//newObjectにセット
 		meteor->SetPosition(pos);
+		//初期Y座標を保存しておく
+		meteor->SetBeforeY(pos.y);
 
 		// 回転角
 		Vector3 rot;

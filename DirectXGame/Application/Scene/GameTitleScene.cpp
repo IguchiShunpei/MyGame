@@ -1,4 +1,4 @@
-﻿#include "GameTitleScene.h"
+#include "GameTitleScene.h"
 
 using namespace DirectX;
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Object3d.h"
 #include "WinApp.h"
@@ -19,6 +19,29 @@ public:
 	//移動
 	void Move();
 
+	//浮上
+	void Levitation();
+
+	//setter
+	void SetBeforeY(float beforeY) { this->beforeY_ = beforeY; }
+
 private:
-	Vector3 position;
+	//座標
+	Vector3 position_;
+	//速度
+	float speed_;
+	//手前
+	float frontNum_;
+	//奥
+	float backNum_;
+	//高さ
+	float meteorY_;
+	//前のy座標
+	float beforeY_;
+	//浮上モーションの時間
+	float levTime_;
+	//範囲
+	float levRange_;
+	//上昇しているか
+	bool isUp_;
 };
