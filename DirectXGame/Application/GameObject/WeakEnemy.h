@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Object3d.h"
 #include "WinApp.h"
 #include "Vector3.h"
@@ -49,6 +49,9 @@ public:
 	//移動
 	void Move();
 
+	//登場モーション
+	void InitMotion();
+
 	//カーブ
 	void RCurve();
 	void LCurve();
@@ -60,13 +63,15 @@ private:
 	//ゲームシーン
 	GamePlayScene* gameScene_ = nullptr;
 
-	//デスフラグ
+	//フラグ
 	//倒されたか
 	bool isDead_ = false;
 	//デスポーンしたか
 	bool isDelete_ = false;
 	//弾が当たったか
 	bool isHit_ = false;
+	//登場したか
+	bool isInit_ = false;
 
 	// モデル
 	Model* wEnemyModel = nullptr;

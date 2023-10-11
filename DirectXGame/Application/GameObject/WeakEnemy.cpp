@@ -70,6 +70,11 @@ void WeakEnemy::Move()
 	}
 }
 
+void WeakEnemy::InitMotion()
+{
+
+}
+
 void WeakEnemy::RCurve()
 {
 	MathFunc::CurveProjection(worldTransform_, startSpeed, C, flame);

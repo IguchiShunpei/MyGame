@@ -87,6 +87,11 @@ void InvEnemy::Turn()
 	}
 }
 
+void InvEnemy::InitMotion()
+{
+
+}
+
 
 Vector3 InvEnemy::GetPosition()
 {

@@ -320,7 +320,7 @@ void Object3d::Draw(ViewProjection* viewProjection, float alpha_)
 	cmdList->SetGraphicsRootConstantBufferView(1, viewProjection->GetBuff()->GetGPUVirtualAddress());
 
 	// モデルを描画
-	model_->Draw(cmdList, 1, alpha_);
+	model_->Draw(cmdList, 2, alpha_);
 }
 
 void Object3d::SetCollider(BaseCollider* collider_)
