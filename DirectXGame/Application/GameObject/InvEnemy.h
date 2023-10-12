@@ -46,7 +46,8 @@ public:
 	//Setter
 	//gameScene
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
-
+	//beforeY
+	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -59,17 +60,25 @@ private:
 	//デスポーンしたか
 	bool isDelete_ = false;
 
+	//登場したか
+	bool isInit_ = false;
+
+	//登場時間
+	float initTime_ = 0.0f;
+
+	//初期Y座標
+	float beforeY_;
+
 	// モデル
 	Model* enemyModel = nullptr;
 	
 	int waitTimer = 0;
+
 	float turnTimer_ = 0.0f;
 
 	bool isHit_ = false;
 
 	bool isStart_ = false;
 
-	bool isTurn_ = false;
-
-	bool isInit_ = false;
+	bool isTurn_ = false;;
 };

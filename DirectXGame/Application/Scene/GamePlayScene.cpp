@@ -519,6 +519,8 @@ void GamePlayScene::UpdateEnemyPop()
 			line_stream >> position.x;
 			line_stream >> position.y;
 			line_stream >> position.z;
+			newWEnemy->SetBeforeY(position.y);
+			position.y += 20.0f;
 			// 座標データに追加
 			newWEnemy->SetPosition(position);
 
@@ -570,6 +572,8 @@ void GamePlayScene::UpdateEnemyPop()
 			line_stream >> position.x;
 			line_stream >> position.y;
 			line_stream >> position.z;
+			newInvEnemy->SetBeforeY(position.y);
+			position.y += 20.0f;
 			// 座標データに追加
 			newInvEnemy->SetPosition(position);
 			newInvEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
@@ -665,6 +669,7 @@ void GamePlayScene::BossDead()
 {
 	//墜落
 	bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
+	bEnemy->worldTransform_.scale_ -= Vector3(0.005f, 0.005f, 0.005f);
 	//左右にシェイク
 	if (bossShake_ == true)
 	{

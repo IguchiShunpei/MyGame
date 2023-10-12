@@ -20,11 +20,19 @@ void WeakEnemy::WEnemyInitialize()
 	// オブジェクトにモデルをひも付ける
 	SetModel(wEnemyModel);
 	isDead_ = false;
+	isInit_ = false;
+	initTime_ = 60.0f;
 }
 
 void WeakEnemy::Update()
 {
-	Move();
+	//登場モーション
+	InitMotion();
+	//登場したら移動
+	if (isInit_ == true)
+	{
+		Move();
+	}
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -43,14 +51,17 @@ void WeakEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class PlayerBullet";
 
-	//相手がplayerBullet
-	if (strcmp(toCollisionName, str1) == 0)
+	if (isInit_ == true)
 	{
-		isHit_ = true;
-		hp_--;
-		if (hp_ == 0)
+		//相手がplayerBullet
+		if (strcmp(toCollisionName, str1) == 0)
 		{
-			isDead_ = true;
+			isHit_ = true;
+			hp_--;
+			if (hp_ == 0)
+			{
+				isDead_ = true;
+			}
 		}
 	}
 }
@@ -72,7 +83,15 @@ void WeakEnemy::Move()
 
 void WeakEnemy::InitMotion()
 {
-
+	if (isInit_ == false)
+	{
+		worldTransform_.position_.y = beforeY_ + 60.0f * -MathFunc::easeInSine(initTime_ / 60.0f);
+		initTime_--;
+		if (initTime_ <= 0.0f)
+		{
+			isInit_ = true;
+		}
+	}
 }
 
 void WeakEnemy::RCurve()
