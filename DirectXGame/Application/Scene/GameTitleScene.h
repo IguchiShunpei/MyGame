@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "DirectXCommon.h"
 #include "Input.h"
@@ -65,4 +65,7 @@ private: // メンバ変数
 	bool isTitleCameraWork_;
 	//タイトルシーンのカメラワーク
 	int titleTimer_;
+
+	//カメラ座標を保存する変数
+	Vector3 cameraWorkPos_;
 };

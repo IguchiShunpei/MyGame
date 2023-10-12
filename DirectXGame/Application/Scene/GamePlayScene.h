@@ -88,7 +88,7 @@ public:
 	void ToGameOverScene();
 
 	//カメラシェイク
-	void CameraShake();
+	void CameraShake(float x,float y);
 
 	//レベルデータのロード
 	void LoadLevelData();
@@ -131,6 +131,12 @@ private://メンバ変数
 	Particle* p_dmg = nullptr;
 	ParticleManager* pm_dmg = nullptr;
 
+	Particle* p_eDmg = nullptr;
+	ParticleManager* pm_eDmg = nullptr;
+
+	Particle* p_bDmg = nullptr;
+	ParticleManager* pm_bDmg = nullptr;
+
 	Meteor* objMeteor = nullptr;
 
 	Model* modelMeteor = nullptr;
@@ -158,6 +164,8 @@ private://メンバ変数
 	float shakeNum_;
 	//敵の墜落スピード
 	float bossDownSpeed_;
+	//敵のalpha 
+	float bossAlpha_;
 
 	//フラグ
 	//ボス戦に入ったか
@@ -174,6 +182,8 @@ private://メンバ変数
 	bool isBossinit_;
 	//ボスのシェイク
 	bool bossShake_;
+	//ボスalpha
+	bool isBossAlpha_;
 
 	//タイマー
 	//打ち出すまでの時間

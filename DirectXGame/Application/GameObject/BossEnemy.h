@@ -31,6 +31,9 @@ public:
 	//更新
 	void Update();
 
+	//描画
+	void BossDraw();
+
 	//当たり判定更新
 	void ColliderUpdate();
 
@@ -72,6 +75,8 @@ public:
 	void SetPhase(Phase phase) { phase_ = phase; }
 	//deathTimer
 	void SetDeathTimer(int deathTimer) { this->deathTimer_ = deathTimer; }
+	//alpha
+	void SetAlpha(float) {}
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -114,4 +119,6 @@ private:
 	Vector3 startSpeed = { -0.5f,0.0f,-0.5f };
 	//落下時間
 	float flame = 0.0f;
+	//alpha
+	float alpha_ = 1.0f;
 };

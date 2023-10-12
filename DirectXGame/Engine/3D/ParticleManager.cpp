@@ -316,9 +316,9 @@ void ParticleManager::Fire(Particle* particle_, int life, const XMFLOAT3& pos_, 
 		[[maybe_unused]] const float md_vel_y = setvel_y;
 		[[maybe_unused]] const float md_vel_z = setvel_z;
 		XMFLOAT3 vel{};
-		vel.x = (float)rand() / RAND_MAX * setvel_x - setvel_x1 / 2.0f;
-		vel.y = (float)rand() / RAND_MAX * setvel_y - setvel_y1 / 2.0f;
-		vel.z = (float)rand() / RAND_MAX * setvel_z - setvel_z1 / 2.0f;
+		vel.x = dist(engine);
+		vel.y = dist(engine);
+		vel.z = dist(engine);
 		//重力に見立ててYのみ{0.001f,0}でランダムに分布
 		XMFLOAT3 acc{};
 		const float md_acc = setAcc;
