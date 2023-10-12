@@ -35,6 +35,8 @@ public:
 	//setter
 	//gameScene
 	void SetGameScene(GamePlayScene* gameScene) { gameScene_ = gameScene; }
+	//beforeY
+	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
 
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
@@ -72,6 +74,12 @@ private:
 	bool isHit_ = false;
 	//登場したか
 	bool isInit_ = false;
+
+	//登場時間
+	float initTime_ = 0.0f;
+
+	//初期Y座標
+	float beforeY_;
 
 	// モデル
 	Model* wEnemyModel = nullptr;

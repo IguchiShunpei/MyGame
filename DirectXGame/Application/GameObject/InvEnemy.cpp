@@ -21,21 +21,27 @@ void InvEnemy::InvEnemyInitialize()
 	SetModel(enemyModel);
 	isDelete_ = false;
 	isHit_ = false;
+	isInit_ = false;
+	initTime_ = 60.0f;
 }
 
 void InvEnemy::Update()
 {
-	isHit_ = false;
-	if (isTurn_ == false && isStart_ == false)
+	InitMotion();
+	if (isInit_ == true)
 	{
-		waitTimer++;
-		if (waitTimer >= 180)
+		isHit_ = false;
+		if (isTurn_ == false && isStart_ == false)
 		{
-			isTurn_ = true;
+			waitTimer++;
+			if (waitTimer >= 120)
+			{
+				isTurn_ = true;
+			}
 		}
+		Turn();
+		Move();
 	}
-	Turn();
-	Move();
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -54,10 +60,13 @@ void InvEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class PlayerBullet";
 
-	//相手がplayerBullet
-	if (strcmp(toCollisionName, str1) == 0)
+	if (isInit_ == true)
 	{
-		isHit_ = true;
+		//相手がplayerBullet
+		if (strcmp(toCollisionName, str1) == 0)
+		{
+			isHit_ = true;
+		}
 	}
 }
 
@@ -90,7 +99,15 @@ void InvEnemy::Turn()
 
 void InvEnemy::InitMotion()
 {
-
+	if (isInit_ == false)
+	{
+		worldTransform_.position_.y = beforeY_ + 60.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		initTime_--;
+		if (initTime_ <= 0.0f)
+		{
+			isInit_ = true;
+		}
+	}
 }
 
 
