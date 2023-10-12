@@ -28,6 +28,8 @@ public:
 	//getter
 	//IsDelete
 	bool GetIsDelete() const { return isDelete_; }
+	//isHit
+	bool GetIsHit() const { return isHit_; }
 	
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;

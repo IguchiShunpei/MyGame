@@ -44,10 +44,20 @@ void GamePlayScene::Initialize()
 	LoadEnemyPop();
 
 	//パーティクル
-	p_dmg = Particle::LoadParticleTexture("effect.png");
+	p_dmg = Particle::LoadParticleTexture("effect01.png");
 	pm_dmg = ParticleManager::Create();
 	pm_dmg->SetParticleModel(p_dmg);
 	pm_dmg->SetXMViewProjection(xmViewProjection);
+
+	p_eDmg = Particle::LoadParticleTexture("effect02.png");
+	pm_eDmg = ParticleManager::Create();
+	pm_eDmg->SetParticleModel(p_eDmg);
+	pm_eDmg->SetXMViewProjection(xmViewProjection);
+
+	p_bDmg = Particle::LoadParticleTexture("effect03.png");
+	pm_bDmg = ParticleManager::Create();
+	pm_bDmg->SetParticleModel(p_bDmg);
+	pm_bDmg->SetXMViewProjection(xmViewProjection);
 
 	LoadLevelData();
 
@@ -63,6 +73,8 @@ void GamePlayScene::Initialize()
 	shakeNum_ = 0.1f;
 	//ボスの墜落スピード
 	bossDownSpeed_ = 0.01f;
+	//ボスalpha
+	bossAlpha_ = 1.0f;
 
 	//フラグ
 	isBossScene_ = false;
@@ -72,6 +84,7 @@ void GamePlayScene::Initialize()
 	isBossEnemyDead_ = false;
 	isBossinit_ = false;
 	bossShake_ = true;
+	isBossAlpha_ = true;
 
 	//タイマー
 	delayTimer_ = 0.0f;
@@ -162,11 +175,20 @@ void GamePlayScene::Update()
 				bEnemy->ActiveDeathTimer();
 				//死亡演出
 				BossDead();
+				if (isClearScene_ == false)
+				{
+					CameraShake(0.3f,0.3f);
+				}
 			}
 			//死亡フラグがtrueになったら
 			if (bEnemy->GetIsDead() == true)
 			{
+				viewProjection->SetEye(cameraWorkPos_);
 				isClearScene_ = true;
+			}
+			else
+			{
+				cameraWorkPos_ = viewProjection->GetEye();
 			}
 			//クリア演出の処理
 			ToClearScene();
@@ -210,11 +232,15 @@ void GamePlayScene::Update()
 
 			//パーティクル更新
 			pm_dmg->Update();
+			pm_eDmg->Update();
+			pm_bDmg->Update();
 		}
 		else
 		{
 			//パーティクル更新
 			pm_dmg->Update();
+			pm_eDmg->Update();
+			pm_bDmg->Update();
 			player->BulletUpdate();
 		}
 	}
@@ -238,12 +264,10 @@ void GamePlayScene::Update()
 				hitTimer_++;
 				if (hitTimer_ < 16)
 				{
-					CameraShake();
+					CameraShake(0.3f,0.3f);
 				}
 				else
 				{
-					//保存していた位置にカメラを戻す
-					viewProjection->SetEye(cameraWorkPos_);
 					player->SetIsHit(false);
 					player->SetIsInv(false);
 					hitTimer_ = 0;
@@ -252,18 +276,31 @@ void GamePlayScene::Update()
 		}
 	}
 
-	//敵死亡時のパーティクル
+	//雑魚敵死亡時のパーティクル
 	for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 	{
 		if (wEnemys->GetIsDead() == true)
 		{
 			Vector3 deadPos{};
 			deadPos = wEnemys->GetPosition();
-			pm_dmg->Fire(p_dmg, 50,
+			pm_eDmg->Fire(p_eDmg, 50,
 				{ deadPos.x,deadPos.y,deadPos.z },
 				7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
 		}
 	}
+	//無敵敵に弾が当たった時
+	for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
+	{
+		if (invEnemys->GetIsHit() == true)
+		{
+			Vector3 hitPos{};
+			hitPos = invEnemys->GetPosition();
+			pm_dmg->Fire(p_dmg, 50,
+				{ hitPos.x,hitPos.y,hitPos.z },
+				4.0f, 4.0f, 4.0f, 4.0f, 0, 0, 0, 0, 0.2f, 0.1f, 0, 0, 0, 4, { 2.0f, 0.0f });
+		}
+	}
+
 	//敵の被ダメージ処理
 	for (std::unique_ptr<Enemy>& enemys : enemys_)
 	{
@@ -273,7 +310,7 @@ void GamePlayScene::Update()
 			hitPos = enemys->GetPosition();
 			pm_dmg->Fire(p_dmg, 50,
 				{ hitPos.x,hitPos.y,hitPos.z },
-				7.0f, 7.0f, 7.0f, 7.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 4, { 2.0f, 0.0f });
+				4.0f, 4.0f, 4.0f, 4.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 4, { 2.0f, 0.0f });
 		}
 		if (enemys->GetIsDead() == true)
 		{
@@ -301,9 +338,9 @@ void GamePlayScene::Update()
 			{
 				Vector3 deadPos{};
 				deadPos = bEnemy->GetPosition();
-				pm_dmg->Fire(p_dmg, 50,
+				pm_bDmg->Fire(p_bDmg, 50,
 					{ deadPos.x,deadPos.y,deadPos.z },
-					14.0f, 14.0f, 14.0f, 14.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 12, { 4.0f, 0.0f });
+					14.0f, 14.0f, 14.0f, 14.0f, 0, 0, 0, 0, 0.2f, 0.5f, 0, 0, 0, 4, { 4.0f, 0.0f });
 			}
 		}
 	}
@@ -350,7 +387,7 @@ void GamePlayScene::Draw()
 			{
 				if (bEnemy->GetIsHit() == false)
 				{
-					bEnemy->Draw(viewProjection);
+					bEnemy->Draw(viewProjection, bossAlpha_);
 				}
 			}
 		}
@@ -375,6 +412,8 @@ void GamePlayScene::Draw()
 	ParticleManager::PreDraw(dxCommon->GetCommandList());
 
 	pm_dmg->Draw();
+	pm_eDmg->Draw();
+	pm_bDmg->Draw();
 
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();
@@ -649,6 +688,30 @@ void GamePlayScene::BossDead()
 			bossShake_ = true;
 		}
 	}
+	//alpha値を変化
+	if (isBossAlpha_ == true)
+	{
+		if (bossAlpha_ <= 1.0f)
+		{
+			bossAlpha_ += 0.05f;
+		}
+		else
+		{
+			isBossAlpha_ = false;
+		}
+	}
+	else
+	{
+		if (bossAlpha_ >= 0.5f)
+		{
+			bossAlpha_ -= 0.05f;
+		}
+		else
+		{
+			isBossAlpha_ = true;
+		}
+	}
+
 	bEnemy->worldTransform_.UpdateMatrix();
 }
 void GamePlayScene::ToClearScene()
@@ -672,7 +735,7 @@ void GamePlayScene::ToGameOverScene()
 {
 	if (player->GetIsDead() == true)
 	{
-		CameraShake();
+		CameraShake(0.3f,0.3f);
 		//自機を動かす
 		player->worldTransform_.position_.y -= 0.05f;
 		gameOverNum_++;
@@ -684,13 +747,14 @@ void GamePlayScene::ToGameOverScene()
 		}
 	}
 }
-void GamePlayScene::CameraShake()
+void GamePlayScene::CameraShake(float x,float y)
 {
+	viewProjection->eye_ = cameraWorkPos_;
 	//乱数生成装置
 	std::random_device seed_gen;
 	std::mt19937_64 engine(seed_gen());
-	std::uniform_real_distribution<float>dist(-0.3f, 0.3f);
-	std::uniform_real_distribution<float>dist2(-0.3f, 0.3f);
+	std::uniform_real_distribution<float>dist(-x, x);
+	std::uniform_real_distribution<float>dist2(-y, y);
 
 	viewProjection->eye_ = viewProjection->eye_ + Vector3(dist(engine), dist2(engine), dist2(engine));
 	viewProjection->UpdateMatrix();

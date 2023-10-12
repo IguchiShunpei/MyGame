@@ -53,7 +53,6 @@ void BossEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	//相手がplayerBullet
 	if (strcmp(toCollisionName, str1) == 0)
 	{
-
 		isHit_ = true;
 		hp_--;
 		if (hp_ == 0)

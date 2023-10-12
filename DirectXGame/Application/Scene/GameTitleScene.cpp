@@ -24,8 +24,8 @@ void GameTitleScene::Initialize()
 	//カメラ初期化
 	viewProjection = new ViewProjection();
 	viewProjection->Initialize();
-	viewProjection->SetEye(Vector3(0.0f, 0.0f, 20.0f));
-	viewProjection->SetTarget(player->worldTransform_.GetPosition());
+	viewProjection->SetEye(Vector3(0.0f, 2.0f, 20.0f));
+	viewProjection->SetTarget(Vector3(0.0f, -2.0f, 0.0f));
 
 	//天球
 	sky = new SkyDome;
@@ -112,7 +112,8 @@ void GameTitleScene::Update()
 				break;
 			case 2:
 				viewProjection->SetTarget(player->GetWorldPosition());
-				viewProjection->SetEye(Vector3(0.0f, 2.0f, -14.0f));
+				viewProjection->SetEye(Vector3(0.0f, 2.0f, 1.0f));
+				cameraWorkPos_ = viewProjection->eye_;
 				break;
 			case 3:
 				viewProjection->SetTarget(Vector3(0.0f, 0.0f, 100.0f));
@@ -167,7 +168,7 @@ void GameTitleScene::StartCameraWork(int num)
 		viewProjection->eye_.x = 20.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		break;
 	case 2:
-		viewProjection->eye_.z = 30.0f * MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		viewProjection->eye_.z = cameraWorkPos_.z + 30.0f * MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		break;
 	case 3:
 		//自機を動かす

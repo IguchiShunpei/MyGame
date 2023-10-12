@@ -25,10 +25,11 @@ void InvEnemy::InvEnemyInitialize()
 
 void InvEnemy::Update()
 {
+	isHit_ = false;
 	if (isTurn_ == false && isStart_ == false)
 	{
 		waitTimer++;
-		if (waitTimer >= 60)
+		if (waitTimer >= 180)
 		{
 			isTurn_ = true;
 		}
@@ -56,7 +57,7 @@ void InvEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	//相手がplayerBullet
 	if (strcmp(toCollisionName, str1) == 0)
 	{
-
+		isHit_ = true;
 	}
 }
 
