@@ -1,5 +1,8 @@
 #include "Meteor.h"
 #include "GamePLayScene.h"
+#include <fstream>
+#include <string.h>
+#include <math.h>
 
 void Meteor::MeteorInitialize()
 {
@@ -12,6 +15,15 @@ void Meteor::MeteorInitialize()
 	frontNum_ = -20.0f;
 	backNum_ = 70.0f;
 	levRange_ = 1.0f;
+
+	rotaSpeed_ = 1.0f;
+
+	//乱数生成装置
+	std::random_device seed_gen;
+	std::mt19937 engine(seed_gen());
+	std::uniform_int_distribution<> dist(0, 5);
+	rotaNum_ = dist(engine);
+
 	isUp_ = true;
 }
 
@@ -19,6 +31,8 @@ void Meteor::MeteorUpdate()
 {
 	//移動
 	Move();
+	//回転
+	Rotate();
 	//浮上モーション
 	Levitation();
 	//更新
@@ -31,6 +45,31 @@ void Meteor::Move()
 	if (worldTransform_.position_.z <= frontNum_)
 	{
 		worldTransform_.position_.z = backNum_;
+	}
+}
+
+void Meteor::Rotate()
+{
+	switch (rotaNum_)
+	{
+	case 0:
+		worldTransform_.rotation_.x += rotaSpeed_;
+		break;
+	case 1:
+		worldTransform_.rotation_.x -= rotaSpeed_;
+		break;
+	case 2:
+		worldTransform_.rotation_.y += rotaSpeed_;
+		break;
+	case 3:
+		worldTransform_.rotation_.y -= rotaSpeed_;
+		break;
+	case 4:
+		worldTransform_.rotation_.z += rotaSpeed_;
+		break;
+	case 5:
+		worldTransform_.rotation_.z -= rotaSpeed_;
+		break;
 	}
 }
 
