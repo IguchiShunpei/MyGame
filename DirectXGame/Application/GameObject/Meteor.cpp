@@ -9,46 +9,72 @@ void Meteor::MeteorInitialize()
 	Create();
 
 	speed_ = 0.05f;
-	frontNum_ = -20.0f;
-	backNum_ = 70.0f;
+	frontX_ = -20.0f;
+	backZ_ = 70.0f;
 	levRange_ = 1.0f;
 
-	rotaSpeed_ = 3.0f;
+	rotaSpeed_ = 2.0f;
 
 	//乱数生成装置
 	std::random_device seed_gen;
 	std::mt19937 engine(seed_gen());
-	std::uniform_int_distribution<> dist(0, 5);
-	rotaNum_ = dist(engine);
+	std::uniform_int_distribution<> rotaDirection(0, 5);
+	//ランダムで回転方向を割り当てる
+	rotaDirection_ = rotaDirection(engine);
+	std::uniform_int_distribution<> levDirection(0, 1);
+	levDirection_ = levDirection(engine);
 
 	isUp_ = true;
 }
 
 void Meteor::MeteorUpdate()
 {
+	//スケール
+	Scale();
 	//移動
 	Move();
 	//回転
 	Rotate();
 	//浮上モーション
-	Levitation();
+	Levitate();
 	//更新
 	Update();
 }
 
+void Meteor::Scale()
+{
+	if (worldTransform_.scale_.x < 1.0f)
+	{
+		worldTransform_.scale_.x += 0.005f;
+		worldTransform_.scale_.y += 0.005f;
+		worldTransform_.scale_.z += 0.005f;
+	}
+	else
+	{
+		worldTransform_.scale_.x = 1.0f;
+		worldTransform_.scale_.y = 1.0f;
+		worldTransform_.scale_.z = 1.0f;
+	}
+}
+
 void Meteor::Move()
 {
+	//移動
 	worldTransform_.position_.z -= speed_;
-	if (worldTransform_.position_.z <= frontNum_)
+	//カメラの裏まで進んだら画面奥まで戻る
+	if (worldTransform_.position_.z <= frontX_)
 	{
-		worldTransform_.position_.z = backNum_;
+		worldTransform_.position_.z = backZ_;
+		worldTransform_.scale_.x = 0.0f;
+		worldTransform_.scale_.y = 0.0f;
+		worldTransform_.scale_.z = 0.0f;
 	}
 }
 
 void Meteor::Rotate()
 {
 	//割り当てられた回転の向きを実行
-	switch (rotaNum_)
+	switch (rotaDirection_)
 	{
 	case 0:
 		worldTransform_.rotation_.x += rotaSpeed_;
@@ -71,30 +97,61 @@ void Meteor::Rotate()
 	}
 }
 
-void Meteor::Levitation()
+void Meteor::Levitate()
 {
-	//上昇
-	if (isUp_ == true)
+	if (levDirection_ == 0)
 	{
-		meteorY_ = levRange_ * MathFunc::easeOutSine(levTime_ / 60.0f);
-		worldTransform_.position_.y = beforeY_ + meteorY_;
-		levTime_++;
-		if (levTime_ >= 120)
+		//上昇
+		if (isUp_ == true)
 		{
-			isUp_ = false;
-			levTime_ = 0;
+			meteorY_ = levRange_ * MathFunc::easeOutSine(levTime_ / 60.0f);
+			worldTransform_.position_.y = beforeY_ + meteorY_;
+			levTime_++;
+			if (levTime_ >= 120)
+			{
+				isUp_ = false;
+				levTime_ = 0;
+			}
+		}
+		//下降
+		else
+		{
+			meteorY_ = levRange_ * -MathFunc::easeOutSine(levTime_ / 60.0f);
+			worldTransform_.position_.y = beforeY_ + meteorY_;
+			levTime_++;
+			if (levTime_ >= 120)
+			{
+				isUp_ = true;
+				levTime_ = 0;
+			}
 		}
 	}
-	//下降
 	else
 	{
-		meteorY_ = levRange_ * -MathFunc::easeOutSine(levTime_ / 60.0f);
-		worldTransform_.position_.y = beforeY_ + meteorY_;
-		levTime_++;
-		if (levTime_ >= 120)
+		//上昇
+		if (isUp_ == false)
 		{
-			isUp_ = true;
-			levTime_ = 0;
+			meteorY_ = levRange_ * MathFunc::easeOutSine(levTime_ / 60.0f);
+			worldTransform_.position_.y = beforeY_ + meteorY_;
+			levTime_++;
+			if (levTime_ >= 120)
+			{
+				isUp_ = true;
+				levTime_ = 0;
+			}
+		}
+		//下降
+		else
+		{
+			meteorY_ = levRange_ * -MathFunc::easeOutSine(levTime_ / 60.0f);
+			worldTransform_.position_.y = beforeY_ + meteorY_;
+			levTime_++;
+			if (levTime_ >= 120)
+			{
+				isUp_ = false;
+				levTime_ = 0;
+			}
 		}
 	}
+	
 }
