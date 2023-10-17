@@ -137,6 +137,7 @@
     <ClCompile Include="DirectXGame\Engine\Level\LevelLoader.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\MathFunc.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\Matrix4.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Spline.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\Vector2.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\Vector3.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp" />
@@ -268,6 +269,7 @@
     <ClInclude Include="DirectXGame\Engine\Level\LevelLoader.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathFunc.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Matrix4.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Spline.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector2.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector3.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector4.h" />

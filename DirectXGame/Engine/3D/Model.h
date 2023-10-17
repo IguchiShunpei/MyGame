@@ -29,7 +29,7 @@ public: // サブクラス
 	// 定数バッファ用データ構造体B0
 	struct ConstBufferDataB0
 	{
-		//Vector4 color;	// 色 (RGBA)
+		Vector4 color;	// 色 (RGBA)
 		Matrix4 mat;	// ３Ｄ変換行列
 	};
 
@@ -84,14 +84,14 @@ public: // 静的メンバ関数
 	// 描画
 	/// <param name="cmdList">描画コマンドリスト</param>
 	/// <param name="rootParamIndexMaterial">マテリアル用ルートパラメータ番号</param>
-	void Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial, float alpha_ = 1);
+	void Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial, float alpha_,Vector3 color_);
 
 	// setter
 	static void SetDevice(ID3D12Device* device) { Model::device_ = device; }
 
 	void SetAlpha(float alpha_);
 
-	void SetColor();
+	void SetColor(Vector3 color_);
 
 
 private: // 静的メンバ変数

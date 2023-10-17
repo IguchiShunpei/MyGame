@@ -44,6 +44,8 @@ public:
 	bool GetIsHit() const { return isHit_; }
 	//HP
 	int GetHP() const { return hp_; };
+	//color
+	Vector3 GetColor() const { return enemyColor_; }
 	
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
@@ -84,6 +86,9 @@ public:
 private:
 	//ゲームシーン
 	GameScene* gameScene_ = nullptr;
+
+	//色
+	Vector3 enemyColor_ = {1.0f,1.0f,1.0f};
 
 	//デスフラグ
 	//倒されたか

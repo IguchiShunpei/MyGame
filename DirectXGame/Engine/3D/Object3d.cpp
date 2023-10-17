@@ -301,10 +301,10 @@ void Object3d::Draw(ViewProjection* viewProjection)
 	cmdList->SetGraphicsRootConstantBufferView(1, viewProjection->GetBuff()->GetGPUVirtualAddress());
 
 	// モデルを描画
-	model_->Draw(cmdList, 2, 1);
+	model_->Draw(cmdList, 2, 1.0f,Vector3(1.0f,1.0f,1.0f));
 }
 
-void Object3d::Draw(ViewProjection* viewProjection, float alpha_)
+void Object3d::Draw(ViewProjection* viewProjection, float alpha_,Vector3 color_)
 {
 	// nullptrチェック
 	assert(device_);
@@ -320,7 +320,7 @@ void Object3d::Draw(ViewProjection* viewProjection, float alpha_)
 	cmdList->SetGraphicsRootConstantBufferView(1, viewProjection->GetBuff()->GetGPUVirtualAddress());
 
 	// モデルを描画
-	model_->Draw(cmdList, 2, alpha_);
+	model_->Draw(cmdList, 2, alpha_,color_);
 }
 
 void Object3d::SetCollider(BaseCollider* collider_)

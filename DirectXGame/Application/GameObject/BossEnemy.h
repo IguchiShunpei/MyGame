@@ -31,9 +31,6 @@ public:
 	//更新
 	void Update();
 
-	//描画
-	void BossDraw();
-
 	//当たり判定更新
 	void ColliderUpdate();
 
@@ -48,12 +45,17 @@ public:
 	int GetHP() const { return hp_; }
 	//DeathTimer
 	int GetDeathTimer() const { return deathTimer_; }
+	//Color
+	Vector3 GetColor() const { return bossColor_; }
 	
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
-	
+
 	//移動
 	void Move();
+
+	//登場モーション
+	void InitMotion();
 
 	//死亡するまでのタイマー処理
 	void ActiveDeathTimer();
@@ -77,6 +79,8 @@ public:
 	void SetDeathTimer(int deathTimer) { this->deathTimer_ = deathTimer; }
 	//alpha
 	void SetAlpha(float) {}
+	//beforeY
+	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -85,12 +89,23 @@ private:
 	//ゲームシーン
 	GameScene* gameScene_ = nullptr;
 
+	//色
+	Vector3 bossColor_ = { 1.0f,1.0f,1.0f };
+
 	//デスフラグ
 	bool isDeathTimer_ = false;
 	//倒されたか
 	bool isDead_ = false;
 	//弾が当たったか
 	bool isHit_ = false;
+	//登場したか
+	bool isInit_ = false;
+
+	//登場時間
+	float initTime_ = 0.0f;
+
+	//初期Y座標
+	float beforeY_;
 
 	// モデル
 	Model* enemyModel = nullptr;

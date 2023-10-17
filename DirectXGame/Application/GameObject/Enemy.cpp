@@ -26,6 +26,7 @@ void Enemy::EnemyInitialize()
 void Enemy::Update()
 {
 	isHit_ = false;
+	enemyColor_ = {1.0f,1.0f,1.0f};
 
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
@@ -66,6 +67,7 @@ void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	{
 
 		isHit_ = true;
+		enemyColor_ = { 3.0f,3.0f,3.0f };
 		hp_--;
 		if (hp_ == 0)
 		{
