@@ -19,6 +19,9 @@ public:
 	//移動
 	void Move();
 
+	//回転
+	void Rotate();
+
 	//浮上
 	void Levitation();
 
@@ -44,4 +47,8 @@ private:
 	float levRange_;
 	//上昇しているか
 	bool isUp_;
+	//回転の向き
+	int rotaNum_;
+	//回転の速度
+	float rotaSpeed_;
 };
