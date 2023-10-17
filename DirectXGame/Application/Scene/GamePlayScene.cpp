@@ -75,6 +75,8 @@ void GamePlayScene::Initialize()
 	bossDownSpeed_ = 0.01f;
 	//ボスalpha
 	bossAlpha_ = 1.0f;
+	//ボスalphaに代入する数
+	bossAlphaNum_ = 0.05f;
 
 	//フラグ
 	isBossScene_ = false;
@@ -177,7 +179,7 @@ void GamePlayScene::Update()
 				BossDead();
 				if (isClearScene_ == false)
 				{
-					CameraShake(0.3f,0.3f);
+					CameraShake(0.3f, 0.3f);
 				}
 			}
 			//死亡フラグがtrueになったら
@@ -264,7 +266,7 @@ void GamePlayScene::Update()
 				hitTimer_++;
 				if (hitTimer_ < 16)
 				{
-					CameraShake(0.3f,0.3f);
+					CameraShake(0.3f, 0.0f);
 				}
 				else
 				{
@@ -374,10 +376,8 @@ void GamePlayScene::Draw()
 		//敵
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
-			if (enemys->GetIsHit() == false)
-			{
-				enemys->Draw(viewProjection);
-			}
+			enemys->Draw(viewProjection, 1.0f, enemys->GetColor());
+
 			enemys->BulletDraw(viewProjection);
 		}
 		//ボス敵
@@ -385,10 +385,7 @@ void GamePlayScene::Draw()
 		{
 			if (bEnemy->GetIsDead() == false)
 			{
-				if (bEnemy->GetIsHit() == false)
-				{
-					bEnemy->Draw(viewProjection, bossAlpha_);
-				}
+				bEnemy->Draw(viewProjection, bossAlpha_, bEnemy->GetColor());
 			}
 		}
 		break;
@@ -698,7 +695,7 @@ void GamePlayScene::BossDead()
 	{
 		if (bossAlpha_ <= 1.0f)
 		{
-			bossAlpha_ += 0.05f;
+			bossAlpha_ += bossAlphaNum_;
 		}
 		else
 		{
@@ -709,7 +706,7 @@ void GamePlayScene::BossDead()
 	{
 		if (bossAlpha_ >= 0.5f)
 		{
-			bossAlpha_ -= 0.05f;
+			bossAlpha_ -= bossAlphaNum_;
 		}
 		else
 		{
@@ -740,7 +737,7 @@ void GamePlayScene::ToGameOverScene()
 {
 	if (player->GetIsDead() == true)
 	{
-		CameraShake(0.3f,0.3f);
+		CameraShake(0.3f, 0.3f);
 		//自機を動かす
 		player->worldTransform_.position_.y -= 0.05f;
 		gameOverNum_++;
@@ -752,7 +749,7 @@ void GamePlayScene::ToGameOverScene()
 		}
 	}
 }
-void GamePlayScene::CameraShake(float x,float y)
+void GamePlayScene::CameraShake(float x, float y)
 {
 	viewProjection->eye_ = cameraWorkPos_;
 	//乱数生成装置

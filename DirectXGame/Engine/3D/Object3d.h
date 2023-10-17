@@ -69,7 +69,7 @@ public: // メンバ関数
 
 	/// 描画
 	void Draw(ViewProjection* viewProjection);
-	void Draw(ViewProjection* viewProjection, float alpha_);
+	void Draw(ViewProjection* viewProjection, float alpha_,Vector3 color_);
 
 	//コライダーのセット
 	void SetCollider(BaseCollider* collider);

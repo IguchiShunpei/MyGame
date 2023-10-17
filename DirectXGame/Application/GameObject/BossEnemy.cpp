@@ -21,16 +21,20 @@ void BossEnemy::BossEnemyInitialize()
 	SetModel(enemyModel);
 	isDead_ = false;
 	isDeathTimer_ = false;
-
 	deathTimer_ = 180;
+	isInit_ = false;
+	initTime_ = 60.0f;
 }
 
 void BossEnemy::Update()
 {
 	isHit_ = false;
 
-	ActiveDeathTimer();
+	bossColor_ = { 1.0f,1.0f,1.0f };
 
+	//死亡タイマーの処理
+	ActiveDeathTimer();
+	//移動処理
 	Move();
 
 	// ワールドトランスフォームの行列更新と転送
@@ -54,6 +58,7 @@ void BossEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	if (strcmp(toCollisionName, str1) == 0)
 	{
 		isHit_ = true;
+		bossColor_ = { 3.0f,3.0f,3.0f };
 		hp_--;
 		if (hp_ == 0)
 		{
@@ -82,6 +87,19 @@ void BossEnemy::Move()
 		case Phase::ReCurve:   //カーブフェーズ
 			ReCurve();
 			break;
+		}
+	}
+}
+
+void BossEnemy::InitMotion()
+{
+	if (isInit_ == false)
+	{
+		worldTransform_.position_.y = beforeY_ + 60.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		initTime_--;
+		if (initTime_ <= 0.0f)
+		{
+			isInit_ = true;
 		}
 	}
 }

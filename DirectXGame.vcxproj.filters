@@ -219,6 +219,9 @@
     <ClCompile Include="DirectXGame\Application\GameObject\BossEnemy.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Math\Spline.cpp">
+      <Filter>ソース ファイル\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli">
@@ -419,6 +422,9 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\BossEnemy.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Math\Spline.h">
+      <Filter>ヘッダー ファイル\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

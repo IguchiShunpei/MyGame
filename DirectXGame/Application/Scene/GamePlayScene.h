@@ -159,13 +159,15 @@ private://メンバ変数
 	Vector3 cameraWorkPos_;
 	//墜落演出の墜落量
 	int gameOverNum_;
-	//敵の墜落時のシェイク範囲
+	//ボスの墜落時のシェイク範囲
 	float shakeRange_;
 	float shakeNum_;
-	//敵の墜落スピード
+	//ボスの墜落スピード
 	float bossDownSpeed_;
-	//敵のalpha 
+	//ボスのalpha 
 	float bossAlpha_;
+	//ボスalphaに代入する変数
+	float bossAlphaNum_;
 
 	//フラグ
 	//ボス戦に入ったか
