@@ -34,6 +34,32 @@ void Meteor::Move()
 	}
 }
 
+void Meteor::Rotate()
+{
+	//割り当てられた回転の向きを実行
+	switch (rotaNum_)
+	{
+	case 0:
+		worldTransform_.rotation_.x += rotaSpeed_;
+		break;
+	case 1:
+		worldTransform_.rotation_.x -= rotaSpeed_;
+		break;
+	case 2:
+		worldTransform_.rotation_.y += rotaSpeed_;
+		break;
+	case 3:
+		worldTransform_.rotation_.y -= rotaSpeed_;
+		break;
+	case 4:
+		worldTransform_.rotation_.z += rotaSpeed_;
+		break;
+	case 5:
+		worldTransform_.rotation_.z -= rotaSpeed_;
+		break;
+	}
+}
+
 void Meteor::Levitation()
 {
 	//上昇
