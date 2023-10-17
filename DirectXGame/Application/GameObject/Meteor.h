@@ -16,6 +16,9 @@ public:
 	//更新
 	void MeteorUpdate();
 
+	//スケール
+	void Scale();
+
 	//移動
 	void Move();
 
@@ -23,7 +26,7 @@ public:
 	void Rotate();
 
 	//浮上
-	void Levitation();
+	void Levitate();
 
 	//setter
 	void SetBeforeY(float beforeY) { this->beforeY_ = beforeY; }
@@ -34,21 +37,23 @@ private:
 	//速度
 	float speed_;
 	//手前
-	float frontNum_;
+	float frontX_;
 	//奥
-	float backNum_;
+	float backZ_;
 	//高さ
 	float meteorY_;
 	//前のy座標
 	float beforeY_;
 	//浮上モーションの時間
 	float levTime_;
+	//浮上する向き
+	int levDirection_;
 	//範囲
 	float levRange_;
 	//上昇しているか
 	bool isUp_;
 	//回転の向き
-	int rotaNum_;
+	int rotaDirection_;
 	//回転の速度
 	float rotaSpeed_;
 };
