@@ -50,6 +50,7 @@ void Meteor::Move()
 
 void Meteor::Rotate()
 {
+	//割り当てられた回転の向きを実行
 	switch (rotaNum_)
 	{
 	case 0:
