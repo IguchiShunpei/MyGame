@@ -131,7 +131,7 @@ private://メンバ変数
 	Particle* p_dmg = nullptr;
 	ParticleManager* pm_dmg = nullptr;
 
-	Particle* p_eDmg = nullptr;
+	Particle* p_wDmg = nullptr;
 	ParticleManager* pm_eDmg = nullptr;
 
 	Particle* p_bDmg = nullptr;
@@ -179,7 +179,7 @@ private://メンバ変数
 	//敵死亡時のパーティクルフラグ
 	bool isBossEffect_;
 	//ボス死亡フラグ
-	bool isBossEnemyDead_;
+	bool isBEnemyDeadScene_;
 	//ボスが読み込まれたか
 	bool isBossinit_;
 	//ボスのシェイク

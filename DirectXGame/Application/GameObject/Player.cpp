@@ -45,13 +45,16 @@ void Player::Update()
 {
 	input_ = Input::GetInstance();
 
-	Move();
+	if (isDead_ == false)
+	{
+		Move();
 
-	Rotate();
+		Rotate();
 
-	ChangeBullet();
+		ChangeBullet();
 
-	Attack();
+		Attack();
+	}
 
 	BulletUpdate();
 
