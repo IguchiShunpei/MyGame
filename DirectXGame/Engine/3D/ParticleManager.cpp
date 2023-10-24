@@ -297,8 +297,7 @@ void ParticleManager::Draw()
 	particle->Draw(cmdList_);
 }
 
-void ParticleManager::Fire(Particle* particle_, int life, const XMFLOAT3& pos_, [[maybe_unused]] float setpos_x, [[maybe_unused]] float setpos_x1, [[maybe_unused]] float setpos_y, [[maybe_unused]] float setpos_y1, [[maybe_unused]] float setpos_z, [[maybe_unused]] float setpos_z1,
-	[[maybe_unused]] float setvel_x, [[maybe_unused]] float setvel_x1, [[maybe_unused]] float setvel_y, [[maybe_unused]] float setvel_y1, [[maybe_unused]] float setvel_z, [[maybe_unused]] float setvel_z1, [[maybe_unused]] float setAcc, [[maybe_unused]] int setNum, const XMFLOAT2& setscale)
+void ParticleManager::Fire(Particle* particle_, int life, const XMFLOAT3& pos_,float setAcc,int setNum, const XMFLOAT2& setscale)
 {
 	for (int i = 0; i < setNum; i++)
 	{
@@ -307,14 +306,6 @@ void ParticleManager::Fire(Particle* particle_, int life, const XMFLOAT3& pos_, 
 		std::mt19937_64 engine(seed_gen());
 		std::uniform_real_distribution<float>dist(-4.5f, 4.5f);
 
-		XMFLOAT3 pos = pos_;
-		pos.x += dist(engine);
-		pos.y += dist(engine);
-		pos.z += dist(engine);
-		//X,Y,Z全て{0.1f,0.1f}でランダムに分布
-		[[maybe_unused]] const float md_vel_x = setvel_x;
-		[[maybe_unused]] const float md_vel_y = setvel_y;
-		[[maybe_unused]] const float md_vel_z = setvel_z;
 		XMFLOAT3 vel{};
 		vel.x = dist(engine);
 		vel.y = dist(engine);
@@ -325,6 +316,6 @@ void ParticleManager::Fire(Particle* particle_, int life, const XMFLOAT3& pos_, 
 		acc.y = -(float)rand() / RAND_MAX * md_acc;
 
 		//追加
-		particle_->Add(life, pos, vel, acc, setscale.x, setscale.y);
+		particle_->Add(life, pos_, vel, acc, setscale.x, setscale.y);
 	}
 }
