@@ -16,6 +16,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_);
 	SetScale(Vector3(2.5f, 2.5f, 2.5f));
+	SetRotation(Vector3(0.0f, -180.0f, 0.0f));
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入
@@ -52,7 +53,7 @@ void PlayerBullet::Update()
 			worldTransform_.scale_ += scaleNum;
 		}
 
-		if (worldTransform_.scale_.x >= 1.0f)
+		if (worldTransform_.scale_.x >= 0.7f)
 		{
 			worldTransform_.scale_ -= Vector3(0.3f, 0.3f, 0.3f);
 		}
