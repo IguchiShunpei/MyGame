@@ -1,4 +1,4 @@
-﻿#include "Sprite.h"
+#include "Sprite.h"
 #include<d3dcompiler.h>
 #include<DirectXTex.h>
 
@@ -7,13 +7,6 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-struct Vertex
-{
-	XMFLOAT3 pos; //xyz座標
-
-	XMFLOAT2 uv;  //uv座標
-};
-
 //デフォルトテクスチャ格納ディレクトリ
 std::string Sprite::kDefaultTextureDirectoryPath = "Resources/";
 
@@ -21,11 +14,8 @@ std::string Sprite::kDefaultTextureDirectoryPath = "Resources/";
 XMMATRIX Sprite::matView{};
 XMMATRIX Sprite::matProjection{};
 
-
-void Sprite::Initialize(DirectXCommon* dxCommon_, int window_width, int window_height)
+void Sprite::Initialize(DirectXCommon* dxCommon_)
 {
-	// 結果確認
-	HRESULT result;
 
 	//頂点データ
 	Vertex vertices[] = {
@@ -112,22 +102,48 @@ void Sprite::Initialize(DirectXCommon* dxCommon_, int window_width, int window_h
 
 	//マテリアル//
 
+	//ヒープ設定
+	D3D12_HEAP_PROPERTIES cbHeapProp{};
+	cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;  //GPUへの転送用
+	//リソース設定
+	D3D12_RESOURCE_DESC cbResourceDesc{};
+	cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	cbResourceDesc.Width = (sizeof(ConstBufferDataMaterial) + 0xff) & ~0xff;  //256バイトアラインメント
+	cbResourceDesc.Height = 1;
+	cbResourceDesc.DepthOrArraySize = 1;
+	cbResourceDesc.MipLevels = 1;
+	cbResourceDesc.SampleDesc.Count = 1;
+	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	//定数バッファの生成
+	result = dxCommon_->GetDevice()->CreateCommittedResource(
+		&cbHeapProp,//ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&cbResourceDesc,//リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuffMaterial_));
+	assert(SUCCEEDED(result));
+
+	//result = constBuffMaterial_->Map(0, nullptr, (void**)&constMapMaterial);//マッピング
+	assert(SUCCEEDED(result));
+
 	////3D変換行列////
 	ConstBufferDataTransform* constMapTransform = nullptr; //定数バッファのマッピング用ポインタ
 
 	{
 		//ヒープ設定
-		D3D12_HEAP_PROPERTIES cbHeapProp{};
+		D3D12_HEAP_PROPERTIES cbHeapProp_{};
 		cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;		//GPUへの転送用
 		//リソース設定
-		D3D12_RESOURCE_DESC cbResourceDesc{};
-		cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		cbResourceDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff; //256バイトアラインメント
-		cbResourceDesc.Height = 1;
-		cbResourceDesc.DepthOrArraySize = 1;
-		cbResourceDesc.MipLevels = 1;
-		cbResourceDesc.SampleDesc.Count = 1;
-		cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		D3D12_RESOURCE_DESC cbResourceDesc_{};
+		cbResourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		cbResourceDesc_.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff; //256バイトアラインメント
+		cbResourceDesc_.Height = 1;
+		cbResourceDesc_.DepthOrArraySize = 1;
+		cbResourceDesc_.MipLevels = 1;
+		cbResourceDesc_.SampleDesc.Count = 1;
+		cbResourceDesc_.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 		//定数バッファの生成
 		result = dxCommon_->GetDevice()->CreateCommittedResource(
@@ -145,8 +161,8 @@ void Sprite::Initialize(DirectXCommon* dxCommon_, int window_width, int window_h
 
 		//単位行列を代入
 		matProjection = XMMatrixOrthographicOffCenterLH(
-			0.0f, (float)window_width,
-			(float)window_height, 0.0f
+			0.0f, (float)WinApp::window_width,
+			(float)WinApp::window_height, 0.0f
 			, 0.0f, 1.0f);
 	}
 
@@ -332,7 +348,6 @@ void Sprite::Initialize(DirectXCommon* dxCommon_, int window_width, int window_h
 
 void Sprite::Update()
 {
-	HRESULT result;
 	XMMATRIX matScale, matRot, matTrans;
 
 	// スケール、回転、平行移動行列の計算
@@ -358,8 +373,6 @@ void Sprite::Update()
 
 void Sprite::LoadTexture(uint32_t index, const wchar_t* fileName, DirectXCommon* dxCommon_)
 {
-	// 結果確認
-	HRESULT result;
 	//画像読み込み
 	TexMetadata metadata{};
 	ScratchImage scratchImg{};
@@ -447,7 +460,7 @@ void Sprite::LoadTexture(uint32_t index, const wchar_t* fileName, DirectXCommon*
 		&srvDesc, srvHandle);
 }
 
-void Sprite::SetTextureCommands( DirectXCommon* dxCommon_)
+void Sprite::SetTextureCommands([[maybe_unused]]uint32_t index, DirectXCommon* dxCommon_)
 {
 	//パイプラインステートとルートシグネチャの設定コマンド
 	dxCommon_->GetCommandList()->SetPipelineState(pipelineState_.Get());
@@ -468,7 +481,7 @@ void Sprite::SetTextureCommands( DirectXCommon* dxCommon_)
 
 void Sprite::Draw(DirectXCommon* dxCommon_)
 {
-	SetTextureCommands(dxCommon_);
+	SetTextureCommands(textureIndex_, dxCommon_);
 
 	//頂点バッファビューの設定コマンド
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vbView);

@@ -1,8 +1,15 @@
-﻿#pragma once
+#pragma once
 #include "DirectXCommon.h"
 #include <wrl.h>
 #include<DirectXMath.h>
 #include<array>
+
+struct Vertex
+{
+	DirectX::XMFLOAT3 pos; //xyz座標
+
+	DirectX::XMFLOAT2 uv;  //uv座標
+};
 
 class Sprite
 {
@@ -22,7 +29,7 @@ public: // サブクラス
 	};
 
 public:
-	void Initialize(DirectXCommon*dxCommon_, int window_width, int window_height);
+	void Initialize(DirectXCommon*dxCommon_);
 
 	void Update();
 
@@ -30,7 +37,7 @@ public:
 
 	void LoadTexture(uint32_t index, const wchar_t* fileName,DirectXCommon* dxCommon_);
 
-	void SetTextureCommands(DirectXCommon* dxCommon_);
+	void SetTextureCommands([[maybe_unused]] uint32_t index, DirectXCommon* dxCommon_);
 
 	//座標setter
 	void SetPosition(const XMFLOAT3& position) { this->position_ = position; }
@@ -68,7 +75,17 @@ public:
 	int SetTextureIndex(int textureIndex) { textureIndex_ = textureIndex; }
 	//テクスチャ番号getter
 	int GetTextureIndex() const { return textureIndex_; }
-private:
+	//scaleGetter
+	XMFLOAT3 GetScale() { return scale_; }
+	//scaleSetter
+	void SetScale(XMFLOAT2 scale) { scale_ = XMFLOAT3(scale.x, scale.y, 1); }
+public:
+	Sprite() = default;
+	Sprite(UINT texNumber, XMFLOAT3 pos, XMFLOAT2 size, XMFLOAT4 color, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY);
+	~Sprite() = default;;
+
+protected:
+	DirectXCommon* dxCommon = nullptr;
 	// ビュー行列
 	static XMMATRIX matView;
 	// 射影行列
@@ -93,6 +110,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
 	//定数バッファのGPUリソースのポインタ
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffTransform_;
+
+	// 結果確認
+	HRESULT result;
 
 	//横方向ピクセル数
 	const size_t textureWidth = 256;
