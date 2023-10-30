@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Input.h"
 #include "DirectXCommon.h"
@@ -34,8 +34,15 @@ public: //メンバ関数
 
 private: // メンバ変数
 	Input* input_ = nullptr;
-	DirectXCommon* dxCommon = nullptr;
-	SkyDome* sky;
+	DirectXCommon* dxCommon_ = nullptr;
+	SkyDome* sky_;
 	//カメラ
-	ViewProjection* viewProjection = nullptr;
+	ViewProjection* viewProjection_ = nullptr;
+
+	Sprite* space_ = nullptr;
+	Sprite* gameClearLogo_ = nullptr;
+
+	bool isUp_;
+	float logoTime_;
+	float logoY_;
 };

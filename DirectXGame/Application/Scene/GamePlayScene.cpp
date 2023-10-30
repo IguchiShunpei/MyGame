@@ -22,8 +22,8 @@ GamePlayScene::~GamePlayScene()
 
 void GamePlayScene::Initialize()
 {
-	input = Input::GetInstance();
-	dxCommon = DirectXCommon::GetInstance();
+	input_ = Input::GetInstance();
+	dxCommon_ = DirectXCommon::GetInstance();
 
 	//当たり判定
 	collisionManager = CollisionManager::GetInstance();
@@ -34,8 +34,8 @@ void GamePlayScene::Initialize()
 	viewProjection->Initialize();
 
 	//天球
-	sky = new SkyDome;
-	sky->SkyDomeInitialize();
+	sky_ = new SkyDome;
+	sky_->SkyDomeInitialize();
 
 	//player 
 	player = new Player;
@@ -60,6 +60,8 @@ void GamePlayScene::Initialize()
 	pm_bDmg = ParticleManager::Create();
 	pm_bDmg->SetParticleModel(p_bDmg);
 	pm_bDmg->SetXMViewProjection(xmViewProjection);
+
+	UIInitialize();
 
 	LoadLevelData();
 
@@ -121,9 +123,11 @@ void GamePlayScene::Update()
 	UpdateEnemyPop();
 
 	//天球
-	sky->Update();
+	sky_->Update();
 	//自機の登場演出
 	player->IntitMotion();
+	//UIの登場モーション
+	UIInitMotion();
 	//ボスの登場演出
 	BossAppears();
 
@@ -205,21 +209,41 @@ void GamePlayScene::Update()
 		if (isBossScene_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
 			//カメラ移動処理
-			if (input->PushKey(DIK_UP))
+			if (input_->PushKey(DIK_UP))
 			{
+				isUp_ = true;
 				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.05f, 0));
 			}
-			if (input->PushKey(DIK_RIGHT))
+			else
 			{
+				isUp_ = false;
+			}
+			if (input_->PushKey(DIK_RIGHT))
+			{
+				isRight_ = true;
 				viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.05f, 0, 0));
 			}
-			if (input->PushKey(DIK_LEFT))
+			else
 			{
+				isRight_ = false;
+			}
+			if (input_->PushKey(DIK_LEFT))
+			{
+				isLeft_ = true;
 				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.05f, 0, 0));
 			}
-			if (input->PushKey(DIK_DOWN))
+			else
 			{
+				isLeft_ = false;
+			}
+			if (input_->PushKey(DIK_DOWN))
+			{
+				isDown_ = true;
 				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.05f, 0));
+			}
+			else
+			{
+				isDown_ = false;
 			}
 
 			//移動限界座標
@@ -239,9 +263,13 @@ void GamePlayScene::Update()
 			pm_dmg->Update();
 			pm_eDmg->Update();
 			pm_bDmg->Update();
+			//UI更新
+			UIUpdate();
 		}
 		else
 		{
+			//UI更新
+			UIUpdate();
 			//パーティクル更新
 			pm_dmg->Update();
 			pm_eDmg->Update();
@@ -288,7 +316,7 @@ void GamePlayScene::Update()
 		{
 			Vector3 deadPos{};
 			deadPos = wEnemys->GetPosition();
-			pm_eDmg->Fire(p_wDmg,20,{ deadPos.x,deadPos.y,deadPos.z },0, 5, { 8.0f, 0.0f });
+			pm_eDmg->Fire(p_wDmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 5, { 8.0f, 0.0f });
 		}
 	}
 	//無敵敵に弾が当たった時
@@ -298,7 +326,7 @@ void GamePlayScene::Update()
 		{
 			Vector3 hitPos{};
 			hitPos = invEnemys->GetPosition();
-			pm_dmg->Fire(p_dmg,10,{ hitPos.x,hitPos.y,hitPos.z },0, 5, { 4.0f, 0.0f });
+			pm_dmg->Fire(p_dmg, 10, { hitPos.x,hitPos.y,hitPos.z }, 0, 5, { 4.0f, 0.0f });
 		}
 	}
 
@@ -309,7 +337,7 @@ void GamePlayScene::Update()
 		{
 			Vector3 deadPos{};
 			deadPos = enemys->GetPosition();
-			pm_dmg->Fire(p_dmg, 20,{ deadPos.x,deadPos.y,deadPos.z },0, 12, { 4.0f, 0.0f });
+			pm_dmg->Fire(p_dmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 12, { 4.0f, 0.0f });
 		}
 	}
 	//ボス敵の被ダメージ処理
@@ -321,7 +349,7 @@ void GamePlayScene::Update()
 			{
 				Vector3 deadPos{};
 				deadPos = bEnemy->GetPosition();
-				pm_bDmg->Fire(p_bDmg, 50,{ deadPos.x,deadPos.y,deadPos.z },0, 4, { 4.0f, 0.0f });
+				pm_bDmg->Fire(p_bDmg, 50, { deadPos.x,deadPos.y,deadPos.z }, 0, 4, { 4.0f, 0.0f });
 			}
 		}
 	}
@@ -331,11 +359,9 @@ void GamePlayScene::Update()
 void GamePlayScene::Draw()
 {
 	//描画前処理
-	dxCommon->PreDraw();
+	dxCommon_->PreDraw();
 
-#pragma region 最初のシーンの描画
-
-	Object3d::PreDraw(dxCommon->GetCommandList());
+	Object3d::PreDraw(dxCommon_->GetCommandList());
 
 	switch (gameNum)
 	{
@@ -370,7 +396,7 @@ void GamePlayScene::Draw()
 		break;
 	}
 
-	sky->Draw(viewProjection);
+	sky_->Draw(viewProjection);
 	//カメラシェイク中は点滅
 	if (hitTimer_ % 2 != 1)
 	{
@@ -385,7 +411,7 @@ void GamePlayScene::Draw()
 	Object3d::PostDraw();
 
 	//エフェクト描画前処理
-	ParticleManager::PreDraw(dxCommon->GetCommandList());
+	ParticleManager::PreDraw(dxCommon_->GetCommandList());
 
 	pm_dmg->Draw();
 	pm_eDmg->Draw();
@@ -394,10 +420,10 @@ void GamePlayScene::Draw()
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();
 
-#pragma endregion 最初のシーンの描画
+	UIDraw();
 
 	// 描画後処理
-	dxCommon->PostDraw();
+	dxCommon_->PostDraw();
 }
 
 void GamePlayScene::Finalize()
@@ -406,7 +432,7 @@ void GamePlayScene::Finalize()
 		delete(object);
 	}
 
-	delete sky;
+	delete sky_;
 	delete player;
 	delete enemy;
 	delete wEnemy;
@@ -614,6 +640,11 @@ void GamePlayScene::UpdateEnemyPop()
 
 void GamePlayScene::BossAppears()
 {
+	isUp_ = false;
+	isDown_ = false;
+	isRight_ = false;
+	isLeft_ = false;
+
 	//接近するカメラワーク
 	if (isBossScene_ == true)
 	{
@@ -643,6 +674,7 @@ void GamePlayScene::BossAppears()
 }
 void GamePlayScene::BossDead()
 {
+	UIOutMotion();
 	//墜落
 	bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
 	bEnemy->worldTransform_.scale_ -= Vector3(0.005f, 0.005f, 0.005f);
@@ -716,6 +748,7 @@ void GamePlayScene::ToGameOverScene()
 {
 	if (player->GetIsDead() == true)
 	{
+		UIOutMotion();
 		CameraShake(0.3f, 0.3f);
 		//自機を動かす
 		player->worldTransform_.position_.y -= 0.05f;
@@ -796,5 +829,207 @@ void GamePlayScene::LoadLevelData()
 
 		// 配列に登録
 		meteorObjects.push_back(meteor);
+	}
+}
+
+void GamePlayScene::UIInitialize()
+{
+	UIInitPos_ = 0.0f;
+	UIInitRange_ = 100.0f;
+	UIInitTime_ = 0.0f;
+	UIOutPos_ = 0.0f;
+	UIOutRange_ = 100.0f;
+	UIOutTime_ = 0.0f;
+	UIMovePos_ = 0.0f;
+	UIMoveRange_ = 5.0f;
+	UIMoveTime_ = 0.0f;
+
+	isUIInit_ = false;
+	isUIOut_ = false;
+	isNeutral_ = true;
+	isUp_ = false;
+	isDown_ = false;
+	isRight_ = false;
+	isLeft_ = false;
+
+	arrowUpOn = new Sprite;
+	arrowUpOn->Initialize(dxCommon_);
+	arrowUpOn->LoadTexture(0, L"Resources/offUp.png", dxCommon_);
+	arrowUpOn->SetScale({ 0.8f,0.8f });
+	arrowUpOn->SetPosition({ 600,0 - UIInitRange_,0 });
+	arrowUpOff = new Sprite;
+	arrowUpOff->Initialize(dxCommon_);
+	arrowUpOff->LoadTexture(0, L"Resources/onUp.png", dxCommon_);
+	arrowUpOff->SetScale({ 0.8f,0.8f });
+	arrowUpOff->SetPosition({ 600,0 - UIInitRange_,0 });
+	arrowDownOn = new Sprite;
+	arrowDownOn->Initialize(dxCommon_);
+	arrowDownOn->LoadTexture(0, L"Resources/offDown.png", dxCommon_);
+	arrowDownOn->SetScale({ 0.8f,0.8f });
+	arrowDownOn->SetPosition({ 600,640 + UIInitRange_,0 });
+	arrowDownOff = new Sprite;
+	arrowDownOff->Initialize(dxCommon_);
+	arrowDownOff->LoadTexture(0, L"Resources/onDown.png", dxCommon_);
+	arrowDownOff->SetScale({ 0.8f,0.8f });
+	arrowDownOff->SetPosition({ 600,640 + UIInitRange_,0 });
+	arrowRightOn = new Sprite;
+	arrowRightOn->Initialize(dxCommon_);
+	arrowRightOn->LoadTexture(0, L"Resources/offRight.png", dxCommon_);
+	arrowRightOn->SetScale({ 0.8f,0.8f });
+	arrowRightOn->SetPosition({ 1200 + UIInitRange_,300,0 });
+	arrowRightOff = new Sprite;
+	arrowRightOff->Initialize(dxCommon_);
+	arrowRightOff->LoadTexture(0, L"Resources/onRight.png", dxCommon_);
+	arrowRightOff->SetScale({ 0.8f,0.8f });
+	arrowRightOff->SetPosition({ 1200 + UIInitRange_,300,0 });
+	arrowLeftOn = new Sprite;
+	arrowLeftOn->Initialize(dxCommon_);
+	arrowLeftOn->LoadTexture(0, L"Resources/offLeft.png", dxCommon_);
+	arrowLeftOn->SetScale({ 0.8f,0.8f });
+	arrowLeftOn->SetPosition({ 0 - UIInitRange_,300,0 });
+	arrowLeftOff = new Sprite;
+	arrowLeftOff->Initialize(dxCommon_);
+	arrowLeftOff->LoadTexture(0, L"Resources/onLeft.png", dxCommon_);
+	arrowLeftOff->SetScale({ 0.8f,0.8f });
+	arrowLeftOff->SetPosition({ 0 - UIInitRange_,300,0 });
+}
+
+void GamePlayScene::UIInitMotion()
+{
+	if (isUIInit_ == false && player->GetIsInit() == true)
+	{
+		UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
+		UIInitTime_++;
+		arrowUpOn->SetPosition({ 600,0 - UIInitRange_ + UIInitPos_,0 });
+		arrowUpOff->SetPosition({ 600,0 - UIInitRange_ + UIInitPos_,0 });
+		arrowDownOn->SetPosition({ 600,640 + UIInitRange_ - UIInitPos_,0 });
+		arrowDownOff->SetPosition({ 600,640 + UIInitRange_ - UIInitPos_,0 });
+		arrowRightOn->SetPosition({ 1200 + UIInitRange_ - UIInitPos_,300,0 });
+		arrowRightOff->SetPosition({ 1200 + UIInitRange_ - UIInitPos_,300,0 });
+		arrowLeftOn->SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
+		arrowLeftOff->SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
+	}
+	if (UIInitPos_ >= UIInitRange_)
+	{
+		isUIInit_ = true;
+	}
+}
+
+void GamePlayScene::UIOutMotion()
+{
+	isNeutral_ = false;
+	if (isUIOut_ == false)
+	{
+		if (UIOutPos_ < UIOutRange_)
+		{
+			UIOutPos_ = UIOutRange_ * MathFunc::easeOutSine(UIOutTime_ / 30.0f);
+			UIOutTime_++;
+			arrowUpOn->SetPosition({ 600.0f,0.0f - UIOutPos_,0.0f });
+			arrowUpOff->SetPosition({ 600.0f,0.0f - UIOutPos_,0.0f });
+			arrowDownOn->SetPosition({ 600.0f,640.0f + UIOutPos_,0.0f });
+			arrowDownOff->SetPosition({ 600.0f,640.0f + UIOutPos_,0.0f });
+			arrowRightOn->SetPosition({ 1200.0f + UIOutPos_,300.0f,0.0f });
+			arrowRightOff->SetPosition({ 1200.0f + UIOutPos_,300.0f,0.0f });
+			arrowLeftOn->SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
+			arrowLeftOff->SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
+		}
+		else
+		{
+			UIOutPos_ = UIOutRange_;
+			isUIOut_ = true;
+		}
+	}
+}
+
+void GamePlayScene::UIUpdate()
+{
+	UIMove();
+	arrowUpOn->Update();
+	arrowUpOff->Update();
+	arrowDownOn->Update();
+	arrowDownOff->Update();
+	arrowRightOn->Update();
+	arrowRightOff->Update();
+	arrowLeftOn->Update();
+	arrowLeftOff->Update();
+}
+
+void GamePlayScene::UIDraw()
+{
+	//移動時のUI切り替え
+	if (isUp_ == true)
+	{
+		arrowUpOn->SetTextureCommands(0, dxCommon_);
+		arrowUpOn->Draw(dxCommon_);
+	}
+	else
+	{
+		arrowUpOff->SetTextureCommands(0, dxCommon_);
+		arrowUpOff->Draw(dxCommon_);
+	}
+	if (isDown_ == true)
+	{
+		arrowDownOn->SetTextureCommands(0, dxCommon_);
+		arrowDownOn->Draw(dxCommon_);
+	}
+	else
+	{
+		arrowDownOff->SetTextureCommands(0, dxCommon_);
+		arrowDownOff->Draw(dxCommon_);
+	}
+	if (isRight_ == true)
+	{
+		arrowRightOn->SetTextureCommands(0, dxCommon_);
+		arrowRightOn->Draw(dxCommon_);
+	}
+	else
+	{
+		arrowRightOff->SetTextureCommands(0, dxCommon_);
+		arrowRightOff->Draw(dxCommon_);
+	}
+	if (isLeft_ == true)
+	{
+		arrowLeftOn->SetTextureCommands(0, dxCommon_);
+		arrowLeftOn->Draw(dxCommon_);
+	}
+	else
+	{
+		arrowLeftOff->SetTextureCommands(0, dxCommon_);
+		arrowLeftOff->Draw(dxCommon_);
+	}
+}
+
+void GamePlayScene::UIMove()
+{
+	if (isUIInit_ == true&& isNeutral_ == true)
+	{
+		if (isMove_ == true)
+		{
+			UIMovePos_ = UIMoveRange_ * MathFunc::easeOutSine(UIMoveTime_ / 30.0f);
+			UIMoveTime_++;
+			if (UIMoveTime_ >= 60.0f)
+			{
+				isMove_ = false;
+				UIMoveTime_ = 0.0f;
+			}
+		}
+		else
+		{
+			UIMovePos_ = UIMoveRange_ * -MathFunc::easeOutSine(UIMoveTime_ / 30.0f);
+			UIMoveTime_++;
+			if (UIMoveTime_ >= 60.0f)
+			{
+				isMove_ = true;
+				UIMoveTime_ = 0.0f;
+			}
+		}
+		arrowUpOn->SetPosition({ 600,-UIMovePos_,0 });
+		arrowUpOff->SetPosition({ 600,-UIMovePos_,0 });
+		arrowDownOn->SetPosition({ 600,640 + UIMovePos_,0 });
+		arrowDownOff->SetPosition({ 600,640 + UIMovePos_,0 });
+		arrowRightOn->SetPosition({ 1200 + UIMovePos_,300,0 });
+		arrowRightOff->SetPosition({ 1200 + UIMovePos_,300,0 });
+		arrowLeftOn->SetPosition({ -UIMovePos_ ,300,0 });
+		arrowLeftOff->SetPosition({ -UIMovePos_ ,300,0 });
 	}
 }

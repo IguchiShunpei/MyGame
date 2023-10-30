@@ -38,6 +38,9 @@ public: //メンバ関数
 	//タイトルシーンのカメラワーク
 	void StartCameraWork(int num);
 
+	//ロゴ移動
+	void LogoOut();
+
 private: // メンバ変数
 	// 入力
 	Input* input_ = nullptr;
@@ -52,10 +55,23 @@ private: // メンバ変数
 	//カメラ
 	ViewProjection* viewProjection = nullptr;
 
+	//ロゴやUI
+	Sprite* titleLogo_ = nullptr;
+	Sprite* space_ = nullptr;
+	Sprite* loading = nullptr;
+	Sprite* black = nullptr;
+	//カメラワーク時の黒い縁
+	Sprite* outBrack[2];
+
+	float logoTime_;
+	float logoY_;
+
 	//自機の角度を保存
 	float plRotaY;
 	//天球の角度を保存
 	float skyRotaY;
+
+	float logoAlpha;
 
 	//タイトルカメラワーク
 	int titleNum;

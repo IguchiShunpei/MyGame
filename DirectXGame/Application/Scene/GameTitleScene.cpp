@@ -24,12 +24,24 @@ void GameTitleScene::Initialize()
 	//カメラ初期化
 	viewProjection = new ViewProjection();
 	viewProjection->Initialize();
-	viewProjection->SetEye(Vector3(0.0f, 2.0f, 20.0f));
+	viewProjection->SetEye(Vector3(0.0f, 4.0f, 18.0f));
 	viewProjection->SetTarget(Vector3(0.0f, -2.0f, 0.0f));
 
 	//天球
 	sky = new SkyDome;
 	sky->SkyDomeInitialize();
+
+	titleLogo_ = new Sprite;
+	titleLogo_->Initialize(dxCommon_);
+	titleLogo_->LoadTexture(0, L"Resources/title01.png", dxCommon_);
+	titleLogo_->SetScale({ 10,4 });
+	titleLogo_->SetPosition({ 170,-60,0 });
+
+	space_ = new Sprite;
+	space_->Initialize(dxCommon_);
+	space_->LoadTexture(0, L"Resources/space.png", dxCommon_);
+	space_->SetScale({ 4,1 });
+	space_->SetPosition({ 450,550,0 });
 
 	//タイトルカメラワーク
 	titleNum = 0;
@@ -75,6 +87,7 @@ void GameTitleScene::Update()
 	}
 	else
 	{
+		LogoOut();
 		if (isTitleCameraWork_ == false)
 		{
 			if (titleTimer_ <= 90)
@@ -120,7 +133,7 @@ void GameTitleScene::Update()
 				viewProjection->SetEye(Vector3(0.0f, -1.0f, 0.0f));
 				break;
 			}
-		
+
 		}
 		StartCameraWork(titleNum);
 		if (titleNum == 4)
@@ -131,6 +144,10 @@ void GameTitleScene::Update()
 	//天球
 	sky->Update();
 	viewProjection->UpdateMatrix();
+
+	//ロゴやUI
+	titleLogo_->Update();
+	space_->Update();
 }
 
 void GameTitleScene::Draw()
@@ -144,6 +161,12 @@ void GameTitleScene::Draw()
 
 	Object3d::PostDraw();
 
+	titleLogo_->SetTextureCommands(0, dxCommon_);
+	titleLogo_->Draw(dxCommon_);
+
+	space_->SetTextureCommands(0, dxCommon_);
+	space_->Draw(dxCommon_);
+
 	dxCommon_->PostDraw();
 
 }
@@ -153,6 +176,8 @@ void GameTitleScene::Finalize()
 	delete sky;
 	delete player;
 	delete viewProjection;
+	delete titleLogo_;
+	delete space_;
 }
 
 void GameTitleScene::StartCameraWork(int num)
@@ -178,5 +203,16 @@ void GameTitleScene::StartCameraWork(int num)
 		// ワールドトランスフォームの行列更新と転送
 		player->worldTransform_.UpdateMatrix();
 		break;
+	}
+}
+
+void GameTitleScene::LogoOut()
+{
+	if (logoTime_ <= 30.0f)
+	{
+		logoY_ = 300.0f * MathFunc::easeInSine(logoTime_ / 30.0f);
+		logoTime_++;
+		titleLogo_->SetPosition({ 170,-60 - logoY_,0 });
+		space_->SetPosition({ 450,550 + logoY_,0 });
 	}
 }
