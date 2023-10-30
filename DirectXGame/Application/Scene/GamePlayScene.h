@@ -93,13 +93,21 @@ public:
 	//レベルデータのロード
 	void LoadLevelData();
 
+	//UIの処理が多いので関数化
+	void UIInitialize();
+	void UIInitMotion();
+	void UIOutMotion();
+	void UIUpdate();
+	void UIDraw();
+	void UIMove();
+
 private://メンバ変数
 	//背景
-	SkyDome* sky;
+	SkyDome* sky_;
 	//入力
-	Input* input = nullptr;
+	Input* input_ = nullptr;
 	//DxCommon
-	DirectXCommon* dxCommon = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	//カメラ
 	ViewProjection* viewProjection = nullptr;
@@ -138,10 +146,47 @@ private://メンバ変数
 	ParticleManager* pm_bDmg = nullptr;
 
 	Meteor* objMeteor = nullptr;
-
 	Model* modelMeteor = nullptr;
-
 	Meteor* meteor;
+
+	//UI
+	Sprite* arrowUpOn = nullptr;
+	Sprite* arrowUpOff = nullptr;
+	Sprite* arrowDownOn = nullptr;
+	Sprite* arrowDownOff = nullptr;
+	Sprite* arrowRightOn = nullptr;
+	Sprite* arrowRightOff = nullptr;
+	Sprite* arrowLeftOn = nullptr;
+	Sprite* arrowLeftOff = nullptr;
+
+	//各方向フラグ
+	bool isUp_;
+	bool isDown_;
+	bool isRight_;
+	bool isLeft_;
+	bool isNeutral_;
+	bool isUIInit_;
+	bool isUIOut_;
+
+	//登場モーション範囲
+	float UIInitRange_;
+	//登場モーション時間
+	float UIInitTime_;
+	//登場モーション移動量
+	float UIInitPos_;
+	//退場モーション範囲
+	float UIOutRange_;
+	//退場モーション時間
+	float UIOutTime_;
+	//退場モーション移動量
+	float UIOutPos_;
+
+	//登場後モーション
+	//フラグ
+	bool isMove_;
+	float UIMoveTime_;
+	float UIMovePos_;
+	float UIMoveRange_;
 
 	//レベルデータ
 	LevelData* levelData = nullptr;
