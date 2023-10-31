@@ -19,6 +19,9 @@ public:
 	//スケール
 	void Scale();
 
+	//サイズを設定
+	void SetSize();
+
 	//移動
 	void Move();
 
@@ -56,4 +59,8 @@ private:
 	int rotaDirection_;
 	//回転の速度
 	float rotaSpeed_;
+	//サイズ乱数を受け取る変数
+	int meteorSize_;
+	//サイズ
+	Vector3 size_;
 };

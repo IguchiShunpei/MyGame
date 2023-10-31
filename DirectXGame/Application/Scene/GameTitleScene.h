@@ -10,6 +10,7 @@
 #include "viewProjection.h"
 #include "Sound.h"
 #include "Player.h"
+#include"Explosion.h"
 
 #include <DirectXMath.h>
 
@@ -52,6 +53,8 @@ private: // メンバ変数
 	//プレイヤー
 	Player* player;
 
+	Explosion* ex;
+
 	//カメラ
 	ViewProjection* viewProjection = nullptr;
 
@@ -84,4 +87,5 @@ private: // メンバ変数
 
 	//カメラ座標を保存する変数
 	Vector3 cameraWorkPos_;
+
 };

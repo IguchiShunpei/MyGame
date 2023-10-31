@@ -14,15 +14,22 @@ void Meteor::MeteorInitialize()
 	levRange_ = 1.0f;
 
 	rotaSpeed_ = 2.0f;
+	size_ = Vector3(0.0f, 0.0f, 0.0f);
 
 	//乱数生成装置
 	std::random_device seed_gen;
 	std::mt19937 engine(seed_gen());
-	std::uniform_int_distribution<> rotaDirection(0, 5);
 	//ランダムで回転方向を割り当てる
+	std::uniform_int_distribution<> rotaDirection(0, 5);
 	rotaDirection_ = rotaDirection(engine);
+	//ランダムで上下を割り当てる
 	std::uniform_int_distribution<> levDirection(0, 1);
 	levDirection_ = levDirection(engine);
+	//ランダムでサイズを割り当てる
+	std::uniform_int_distribution<> meteorSize(0, 3);
+	meteorSize_ = meteorSize(engine);
+
+	SetSize();
 
 	isUp_ = true;
 }
@@ -43,7 +50,7 @@ void Meteor::MeteorUpdate()
 
 void Meteor::Scale()
 {
-	if (worldTransform_.scale_.x < 1.0f)
+	if (worldTransform_.scale_.x < size_.x)
 	{
 		worldTransform_.scale_.x += 0.005f;
 		worldTransform_.scale_.y += 0.005f;
@@ -51,9 +58,27 @@ void Meteor::Scale()
 	}
 	else
 	{
-		worldTransform_.scale_.x = 1.0f;
-		worldTransform_.scale_.y = 1.0f;
-		worldTransform_.scale_.z = 1.0f;
+		worldTransform_.scale_ = size_;
+	}
+}
+
+void Meteor::SetSize()
+{
+	//割り当てられたサイズを実行
+	switch (meteorSize_)
+	{
+	case 0:
+		size_ = {0.25f,0.25f,0.25f};
+		break;
+	case 1:
+		size_ = { 0.5f,0.5f,0.5f };
+		break;
+	case 2:
+		size_ = { 1.0f,1.0f,1.0f };
+		break;
+	case 3:
+		size_ = { 1.5f,1.5f,1.5f };
+		break;
 	}
 }
 

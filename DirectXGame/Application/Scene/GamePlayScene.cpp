@@ -37,6 +37,12 @@ void GamePlayScene::Initialize()
 	sky_ = new SkyDome;
 	sky_->SkyDomeInitialize();
 
+	//爆発
+	explosion01_ = new Explosion;
+	explosion01_->ExplosionInitialize(0);
+	explosion02_ = new Explosion;
+	explosion02_->ExplosionInitialize(1);
+
 	//player 
 	player = new Player;
 	player->PlayerInitialize();
@@ -349,6 +355,8 @@ void GamePlayScene::Update()
 			{
 				Vector3 deadPos{};
 				deadPos = bEnemy->GetPosition();
+				explosion01_->SetPosition(Vector3( deadPos.x,deadPos.y,deadPos.z - 2.0f ));
+				explosion02_->SetPosition(Vector3(deadPos.x, deadPos.y, deadPos.z - 1.0f));
 				pm_bDmg->Fire(p_bDmg, 50, { deadPos.x,deadPos.y,deadPos.z }, 0, 4, { 4.0f, 0.0f });
 			}
 		}
@@ -363,6 +371,18 @@ void GamePlayScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
+	sky_->Draw(viewProjection);
+
+	//カメラシェイク中は点滅
+	if (hitTimer_ % 2 != 1)
+	{
+		player->Draw(viewProjection);
+	}
+	player->BulletDraw(viewProjection);
+
+	for (auto& object : meteorObjects) {
+		object->Draw(viewProjection);
+	}
 	switch (gameNum)
 	{
 	case FirstScene:
@@ -396,16 +416,10 @@ void GamePlayScene::Draw()
 		break;
 	}
 
-	sky_->Draw(viewProjection);
-	//カメラシェイク中は点滅
-	if (hitTimer_ % 2 != 1)
+	if (isBEnemyDeadScene_ == true)
 	{
-		player->Draw(viewProjection);
-	}
-	player->BulletDraw(viewProjection);
-
-	for (auto& object : meteorObjects) {
-		object->Draw(viewProjection);
+		explosion01_->ExplosionDraw(viewProjection);
+		explosion02_->ExplosionDraw(viewProjection);
 	}
 
 	Object3d::PostDraw();
@@ -440,6 +454,8 @@ void GamePlayScene::Finalize()
 	delete invEnemy;
 	delete p_dmg;
 	delete pm_dmg;
+	delete explosion01_;
+	delete explosion02_;
 
 	//カメラ解放
 	delete viewProjection;
@@ -673,8 +689,10 @@ void GamePlayScene::BossAppears()
 	}
 }
 void GamePlayScene::BossDead()
-{
+ {
 	UIOutMotion();
+	explosion01_->Update();
+	explosion02_->Update();
 	//墜落
 	bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
 	bEnemy->worldTransform_.scale_ -= Vector3(0.005f, 0.005f, 0.005f);
