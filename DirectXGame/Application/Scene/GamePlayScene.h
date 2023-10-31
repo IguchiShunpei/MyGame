@@ -18,6 +18,7 @@
 #include "WeakEnemy.h"
 #include "BossEnemy.h"
 #include "Sound.h"
+#include "Explosion.h"
 
 #include<cassert>
 #include<vector>
@@ -147,7 +148,10 @@ private://メンバ変数
 
 	Meteor* objMeteor = nullptr;
 	Model* modelMeteor = nullptr;
-	Meteor* meteor;
+	Meteor* meteor = nullptr;
+
+	Explosion* explosion01_ = nullptr;
+	Explosion* explosion02_ = nullptr;
 
 	//UI
 	Sprite* arrowUpOn = nullptr;

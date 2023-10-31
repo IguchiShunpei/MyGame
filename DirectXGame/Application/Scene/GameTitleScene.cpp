@@ -53,6 +53,7 @@ void GameTitleScene::Initialize()
 	//フラグ
 	isBeforeCameraWork_ = false;
 	isTitleCameraWork_ = false;
+
 }
 
 void GameTitleScene::Update()
