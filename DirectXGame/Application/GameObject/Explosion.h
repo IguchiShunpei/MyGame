@@ -10,7 +10,7 @@ public:
 	//初期化
 	void ExplosionInitialize(int num);
 
-	void Update();
+	void ExplosionUpdate();
 
 	void ExplosionDraw(ViewProjection* viewProjection_);
 

@@ -8,6 +8,7 @@
 #include "GameTitleScene.h"
 #include "SkyDome.h"
 #include "Sound.h"
+#include "Black.h"
 
 #include <DirectXMath.h>
 
@@ -36,10 +37,14 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	DirectXCommon* dxCommon_ = nullptr;
 	SkyDome* sky_;
+	Black* black_;
 	//カメラ
 	ViewProjection* viewProjection_ = nullptr;
 	Sprite* space_ = nullptr;
 	Sprite* gameOverLogo_ = nullptr;
+
+	bool isToTitle_;
+	int toTitleTimer_;
 
 	bool isUp_;
 	float logoTime_;

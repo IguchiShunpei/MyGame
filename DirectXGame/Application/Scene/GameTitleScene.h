@@ -11,6 +11,7 @@
 #include "Sound.h"
 #include "Player.h"
 #include"Explosion.h"
+#include"Black.h"
 
 #include <DirectXMath.h>
 
@@ -56,16 +57,19 @@ private: // メンバ変数
 	Explosion* ex;
 
 	//カメラ
-	ViewProjection* viewProjection = nullptr;
+	ViewProjection* viewProjection_ = nullptr;
 
 	//ロゴやUI
 	Sprite* titleLogo_ = nullptr;
 	Sprite* space_ = nullptr;
 	Sprite* loading = nullptr;
-	Sprite* black = nullptr;
-	//カメラワーク時の黒い縁
-	Sprite* outBrack[2];
+	
+	Black* black_ = nullptr;
 
+	//カメラワーク時の黒い縁
+	Sprite* outBlack[2];
+
+	//タイトル
 	float logoTime_;
 	float logoY_;
 
@@ -73,8 +77,6 @@ private: // メンバ変数
 	float plRotaY;
 	//天球の角度を保存
 	float skyRotaY;
-
-	float logoAlpha;
 
 	//タイトルカメラワーク
 	int titleNum;

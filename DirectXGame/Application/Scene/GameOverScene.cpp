@@ -24,6 +24,11 @@ void GameOverScene::Initialize()
 	viewProjection_->Initialize();
 	viewProjection_->SetEye(Vector3(0.0f, 0.0f, 20.0f));
 
+	//黒
+	black_ = new Black;
+	black_->BlackInitialize();
+	black_->SetPosition(Vector3(0.0f, 0.0f, 19.0f));
+
 	space_ = new Sprite;
 	space_->Initialize(dxCommon_);
 	space_->LoadTexture(0, L"Resources/space.png", dxCommon_);
@@ -35,10 +40,15 @@ void GameOverScene::Initialize()
 	gameOverLogo_->LoadTexture(0, L"Resources/gameOver.png", dxCommon_);
 	gameOverLogo_->SetScale({ 10,4 });
 	gameOverLogo_->SetPosition({ 170,-60,0 });
+	
+	isUp_ = true;
+	isToTitle_ = false;
+	toTitleTimer_ = 0;
 }
 
 void GameOverScene::Update()
 {
+	black_->Update();
 	//天球
 	sky_->Update();
 	viewProjection_->UpdateMatrix();
@@ -68,11 +78,20 @@ void GameOverScene::Update()
 	}
 	gameOverLogo_->SetPosition({ 160,logoY_,0 });
 	gameOverLogo_->Update();
-
+	black_->BlackUpdate();
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE) == true)
 	{
-		//TITLE（次シーン）を生成
-		GameSceneManager::GetInstance()->ChangeScene("TITLE");
+		isToTitle_ = true;
+	}
+	if (isToTitle_ == true)
+	{
+		black_->SetIsFinish(true);
+		toTitleTimer_++;
+		if (toTitleTimer_ >= 100)
+		{
+			//TITLE（次シーン）を生成
+			GameSceneManager::GetInstance()->ChangeScene("TITLE");
+		}
 	}
 }
 
@@ -91,6 +110,12 @@ void GameOverScene::Draw()
 	space_->Draw(dxCommon_);
 	gameOverLogo_->SetTextureCommands(0, dxCommon_);
 	gameOverLogo_->Draw(dxCommon_);
+
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+
+	black_->BlackDraw(viewProjection_);
+
+	Object3d::PostDraw();
 
 	// 描画後処理
 	dxCommon_->PostDraw();

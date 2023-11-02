@@ -22,14 +22,18 @@ void GameTitleScene::Initialize()
 	player->SetPosition(Vector3(0.0f, -2.0f, 0.0f));
 
 	//カメラ初期化
-	viewProjection = new ViewProjection();
-	viewProjection->Initialize();
-	viewProjection->SetEye(Vector3(0.0f, 4.0f, 18.0f));
-	viewProjection->SetTarget(Vector3(0.0f, -2.0f, 0.0f));
+	viewProjection_ = new ViewProjection();
+	viewProjection_->Initialize();
+	viewProjection_->SetEye(Vector3(0.0f, 4.0f, 18.0f));
+	viewProjection_->SetTarget(Vector3(0.0f, -2.0f, 0.0f));
 
 	//天球
 	sky = new SkyDome;
 	sky->SkyDomeInitialize();
+
+	black_ = new Black;
+	black_->BlackInitialize();
+	black_->SetPosition(Vector3(0.0f, 4.0f, 17.0f));
 
 	titleLogo_ = new Sprite;
 	titleLogo_->Initialize(dxCommon_);
@@ -53,15 +57,15 @@ void GameTitleScene::Initialize()
 	//フラグ
 	isBeforeCameraWork_ = false;
 	isTitleCameraWork_ = false;
-
 }
 
 void GameTitleScene::Update()
 {
+	black_->BlackUpdate();
 	//待機時
 	if (isBeforeCameraWork_ == false)
 	{
-		viewProjection->SetTarget(player->GetWorldPosition());
+		viewProjection_->SetTarget(player->GetWorldPosition());
 		if (player->worldTransform_.rotation_.y <= 360.0f)
 		{
 			player->worldTransform_.rotation_.y += 0.4f;
@@ -121,17 +125,17 @@ void GameTitleScene::Update()
 			switch (titleNum)
 			{
 			case 1:
-				viewProjection->SetTarget(player->GetWorldPosition());
-				viewProjection->SetEye(Vector3(0.0f, 0.0f, 7.0f));
+				viewProjection_->SetTarget(player->GetWorldPosition());
+				viewProjection_->SetEye(Vector3(0.0f, 0.0f, 7.0f));
 				break;
 			case 2:
-				viewProjection->SetTarget(player->GetWorldPosition());
-				viewProjection->SetEye(Vector3(0.0f, 2.0f, 1.0f));
-				cameraWorkPos_ = viewProjection->eye_;
+				viewProjection_->SetTarget(player->GetWorldPosition());
+				viewProjection_->SetEye(Vector3(0.0f, 2.0f, 1.0f));
+				cameraWorkPos_ = viewProjection_->eye_;
 				break;
 			case 3:
-				viewProjection->SetTarget(Vector3(0.0f, 0.0f, 100.0f));
-				viewProjection->SetEye(Vector3(0.0f, -1.0f, 0.0f));
+				viewProjection_->SetTarget(Vector3(0.0f, 0.0f, 100.0f));
+				viewProjection_->SetEye(Vector3(0.0f, -1.0f, 0.0f));
 				break;
 			}
 
@@ -144,7 +148,7 @@ void GameTitleScene::Update()
 	}
 	//天球
 	sky->Update();
-	viewProjection->UpdateMatrix();
+	viewProjection_->UpdateMatrix();
 
 	//ロゴやUI
 	titleLogo_->Update();
@@ -157,8 +161,8 @@ void GameTitleScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	sky->Draw(viewProjection);
-	player->Draw(viewProjection);
+	sky->Draw(viewProjection_);
+	player->Draw(viewProjection_);
 
 	Object3d::PostDraw();
 
@@ -168,17 +172,23 @@ void GameTitleScene::Draw()
 	space_->SetTextureCommands(0, dxCommon_);
 	space_->Draw(dxCommon_);
 
-	dxCommon_->PostDraw();
+	Object3d::PreDraw(dxCommon_->GetCommandList());
 
+	black_->BlackDraw(viewProjection_);
+
+	Object3d::PostDraw();
+
+	dxCommon_->PostDraw();
 }
 
 void GameTitleScene::Finalize()
 {
 	delete sky;
 	delete player;
-	delete viewProjection;
+	delete viewProjection_;
 	delete titleLogo_;
 	delete space_;
+	delete black_;
 }
 
 void GameTitleScene::StartCameraWork(int num)
@@ -186,20 +196,21 @@ void GameTitleScene::StartCameraWork(int num)
 	switch (num)
 	{
 	case 0:
-		viewProjection->SetEye(Vector3(0.0f, 0.0f, 10.0f));
-		viewProjection->eye_.x = 15.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
-		viewProjection->eye_.y = 10.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		viewProjection_->SetEye(Vector3(0.0f, 0.0f, 10.0f));
+		viewProjection_->eye_.x = 15.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		viewProjection_->eye_.y = 10.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		break;
 	case 1:
-		viewProjection->eye_.x = 20.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		viewProjection_->eye_.x = 20.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		break;
 	case 2:
-		viewProjection->eye_.z = cameraWorkPos_.z + 30.0f * MathFunc::easeOutSine(titleTimer_ / 60.0f);
+		viewProjection_->eye_.z = cameraWorkPos_.z + 30.0f * MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		break;
 	case 3:
+		black_->SetIsFinish(true);
 		//自機を動かす
 		player->worldTransform_.position_.z++;
-		viewProjection->eye_.z -= 1.5f;
+		viewProjection_->eye_.z -= 1.5f;
 		player->worldTransform_.rotation_.z = 360.0f * -MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		// ワールドトランスフォームの行列更新と転送
 		player->worldTransform_.UpdateMatrix();
