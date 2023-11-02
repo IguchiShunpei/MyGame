@@ -102,6 +102,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXGame\Application\GameObject\Black.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\BossEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyBullet.cpp" />
@@ -111,6 +112,7 @@
     <ClCompile Include="DirectXGame\Application\GameObject\Meteor.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\PlayerBullet.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Red.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GameClearScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GameOverScene.cpp" />
@@ -231,6 +233,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXGame\Application\GameObject\Black.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\BossEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyBullet.h" />
@@ -240,6 +243,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\Meteor.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\PlayerBullet.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Red.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\SkyDome.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GameClearScene.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GameOverScene.h" />

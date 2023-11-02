@@ -29,13 +29,23 @@ void GamePlayScene::Initialize()
 	collisionManager = CollisionManager::GetInstance();
 
 	//カメラ初期化
-	viewProjection = new ViewProjection();
+	viewProjection_ = new ViewProjection();
 	xmViewProjection = new XMViewProjection();
-	viewProjection->Initialize();
+	viewProjection_->Initialize();
 
 	//天球
 	sky_ = new SkyDome;
 	sky_->SkyDomeInitialize();
+
+	//黒
+	black_ = new Black;
+	black_->BlackInitialize();
+	black_->SetPosition(Vector3(0.0f, -2.0f, -18.0f));
+
+	//黒
+	red_ = new Red;
+	red_->RedInitialize();
+	red_->SetPosition(Vector3(0.0f, -2.0f, -19.0f));
 
 	//爆発
 	explosion01_ = new Explosion;
@@ -107,6 +117,9 @@ void GamePlayScene::Initialize()
 
 void GamePlayScene::Update()
 {
+	black_->BlackUpdate();
+	red_->RedUpdate();
+
 	//デスフラグの立った敵を削除
 	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
 		{
@@ -136,9 +149,6 @@ void GamePlayScene::Update()
 	UIInitMotion();
 	//ボスの登場演出
 	BossAppears();
-
-	//カメラ
-	viewProjection->UpdateMatrix();
 
 	for (auto& object : meteorObjects)
 	{
@@ -197,12 +207,12 @@ void GamePlayScene::Update()
 			//死亡フラグがtrueになったら
 			if (bEnemy->GetIsDead() == true)
 			{
-				viewProjection->SetEye(cameraWorkPos_);
+				viewProjection_->SetEye(cameraWorkPos_);
 				isClearScene_ = true;
 			}
 			else
 			{
-				cameraWorkPos_ = viewProjection->GetEye();
+				cameraWorkPos_ = viewProjection_->GetEye();
 			}
 			//クリア演出の処理
 			ToClearScene();
@@ -218,7 +228,7 @@ void GamePlayScene::Update()
 			if (input_->PushKey(DIK_UP))
 			{
 				isUp_ = true;
-				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, -0.05f, 0));
+				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, -0.05f, 0));
 			}
 			else
 			{
@@ -227,7 +237,7 @@ void GamePlayScene::Update()
 			if (input_->PushKey(DIK_RIGHT))
 			{
 				isRight_ = true;
-				viewProjection->SetEye(viewProjection->GetEye() + Vector3(-0.05f, 0, 0));
+				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(-0.05f, 0, 0));
 			}
 			else
 			{
@@ -236,7 +246,7 @@ void GamePlayScene::Update()
 			if (input_->PushKey(DIK_LEFT))
 			{
 				isLeft_ = true;
-				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0.05f, 0, 0));
+				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0.05f, 0, 0));
 			}
 			else
 			{
@@ -245,7 +255,7 @@ void GamePlayScene::Update()
 			if (input_->PushKey(DIK_DOWN))
 			{
 				isDown_ = true;
-				viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0.05f, 0));
+				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0.05f, 0));
 			}
 			else
 			{
@@ -257,10 +267,10 @@ void GamePlayScene::Update()
 			const float kCameraLimitY = 1.1f * 1.7f;
 
 			//範囲を超えない処理
-			viewProjection->eye_.x = max(viewProjection->eye_.x, -kCameraLimitX);
-			viewProjection->eye_.x = min(viewProjection->eye_.x, +kCameraLimitX);
-			viewProjection->eye_.y = max(viewProjection->eye_.y, -kCameraLimitY);
-			viewProjection->eye_.y = min(viewProjection->eye_.y, +kCameraLimitY);
+			viewProjection_->eye_.x = max(viewProjection_->eye_.x, -kCameraLimitX);
+			viewProjection_->eye_.x = min(viewProjection_->eye_.x, +kCameraLimitX);
+			viewProjection_->eye_.y = max(viewProjection_->eye_.y, -kCameraLimitY);
+			viewProjection_->eye_.y = min(viewProjection_->eye_.y, +kCameraLimitY);
 
 			player->Update();
 			player->ColliderUpdate();
@@ -292,13 +302,14 @@ void GamePlayScene::Update()
 	{
 		if (player->GetIsHit() == false)
 		{
-			cameraWorkPos_ = viewProjection->GetEye();
+			cameraWorkPos_ = viewProjection_->GetEye();
 		}
 		else
 		{
 			//攻撃を受けた時の無敵フラグがtrueになったら
 			if (player->GetIsInv() == true)
 			{
+				red_->SetIsRed(true);
 				//無敵時間
 				hitTimer_++;
 				if (hitTimer_ < 16)
@@ -362,6 +373,9 @@ void GamePlayScene::Update()
 		}
 	}
 	ToGameOverScene();
+
+	//カメラ
+	viewProjection_->UpdateMatrix();
 }
 
 void GamePlayScene::Draw()
@@ -371,17 +385,17 @@ void GamePlayScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	sky_->Draw(viewProjection);
+	sky_->Draw(viewProjection_);
 
 	//カメラシェイク中は点滅
 	if (hitTimer_ % 2 != 1)
 	{
-		player->Draw(viewProjection);
+		player->Draw(viewProjection_);
 	}
-	player->BulletDraw(viewProjection);
+	player->BulletDraw(viewProjection_);
 
 	for (auto& object : meteorObjects) {
-		object->Draw(viewProjection);
+		object->Draw(viewProjection_);
 	}
 	switch (gameNum)
 	{
@@ -389,11 +403,11 @@ void GamePlayScene::Draw()
 		//雑魚敵
 		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 		{
-			wEnemys->Draw(viewProjection);
+			wEnemys->Draw(viewProjection_);
 		}
 		for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
 		{
-			invEnemys->Draw(viewProjection);
+			invEnemys->Draw(viewProjection_);
 		}
 		break;
 
@@ -401,16 +415,16 @@ void GamePlayScene::Draw()
 		//敵
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
-			enemys->Draw(viewProjection, 1.0f, enemys->GetColor());
+			enemys->Draw(viewProjection_, 1.0f, enemys->GetColor());
 
-			enemys->BulletDraw(viewProjection);
+			enemys->BulletDraw(viewProjection_);
 		}
 		//ボス敵
 		if (isBossinit_ == true)
 		{
 			if (bEnemy->GetIsDead() == false)
 			{
-				bEnemy->Draw(viewProjection, bossAlpha_, bEnemy->GetColor());
+				bEnemy->Draw(viewProjection_, bossAlpha_, bEnemy->GetColor());
 			}
 		}
 		break;
@@ -418,8 +432,8 @@ void GamePlayScene::Draw()
 
 	if (isBEnemyDeadScene_ == true)
 	{
-		explosion01_->ExplosionDraw(viewProjection);
-		explosion02_->ExplosionDraw(viewProjection);
+		explosion01_->ExplosionDraw(viewProjection_);
+		explosion02_->ExplosionDraw(viewProjection_);
 	}
 
 	Object3d::PostDraw();
@@ -435,6 +449,13 @@ void GamePlayScene::Draw()
 	ParticleManager::PostDraw();
 
 	UIDraw();
+
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+
+	black_->BlackDraw(viewProjection_);
+	red_->RedDraw(viewProjection_);
+
+	Object3d::PostDraw();
 
 	// 描画後処理
 	dxCommon_->PostDraw();
@@ -456,15 +477,17 @@ void GamePlayScene::Finalize()
 	delete pm_dmg;
 	delete explosion01_;
 	delete explosion02_;
+	delete black_;
+	delete red_;
 
 	//カメラ解放
-	delete viewProjection;
+	delete viewProjection_;
 	delete xmViewProjection;
 }
 
 void GamePlayScene::GameReset()
 {
-	viewProjection->Initialize();
+	viewProjection_->Initialize();
 }
 
 void GamePlayScene::LoadEnemyPop()
@@ -649,7 +672,7 @@ void GamePlayScene::UpdateEnemyPop()
 		{
 			isBossScene_ = true;
 			gameNum = GameNum::BossScene;
-			cameraWorkPos_ = viewProjection->GetEye();
+			cameraWorkPos_ = viewProjection_->GetEye();
 		}
 	}
 }
@@ -664,9 +687,9 @@ void GamePlayScene::BossAppears()
 	//接近するカメラワーク
 	if (isBossScene_ == true)
 	{
-		if (viewProjection->eye_.z <= 10)
+		if (viewProjection_->eye_.z <= 10)
 		{
-			viewProjection->SetEye(viewProjection->GetEye() + Vector3(0, 0, 10) * MathFunc::easeInSine(bossAppTimer_ / 180.0f));
+			viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0, 10) * MathFunc::easeInSine(bossAppTimer_ / 180.0f));
 		}
 		if (bossAppTimer_ >= 180)
 		{
@@ -677,13 +700,13 @@ void GamePlayScene::BossAppears()
 	//引くカメラワーク
 	else if (isBossScene_ == false && bossAppTimer_ >= 180)
 	{
-		if (viewProjection->eye_.z > -20)
+		if (viewProjection_->eye_.z > -20)
 		{
-			viewProjection->SetEye(viewProjection->GetEye() - Vector3(0, 0, 1.0f));
+			viewProjection_->SetEye(viewProjection_->GetEye() - Vector3(0, 0, 1.0f));
 		}
 		else
 		{
-			viewProjection->SetEye(cameraWorkPos_);
+			viewProjection_->SetEye(cameraWorkPos_);
 			bossAppTimer_ = 0;
 		}
 	}
@@ -691,8 +714,8 @@ void GamePlayScene::BossAppears()
 void GamePlayScene::BossDead()
  {
 	UIOutMotion();
-	explosion01_->Update();
-	explosion02_->Update();
+	explosion01_->ExplosionUpdate();
+	explosion02_->ExplosionUpdate();
 	//墜落
 	bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
 	bEnemy->worldTransform_.scale_ -= Vector3(0.005f, 0.005f, 0.005f);
@@ -749,6 +772,7 @@ void GamePlayScene::ToClearScene()
 {
 	if (isClearScene_ == true)
 	{
+		black_->SetIsFinish(true);
 		//自機を動かす
 		player->worldTransform_.position_.z++;
 		// ワールドトランスフォームの行列更新と転送
@@ -756,7 +780,6 @@ void GamePlayScene::ToClearScene()
 		//自機が移動しきったらシーン遷移
 		if (player->worldTransform_.position_.z >= 100)
 		{
-
 			GameSceneManager::GetInstance()->ChangeScene("CLEAR");
 			isClearScene_ = false;
 		}
@@ -766,6 +789,7 @@ void GamePlayScene::ToGameOverScene()
 {
 	if (player->GetIsDead() == true)
 	{
+		black_->SetIsFinish(true);
 		UIOutMotion();
 		CameraShake(0.3f, 0.3f);
 		//自機を動かす
@@ -781,15 +805,15 @@ void GamePlayScene::ToGameOverScene()
 }
 void GamePlayScene::CameraShake(float x, float y)
 {
-	viewProjection->eye_ = cameraWorkPos_;
+	viewProjection_->eye_ = cameraWorkPos_;
 	//乱数生成装置
 	std::random_device seed_gen;
 	std::mt19937_64 engine(seed_gen());
 	std::uniform_real_distribution<float>dist(-x, x);
 	std::uniform_real_distribution<float>dist2(-y, y);
 
-	viewProjection->eye_ = viewProjection->eye_ + Vector3(dist(engine), dist2(engine), dist2(engine));
-	viewProjection->UpdateMatrix();
+	viewProjection_->eye_ = viewProjection_->eye_ + Vector3(dist(engine), dist2(engine), dist2(engine));
+	viewProjection_->UpdateMatrix();
 }
 
 void GamePlayScene::LoadLevelData()

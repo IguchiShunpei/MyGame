@@ -1,4 +1,5 @@
 #include "Explosion.h"
+#include "GamePlayScene.h"
 
 Explosion::~Explosion()
 {
@@ -18,7 +19,7 @@ void Explosion::ExplosionInitialize(int num)
 		Create();
 		// オブジェクトにモデルをひも付ける
 		SetModel(explosionModel01_);
-		scaleNum_ = Vector3(0.3f, 0.3f, 0.3f);
+		scaleNum_ = Vector3(0.1f, 0.1f, 0.1f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}
 	else if(num == 1)
@@ -29,7 +30,7 @@ void Explosion::ExplosionInitialize(int num)
 		Create();
 		// オブジェクトにモデルをひも付ける
 		SetModel(explosionModel02_);
-		scaleNum_ = Vector3(0.2f, 0.2f, 0.2f);
+		scaleNum_ = Vector3(0.05f, 0.05f, 0.05f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}
 	SetPosition(Vector3(0.0f, 0.0f, 0.0f));
@@ -38,14 +39,25 @@ void Explosion::ExplosionInitialize(int num)
 	alpha_ = 0.8f;
 }
 
-void Explosion::Update()
+void Explosion::ExplosionUpdate()
 {
+	worldTransform_.position_ = { 0.0f,0.0f,0.0f };
+	worldTransform_.UpdateMatrix();
+
+	//乱数生成装置
+	std::random_device seed_gen;
+	std::mt19937_64 engine(seed_gen());
+	std::uniform_real_distribution<float>dist(-1.0, 1.0);
+	std::uniform_real_distribution<float>dist2(-1.0, 1.0);
+
+	worldTransform_.position_ += Vector3(dist(engine), dist2(engine), dist2(engine));
+
 	worldTransform_.scale_ += scaleNum_;
 	if (alpha_ >= 0.0f)
 	{
 		alpha_ -= 0.0045f;
 	}
-	worldTransform_.UpdateMatrix();
+	Update();
 }
 
 void Explosion::ExplosionDraw(ViewProjection* viewProjection_)

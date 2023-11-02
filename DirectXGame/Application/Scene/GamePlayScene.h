@@ -19,6 +19,8 @@
 #include "BossEnemy.h"
 #include "Sound.h"
 #include "Explosion.h"
+#include "Black.h"
+#include "Red.h"
 
 #include<cassert>
 #include<vector>
@@ -111,7 +113,7 @@ private://メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 
 	//カメラ
-	ViewProjection* viewProjection = nullptr;
+	ViewProjection* viewProjection_ = nullptr;
 	XMViewProjection* xmViewProjection = nullptr;
 
 	//プレイヤー
@@ -152,6 +154,9 @@ private://メンバ変数
 
 	Explosion* explosion01_ = nullptr;
 	Explosion* explosion02_ = nullptr;
+
+	Black* black_ = nullptr;
+	Red* red_ = nullptr;
 
 	//UI
 	Sprite* arrowUpOn = nullptr;
