@@ -127,45 +127,7 @@ wait 20
 
 wEnemy L -10 -5 100 
 
-wait 180
+wait 240
 
 //ボス戦
 BOSS
-
-wait 150
-
-enemy HP 5 -7 7 100 //攻撃する敵 体力 生成座標
-
-wait 0
-
-enemy HP 5 0 7 100
-
-wait 0
-
-enemy HP 5 7 7 100
-
-wait 0
-
-enemy HP 5 7 0 100
-
-wait 0
-
-enemy HP 5 7 -7 100
-
-wait 0
-
-enemy HP 5 0 -7 100
-
-wait 0
-
-enemy HP 5 -7 -7 100
-
-wait 0
-
-enemy HP 5 -7 0 100
-
-wait 0
-
-bossEnemy HP 10 0 0 100 //ボス敵 体力 生成座標
-
-wait 50

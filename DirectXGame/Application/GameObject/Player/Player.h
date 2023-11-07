@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Object3d.h"
 #include "WinApp.h"
 #include "Vector3.h"
@@ -92,7 +92,7 @@ private:
 	//弾種類
 	int bulletNum_;
 	//体力
-	int hp_ = 10;
+	int hp_;
 
 	//タイマー
 	//打ち出すまでの時間

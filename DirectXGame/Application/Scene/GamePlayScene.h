@@ -46,9 +46,19 @@ public:
 	//ゲームシーンの切り替え
 	enum GameNum
 	{
-		FirstScene,
-		BossScene,
+		FirstScene, //道中
+		BossScene  //ボス戦
 	};
+public:
+	//ゲームシーンの切り替え
+	enum BossInitNum
+	{
+		NONE,
+		Up,     //寄る
+		InitCameraWork, //登場カメラワーク
+		Loose   //引く
+	};
+
 public:
 	GamePlayScene();
 	~GamePlayScene();
@@ -78,8 +88,20 @@ public:
 	void LoadEnemyPop();
 	void UpdateEnemyPop();
 
+	//プレイヤー登場演出
+	void PlayerInit();
+
+	//プレイヤー登場カメラワーク
+	void PlayerInitCameraWork();
+
+	//プレイヤー死亡演出
+	void PlayerDead();
+
 	//BOSS戦前の演出
-	void BossAppears();
+	void BossInit();
+
+	//プレイヤー登場カメラワーク
+	void BossInitCameraWork();
 
 	//ボス敵の死亡演出
 	void BossDead();
@@ -205,12 +227,13 @@ private://メンバ変数
 	std::vector<Meteor*> meteorObjects;
 
 	//シーン番号
-	int gameNum;
-	//wave番号
-	int waveNum;
+	int gameNum_;
+	//ボス登場番号
+	int bossInitNum_;
 
 	//カメラワーク前の座標を入れる変数
 	Vector3 cameraWorkPos_;
+	Vector3 bossInitCameraPos_;
 	//墜落演出の墜落量
 	int gameOverNum_;
 	//ボスの墜落時のシェイク範囲
@@ -224,8 +247,10 @@ private://メンバ変数
 	float bossAlphaNum_;
 
 	//フラグ
-	//ボス戦に入ったか
-	bool isBossScene_;
+	//自機が登場したか
+	bool isPlayerInit_;
+	//ボス戦演出フラグ
+	bool isBossInitCamera_;
 	//敵を発生させるときの待機フラグ
 	bool isWait_;
 	//クリア演出フラグ
@@ -234,8 +259,6 @@ private://メンバ変数
 	bool isBossEffect_;
 	//ボス死亡フラグ
 	bool isBEnemyDeadScene_;
-	//ボスが読み込まれたか
-	bool isBossinit_;
 	//ボスのシェイク
 	bool bossShake_;
 	//ボスalpha
@@ -252,4 +275,6 @@ private://メンバ変数
 	float clearTimer_;
 	//敵の攻撃に当たった時の演出時間
 	int hitTimer_;
+	//ボス登場タイマー
+	int initTimer_;
 };

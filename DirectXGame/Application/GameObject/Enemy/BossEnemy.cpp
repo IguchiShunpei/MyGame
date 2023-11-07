@@ -19,11 +19,16 @@ void BossEnemy::BossEnemyInitialize()
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyModel);
+	SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+	SetScale({ 1.0f,1.0f,1.0f });
+	beforeY_ = 120.0f;
+	SetPosition({0.0f,beforeY_,100.0f});
 	isDead_ = false;
 	isDeathTimer_ = false;
 	deathTimer_ = 180;
 	isInit_ = false;
-	initTime_ = 60.0f;
+	initTime_ = 240.0f;
+	hp_ = 10;
 }
 
 void BossEnemy::Update()
@@ -95,7 +100,8 @@ void BossEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ + 60.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		worldTransform_.position_.y = beforeY_ * MathFunc::easeInSine(initTime_ / 240.0f);
+		worldTransform_.UpdateMatrix();
 		initTime_--;
 		if (initTime_ <= 0.0f)
 		{

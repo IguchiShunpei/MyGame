@@ -41,6 +41,8 @@ public:
 	bool GetIsDead() const { return isDead_; }
 	//IsHit
 	bool GetIsHit() const { return isHit_; }
+	//IsInit
+	bool GetIsInit() const { return isInit_; }
 	//HP
 	int GetHP() const { return hp_; }
 	//DeathTimer
