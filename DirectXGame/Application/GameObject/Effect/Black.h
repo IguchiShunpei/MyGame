@@ -23,7 +23,13 @@ public:
 	//描画
 	void BlackDraw(ViewProjection* viewProjection_);
 
+	void SetIsStart(bool isStart) { this->isStart_ = isStart; }
 	void SetIsFinish(bool isFinish){ this->isFinish_ = isFinish; }
+
+	float GetAlpha() const { return alpha_; }
+	bool GetIsStart() const { return isStart_; }
+	bool GetIsBlack() const { return isBlack_; }
+	bool GetIsFinish() const { return isFinish_; }
 
 private:
 	// モデル

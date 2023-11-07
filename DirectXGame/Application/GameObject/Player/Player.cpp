@@ -27,7 +27,7 @@ void Player::PlayerInitialize()
 	SetScale(Vector3(0.5f, 0.5f, 0.5f));
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
-	hp_ = 3;
+	hp_ = 5;
 
 	//フラグ
 	isBurst_ = false;

@@ -40,12 +40,12 @@ void GamePlayScene::Initialize()
 	//黒
 	black_ = new Black;
 	black_->BlackInitialize();
-	black_->SetPosition(Vector3(0.0f, -2.0f, -18.0f));
+	black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
 
 	//黒
 	red_ = new Red;
 	red_->RedInitialize();
-	red_->SetPosition(Vector3(0.0f, -2.0f, -19.0f));
+	red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
 
 	//爆発
 	explosion01_ = new Explosion;
@@ -56,6 +56,11 @@ void GamePlayScene::Initialize()
 	//player 
 	player = new Player;
 	player->PlayerInitialize();
+
+	//bossEnemy
+	bEnemy = new BossEnemy;
+	bEnemy->BossEnemyInitialize();
+	bEnemy->worldTransform_.UpdateMatrix();
 
 	//敵ファイル読み込み
 	LoadEnemyPop();
@@ -82,9 +87,13 @@ void GamePlayScene::Initialize()
 	LoadLevelData();
 
 	//メンバ変数の初期化
-	cameraWorkPos_ = { 0,0,0 };
+	cameraWorkPos_ = { 0.0f,0.0f,0.0f };
+	bossInitCameraPos_ = { 0.0f,0.0f,0.0f };
 	//ゲーム中のシーン番号
-	gameNum = GameNum::FirstScene;
+	gameNum_ = GameNum::FirstScene;
+	//カメラワーク番号
+	bossInitNum_ = BossInitNum::Up;
+
 	//墜落量
 	gameOverNum_ = 0;
 	//シェイク範囲
@@ -99,24 +108,26 @@ void GamePlayScene::Initialize()
 	bossAlphaNum_ = 0.05f;
 
 	//フラグ
-	isBossScene_ = false;
 	isWait_ = false;
 	isClearScene_ = false;
 	isBossEffect_ = false;
 	isBEnemyDeadScene_ = false;
-	isBossinit_ = false;
 	bossShake_ = true;
 	isBossAlpha_ = true;
+	isBossInitCamera_ = false;
 
 	//タイマー
 	delayTimer_ = 0.0f;
 	bossAppTimer_ = 0.0f;
 	waitTimer_ = 0;
 	clearTimer_ = 0.0f;
+	initTimer_ = 0;
 }
 
 void GamePlayScene::Update()
 {
+	black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
+	red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
 	black_->BlackUpdate();
 	red_->RedUpdate();
 
@@ -143,19 +154,17 @@ void GamePlayScene::Update()
 
 	//天球
 	sky_->Update();
-	//自機の登場演出
-	player->IntitMotion();
+	//自機登場演出
+	PlayerInit();
 	//UIの登場モーション
 	UIInitMotion();
-	//ボスの登場演出
-	BossAppears();
 
 	for (auto& object : meteorObjects)
 	{
 		object->MeteorUpdate();
 	}
 
-	switch (gameNum)
+	switch (gameNum_)
 	{
 	case FirstScene://雑魚敵戦専用の処理
 
@@ -172,9 +181,10 @@ void GamePlayScene::Update()
 		break;
 
 	case BossScene://ボス戦専用の処理
-
+		//ボスの登場演出
+		BossInit();
 		//ボス登場演出フラグがfalseになったらボス戦開始
-		if (isBossScene_ == false)
+		if (isBossInitCamera_ == false)
 		{
 			//敵
 			for (std::unique_ptr<Enemy>& enemys : enemys_)
@@ -220,9 +230,9 @@ void GamePlayScene::Update()
 		break;
 	}
 
-	if (player->GetIsInit() == true)
+	if (isPlayerInit_ == true)
 	{
-		if (isBossScene_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
+		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
 			//カメラ移動処理
 			if (input_->PushKey(DIK_UP))
@@ -320,6 +330,7 @@ void GamePlayScene::Update()
 				{
 					player->SetIsHit(false);
 					player->SetIsInv(false);
+					viewProjection_->SetEye(cameraWorkPos_);
 					hitTimer_ = 0;
 				}
 			}
@@ -358,7 +369,7 @@ void GamePlayScene::Update()
 		}
 	}
 	//ボス敵の被ダメージ処理
-	if (isBossinit_ == true)
+	if (bEnemy->GetIsInit() == true)
 	{
 		if (isBEnemyDeadScene_ == true)
 		{
@@ -366,7 +377,7 @@ void GamePlayScene::Update()
 			{
 				Vector3 deadPos{};
 				deadPos = bEnemy->GetPosition();
-				explosion01_->SetPosition(Vector3( deadPos.x,deadPos.y,deadPos.z - 2.0f ));
+				explosion01_->SetPosition(Vector3(deadPos.x, deadPos.y, deadPos.z - 2.0f));
 				explosion02_->SetPosition(Vector3(deadPos.x, deadPos.y, deadPos.z - 1.0f));
 				pm_bDmg->Fire(p_bDmg, 50, { deadPos.x,deadPos.y,deadPos.z }, 0, 4, { 4.0f, 0.0f });
 			}
@@ -397,7 +408,7 @@ void GamePlayScene::Draw()
 	for (auto& object : meteorObjects) {
 		object->Draw(viewProjection_);
 	}
-	switch (gameNum)
+	switch (gameNum_)
 	{
 	case FirstScene:
 		//雑魚敵
@@ -420,12 +431,9 @@ void GamePlayScene::Draw()
 			enemys->BulletDraw(viewProjection_);
 		}
 		//ボス敵
-		if (isBossinit_ == true)
+		if (bEnemy->GetIsDead() == false)
 		{
-			if (bEnemy->GetIsDead() == false)
-			{
-				bEnemy->Draw(viewProjection_, bossAlpha_, bEnemy->GetColor());
-			}
+			bEnemy->Draw(viewProjection_, bossAlpha_, bEnemy->GetColor());
 		}
 		break;
 	}
@@ -622,35 +630,6 @@ void GamePlayScene::UpdateEnemyPop()
 			//登録
 			invEnemys_.push_back(std::move(newInvEnemy));
 		}
-		// bossEnemy
-		else if (key == "bossEnemy") {
-			std::string word;
-			getline(line_stream, word, ' ');
-			//敵の生成
-			bEnemy = new BossEnemy;
-			//敵の初期化
-			bEnemy->BossEnemyInitialize();
-			//コライダーの追加
-			bEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
-			if (word.find("HP") == 0)
-			{
-				std::string num;
-				getline(line_stream, num, ' ');
-				//hpを保存
-				int32_t hpNum = atoi(num.c_str());
-				bEnemy->SetHp(hpNum);
-			}
-			// X,Y,Z座標読み込み
-			Vector3 position{};
-			line_stream >> position.x;
-			line_stream >> position.y;
-			line_stream >> position.z;
-			// 座標データに追加
-			bEnemy->SetPosition(position);
-			bEnemy->SetScale(Vector3(1.0f, 1.0f, 1.0f));
-			bEnemy->worldTransform_.UpdateMatrix();
-			isBossinit_ = true;
-		}
 		//待機時間を読み取る
 		else if (key == "wait")
 		{
@@ -670,49 +649,123 @@ void GamePlayScene::UpdateEnemyPop()
 		//"BOSS"を読み取ってボス戦に移行
 		else if (key == "BOSS")
 		{
-			isBossScene_ = true;
-			gameNum = GameNum::BossScene;
+			isBossInitCamera_ = true;
+			gameNum_ = GameNum::BossScene;
 			cameraWorkPos_ = viewProjection_->GetEye();
 		}
 	}
 }
 
-void GamePlayScene::BossAppears()
+void GamePlayScene::PlayerInit()
 {
-	isUp_ = false;
-	isDown_ = false;
-	isRight_ = false;
-	isLeft_ = false;
-
-	//接近するカメラワーク
-	if (isBossScene_ == true)
+	if (isPlayerInit_ == false)
 	{
-		if (viewProjection_->eye_.z <= 10)
+		//カメラワーク
+		PlayerInitCameraWork();
+		//自機の登場モーション
+		player->IntitMotion();
+		//モーションが終わったらフラグtrue
+		if (player->GetIsInit() == true)
+		{
+			isPlayerInit_ = true;
+		}
+	}
+}
+
+void GamePlayScene::PlayerInitCameraWork()
+{
+
+}
+
+void GamePlayScene::PlayerDead()
+{
+	CameraShake(0.3f, 0.3f);
+	//自機を動かす
+	player->worldTransform_.position_.y -= 0.05f;
+}
+
+void GamePlayScene::BossInit()
+{
+	if (isBossInitCamera_ == true)
+	{
+		isUp_ = false;
+		isDown_ = false;
+		isRight_ = false;
+		isLeft_ = false;
+
+		BossInitCameraWork();
+	}
+}
+void GamePlayScene::BossInitCameraWork()
+{
+	switch (bossInitNum_)
+	{
+	case NONE:
+
+		break;
+	case Up:
+		//カメラを寄せる
+		if (viewProjection_->eye_.z <= 10.0f)
 		{
 			viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0, 10) * MathFunc::easeInSine(bossAppTimer_ / 180.0f));
 		}
-		if (bossAppTimer_ >= 180)
+		else
 		{
-			isBossScene_ = false;
+			//寄ったら黒フェード
+			black_->SetIsFinish(true);
 		}
 		bossAppTimer_++;
-	}
-	//引くカメラワーク
-	else if (isBossScene_ == false && bossAppTimer_ >= 180)
-	{
-		if (viewProjection_->eye_.z > -20)
+
+		//黒フェードが完了したら登場カメラワークへ
+		if (black_->GetAlpha() >= 1.0f)
+		{
+			bossInitNum_ = InitCameraWork;
+			bossAppTimer_ = 0;
+		}
+		break;
+	case InitCameraWork:
+		black_->SetIsStart(true);
+		viewProjection_->SetTarget(bEnemy->GetPosition());
+		bEnemy->InitMotion();
+
+		if (bEnemy->GetIsInit() == true)
+		{
+			//登場カメラシェイク時間
+			initTimer_++;
+			if (initTimer_ < 24)
+			{
+				CameraShake(1.5f, 1.5f);
+			}
+			else
+			{
+				initTimer_ = 0;
+				black_->SetIsStart(false);
+				viewProjection_->SetEye(bossInitCameraPos_);
+				bossInitNum_ = Loose;
+			}
+		}
+		else
+		{
+			bossInitCameraPos_ = viewProjection_->GetEye();
+		}
+
+		break;
+	case Loose:
+		if (viewProjection_->eye_.z > -20.0f)
 		{
 			viewProjection_->SetEye(viewProjection_->GetEye() - Vector3(0, 0, 1.0f));
 		}
 		else
 		{
-			viewProjection_->SetEye(cameraWorkPos_);
-			bossAppTimer_ = 0;
+			viewProjection_->eye_.z = -20.0f;
+			isBossInitCamera_ = false;
+			bossInitNum_ = NONE;
 		}
+		break;
 	}
 }
 void GamePlayScene::BossDead()
- {
+{
 	UIOutMotion();
 	explosion01_->ExplosionUpdate();
 	explosion02_->ExplosionUpdate();
@@ -791,9 +844,7 @@ void GamePlayScene::ToGameOverScene()
 	{
 		black_->SetIsFinish(true);
 		UIOutMotion();
-		CameraShake(0.3f, 0.3f);
-		//自機を動かす
-		player->worldTransform_.position_.y -= 0.05f;
+		PlayerDead();
 		gameOverNum_++;
 		// ワールドトランスフォームの行列更新と転送
 		player->worldTransform_.UpdateMatrix();
@@ -805,7 +856,6 @@ void GamePlayScene::ToGameOverScene()
 }
 void GamePlayScene::CameraShake(float x, float y)
 {
-	viewProjection_->eye_ = cameraWorkPos_;
 	//乱数生成装置
 	std::random_device seed_gen;
 	std::mt19937_64 engine(seed_gen());
@@ -938,7 +988,7 @@ void GamePlayScene::UIInitialize()
 
 void GamePlayScene::UIInitMotion()
 {
-	if (isUIInit_ == false && player->GetIsInit() == true)
+	if (isUIInit_ == false && isPlayerInit_ == true)
 	{
 		UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
 		UIInitTime_++;
@@ -1043,7 +1093,7 @@ void GamePlayScene::UIDraw()
 
 void GamePlayScene::UIMove()
 {
-	if (isUIInit_ == true&& isNeutral_ == true)
+	if (isUIInit_ == true && isNeutral_ == true)
 	{
 		if (isMove_ == true)
 		{

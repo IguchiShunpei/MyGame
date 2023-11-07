@@ -59,6 +59,7 @@ void Black::Finish()
 		{
 			alpha_ = 1.0f;
 			isBlack_ = true;
+			isFinish_ = false;
 		}
 	}
 }
