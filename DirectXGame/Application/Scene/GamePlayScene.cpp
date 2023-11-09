@@ -696,7 +696,7 @@ void GamePlayScene::PlayerInitCameraWork()
 {
 	if (isStart_ == false)
 	{
-			viewProjection_->SetTarget(player->GetPosition());
+		viewProjection_->SetTarget(player->GetPosition());
 		//自機が到着したらカメラを初期位置へ
 		if (player->GetIsInit() == true)
 		{
@@ -880,16 +880,36 @@ void GamePlayScene::ToGameOverScene()
 {
 	if (player->GetIsDead() == true)
 	{
-		black_->SetIsFinish(true);
+		black_->worldTransform_.rotation_.x = 90.0f;
+		black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y-2.0f, 0.0f));
 		UIOutMotion();
+		ToGameOverCameraWork();
 		PlayerDead();
-		gameOverNum_++;
-		// ワールドトランスフォームの行列更新と転送
 		player->worldTransform_.UpdateMatrix();
-		if (gameOverNum_ >= 60)
+		if (isGameOver_ == true)
 		{
-			GameSceneManager::GetInstance()->ChangeScene("GAMEOVER");
+			black_->SetIsFinish(true);
+			gameOverNum_++;
+			// ワールドトランスフォームの行列更新と転送
+			if (gameOverNum_ >= 60)
+			{
+				GameSceneManager::GetInstance()->ChangeScene("GAMEOVER");
+			}
 		}
+	}
+}
+void GamePlayScene::ToGameOverCameraWork()
+{
+	viewProjection_->SetTarget(player->GetPosition());
+	if (player->worldTransform_.rotation_.x <= 90.0f)
+	{
+		player->worldTransform_.rotation_.x += 1.0f;
+	}
+	player->worldTransform_.rotation_.z += 3.0f;
+	player->worldTransform_.position_.y -= 1.0f;
+	if (player->worldTransform_.position_.y <= -90.0f)
+	{
+		isGameOver_ = true;
 	}
 }
 void GamePlayScene::CameraShake(float x, float y)

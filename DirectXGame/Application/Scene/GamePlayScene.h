@@ -112,6 +112,9 @@ public:
 	//GameOver画面への演出
 	void ToGameOverScene();
 
+	//gameOverカメラワーク
+	void ToGameOverCameraWork();
+
 	//カメラシェイク
 	void CameraShake(float x,float y);
 
@@ -271,6 +274,8 @@ private://メンバ変数
 	bool isBossAlpha_;
 	//スタート演出
 	bool isStart_;
+	//ゲームオーバー演出
+	bool isGameOver_;
 
 	//タイマー
 	//打ち出すまでの時間

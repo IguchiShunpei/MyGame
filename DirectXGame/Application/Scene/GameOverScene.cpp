@@ -27,7 +27,7 @@ void GameOverScene::Initialize()
 	//黒
 	black_ = new Black;
 	black_->BlackInitialize();
-	black_->SetPosition(Vector3(0.0f, 0.0f, 19.0f));
+	black_->SetPosition(Vector3(0.0f, 0.0f, 21.0f));
 
 	space_ = new Sprite;
 	space_->Initialize(dxCommon_);
