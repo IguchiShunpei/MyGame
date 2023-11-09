@@ -32,6 +32,9 @@ void GamePlayScene::Initialize()
 	viewProjection_ = new ViewProjection();
 	xmViewProjection = new XMViewProjection();
 	viewProjection_->Initialize();
+	viewProjection_->SetEye({ -15.0f,0.0f,10.0f });
+	startCameraPos_ = viewProjection_->GetEye();
+	beforeTargetNum_ = viewProjection_->target_;
 
 	//天球
 	sky_ = new SkyDome;
@@ -40,7 +43,7 @@ void GamePlayScene::Initialize()
 	//黒
 	black_ = new Black;
 	black_->BlackInitialize();
-	black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
+	black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z - 2.0f));
 
 	//黒
 	red_ = new Red;
@@ -89,6 +92,10 @@ void GamePlayScene::Initialize()
 	//メンバ変数の初期化
 	cameraWorkPos_ = { 0.0f,0.0f,0.0f };
 	bossInitCameraPos_ = { 0.0f,0.0f,0.0f };
+
+	//基本target
+	changeTargetNum_ = { 0.0f,0.0f,0.0f };
+
 	//ゲーム中のシーン番号
 	gameNum_ = GameNum::FirstScene;
 	//カメラワーク番号
@@ -115,6 +122,7 @@ void GamePlayScene::Initialize()
 	bossShake_ = true;
 	isBossAlpha_ = true;
 	isBossInitCamera_ = false;
+	isStart_ = false;
 
 	//タイマー
 	delayTimer_ = 0.0f;
@@ -122,15 +130,12 @@ void GamePlayScene::Initialize()
 	waitTimer_ = 0;
 	clearTimer_ = 0.0f;
 	initTimer_ = 0;
+	startTimer_ = 0.0f;
+	startTimerMax_ = 90.0f;
 }
 
 void GamePlayScene::Update()
 {
-	black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
-	red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
-	black_->BlackUpdate();
-	red_->RedUpdate();
-
 	//デスフラグの立った敵を削除
 	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
 		{
@@ -232,6 +237,8 @@ void GamePlayScene::Update()
 
 	if (isPlayerInit_ == true)
 	{
+		black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
+		red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
 		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
 			//カメラ移動処理
@@ -239,6 +246,7 @@ void GamePlayScene::Update()
 			{
 				isUp_ = true;
 				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, -0.05f, 0));
+				viewProjection_->target_.y += -0.2f;
 			}
 			else
 			{
@@ -248,6 +256,7 @@ void GamePlayScene::Update()
 			{
 				isRight_ = true;
 				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(-0.05f, 0, 0));
+				viewProjection_->target_.x += -0.2f;
 			}
 			else
 			{
@@ -257,6 +266,7 @@ void GamePlayScene::Update()
 			{
 				isLeft_ = true;
 				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0.05f, 0, 0));
+				viewProjection_->target_.x += 0.2f;
 			}
 			else
 			{
@@ -266,6 +276,7 @@ void GamePlayScene::Update()
 			{
 				isDown_ = true;
 				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0.05f, 0));
+				viewProjection_->target_.y += 0.2f;
 			}
 			else
 			{
@@ -273,14 +284,20 @@ void GamePlayScene::Update()
 			}
 
 			//移動限界座標
-			const float kCameraLimitX = 1.5f * 1.7f;
-			const float kCameraLimitY = 1.1f * 1.7f;
+			const float kCameraLimitX = 1280.0f;
+			const float kCameraLimitY = 720.0f;
+			const float kTargetLimitX = 20.0f;
+			const float kTargetLimitY = 20.0f;
 
 			//範囲を超えない処理
 			viewProjection_->eye_.x = max(viewProjection_->eye_.x, -kCameraLimitX);
 			viewProjection_->eye_.x = min(viewProjection_->eye_.x, +kCameraLimitX);
 			viewProjection_->eye_.y = max(viewProjection_->eye_.y, -kCameraLimitY);
 			viewProjection_->eye_.y = min(viewProjection_->eye_.y, +kCameraLimitY);
+			viewProjection_->target_.x = max(viewProjection_->target_.x, -kTargetLimitX);
+			viewProjection_->target_.x = min(viewProjection_->target_.x, +kTargetLimitX);
+			viewProjection_->target_.y = max(viewProjection_->target_.y, -kTargetLimitY);
+			viewProjection_->target_.y = min(viewProjection_->target_.y, +kTargetLimitY);
 
 			player->Update();
 			player->ColliderUpdate();
@@ -384,6 +401,9 @@ void GamePlayScene::Update()
 		}
 	}
 	ToGameOverScene();
+
+	black_->BlackUpdate();
+	red_->RedUpdate();
 
 	//カメラ
 	viewProjection_->UpdateMatrix();
@@ -664,8 +684,8 @@ void GamePlayScene::PlayerInit()
 		PlayerInitCameraWork();
 		//自機の登場モーション
 		player->IntitMotion();
-		//モーションが終わったらフラグtrue
-		if (player->GetIsInit() == true)
+		//カメラワークが終わったらフラグtrue
+		if (isStart_ == true)
 		{
 			isPlayerInit_ = true;
 		}
@@ -674,7 +694,25 @@ void GamePlayScene::PlayerInit()
 
 void GamePlayScene::PlayerInitCameraWork()
 {
-
+	if (isStart_ == false)
+	{
+			viewProjection_->SetTarget(player->GetPosition());
+		//自機が到着したらカメラを初期位置へ
+		if (player->GetIsInit() == true)
+		{
+			viewProjection_->eye_.x = startCameraPos_.x + 15.0f * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
+			viewProjection_->eye_.y = startCameraPos_.y + 5.0f * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
+			viewProjection_->eye_.z = startCameraPos_.z + 30.0f * -MathFunc::easeOutSine(startTimer_ / startTimerMax_);
+			viewProjection_->target_.z = changeTargetNum_.z + 50.0f * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
+			startTimer_++;
+			if (startTimer_ >= startTimerMax_)
+			{
+				viewProjection_->SetEye({ 0.0f, 5.0f, -20.0f });
+				viewProjection_->SetTarget({ 0.0f, -2.0f, 50.0f });
+				isStart_ = true;
+			}
+		}
+	}
 }
 
 void GamePlayScene::PlayerDead()

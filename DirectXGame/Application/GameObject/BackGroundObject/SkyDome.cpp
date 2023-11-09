@@ -1,4 +1,4 @@
-﻿#include "SkyDome.h"
+#include "SkyDome.h"
 
 SkyDome::~SkyDome()
 {
@@ -14,5 +14,5 @@ void SkyDome::SkyDomeInitialize()
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(skyModel);
-	SetScale(Vector3(454.0f, 340.0f, 500.0f));
+	SetScale(Vector3(1000.0f, 1000.0f, 1000.0f));
 }
