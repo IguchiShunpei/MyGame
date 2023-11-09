@@ -22,7 +22,7 @@ void BossEnemy::BossEnemyInitialize()
 	SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
 	SetScale({ 1.0f,1.0f,1.0f });
 	beforeY_ = 120.0f;
-	SetPosition({0.0f,beforeY_,100.0f});
+	SetPosition({ 0.0f,beforeY_,100.0f });
 	isDead_ = false;
 	isDeathTimer_ = false;
 	deathTimer_ = 180;
@@ -62,12 +62,15 @@ void BossEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	//相手がplayerBullet
 	if (strcmp(toCollisionName, str1) == 0)
 	{
-		isHit_ = true;
-		bossColor_ = { 3.0f,3.0f,3.0f };
-		hp_--;
-		if (hp_ == 0)
+		if (isInit_ == true)
 		{
-			isDeathTimer_ = true;
+			isHit_ = true;
+			bossColor_ = { 3.0f,3.0f,3.0f };
+			hp_--;
+			if (hp_ == 0)
+			{
+				isDeathTimer_ = true;
+			}
 		}
 	}
 }

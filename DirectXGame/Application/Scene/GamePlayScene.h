@@ -232,8 +232,14 @@ private://メンバ変数
 	int bossInitNum_;
 
 	//カメラワーク前の座標を入れる変数
+	Vector3 startCameraPos_;
 	Vector3 cameraWorkPos_;
 	Vector3 bossInitCameraPos_;
+	//基本target
+	Vector3 beforeTargetNum_;
+	//targetを変化させるときに入れる変数
+	Vector3 changeTargetNum_;
+	
 	//墜落演出の墜落量
 	int gameOverNum_;
 	//ボスの墜落時のシェイク範囲
@@ -263,6 +269,8 @@ private://メンバ変数
 	bool bossShake_;
 	//ボスalpha
 	bool isBossAlpha_;
+	//スタート演出
+	bool isStart_;
 
 	//タイマー
 	//打ち出すまでの時間
@@ -277,4 +285,7 @@ private://メンバ変数
 	int hitTimer_;
 	//ボス登場タイマー
 	int initTimer_;
+	//スタート演出
+	float startTimer_;
+	float startTimerMax_;
 };
