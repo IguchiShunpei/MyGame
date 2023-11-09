@@ -28,7 +28,7 @@ void BossEnemy::BossEnemyInitialize()
 	deathTimer_ = 180;
 	isInit_ = false;
 	initTime_ = 240.0f;
-	hp_ = 10;
+	hp_ = 50;
 }
 
 void BossEnemy::Update()

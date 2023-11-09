@@ -27,6 +27,7 @@ void Player::PlayerInitialize()
 	SetScale(Vector3(0.5f, 0.5f, 0.5f));
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
+	dalayTimer_ = 0.0f;
 	hp_ = 5;
 
 	//フラグ
@@ -282,7 +283,7 @@ void Player::Attack()
 			//球の登録
 			bullets_.push_back(std::move(newBullet));
 
-			dalayTimer_ = 1.2f;
+			dalayTimer_ = 0.6f;
 		}
 	}
 }
@@ -291,9 +292,9 @@ void Player::Damage()
 {
 	if (isHit_ == true && isInv_ == false)
 	{
-		hp_--;
+		hp_-= 10;
 		isInv_ = true;
-		if (hp_ == 0)
+		if (hp_ <= 0)
 		{
 			isDead_ = true;
 		}
