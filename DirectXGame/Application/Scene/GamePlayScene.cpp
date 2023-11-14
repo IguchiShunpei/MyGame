@@ -246,7 +246,6 @@ void GamePlayScene::Update()
 	if (isPlayerInit_ == true)
 	{
 		black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
-		red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
 		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false && isChangeCameraDir_ == false)
 		{
 			//カメラ移動処理
@@ -430,9 +429,9 @@ void GamePlayScene::Draw()
 	}
 	player->BulletDraw(viewProjection_);
 
-	//for (auto& object : meteorObjects) {
-	//	object->Draw(viewProjection_);
-	//}
+	for (auto& object : meteorObjects) {
+		object->Draw(viewProjection_);
+	}
 	switch (gameNum_)
 	{
 	case FirstScene:
@@ -485,8 +484,8 @@ void GamePlayScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	black_->BlackDraw(viewProjection_);
 	red_->RedDraw(viewProjection_);
+	black_->BlackDraw(viewProjection_);
 
 	Object3d::PostDraw();
 
@@ -723,6 +722,8 @@ void GamePlayScene::PlayerInitCameraWork()
 				viewProjection_->SetEye({ 0.0f, 5.0f, -20.0f });
 				viewProjection_->SetTarget({ 0.0f, -2.0f, 50.0f });
 				beforeTargetNum_ = { 0.0f,0.0f,0.0f };
+				black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
+				red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
 				isStart_ = true;
 			}
 		}
@@ -1004,10 +1005,13 @@ void GamePlayScene::CameraMovePoint()
 			if (cameraPos_ == CameraPos::Back)
 			{
 				cameraPos_ = Front;
+				red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z - 1.0f));
+				black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z - 2.0f));
 			}
 			else
 			{
 				cameraPos_ = Back;
+				red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
 			}
 			isPassPoint_ = false;
 			cameraMoveTimer_ = 0.0f;
