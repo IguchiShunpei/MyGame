@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Object3d.h"
 #include "Model.h"
 #include "MathFunc.h"
@@ -9,7 +9,7 @@ public:
 	//デストラクタ
 	~PlayerBullet();
 	//初期化
-	void PlayerBulletInitialize(const Vector3& position, const Vector3& velocity);
+	void PlayerBulletInitialize(const Vector3& position, const Vector3& velocity,int bulletDir);
 	//当たり判定更新
 	void ColliderUpdate();
 

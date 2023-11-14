@@ -53,10 +53,18 @@ public:
 	//ゲームシーンの切り替え
 	enum BossInitNum
 	{
-		NONE,
+		None,
 		Up,     //寄る
 		InitCameraWork, //登場カメラワーク
 		Loose   //引く
+	};
+
+public:
+	//カメラ位置切り替え
+	enum CameraPos
+	{
+		Front,
+		Back
 	};
 
 public:
@@ -117,6 +125,10 @@ public:
 
 	//カメラシェイク
 	void CameraShake(float x,float y);
+
+	//カメラ向き変更
+	void ChangeCameraDirection();
+	void CameraMovePoint();
 
 	//レベルデータのロード
 	void LoadLevelData();
@@ -235,9 +247,23 @@ private://メンバ変数
 	int bossInitNum_;
 
 	//カメラワーク前の座標を入れる変数
+	//スタート時
 	Vector3 startCameraPos_;
-	Vector3 cameraWorkPos_;
+	//カメラシェイク時
+	Vector3 cameraShakePos_;
+	//ボス登場時
 	Vector3 bossInitCameraPos_;
+	//カメラの向きが変わる時
+	//移動先
+	Vector3 cameraDirChangePos_;
+	//中間点
+	Vector3 cameraMovePoint_;
+	//中間点までのz移動量
+	float cameraMoveZ_;
+	//targetZ移動量
+	float moveTargetZ_;
+	//移動前の座標を保存
+	Vector3 beforeMoveCameraPos_;
 	//基本target
 	Vector3 beforeTargetNum_;
 	//targetを変化させるときに入れる変数
@@ -254,6 +280,8 @@ private://メンバ変数
 	float bossAlpha_;
 	//ボスalphaに代入する変数
 	float bossAlphaNum_;
+	//カメラ移動座標
+	int cameraPos_;
 
 	//フラグ
 	//自機が登場したか
@@ -276,6 +304,10 @@ private://メンバ変数
 	bool isStart_;
 	//ゲームオーバー演出
 	bool isGameOver_;
+	//カメラ向き変更フラグ
+	bool isChangeCameraDir_;
+	//カメラ移動時に中間点を通ったか
+	bool isPassPoint_;
 
 	//タイマー
 	//打ち出すまでの時間
@@ -293,4 +325,9 @@ private://メンバ変数
 	//スタート演出
 	float startTimer_;
 	float startTimerMax_;
+	//カメラ移動
+	float cameraMoveTimer_;
+	float cameraMoveTimerMax_;
+	float targetMoveTimer_;
+	float targetMoveTimerMax_;
 };

@@ -28,6 +28,8 @@ void Player::PlayerInitialize()
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
+	levRange_ = 0.2f;
+	beforeY_ = worldTransform_.position_.y;
 	hp_ = 5;
 
 	//フラグ
@@ -40,6 +42,9 @@ void Player::PlayerInitialize()
 	isLeftRotation_ = false;
 	isDead_ = false;
 	isInv_ = false;
+	isMove_ = false;
+	isUp_ = false;
+	isChangeDir_ = false;
 }
 
 void Player::Update()
@@ -48,6 +53,8 @@ void Player::Update()
 
 	if (isDead_ == false)
 	{
+		/*Levitate();*/
+
 		Move();
 
 		Rotate();
@@ -120,6 +127,42 @@ void Player::IntitMotion()
 	worldTransform_.UpdateMatrix();
 }
 
+void Player::Levitate()
+{
+	if (isMove_ == false)
+	{
+		//上昇
+		if (isUp_ == true)
+		{
+			playerY_ = levRange_ * MathFunc::easeOutSine(levTime_ / 60.0f);
+			worldTransform_.position_.y = beforeY_ + playerY_;
+			levTime_++;
+			if (levTime_ >= 120)
+			{
+				isUp_ = false;
+				levTime_ = 0.0f;
+			}
+		}
+		//下降
+		else
+		{
+			playerY_ = levRange_ * -MathFunc::easeOutSine(levTime_ / 60.0f);
+			worldTransform_.position_.y = beforeY_ + playerY_;
+			levTime_++;
+			if (levTime_ >= 120)
+			{
+				isUp_ = true;
+				levTime_ = 0.0f;
+			}
+		}
+	}
+	else
+	{
+		isUp_ = false;
+		levTime_ = 0.0f;
+	}
+}
+
 void Player::Move()
 {
 	input_ = Input::GetInstance();
@@ -131,10 +174,12 @@ void Player::Move()
 		SetPosition(GetPosition() + Vector3(0.0f, 0.2f, 0.0f));
 		//傾きフラグ
 		isUpRotation_ = true;
+		isMove_ = true;
 	}
 	else
 	{
 		isUpRotation_ = false;
+		isMove_ = false;
 	}
 	//下キーを押したとき
 	if (input_->PushKey(DIK_DOWN))
@@ -143,34 +188,74 @@ void Player::Move()
 		SetPosition(GetPosition() + Vector3(0, -0.2f, 0));
 		//傾きフラグ
 		isDownRotation_ = true;
+		isMove_ = true;
 	}
 	else
 	{
 		isDownRotation_ = false;
+		isMove_ = false;
 	}
-	//右キーを押したとき
-	if (input_->PushKey(DIK_RIGHT))
+	if (isChangeDir_ == false)
 	{
-		//移動
-		SetPosition(GetPosition() + Vector3(0.2f, 0.0f, 0.0f));
-		//傾きフラグ
-		isRightRotation_ = true;
+		//右キーを押したとき
+		if (input_->PushKey(DIK_RIGHT))
+		{
+			//移動
+			SetPosition(GetPosition() + Vector3(0.2f, 0.0f, 0.0f));
+			//傾きフラグ
+			isRightRotation_ = true;
+			isMove_ = true;
+		}
+		else
+		{
+			isRightRotation_ = false;
+			isMove_ = false;
+		}
+		//左キーを押したとき
+		if (input_->PushKey(DIK_LEFT))
+		{
+			//移動
+			SetPosition(GetPosition() + Vector3(-0.2f, 0, 0));
+			//傾きフラグ
+			isLeftRotation_ = true;
+			isMove_ = true;
+		}
+		else
+		{
+			isLeftRotation_ = false;
+			isMove_ = false;
+		}
 	}
 	else
 	{
-		isRightRotation_ = false;
-	}
-	//左キーを押したとき
-	if (input_->PushKey(DIK_LEFT))
-	{
-		//移動
-		SetPosition(GetPosition() + Vector3(-0.2f, 0, 0));
-		//傾きフラグ
-		isLeftRotation_ = true;
-	}
-	else
-	{
-		isLeftRotation_ = false;
+		//右キーを押したとき
+		if (input_->PushKey(DIK_RIGHT))
+		{
+			//移動
+			SetPosition(GetPosition() + Vector3(-0.2f, 0.0f, 0.0f));
+			//傾きフラグ
+			isLeftRotation_ = true;
+			isMove_ = true;
+		}
+		else
+		{
+			isLeftRotation_ = false;
+			isMove_ = false;
+		}
+		//左キーを押したとき
+		if (input_->PushKey(DIK_LEFT))
+		{
+			//移動
+			SetPosition(GetPosition() + Vector3(0.2f, 0, 0));
+			//傾きフラグ
+			isRightRotation_ = true;
+			isMove_ = true;
+		}
+		else
+		{
+			isRightRotation_ = false;
+			isMove_ = false;
+		}
 	}
 
 	//移動限界座標
@@ -263,8 +348,17 @@ void Player::Attack()
 		Vector3 position = GetWorldPosition();
 
 		//弾の速度
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		if (isChangeDir_ == false)
+		{
+			kBulletSpeed_ = 1.0f;
+			bulletDir_ = 0;
+		}
+		else
+		{
+			kBulletSpeed_ = -1.0f;
+			bulletDir_ = 1;
+		}
+		Vector3 velocity(0, 0, kBulletSpeed_);
 
 		//クールタイムが０になったとき
 		if (dalayTimer_ <= 0)
@@ -272,7 +366,7 @@ void Player::Attack()
 			//球の生成
 			std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 			//球の初期化
-			newBullet->PlayerBulletInitialize(position, velocity);
+			newBullet->PlayerBulletInitialize(position, velocity, bulletDir_);
 
 			//コライダーの追加
 			newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
@@ -292,7 +386,7 @@ void Player::Damage()
 {
 	if (isHit_ == true && isInv_ == false)
 	{
-		hp_-= 10;
+		hp_ -= 1;
 		isInv_ = true;
 		if (hp_ <= 0)
 		{
