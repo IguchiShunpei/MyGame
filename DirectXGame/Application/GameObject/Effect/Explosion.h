@@ -10,7 +10,7 @@ public:
 	//初期化
 	void ExplosionInitialize(int num);
 
-	void ExplosionUpdate();
+	void ExplosionUpdate(Vector3 bossDeadpos);
 
 	void ExplosionDraw(ViewProjection* viewProjection_);
 
@@ -23,6 +23,8 @@ private:
 	Vector3 scaleNum_;
 
 	float alpha_;
+
+	int updateTimer_;
 
 	Vector3 color_;
 };

@@ -30,7 +30,7 @@ void Player::PlayerInitialize()
 	dalayTimer_ = 0.0f;
 	levRange_ = 0.2f;
 	beforeY_ = worldTransform_.position_.y;
-	hp_ = 5;
+	hp_ = 3;
 
 	//フラグ
 	isBurst_ = false;

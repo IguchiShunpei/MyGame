@@ -268,6 +268,8 @@ private://メンバ変数
 	Vector3 beforeTargetNum_;
 	//targetを変化させるときに入れる変数
 	Vector3 changeTargetNum_;
+	//ボスの死亡座標を保存
+	Vector3 bossDeadPos_;
 	
 	//墜落演出の墜落量
 	int gameOverNum_;

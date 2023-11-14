@@ -396,11 +396,10 @@ void GamePlayScene::Update()
 		{
 			if (bEnemy->GetIsDead() == false)
 			{
-				Vector3 deadPos{};
-				deadPos = bEnemy->GetPosition();
-				explosion01_->SetPosition(Vector3(deadPos.x, deadPos.y, deadPos.z - 2.0f));
-				explosion02_->SetPosition(Vector3(deadPos.x, deadPos.y, deadPos.z - 1.0f));
-				pm_bDmg->Fire(p_bDmg, 50, { deadPos.x,deadPos.y,deadPos.z }, 0, 4, { 4.0f, 0.0f });
+				bossDeadPos_ = bEnemy->GetPosition();
+				explosion01_->SetPosition(Vector3(bossDeadPos_.x, bossDeadPos_.y, bossDeadPos_.z));
+				explosion02_->SetPosition(Vector3(bossDeadPos_.x, bossDeadPos_.y, bossDeadPos_.z));
+				pm_bDmg->Fire(p_bDmg, 50, { bossDeadPos_.x,bossDeadPos_.y,bossDeadPos_.z }, 0, 4, { 4.0f, 0.0f });
 			}
 		}
 	}
@@ -827,8 +826,8 @@ void GamePlayScene::BossInitCameraWork()
 void GamePlayScene::BossDead()
 {
 	UIOutMotion();
-	explosion01_->ExplosionUpdate();
-	explosion02_->ExplosionUpdate();
+	explosion01_->ExplosionUpdate(bossDeadPos_);
+	explosion02_->ExplosionUpdate(bossDeadPos_);
 	//墜落
 	bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
 	bEnemy->worldTransform_.scale_ -= Vector3(0.005f, 0.005f, 0.005f);
