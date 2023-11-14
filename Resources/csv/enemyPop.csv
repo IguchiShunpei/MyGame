@@ -130,7 +130,7 @@ wait 20
 
 wEnemy L -10 -5 100 
 
-wait 240
+wait 300
 
 //ボス戦
 BOSS

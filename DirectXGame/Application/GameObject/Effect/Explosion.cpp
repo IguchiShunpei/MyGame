@@ -22,7 +22,7 @@ void Explosion::ExplosionInitialize(int num)
 		scaleNum_ = Vector3(0.1f, 0.1f, 0.1f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}
-	else if(num == 1)
+	else if (num == 1)
 	{
 		// OBJからモデルデータを読み込む
 		explosionModel02_ = Model::LoadFromOBJ("explosion02");
@@ -36,22 +36,28 @@ void Explosion::ExplosionInitialize(int num)
 	SetPosition(Vector3(0.0f, 0.0f, 0.0f));
 	color_ = Vector3(1.0f, 1.0f, 1.0f);
 
+	updateTimer_ = 0;
+
 	alpha_ = 0.8f;
 }
 
-void Explosion::ExplosionUpdate()
+void Explosion::ExplosionUpdate(Vector3 bossDeadPos)
 {
-	worldTransform_.position_ = { 0.0f,0.0f,0.0f };
-	worldTransform_.UpdateMatrix();
+	if (updateTimer_ % 2 != 1)
+	{
+		//乱数生成装置
+		std::random_device seed_gen;
+		std::mt19937_64 engine(seed_gen());
+		std::uniform_real_distribution<float>dist(-3.0, 3.0);
+		std::uniform_real_distribution<float>dist2(-3.0, 3.0);
 
-	//乱数生成装置
-	std::random_device seed_gen;
-	std::mt19937_64 engine(seed_gen());
-	std::uniform_real_distribution<float>dist(-1.0, 1.0);
-	std::uniform_real_distribution<float>dist2(-1.0, 1.0);
-
-	worldTransform_.position_ += Vector3(dist(engine), dist2(engine), dist2(engine));
-
+		worldTransform_.position_ = Vector3(dist(engine), dist2(engine), bossDeadPos.z);
+	}
+	else
+	{
+		SetPosition(bossDeadPos);
+	}
+	updateTimer_++;
 	worldTransform_.scale_ += scaleNum_;
 	if (alpha_ >= 0.0f)
 	{
