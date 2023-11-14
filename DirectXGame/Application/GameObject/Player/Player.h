@@ -32,6 +32,9 @@ public:
 	//登場モーション
 	void IntitMotion();
 
+	//待機モーション
+	void Levitate();
+
 	//移動
 	void Move();
 
@@ -76,6 +79,8 @@ public:
 	void SetIsInit(bool isInit) { isInit_ = isInit; }
 	//IsInv
 	void SetIsInv(bool isInv) { isInv_ = isInv; }
+	//IsChangeDir
+	void SetIsChangeDir(bool isChangeDir) { isChangeDir_ = isChangeDir; }
 
 private:
 	//入力
@@ -93,12 +98,25 @@ private:
 	int bulletNum_;
 	//体力
 	int hp_;
+	//浮上する向き
+	int levDirection_;
+	//範囲
+	float levRange_;
+	//待機モーションのy変数
+	float playerY_;
+	float beforeY_;
+	//弾の速度
+	float kBulletSpeed_;
+	//弾の向き
+	int bulletDir_;
 
 	//タイマー
 	//打ち出すまでの時間
 	float dalayTimer_;
 	//登場モーションの時間
 	float initMotionTime_;
+	//浮上モーションの時間
+	float levTime_;
 
 	//フラグ
 	//倒したか
@@ -111,6 +129,12 @@ private:
 	bool isInv_;
 	//死亡
 	bool isDead_;
+	//上昇しているか
+	bool isUp_;
+	//移動しているか
+	bool isMove_;
+	//カメラの向きによって移動方向を変えるフラグ
+	bool isChangeDir_;
 
 	//移動時の傾き
 	bool isRightRotation_;

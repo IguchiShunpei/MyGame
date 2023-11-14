@@ -6,7 +6,7 @@ PlayerBullet::~PlayerBullet()
 	delete playerBulletModel_;
 }
 
-void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3& velocity)
+void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3& velocity,int bulletDir)
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
@@ -16,7 +16,14 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_);
 	SetScale(Vector3(2.5f, 2.5f, 2.5f));
-	SetRotation(Vector3(0.0f, -180.0f, 0.0f));
+	if (bulletDir == 0)
+	{
+		SetRotation(Vector3(0.0f, -180.0f, 0.0f));
+	}
+	else
+	{
+		SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+	}
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入

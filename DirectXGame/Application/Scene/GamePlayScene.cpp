@@ -90,7 +90,8 @@ void GamePlayScene::Initialize()
 	LoadLevelData();
 
 	//メンバ変数の初期化
-	cameraWorkPos_ = { 0.0f,0.0f,0.0f };
+	cameraPos_ = CameraPos::Back;
+	cameraShakePos_ = { 0.0f,0.0f,0.0f };
 	bossInitCameraPos_ = { 0.0f,0.0f,0.0f };
 
 	//基本target
@@ -123,6 +124,8 @@ void GamePlayScene::Initialize()
 	isBossAlpha_ = true;
 	isBossInitCamera_ = false;
 	isStart_ = false;
+	isChangeCameraDir_ = false;
+	isPassPoint_ = false;
 
 	//タイマー
 	delayTimer_ = 0.0f;
@@ -131,7 +134,11 @@ void GamePlayScene::Initialize()
 	clearTimer_ = 0.0f;
 	initTimer_ = 0;
 	startTimer_ = 0.0f;
-	startTimerMax_ = 90.0f;
+	startTimerMax_ = 120.0f;
+	cameraMoveTimer_ = 0.0f;
+	cameraMoveTimerMax_ = 45.0f;
+	targetMoveTimer_ = 0.0f;
+	targetMoveTimerMax_ = cameraMoveTimerMax_ * 2.0f;
 }
 
 void GamePlayScene::Update()
@@ -163,7 +170,8 @@ void GamePlayScene::Update()
 	PlayerInit();
 	//UIの登場モーション
 	UIInitMotion();
-
+	//"CHANGE"を読み取ったらカメラ切り替え
+	ChangeCameraDirection();
 	for (auto& object : meteorObjects)
 	{
 		object->MeteorUpdate();
@@ -222,12 +230,12 @@ void GamePlayScene::Update()
 			//死亡フラグがtrueになったら
 			if (bEnemy->GetIsDead() == true)
 			{
-				viewProjection_->SetEye(cameraWorkPos_);
+				viewProjection_->SetEye(cameraShakePos_);
 				isClearScene_ = true;
 			}
 			else
 			{
-				cameraWorkPos_ = viewProjection_->GetEye();
+				cameraShakePos_ = viewProjection_->GetEye();
 			}
 			//クリア演出の処理
 			ToClearScene();
@@ -239,14 +247,13 @@ void GamePlayScene::Update()
 	{
 		black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
 		red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
-		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
+		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false && isChangeCameraDir_ == false)
 		{
 			//カメラ移動処理
 			if (input_->PushKey(DIK_UP))
 			{
 				isUp_ = true;
-				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, -0.05f, 0));
-				viewProjection_->target_.y += -0.2f;
+				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0.05f, 0));
 			}
 			else
 			{
@@ -255,8 +262,7 @@ void GamePlayScene::Update()
 			if (input_->PushKey(DIK_RIGHT))
 			{
 				isRight_ = true;
-				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(-0.05f, 0, 0));
-				viewProjection_->target_.x += -0.2f;
+				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0.05f, 0, 0));
 			}
 			else
 			{
@@ -265,8 +271,7 @@ void GamePlayScene::Update()
 			if (input_->PushKey(DIK_LEFT))
 			{
 				isLeft_ = true;
-				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0.05f, 0, 0));
-				viewProjection_->target_.x += 0.2f;
+				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(-0.05f, 0, 0));
 			}
 			else
 			{
@@ -275,8 +280,7 @@ void GamePlayScene::Update()
 			if (input_->PushKey(DIK_DOWN))
 			{
 				isDown_ = true;
-				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0.05f, 0));
-				viewProjection_->target_.y += 0.2f;
+				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, -0.05f, 0));
 			}
 			else
 			{
@@ -286,18 +290,12 @@ void GamePlayScene::Update()
 			//移動限界座標
 			const float kCameraLimitX = 1280.0f;
 			const float kCameraLimitY = 720.0f;
-			const float kTargetLimitX = 20.0f;
-			const float kTargetLimitY = 20.0f;
 
 			//範囲を超えない処理
 			viewProjection_->eye_.x = max(viewProjection_->eye_.x, -kCameraLimitX);
 			viewProjection_->eye_.x = min(viewProjection_->eye_.x, +kCameraLimitX);
 			viewProjection_->eye_.y = max(viewProjection_->eye_.y, -kCameraLimitY);
 			viewProjection_->eye_.y = min(viewProjection_->eye_.y, +kCameraLimitY);
-			viewProjection_->target_.x = max(viewProjection_->target_.x, -kTargetLimitX);
-			viewProjection_->target_.x = min(viewProjection_->target_.x, +kTargetLimitX);
-			viewProjection_->target_.y = max(viewProjection_->target_.y, -kTargetLimitY);
-			viewProjection_->target_.y = min(viewProjection_->target_.y, +kTargetLimitY);
 
 			player->Update();
 			player->ColliderUpdate();
@@ -329,7 +327,7 @@ void GamePlayScene::Update()
 	{
 		if (player->GetIsHit() == false)
 		{
-			cameraWorkPos_ = viewProjection_->GetEye();
+			cameraShakePos_ = viewProjection_->GetEye();
 		}
 		else
 		{
@@ -341,13 +339,20 @@ void GamePlayScene::Update()
 				hitTimer_++;
 				if (hitTimer_ < 16)
 				{
-					CameraShake(0.3f, 0.0f);
+					if (hitTimer_ % 2 != 1)
+					{
+						CameraShake(0.3f, 0.0f);
+					}
+					else
+					{
+						viewProjection_->SetEye(cameraShakePos_);
+					}
 				}
 				else
 				{
 					player->SetIsHit(false);
 					player->SetIsInv(false);
-					viewProjection_->SetEye(cameraWorkPos_);
+					viewProjection_->SetEye(cameraShakePos_);
 					hitTimer_ = 0;
 				}
 			}
@@ -425,9 +430,9 @@ void GamePlayScene::Draw()
 	}
 	player->BulletDraw(viewProjection_);
 
-	for (auto& object : meteorObjects) {
-		object->Draw(viewProjection_);
-	}
+	//for (auto& object : meteorObjects) {
+	//	object->Draw(viewProjection_);
+	//}
 	switch (gameNum_)
 	{
 	case FirstScene:
@@ -671,7 +676,15 @@ void GamePlayScene::UpdateEnemyPop()
 		{
 			isBossInitCamera_ = true;
 			gameNum_ = GameNum::BossScene;
-			cameraWorkPos_ = viewProjection_->GetEye();
+			cameraShakePos_ = viewProjection_->GetEye();
+		}
+		//"CHANGE"を読み取ってカメラ向き変更
+		else if (key == "CHANGE")
+		{
+			isChangeCameraDir_ = true;
+			cameraDirChangePos_ = { -viewProjection_->eye_.x,viewProjection_->eye_.y,-viewProjection_->eye_.z };
+			beforeMoveCameraPos_ = viewProjection_->GetEye();
+			changeTargetNum_ = viewProjection_->target_;
 		}
 	}
 }
@@ -705,10 +718,11 @@ void GamePlayScene::PlayerInitCameraWork()
 			viewProjection_->eye_.z = startCameraPos_.z + 30.0f * -MathFunc::easeOutSine(startTimer_ / startTimerMax_);
 			viewProjection_->target_.z = changeTargetNum_.z + 50.0f * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
 			startTimer_++;
-			if (startTimer_ >= startTimerMax_)
+			if (startTimer_ > startTimerMax_)
 			{
 				viewProjection_->SetEye({ 0.0f, 5.0f, -20.0f });
 				viewProjection_->SetTarget({ 0.0f, -2.0f, 50.0f });
+				beforeTargetNum_ = { 0.0f,0.0f,0.0f };
 				isStart_ = true;
 			}
 		}
@@ -738,7 +752,7 @@ void GamePlayScene::BossInitCameraWork()
 {
 	switch (bossInitNum_)
 	{
-	case NONE:
+	case None:
 
 		break;
 	case Up:
@@ -772,7 +786,14 @@ void GamePlayScene::BossInitCameraWork()
 			initTimer_++;
 			if (initTimer_ < 24)
 			{
-				CameraShake(1.5f, 1.5f);
+				if (initTimer_ % 2 != 1)
+				{
+					CameraShake(1.5f, 1.5f);
+				}
+				else
+				{
+					viewProjection_->SetEye(bossInitCameraPos_);
+				}
 			}
 			else
 			{
@@ -797,7 +818,7 @@ void GamePlayScene::BossInitCameraWork()
 		{
 			viewProjection_->eye_.z = -20.0f;
 			isBossInitCamera_ = false;
-			bossInitNum_ = NONE;
+			bossInitNum_ = None;
 		}
 		break;
 	}
@@ -881,7 +902,7 @@ void GamePlayScene::ToGameOverScene()
 	if (player->GetIsDead() == true)
 	{
 		black_->worldTransform_.rotation_.x = 90.0f;
-		black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y-2.0f, 0.0f));
+		black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y - 2.0f, 0.0f));
 		UIOutMotion();
 		ToGameOverCameraWork();
 		PlayerDead();
@@ -922,6 +943,79 @@ void GamePlayScene::CameraShake(float x, float y)
 
 	viewProjection_->eye_ = viewProjection_->eye_ + Vector3(dist(engine), dist2(engine), dist2(engine));
 	viewProjection_->UpdateMatrix();
+}
+
+void GamePlayScene::ChangeCameraDirection()
+{
+	if (isChangeCameraDir_ == true)
+	{
+		if (cameraPos_ == CameraPos::Back)
+		{
+			cameraMovePoint_ = { -20.0f,5.0f,0.0f };
+			cameraMoveZ_ = 20.0f;
+			beforeTargetNum_.z = 50.0f;
+			moveTargetZ_ = beforeTargetNum_.z * -2.0f;
+			player->SetIsChangeDir(true);
+		}
+		else if (cameraPos_ == CameraPos::Front)
+		{
+			cameraMovePoint_ = { 20.0f,5.0f,0.0f };
+			cameraMoveZ_ = -20.0f;
+			beforeTargetNum_.z = -50.0f;
+			moveTargetZ_ = beforeTargetNum_.z * -2.0f;
+			player->SetIsChangeDir(false);
+		}
+		CameraMovePoint();
+	}
+}
+
+void GamePlayScene::CameraMovePoint()
+{
+	//ターゲット移動処理
+	if (targetMoveTimer_ < targetMoveTimerMax_)
+	{
+		viewProjection_->target_.z = changeTargetNum_.z + moveTargetZ_ * MathFunc::easeOutSine(targetMoveTimer_ / targetMoveTimerMax_);
+		targetMoveTimer_ += 1.0f;
+	}
+	else
+	{
+		viewProjection_->target_ = { 0.0f,-2.0f,-beforeTargetNum_.z };
+	}
+	//カメラ移動処理
+	if (isPassPoint_ == false)
+	{
+		viewProjection_->eye_.x = beforeMoveCameraPos_.x + (cameraMovePoint_.x - beforeMoveCameraPos_.x) * MathFunc::easeInSine(cameraMoveTimer_ / cameraMoveTimerMax_);
+		viewProjection_->eye_.z = beforeMoveCameraPos_.z + cameraMoveZ_ * MathFunc::easeInSine(cameraMoveTimer_ / cameraMoveTimerMax_);
+		cameraMoveTimer_ += 1.0f;
+		if (cameraMoveTimer_ > cameraMoveTimerMax_)
+		{
+			isPassPoint_ = true;
+			cameraMoveTimer_ = 0.0f;
+		}
+	}
+	else
+	{
+		viewProjection_->eye_.x = cameraMovePoint_.x + -cameraMovePoint_.x * MathFunc::easeOutSine(cameraMoveTimer_ / cameraMoveTimerMax_);
+		viewProjection_->eye_.z = cameraMovePoint_.z + cameraMoveZ_ * MathFunc::easeOutSine(cameraMoveTimer_ / cameraMoveTimerMax_);
+		cameraMoveTimer_ += 1.0f;
+		if (cameraMoveTimer_ > cameraMoveTimerMax_)
+		{
+			//位置のenumを切り替え
+			if (cameraPos_ == CameraPos::Back)
+			{
+				cameraPos_ = Front;
+			}
+			else
+			{
+				cameraPos_ = Back;
+			}
+			isPassPoint_ = false;
+			cameraMoveTimer_ = 0.0f;
+			isChangeCameraDir_ = false;
+			targetMoveTimer_ = 0.0f;
+			viewProjection_->eye_.z = cameraMoveZ_;
+		}
+	}
 }
 
 void GamePlayScene::LoadLevelData()
