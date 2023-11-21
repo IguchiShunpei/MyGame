@@ -32,11 +32,11 @@ public:
 	//登場モーション
 	void IntitMotion();
 
-	//待機モーション
-	void Levitate();
-
 	//移動
 	void Move();
+
+	//速度変化
+	void SpeedChange();
 
 	//傾き
 	void Rotate();
@@ -91,34 +91,46 @@ private:
 	//弾
 	PlayerBullet* playerBullet_ = nullptr;
 
-	//弾
+	//弾リスト
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+
+	//移動速度
+	Vector3 speed_;
+	float speedU_;
+	float speedD_;
+	float speedR_;
+	float speedL_;
+	//加減速値
+	float speedChange_;
+	//最高速度
+	float speedMax_;
 
 	//弾種類
 	int bulletNum_;
 	//体力
 	int hp_;
-	//浮上する向き
-	int levDirection_;
-	//範囲
-	float levRange_;
-	//待機モーションのy変数
-	float playerY_;
-	float beforeY_;
 	//弾の速度
 	float kBulletSpeed_;
 	//弾の向き
 	int bulletDir_;
+
+	//登場モーションに使う変数
+	float initSpeedZ_;
+	float initMotionTimeMax_;
+	float initRotaZ_;
 
 	//タイマー
 	//打ち出すまでの時間
 	float dalayTimer_;
 	//登場モーションの時間
 	float initMotionTime_;
-	//浮上モーションの時間
-	float levTime_;
 
 	//フラグ
+	//移動
+	bool isMoveUp_;
+	bool isMoveDown_;
+	bool isMoveRight_;
+	bool isMoveLeft_;
 	//倒したか
 	bool isBurst_;
 	//登場したか
@@ -129,16 +141,6 @@ private:
 	bool isInv_;
 	//死亡
 	bool isDead_;
-	//上昇しているか
-	bool isUp_;
-	//移動しているか
-	bool isMove_;
 	//カメラの向きによって移動方向を変えるフラグ
 	bool isChangeDir_;
-
-	//移動時の傾き
-	bool isRightRotation_;
-	bool isLeftRotation_;
-	bool isUpRotation_;
-	bool isDownRotation_;
 };

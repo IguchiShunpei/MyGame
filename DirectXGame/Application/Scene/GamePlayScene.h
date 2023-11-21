@@ -130,6 +130,9 @@ public:
 	void ChangeCameraDirection();
 	void CameraMovePoint();
 
+	//カメラ基本移動
+	void MoveCamera();
+
 	//レベルデータのロード
 	void LoadLevelData();
 
@@ -265,6 +268,8 @@ private://メンバ変数
 	//移動前の座標を保存
 	Vector3 beforeMoveCameraPos_;
 	//基本target
+	Vector3 normalTargetNum_;
+	//変化前target
 	Vector3 beforeTargetNum_;
 	//targetを変化させるときに入れる変数
 	Vector3 changeTargetNum_;
