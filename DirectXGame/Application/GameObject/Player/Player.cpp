@@ -25,25 +25,33 @@ void Player::PlayerInitialize()
 	SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.0f));
 	SetPosition(Vector3(0, -2, -20));
 	SetScale(Vector3(0.5f, 0.5f, 0.5f));
+
+	//変数の初期化
+	speed_ = { 0.0f,0.0f,0.0f };
+	speedU_ = 0.0f;
+	speedD_ = 0.0f;
+	speedR_ = 0.0f;
+	speedL_ = 0.0f;
+	speedMax_ = 0.2f;
+	speedChange_ = 0.01f;
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
-	levRange_ = 0.2f;
-	beforeY_ = worldTransform_.position_.y;
 	hp_ = 3;
+	initSpeedZ_ = 0.5f;
+	initRotaZ_ = 400.0f;
+	initMotionTimeMax_ = 40.0f;
 
 	//フラグ
+	isMoveUp_ = false;
+	isMoveDown_ = false;
+	isMoveRight_ = false;
+	isMoveLeft_ = false;
 	isBurst_ = false;
 	isInit_ = false;
 	isHit_ = false;
-	isDownRotation_ = false;
-	isUpRotation_ = false;
-	isRightRotation_ = false;
-	isLeftRotation_ = false;
 	isDead_ = false;
 	isInv_ = false;
-	isMove_ = false;
-	isUp_ = false;
 	isChangeDir_ = false;
 }
 
@@ -53,13 +61,11 @@ void Player::Update()
 
 	if (isDead_ == false)
 	{
-		/*Levitate();*/
-
 		Move();
 
 		Rotate();
 
-		ChangeBullet();
+		//ChangeBullet();
 
 		Attack();
 	}
@@ -100,9 +106,9 @@ void Player::IntitMotion()
 	if (isInit_ == false && isInitAfter_ == false)
 	{
 		//前進
-		worldTransform_.position_.z += 0.5f;
+		worldTransform_.position_.z += initSpeedZ_;
 		//イージングを使った回転
-		worldTransform_.rotation_.z = 400.0f * -MathFunc::easeOutSine(initMotionTime_ / 40.0f);
+		worldTransform_.rotation_.z = initRotaZ_ * -MathFunc::easeOutSine(initMotionTime_ / initMotionTimeMax_);
 		initMotionTime_++;
 		//初期座標に来たら固定
 		if (worldTransform_.position_.z >= 0.0f)
@@ -127,140 +133,54 @@ void Player::IntitMotion()
 	worldTransform_.UpdateMatrix();
 }
 
-void Player::Levitate()
-{
-	if (isMove_ == false)
-	{
-		//上昇
-		if (isUp_ == true)
-		{
-			playerY_ = levRange_ * MathFunc::easeOutSine(levTime_ / 60.0f);
-			worldTransform_.position_.y = beforeY_ + playerY_;
-			levTime_++;
-			if (levTime_ >= 120)
-			{
-				isUp_ = false;
-				levTime_ = 0.0f;
-			}
-		}
-		//下降
-		else
-		{
-			playerY_ = levRange_ * -MathFunc::easeOutSine(levTime_ / 60.0f);
-			worldTransform_.position_.y = beforeY_ + playerY_;
-			levTime_++;
-			if (levTime_ >= 120)
-			{
-				isUp_ = true;
-				levTime_ = 0.0f;
-			}
-		}
-	}
-	else
-	{
-		isUp_ = false;
-		levTime_ = 0.0f;
-	}
-}
-
 void Player::Move()
 {
-	input_ = Input::GetInstance();
-
 	//上キーを押したとき
 	if (input_->PushKey(DIK_UP))
 	{
-		//移動
-		SetPosition(GetPosition() + Vector3(0.0f, 0.2f, 0.0f));
-		//傾きフラグ
-		isUpRotation_ = true;
-		isMove_ = true;
+		//向きを変化
+		isMoveUp_ = true;
 	}
 	else
 	{
-		isUpRotation_ = false;
-		isMove_ = false;
+		isMoveUp_ = false;
 	}
 	//下キーを押したとき
 	if (input_->PushKey(DIK_DOWN))
 	{
-		//移動
-		SetPosition(GetPosition() + Vector3(0, -0.2f, 0));
-		//傾きフラグ
-		isDownRotation_ = true;
-		isMove_ = true;
+		//向きを変化
+		isMoveDown_ = true;
 	}
 	else
 	{
-		isDownRotation_ = false;
-		isMove_ = false;
+		isMoveDown_ = false;
 	}
-	if (isChangeDir_ == false)
+	//右キーを押したとき
+	if (input_->PushKey(DIK_RIGHT))
 	{
-		//右キーを押したとき
-		if (input_->PushKey(DIK_RIGHT))
-		{
-			//移動
-			SetPosition(GetPosition() + Vector3(0.2f, 0.0f, 0.0f));
-			//傾きフラグ
-			isRightRotation_ = true;
-			isMove_ = true;
-		}
-		else
-		{
-			isRightRotation_ = false;
-			isMove_ = false;
-		}
-		//左キーを押したとき
-		if (input_->PushKey(DIK_LEFT))
-		{
-			//移動
-			SetPosition(GetPosition() + Vector3(-0.2f, 0, 0));
-			//傾きフラグ
-			isLeftRotation_ = true;
-			isMove_ = true;
-		}
-		else
-		{
-			isLeftRotation_ = false;
-			isMove_ = false;
-		}
+		//向きを変化
+		isMoveRight_ = true;
 	}
 	else
 	{
-		//右キーを押したとき
-		if (input_->PushKey(DIK_RIGHT))
-		{
-			//移動
-			SetPosition(GetPosition() + Vector3(-0.2f, 0.0f, 0.0f));
-			//傾きフラグ
-			isLeftRotation_ = true;
-			isMove_ = true;
-		}
-		else
-		{
-			isLeftRotation_ = false;
-			isMove_ = false;
-		}
-		//左キーを押したとき
-		if (input_->PushKey(DIK_LEFT))
-		{
-			//移動
-			SetPosition(GetPosition() + Vector3(0.2f, 0, 0));
-			//傾きフラグ
-			isRightRotation_ = true;
-			isMove_ = true;
-		}
-		else
-		{
-			isRightRotation_ = false;
-			isMove_ = false;
-		}
+		isMoveRight_ = false;
+	}
+	//左キーを押したとき
+	if (input_->PushKey(DIK_LEFT))
+	{
+		//向きを変化
+		isMoveLeft_ = true;
+	}
+	else
+	{
+		isMoveLeft_ = false;
 	}
 
+	SpeedChange();
+
 	//移動限界座標
-	const float kMoveLimitX = 6.0f * 1.7f;
-	const float kMoveLimitY = 4.0f * 1.7f;
+	const float kMoveLimitX = 9.0f * 1.7f;
+	const float kMoveLimitY = 6.0f * 1.7f;
 
 	//範囲を超えない処理
 	worldTransform_.position_.x = max(worldTransform_.position_.x, -kMoveLimitX);
@@ -269,12 +189,116 @@ void Player::Move()
 	worldTransform_.position_.y = min(worldTransform_.position_.y, +kMoveLimitY);
 }
 
+void Player::SpeedChange()
+{
+	//キーを押しているときに加速
+	//上
+	if (isMoveUp_ == true)
+	{
+		if (speedU_ <= speedMax_)
+		{
+			speedU_ += speedChange_;
+		}
+		else
+		{
+			speedU_ = speedMax_;
+		}
+	}
+	else
+	{
+		if (speedU_ >= 0.0f)
+		{
+			speedU_ -= speedChange_;
+		}
+		else
+		{
+			speedU_ = 0.0f;
+		}
+	}
+	//下
+	if (isMoveDown_ == true)
+	{
+		if (speedD_ >= -speedMax_)
+		{
+			speedD_ -= speedChange_;
+		}
+		else
+		{
+			speedD_ = -speedMax_;
+		}
+	}
+	else
+	{
+		if (speedD_ <= 0.0f)
+		{
+			speedD_ += speedChange_;
+		}
+		else
+		{
+			speedD_ = 0.0f;
+		}
+	}
+	//右
+	if (isMoveRight_ == true)
+	{
+		if (speedR_ <= speedMax_)
+		{
+			speedR_ += speedChange_;
+		}
+		else
+		{
+			speedR_ = speedMax_;
+		}
+	}
+	else
+	{
+		if (speedR_ >= 0.0f)
+		{
+			speedR_ -= speedChange_;
+		}
+		else
+		{
+			speedR_ = 0.0f;
+		}
+	}
+	//左
+	if (isMoveLeft_ == true)
+	{
+		if (speedL_ >= -speedMax_)
+		{
+			speedL_ -= speedChange_;
+		}
+		else
+		{
+			speedL_ = -speedMax_;
+		}
+	}
+	else
+	{
+		if (speedL_ <= 0.0f)
+		{
+			speedL_ += speedChange_;
+		}
+		else
+		{
+			speedL_ = 0.0f;
+		}
+	}
+
+
+	speed_.x = speedR_ + speedL_;
+	speed_.y = speedU_ + speedD_;
+
+	//移動
+	SetPosition(GetPosition() + speed_);
+}
+
 void Player::Rotate()
 {
 	//上キーを押したときの傾き処理
-	if (isUpRotation_ == true)
+	if (isMoveUp_ == true)
 	{
-		if (worldTransform_.rotation_.x > -45.0f)
+		if (worldTransform_.rotation_.x > -30.0f)
 		{
 			SetRotation(GetRotation() - Vector3(1.0f, 0.0f, 0.0f));
 		}
@@ -283,13 +307,13 @@ void Player::Rotate()
 	{
 		if (worldTransform_.rotation_.x < 0.0f)
 		{
-			SetRotation(GetRotation() + Vector3(2.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(1.0f, 0.0f, 0.0f));
 		}
 	}
 	//下キーを押したときの傾き処理
-	if (isDownRotation_ == true)
+	if (isMoveDown_ == true)
 	{
-		if (worldTransform_.rotation_.x < 45.0f)
+		if (worldTransform_.rotation_.x < 30.0f)
 		{
 			SetRotation(GetRotation() + Vector3(1.0f, 0.0f, 0.0f));
 		}
@@ -298,37 +322,37 @@ void Player::Rotate()
 	{
 		if (worldTransform_.rotation_.x > 0.0f)
 		{
-			SetRotation(GetRotation() - Vector3(2.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(1.0f, 0.0f, 0.0f));
 		}
 	}
 	//右キーを押したとき
-	if (isRightRotation_ == true)
+	if (isMoveRight_ == true)
 	{
-		if (worldTransform_.rotation_.z > -45.0f)
+		if (worldTransform_.rotation_.z > -30.0f)
 		{
-			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 1.0f));
+			SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.z < 0.0f)
 		{
-			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 2.0f));
+			SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
 		}
 	}
 	//左キーを押したとき
-	if (isLeftRotation_ == true)
+	if (isMoveLeft_ == true)
 	{
-		if (worldTransform_.rotation_.z < 45.0f)
+		if (worldTransform_.rotation_.z < 30.0f)
 		{
-			SetRotation(GetRotation() + Vector3(0.0f, 0.0f, 1.0f));
+			SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.z > 0.0f)
 		{
-			SetRotation(GetRotation() - Vector3(0.0f, 0.0f, 2.0f));
+			SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
 		}
 	}
 }

@@ -35,6 +35,7 @@ void GamePlayScene::Initialize()
 	viewProjection_->SetEye({ -15.0f,0.0f,10.0f });
 	startCameraPos_ = viewProjection_->GetEye();
 	beforeTargetNum_ = viewProjection_->target_;
+	normalTargetNum_ = viewProjection_->target_;
 
 	//天球
 	sky_ = new SkyDome;
@@ -136,7 +137,7 @@ void GamePlayScene::Initialize()
 	startTimer_ = 0.0f;
 	startTimerMax_ = 120.0f;
 	cameraMoveTimer_ = 0.0f;
-	cameraMoveTimerMax_ = 45.0f;
+	cameraMoveTimerMax_ = 60.0f;
 	targetMoveTimer_ = 0.0f;
 	targetMoveTimerMax_ = cameraMoveTimerMax_ * 2.0f;
 }
@@ -162,7 +163,7 @@ void GamePlayScene::Update()
 		});
 
 	//更新コマンド
-	UpdateEnemyPop();
+	/*UpdateEnemyPop();*/
 
 	//天球
 	sky_->Update();
@@ -248,53 +249,7 @@ void GamePlayScene::Update()
 		black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
 		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false && isChangeCameraDir_ == false)
 		{
-			//カメラ移動処理
-			if (input_->PushKey(DIK_UP))
-			{
-				isUp_ = true;
-				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0.05f, 0));
-			}
-			else
-			{
-				isUp_ = false;
-			}
-			if (input_->PushKey(DIK_RIGHT))
-			{
-				isRight_ = true;
-				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0.05f, 0, 0));
-			}
-			else
-			{
-				isRight_ = false;
-			}
-			if (input_->PushKey(DIK_LEFT))
-			{
-				isLeft_ = true;
-				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(-0.05f, 0, 0));
-			}
-			else
-			{
-				isLeft_ = false;
-			}
-			if (input_->PushKey(DIK_DOWN))
-			{
-				isDown_ = true;
-				viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, -0.05f, 0));
-			}
-			else
-			{
-				isDown_ = false;
-			}
-
-			//移動限界座標
-			const float kCameraLimitX = 1280.0f;
-			const float kCameraLimitY = 720.0f;
-
-			//範囲を超えない処理
-			viewProjection_->eye_.x = max(viewProjection_->eye_.x, -kCameraLimitX);
-			viewProjection_->eye_.x = min(viewProjection_->eye_.x, +kCameraLimitX);
-			viewProjection_->eye_.y = max(viewProjection_->eye_.y, -kCameraLimitY);
-			viewProjection_->eye_.y = min(viewProjection_->eye_.y, +kCameraLimitY);
+			MoveCamera();
 
 			player->Update();
 			player->ColliderUpdate();
@@ -721,6 +676,7 @@ void GamePlayScene::PlayerInitCameraWork()
 				viewProjection_->SetEye({ 0.0f, 5.0f, -20.0f });
 				viewProjection_->SetTarget({ 0.0f, -2.0f, 50.0f });
 				beforeTargetNum_ = { 0.0f,0.0f,0.0f };
+				normalTargetNum_ = viewProjection_->target_;
 				black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
 				red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
 				isStart_ = true;
@@ -975,18 +931,18 @@ void GamePlayScene::CameraMovePoint()
 	if (targetMoveTimer_ < targetMoveTimerMax_)
 	{
 		viewProjection_->target_.z = changeTargetNum_.z + moveTargetZ_ * MathFunc::easeOutSine(targetMoveTimer_ / targetMoveTimerMax_);
-		targetMoveTimer_ += 1.0f;
+		targetMoveTimer_ ++;
 	}
 	else
 	{
-		viewProjection_->target_ = { 0.0f,-2.0f,-beforeTargetNum_.z };
+		viewProjection_->target_.z = -beforeTargetNum_.z;
 	}
 	//カメラ移動処理
 	if (isPassPoint_ == false)
 	{
 		viewProjection_->eye_.x = beforeMoveCameraPos_.x + (cameraMovePoint_.x - beforeMoveCameraPos_.x) * MathFunc::easeInSine(cameraMoveTimer_ / cameraMoveTimerMax_);
 		viewProjection_->eye_.z = beforeMoveCameraPos_.z + cameraMoveZ_ * MathFunc::easeInSine(cameraMoveTimer_ / cameraMoveTimerMax_);
-		cameraMoveTimer_ += 1.0f;
+		cameraMoveTimer_ ++;
 		if (cameraMoveTimer_ > cameraMoveTimerMax_)
 		{
 			isPassPoint_ = true;
@@ -997,7 +953,7 @@ void GamePlayScene::CameraMovePoint()
 	{
 		viewProjection_->eye_.x = cameraMovePoint_.x + -cameraMovePoint_.x * MathFunc::easeOutSine(cameraMoveTimer_ / cameraMoveTimerMax_);
 		viewProjection_->eye_.z = cameraMovePoint_.z + cameraMoveZ_ * MathFunc::easeOutSine(cameraMoveTimer_ / cameraMoveTimerMax_);
-		cameraMoveTimer_ += 1.0f;
+		cameraMoveTimer_ ++;
 		if (cameraMoveTimer_ > cameraMoveTimerMax_)
 		{
 			//位置のenumを切り替え
@@ -1019,6 +975,77 @@ void GamePlayScene::CameraMovePoint()
 			viewProjection_->eye_.z = cameraMoveZ_;
 		}
 	}
+}
+
+void GamePlayScene::MoveCamera()
+{
+	//カメラ移動処理
+	if (input_->PushKey(DIK_UP))
+	{
+		isUp_ = true;
+
+		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, 0.1f, 0));
+	}
+	else
+	{
+		isUp_ = false;
+		if (viewProjection_->target_.y >= normalTargetNum_.y)
+		{
+			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, -0.1f, 0));
+		}
+	}
+	if (input_->PushKey(DIK_RIGHT))
+	{
+		isRight_ = true;
+
+		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0.1f, 0, 0));
+	}
+	else
+	{
+		isRight_ = false;
+		if (viewProjection_->target_.x >= normalTargetNum_.x)
+		{
+			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(-0.1f, 0, 0));
+		}
+	}
+	if (input_->PushKey(DIK_LEFT))
+	{
+		isLeft_ = true;
+
+		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(-0.1f, 0, 0));
+	}
+	else
+	{
+		isLeft_ = false;
+		if (viewProjection_->target_.x <= normalTargetNum_.x)
+		{
+			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0.1f,0, 0));
+		}
+	}
+	if (input_->PushKey(DIK_DOWN))
+	{
+		isDown_ = true;
+
+		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, -0.1f, 0));
+	}
+	else
+	{
+		isDown_ = false;
+		if (viewProjection_->target_.y <= normalTargetNum_.y)
+		{
+			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, 0.1f, 0));
+		}
+	}
+
+	//移動限界座標
+	const float kTargetLimitX = 9.0f;
+	const float kTargetLimitY = 7.0f;
+
+	//範囲を超えない処理
+	viewProjection_->target_.x = max(viewProjection_->target_.x, -kTargetLimitX);
+	viewProjection_->target_.x = min(viewProjection_->target_.x, +kTargetLimitX);
+	viewProjection_->target_.y = max(viewProjection_->target_.y, -kTargetLimitY);
+	viewProjection_->target_.y = min(viewProjection_->target_.y, +kTargetLimitY);
 }
 
 void GamePlayScene::LoadLevelData()
