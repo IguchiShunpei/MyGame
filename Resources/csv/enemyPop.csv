@@ -41,7 +41,7 @@ wait 20
 
 wEnemy L 0 0 100 
 
-wait 150
+wait 450
 
 CHANGE //カメラ切り替え
 
@@ -87,7 +87,7 @@ wait 20
 
 wEnemy R 10 5 100 
 
-wait 150
+wait 450
 
 CHANGE //カメラ切り替え
 

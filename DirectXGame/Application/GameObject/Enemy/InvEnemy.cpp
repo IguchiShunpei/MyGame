@@ -42,6 +42,7 @@ void InvEnemy::Update()
 		Turn();
 		Move();
 	}
+	BackMotion();
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -77,7 +78,7 @@ void InvEnemy::Move()
 		worldTransform_.position_.z -= 3.0f;
 		if (worldTransform_.position_.z <= -20.0f)
 		{
-			isDelete_ = true;
+			isBack_ = true;
 		}
 	}
 }
@@ -106,6 +107,22 @@ void InvEnemy::InitMotion()
 		if (initTime_ <= 0.0f)
 		{
 			isInit_ = true;
+			beforeY_ = 0.0f;
+			initTime_ = 0.0f;
+		}
+	}
+}
+
+void InvEnemy::BackMotion()
+{
+	if (isBack_ == true)
+	{
+		worldTransform_.position_.y = beforeY_ + 120.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		initTime_++;
+		if (initTime_ >= 60.0f)
+		{
+			isBack_ = true;
+			isDelete_ = true;
 		}
 	}
 }

@@ -94,6 +94,20 @@ void WeakEnemy::InitMotion()
 	}
 }
 
+void WeakEnemy::BackMotion()
+{
+	if (isBack_ == true)
+	{
+		worldTransform_.position_.y = beforeY_ + 120.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		initTime_++;
+		if (initTime_ >= 60.0f)
+		{
+			isBack_ = true;
+			isDelete_ = true;
+		}
+	}
+}
+
 void WeakEnemy::RCurve()
 {
 	MathFunc::CurveProjection(worldTransform_, startSpeed, C, flame);

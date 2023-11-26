@@ -29,6 +29,7 @@ void BossEnemy::BossEnemyInitialize()
 	isInit_ = false;
 	initTime_ = 240.0f;
 	hp_ = 50;
+	dalayTimer_ = 5.0f;
 }
 
 void BossEnemy::Update()
@@ -37,10 +38,25 @@ void BossEnemy::Update()
 
 	bossColor_ = { 1.0f,1.0f,1.0f };
 
+	//デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
+		{
+			return bullet->GetIsDelete();
+		});
+
 	//死亡タイマーの処理
 	ActiveDeathTimer();
 	//移動処理
 	Move();
+
+	Attack();
+
+	//弾更新
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
+	{
+		bullet->Update();
+		bullet->ColliderUpdate();
+	}
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -96,6 +112,35 @@ void BossEnemy::Move()
 			ReCurve();
 			break;
 		}
+	}
+}
+
+void BossEnemy::Attack()
+{
+	dalayTimer_ -= 0.1f;
+
+	//自キャラの座標をコピー
+	Vector3 position = GetPosition();
+
+	//弾の速度
+	const float kBulletSpeed = 0.5f;
+	Vector3 velocity(0, 0, kBulletSpeed);
+
+	//クールタイムが０になったとき
+	if (dalayTimer_ <= 0)
+	{
+		//球の生成
+		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+		//球の初期化
+		newBullet->EnemyBulletInitialize(position, velocity);
+
+		//コライダーの追加
+		newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
+
+		//球の登録
+		bullets_.push_back(std::move(newBullet));
+
+		dalayTimer_ = 5.0f;
 	}
 }
 
@@ -156,6 +201,14 @@ void BossEnemy::Curve()
 void BossEnemy::ReCurve()
 {
 	MathFunc::CurveProjection(worldTransform_, { -startSpeed.x,startSpeed.y,startSpeed.z }, -C, flame);
+}
+
+void BossEnemy::BulletDraw(ViewProjection* viewProjection_)
+{
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
+	{
+		bullet->Draw(viewProjection_);
+	}
 }
 
 

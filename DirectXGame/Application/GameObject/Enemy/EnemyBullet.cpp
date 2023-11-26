@@ -10,12 +10,13 @@ void EnemyBullet::EnemyBulletInitialize(const Vector3& position, const Vector3& 
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	enemyBulletModel_ = Model::LoadFromOBJ("triangle_mat");
+	enemyBulletModel_ = Model::LoadFromOBJ("EnemyBullet");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyBulletModel_);
-	SetScale(Vector3(1.5f, 1.5f, 1.5f));
+	SetScale(Vector3(0.5f, 0.5f, 1.5f));
+	SetRotation(Vector3(0.0f, 180.0f, 0.0f));
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入

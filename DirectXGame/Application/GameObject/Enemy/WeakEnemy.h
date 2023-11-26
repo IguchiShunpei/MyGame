@@ -54,6 +54,9 @@ public:
 	//登場モーション
 	void InitMotion();
 
+	//退場モーション
+	void BackMotion();
+
 	//カーブ
 	void RCurve();
 	void LCurve();
@@ -74,7 +77,8 @@ private:
 	bool isHit_ = false;
 	//登場したか
 	bool isInit_ = false;
-
+	//退場したか
+	bool isBack_ = false;
 	//登場時間
 	float initTime_ = 0.0f;
 

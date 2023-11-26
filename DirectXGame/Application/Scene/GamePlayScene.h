@@ -252,6 +252,8 @@ private://メンバ変数
 	//カメラワーク前の座標を入れる変数
 	//スタート時
 	Vector3 startCameraPos_;
+	//死亡時
+	Vector3 deadCameraPos_;
 	//カメラシェイク時
 	Vector3 cameraShakePos_;
 	//ボス登場時
@@ -275,6 +277,8 @@ private://メンバ変数
 	Vector3 changeTargetNum_;
 	//ボスの死亡座標を保存
 	Vector3 bossDeadPos_;
+	//自機の死亡座標を保存
+	Vector3 playerDeadPos_;
 	
 	//墜落演出の墜落量
 	int gameOverNum_;
@@ -315,6 +319,8 @@ private://メンバ変数
 	bool isChangeCameraDir_;
 	//カメラ移動時に中間点を通ったか
 	bool isPassPoint_;
+	//player死亡フラグ
+	bool isPlayerDead_;
 
 	//タイマー
 	//打ち出すまでの時間
@@ -328,10 +334,13 @@ private://メンバ変数
 	//敵の攻撃に当たった時の演出時間
 	int hitTimer_;
 	//ボス登場タイマー
-	int initTimer_;
+	int bossInitTimer_;
 	//スタート演出
 	float startTimer_;
 	float startTimerMax_;
+	//自機死亡タイマー
+	float playerDeadTimer_;
+	float playerDeadTimerMax_;
 	//カメラ移動
 	float cameraMoveTimer_;
 	float cameraMoveTimerMax_;
