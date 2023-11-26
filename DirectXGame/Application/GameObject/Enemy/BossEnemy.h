@@ -56,6 +56,9 @@ public:
 	//移動
 	void Move();
 
+	//攻撃
+	void Attack();
+
 	//登場モーション
 	void InitMotion();
 
@@ -69,6 +72,12 @@ public:
 	//カーブ
 	void Curve();
 	void ReCurve();
+
+	//弾を描画
+	void BulletDraw(ViewProjection* viewProjection_);
+
+	//弾リスト
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
 	//Setter
 	//HP
@@ -111,6 +120,9 @@ private:
 
 	// モデル
 	Model* enemyModel = nullptr;
+
+	//弾リスト
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
 	//弾を打ち出すまでの時間
 	float dalayTimer_ = 15.0f;

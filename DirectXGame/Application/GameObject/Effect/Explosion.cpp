@@ -30,13 +30,15 @@ void Explosion::ExplosionInitialize(int num)
 		Create();
 		// オブジェクトにモデルをひも付ける
 		SetModel(explosionModel02_);
-		scaleNum_ = Vector3(0.05f, 0.05f, 0.05f);
+		scaleNum_ = Vector3(0.1f, 0.1f, 0.1f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}
 	SetPosition(Vector3(0.0f, 0.0f, 0.0f));
 	color_ = Vector3(1.0f, 1.0f, 1.0f);
 
 	updateTimer_ = 0;
+
+	isFinish_ = false;
 
 	alpha_ = 0.8f;
 }
@@ -62,6 +64,10 @@ void Explosion::ExplosionUpdate(Vector3 bossDeadPos)
 	if (alpha_ >= 0.0f)
 	{
 		alpha_ -= 0.0045f;
+	}
+	else
+	{
+		isFinish_ = true;
 	}
 	Update();
 }

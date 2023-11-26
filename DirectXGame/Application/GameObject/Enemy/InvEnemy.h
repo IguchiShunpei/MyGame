@@ -43,6 +43,9 @@ public:
 	//登場モーション
 	void InitMotion();
 
+	//退場モーション
+	void BackMotion();
+
 	//Setter
 	//gameScene
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
@@ -66,19 +69,22 @@ private:
 	//登場時間
 	float initTime_ = 0.0f;
 
+	//退場したか
+	bool isBack_ = false;
+
 	//初期Y座標
 	float beforeY_;
 
 	// モデル
 	Model* enemyModel = nullptr;
-	
+	//待機時間
 	int waitTimer = 0;
-
+	//回転時間
 	float turnTimer_ = 0.0f;
-
+	//当たったか
 	bool isHit_ = false;
-
+	//発射したか
 	bool isStart_ = false;
-
+	//予備動作をしたか
 	bool isTurn_ = false;;
 };

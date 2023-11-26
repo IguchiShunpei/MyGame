@@ -14,6 +14,8 @@ public:
 
 	void ExplosionDraw(ViewProjection* viewProjection_);
 
+	bool GetIsFinish() const { return isFinish_; }
+
 private:
 
 	// モデル
@@ -25,6 +27,8 @@ private:
 	float alpha_;
 
 	int updateTimer_;
+
+	bool isFinish_;
 
 	Vector3 color_;
 };

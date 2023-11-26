@@ -37,7 +37,7 @@ void Player::PlayerInitialize()
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
-	hp_ = 3;
+	hp_ = 1;
 	initSpeedZ_ = 0.5f;
 	initRotaZ_ = 400.0f;
 	initMotionTimeMax_ = 40.0f;
@@ -238,50 +238,102 @@ void Player::SpeedChange()
 			speedD_ = 0.0f;
 		}
 	}
-	//右
-	if (isMoveRight_ == true)
+	if (isChangeDir_ == false)
 	{
-		if (speedR_ <= speedMax_)
+		//右
+		if (isMoveRight_ == true)
 		{
-			speedR_ += speedChange_;
+			if (speedR_ <= speedMax_)
+			{
+				speedR_ += speedChange_;
+			}
+			else
+			{
+				speedR_ = speedMax_;
+			}
 		}
 		else
 		{
-			speedR_ = speedMax_;
+			if (speedR_ >= 0.0f)
+			{
+				speedR_ -= speedChange_;
+			}
+			else
+			{
+				speedR_ = 0.0f;
+			}
+		}
+		//左
+		if (isMoveLeft_ == true)
+		{
+			if (speedL_ >= -speedMax_)
+			{
+				speedL_ -= speedChange_;
+			}
+			else
+			{
+				speedL_ = -speedMax_;
+			}
+		}
+		else
+		{
+			if (speedL_ <= 0.0f)
+			{
+				speedL_ += speedChange_;
+			}
+			else
+			{
+				speedL_ = 0.0f;
+			}
 		}
 	}
 	else
 	{
-		if (speedR_ >= 0.0f)
+		//右
+		if (isMoveRight_ == true)
 		{
-			speedR_ -= speedChange_;
+			if (speedL_ >= -speedMax_)
+			{
+				speedL_ -= speedChange_;
+			}
+			else
+			{
+				speedL_ = -speedMax_;
+			}
 		}
 		else
 		{
-			speedR_ = 0.0f;
+			if (speedL_ <= 0.0f)
+			{
+				speedL_ += speedChange_;
+			}
+			else
+			{
+				speedL_ = 0.0f;
+			}
 		}
-	}
-	//左
-	if (isMoveLeft_ == true)
-	{
-		if (speedL_ >= -speedMax_)
+		//左
+		if (isMoveLeft_ == true)
 		{
-			speedL_ -= speedChange_;
+			if (speedR_ <= speedMax_)
+			{
+				speedR_ += speedChange_;
+			}
+			else
+			{
+				speedR_ = speedMax_;
+			}
 		}
 		else
 		{
-			speedL_ = -speedMax_;
-		}
-	}
-	else
-	{
-		if (speedL_ <= 0.0f)
-		{
-			speedL_ += speedChange_;
-		}
-		else
-		{
-			speedL_ = 0.0f;
+			if (speedR_ >= 0.0f)
+			{
+				speedR_ -= speedChange_;
+			}
+			else
+			{
+				speedR_ = 0.0f;
+			}
 		}
 	}
 
@@ -325,34 +377,70 @@ void Player::Rotate()
 			SetRotation(GetRotation() - Vector3(1.0f, 0.0f, 0.0f));
 		}
 	}
-	//右キーを押したとき
-	if (isMoveRight_ == true)
+	if (isChangeDir_ == false)
 	{
-		if (worldTransform_.rotation_.z > -30.0f)
+		//右キーを押したとき
+		if (isMoveRight_ == true)
 		{
-			SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+			if (worldTransform_.rotation_.z > -30.0f)
+			{
+				SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+			}
+		}
+		else
+		{
+			if (worldTransform_.rotation_.z < 0.0f)
+			{
+				SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+			}
+		}
+		//左キーを押したとき
+		if (isMoveLeft_ == true)
+		{
+			if (worldTransform_.rotation_.z < 30.0f)
+			{
+				SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+			}
+		}
+		else
+		{
+			if (worldTransform_.rotation_.z > 0.0f)
+			{
+				SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+			}
 		}
 	}
 	else
 	{
-		if (worldTransform_.rotation_.z < 0.0f)
+		//右キーを押したとき
+		if (isMoveRight_ == true)
 		{
-			SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+			if (worldTransform_.rotation_.z < 30.0f)
+			{
+				SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+			}
 		}
-	}
-	//左キーを押したとき
-	if (isMoveLeft_ == true)
-	{
-		if (worldTransform_.rotation_.z < 30.0f)
+		else
 		{
-			SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+			if (worldTransform_.rotation_.z > 0.0f)
+			{
+				SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+			}
 		}
-	}
-	else
-	{
-		if (worldTransform_.rotation_.z > 0.0f)
+		//左キーを押したとき
+		if (isMoveLeft_ == true)
 		{
-			SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+			if (worldTransform_.rotation_.z > -30.0f)
+			{
+				SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+			}
+		}
+		else
+		{
+			if (worldTransform_.rotation_.z < 0.0f)
+			{
+				SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+			}
 		}
 	}
 }
