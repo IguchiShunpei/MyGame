@@ -107,7 +107,6 @@ void InvEnemy::InitMotion()
 		if (initTime_ <= 0.0f)
 		{
 			isInit_ = true;
-			beforeY_ = 0.0f;
 			initTime_ = 0.0f;
 		}
 	}
