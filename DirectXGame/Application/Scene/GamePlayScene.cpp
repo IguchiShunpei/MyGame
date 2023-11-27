@@ -160,6 +160,10 @@ void GamePlayScene::Update()
 		{
 			return enemy->GetIsDead();
 		});
+	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+		{
+			return enemy->GetIsDelete();
+		});
 	invEnemys_.remove_if([](std::unique_ptr <InvEnemy>& invEnemy)
 		{
 			return invEnemy->GetIsDelete();
@@ -195,6 +199,12 @@ void GamePlayScene::Update()
 			invEnemys->Update();
 			invEnemys->ColliderUpdate();
 		}
+		//敵
+		for (std::unique_ptr<Enemy>& enemys : enemys_)
+		{
+			enemys->Update();
+			enemys->ColliderUpdate();
+		}
 		break;
 
 	case BossScene://ボス戦専用の処理
@@ -203,16 +213,6 @@ void GamePlayScene::Update()
 		//ボス登場演出フラグがfalseになったらボス戦開始
 		if (isBossInitCamera_ == false)
 		{
-			//敵
-			for (std::unique_ptr<Enemy>& enemys : enemys_)
-			{
-				enemys->Update();
-				enemys->ColliderUpdate();
-				if (isBEnemyDeadScene_ == true)
-				{
-					enemys->SetIsDead(true);
-				}
-			}
 			//更新
 			if (bEnemy->GetIsDeathTimer() == false)
 			{
@@ -276,6 +276,7 @@ void GamePlayScene::Update()
 			pm_eDmg->Update();
 			pm_bDmg->Update();
 			player->BulletUpdate();
+			bEnemy->BulletUpdate();
 		}
 	}
 
@@ -404,9 +405,6 @@ void GamePlayScene::Draw()
 		{
 			invEnemys->Draw(viewProjection_);
 		}
-		break;
-
-	case BossScene:
 		//敵
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
@@ -414,6 +412,9 @@ void GamePlayScene::Draw()
 
 			enemys->BulletDraw(viewProjection_);
 		}
+		break;
+
+	case BossScene:
 		//ボス敵
 		if (bEnemy->GetIsDead() == false)
 		{
@@ -586,6 +587,8 @@ void GamePlayScene::UpdateEnemyPop()
 			line_stream >> position.x;
 			line_stream >> position.y;
 			line_stream >> position.z;
+			newEnemy->SetBeforeY(position.y);
+			position.y += 20.0f;
 			// 座標データに追加
 			newEnemy->SetPosition(position);
 			newEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));

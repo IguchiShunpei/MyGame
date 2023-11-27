@@ -56,6 +56,12 @@ public:
 	//移動
 	void Move();
 
+	//登場モーション
+	void InitMotion();
+
+	//退場モーション
+	void BackMotion();
+
 	//接近
 	void Approach();
 	//離脱
@@ -79,6 +85,8 @@ public:
 	void SetPhase(Phase phase) { phase_ = phase; }
 	//isDead
 	void SetIsDead(bool isDead) { this->isDead_ = isDead; }
+	//beforeY
+	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -97,6 +105,17 @@ private:
 	bool isDelete_ = false;
 	//弾が当たったか
 	bool isHit_ = false;
+
+	//登場したか
+	bool isInit_ = false;
+	//退場したか
+	bool isBack_ = false;
+	//登場時間
+	float initTime_ = 0.0f;
+	//退場までの時間
+	float deleteTimer_;
+	//攻撃したか
+	bool isAttack_ = false;
 
 	// モデル
 	Model* enemyModel = nullptr;
@@ -128,4 +147,7 @@ private:
 	Vector3 startSpeed = { -0.5f,0.0f,-0.5f };
 	//落下時間
 	float flame = 0.0f;
+
+	//初期Y座標
+	float beforeY_;
 };

@@ -31,6 +31,9 @@ public:
 	//更新
 	void Update();
 
+	//弾更新
+	void BulletUpdate();
+
 	//当たり判定更新
 	void ColliderUpdate();
 

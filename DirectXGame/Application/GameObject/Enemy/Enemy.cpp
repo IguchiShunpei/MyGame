@@ -20,13 +20,19 @@ void Enemy::EnemyInitialize()
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyModel);
+	dalayTimer_ = 5.0f;
+	deleteTimer_ = 200.0f;
 	isDead_ = false;
+	isDelete_ = false;
+	isHit_ = false;
+	isInit_ = false;
+	initTime_ = 60.0f;
 }
 
 void Enemy::Update()
 {
 	isHit_ = false;
-	enemyColor_ = {1.0f,1.0f,1.0f};
+	enemyColor_ = { 1.0f,1.0f,1.0f };
 
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
@@ -34,9 +40,24 @@ void Enemy::Update()
 			return bullet->GetIsDelete();
 		});
 
-	Move();
+	InitMotion();
+	if (isInit_ == true)
+	{
+		if (isAttack_ == false)
+		{
+		Attack();
+		}
+		else
+		{
+			deleteTimer_--;
+			if (deleteTimer_ <= 0.0f)
+			{
+				isBack_ = true;
+			}
+		}
+	}
 
-	Attack();
+	BackMotion();
 
 	//弾更新
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
@@ -69,7 +90,7 @@ void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 		isHit_ = true;
 		enemyColor_ = { 3.0f,3.0f,3.0f };
 		hp_--;
-		if (hp_ == 0)
+		if (hp_ <= 0)
 		{
 			isDead_ = true;
 		}
@@ -84,7 +105,7 @@ void Enemy::Attack()
 	Vector3 position = GetPosition();
 
 	//弾の速度
-	const float kBulletSpeed = 0.5f;
+	const float kBulletSpeed = 1.5f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
 	//クールタイムが０になったとき
@@ -101,7 +122,7 @@ void Enemy::Attack()
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
 
-		dalayTimer_ = 15.0f;
+		isAttack_ = true;
 	}
 }
 
@@ -123,6 +144,34 @@ void Enemy::Move()
 	case Phase::ReCurve:   //カーブフェーズ
 		ReCurve();
 		break;
+	}
+}
+
+void Enemy::InitMotion()
+{
+	if (isInit_ == false)
+	{
+		worldTransform_.position_.y = beforeY_ + 60.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		initTime_--;
+		if (initTime_ <= 0.0f)
+		{
+			isInit_ = true;
+			initTime_ = 0.0f;
+		}
+	}
+}
+
+void Enemy::BackMotion()
+{
+	if (isBack_ == true)
+	{
+		worldTransform_.position_.y = beforeY_ + 120.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		initTime_++;
+		if (initTime_ >= 60.0f)
+		{
+			isBack_ = true;
+			isDelete_ = true;
+		}
 	}
 }
 

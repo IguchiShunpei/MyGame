@@ -51,15 +51,20 @@ void BossEnemy::Update()
 
 	Attack();
 
+	BulletUpdate();
+
+	// ワールドトランスフォームの行列更新と転送
+	worldTransform_.UpdateMatrix();
+}
+
+void BossEnemy::BulletUpdate()
+{
 	//弾更新
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
 	{
 		bullet->Update();
 		bullet->ColliderUpdate();
 	}
-
-	// ワールドトランスフォームの行列更新と転送
-	worldTransform_.UpdateMatrix();
 }
 
 void BossEnemy::ColliderUpdate()
