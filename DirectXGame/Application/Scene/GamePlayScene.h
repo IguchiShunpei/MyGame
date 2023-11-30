@@ -305,6 +305,8 @@ private://メンバ変数
 	bool isWait_;
 	//クリア演出フラグ
 	bool isClearScene_;
+	//敵を倒した時のカメラシェイク
+	bool isEnemyDeadCameraShake_;
 	//敵死亡時のパーティクルフラグ
 	bool isBossEffect_;
 	//ボス死亡フラグ
@@ -333,8 +335,10 @@ private://メンバ変数
 	int waitTimer_;
 	//Clearに移行する演出のタイマー
 	float clearTimer_;
-	//敵の攻撃に当たった時の演出時間
-	int hitTimer_;
+	//敵が死んだ時の演出時間
+	int hitEnemyTimer_;
+	//自機が攻撃に当たった時の演出時間
+	int hitPlayerTimer_;
 	//ボス登場タイマー
 	int bossInitTimer_;
 	//スタート演出

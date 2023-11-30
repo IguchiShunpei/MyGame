@@ -130,6 +130,7 @@ void GamePlayScene::Initialize()
 	isStart_ = false;
 	isChangeCameraDir_ = false;
 	isPassPoint_ = false;
+	isEnemyDeadCameraShake_ = false;
 
 	//タイマー
 	delayTimer_ = 0.0f;
@@ -145,6 +146,8 @@ void GamePlayScene::Initialize()
 	playerDeadTimerMax_ = 60.0f;
 	targetMoveTimer_ = 0.0f;
 	targetMoveTimerMax_ = cameraMoveTimerMax_ * 2.0f;
+	hitPlayerTimer_ = 0;
+	hitEnemyTimer_ = 0;
 }
 
 void GamePlayScene::Update()
@@ -231,7 +234,14 @@ void GamePlayScene::Update()
 				BossDead();
 				if (isClearScene_ == false)
 				{
-					CameraShake(0.3f, 0.3f);
+					if (bEnemy->GetDeathTimer() % 2 != 1)
+					{
+						CameraShake(0.3f, 0.3f);
+					}
+					else
+					{
+						cameraShakePos_ = viewProjection_->GetEye();
+					}
 				}
 			}
 			//死亡フラグがtrueになったら
@@ -300,12 +310,12 @@ void GamePlayScene::Update()
 			{
 				red_->SetIsRed(true);
 				//無敵時間
-				hitTimer_++;
-				if (hitTimer_ < 16)
+				hitPlayerTimer_++;
+				if (hitPlayerTimer_ < 16)
 				{
-					if (hitTimer_ % 2 != 1)
+					if (hitPlayerTimer_ % 2 != 1)
 					{
-						CameraShake(0.3f, 0.0f);
+						CameraShake(0.2f, 0.2f);
 					}
 					else
 					{
@@ -317,7 +327,7 @@ void GamePlayScene::Update()
 					player->SetIsHit(false);
 					player->SetIsInv(false);
 					viewProjection_->SetEye(cameraShakePos_);
-					hitTimer_ = 0;
+					hitPlayerTimer_ = 0;
 				}
 			}
 		}
@@ -328,6 +338,7 @@ void GamePlayScene::Update()
 	{
 		if (wEnemys->GetIsDead() == true)
 		{
+			isEnemyDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = wEnemys->GetPosition();
 			pm_eDmg->Fire(p_wDmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 5, { 8.0f, 0.0f });
@@ -352,6 +363,26 @@ void GamePlayScene::Update()
 			Vector3 deadPos{};
 			deadPos = enemys->GetPosition();
 			pm_dmg->Fire(p_dmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 12, { 4.0f, 0.0f });
+		}
+	}
+	if (isEnemyDeadCameraShake_ == true)
+	{
+		hitEnemyTimer_++;
+		if (hitEnemyTimer_ < 16)
+		{
+			if (hitEnemyTimer_ % 2 != 1)
+			{
+				CameraShake(0.3f, 0.0f);
+			}
+			else
+			{
+				viewProjection_->SetEye(cameraShakePos_);
+			}
+		}
+		else
+		{
+			hitEnemyTimer_ = 0;
+			isEnemyDeadCameraShake_ = false;
 		}
 	}
 	//ボス敵の被ダメージ処理
@@ -387,7 +418,7 @@ void GamePlayScene::Draw()
 	sky_->Draw(viewProjection_);
 
 	//カメラシェイク中は点滅
-	if (hitTimer_ % 2 != 1)
+	if (hitPlayerTimer_ % 2 != 1)
 	{
 		player->Draw(viewProjection_);
 	}
@@ -494,7 +525,7 @@ void GamePlayScene::LoadEnemyPop()
 
 	//ファイルを開く
 	std::ifstream file;
-	file.open("Resources/csv/enemyPop02.csv");
+	file.open("Resources/csv/enemyPop.csv");
 	assert(file.is_open());
 
 	//ファイルの内容を文字列ストリームにコピー
