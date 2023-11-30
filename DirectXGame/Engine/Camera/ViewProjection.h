@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include"Vector3.h"
 #include "Vector4.h"
 #include"Matrix4.h"
@@ -34,6 +34,8 @@ public:// メンバ関数
 
 	void SetTarget(const Vector3& target) { this->target_ = target; }
 
+	void SetUp(const Vector3& up) { this->up_ = up; }
+
 private:// プライベート関数
 	// 円周率
 	const float PI = 3.141592f;
@@ -47,7 +49,6 @@ private:// プライベート関数
 	// 度数からラジアンに変換
 	float ToRadian(float angle) { return angle * (PI / 180); }
 
-
 public:// パブリック変数
 #pragma region ビュー行列の設定
 	// 視点座標
@@ -55,7 +56,7 @@ public:// パブリック変数
 	// 注視点座標
 	Vector3 target_ = { 0.0f, 0.0f, 100.0f };
 	// 上方向ベクトル
-	Vector3 up_ = { 0.0f, 1.0f, 0.0f };
+	Vector3 up_ = { 1.0f, 1.0f, 1.0f };
 #pragma endregion
 
 #pragma region 射影行列の設定

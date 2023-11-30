@@ -271,6 +271,8 @@ private://メンバ変数
 	Vector3 beforeMoveCameraPos_;
 	//基本target
 	Vector3 normalTargetNum_;
+	//基本up
+	Vector3 normalUpNum_;
 	//変化前target
 	Vector3 beforeTargetNum_;
 	//targetを変化させるときに入れる変数
