@@ -184,9 +184,9 @@ void Player::Move()
 
 	//範囲を超えない処理
 	worldTransform_.position_.x = max(worldTransform_.position_.x, -kMoveLimitX);
-	worldTransform_.position_.x = min(worldTransform_.position_.x, +kMoveLimitX);
+	worldTransform_.position_.x = min(worldTransform_.position_.x, kMoveLimitX);
 	worldTransform_.position_.y = max(worldTransform_.position_.y, -kMoveLimitY);
-	worldTransform_.position_.y = min(worldTransform_.position_.y, +kMoveLimitY);
+	worldTransform_.position_.y = min(worldTransform_.position_.y, kMoveLimitY);
 }
 
 void Player::SpeedChange()
@@ -498,7 +498,7 @@ void Player::Damage()
 {
 	if (isHit_ == true && isInv_ == false)
 	{
-		hp_ -= 1;
+		hp_--;
 		isInv_ = true;
 		if (hp_ <= 0)
 		{

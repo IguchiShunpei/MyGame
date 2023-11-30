@@ -33,9 +33,11 @@ void GamePlayScene::Initialize()
 	xmViewProjection = new XMViewProjection();
 	viewProjection_->Initialize();
 	viewProjection_->SetEye({ -15.0f,0.0f,10.0f });
+	viewProjection_->SetUp({ 0.0f,1.0f,0.0f });
 	startCameraPos_ = viewProjection_->GetEye();
 	beforeTargetNum_ = viewProjection_->target_;
 	normalTargetNum_ = viewProjection_->target_;
+	normalUpNum_ = viewProjection_->up_;
 
 	//天球
 	sky_ = new SkyDome;
@@ -217,6 +219,7 @@ void GamePlayScene::Update()
 			if (bEnemy->GetIsDeathTimer() == false)
 			{
 				bEnemy->Update();
+				bEnemy->PhaseChange(player->GetPosition());
 				bEnemy->ColliderUpdate();
 			}
 			else
@@ -491,7 +494,7 @@ void GamePlayScene::LoadEnemyPop()
 
 	//ファイルを開く
 	std::ifstream file;
-	file.open("Resources/csv/enemyPop.csv");
+	file.open("Resources/csv/enemyPop02.csv");
 	assert(file.is_open());
 
 	//ファイルの内容を文字列ストリームにコピー
@@ -1024,6 +1027,7 @@ void GamePlayScene::MoveCamera()
 		isRight_ = true;
 
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0.1f, 0, 0));
+		viewProjection_->SetUp(viewProjection_->up_ + Vector3(-0.005f, 0, 0));
 	}
 	else
 	{
@@ -1032,12 +1036,17 @@ void GamePlayScene::MoveCamera()
 		{
 			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(-0.1f, 0, 0));
 		}
+		if (viewProjection_->up_.x <= normalUpNum_.x)
+		{
+			viewProjection_->SetUp(viewProjection_->up_ + Vector3(0.005f, 0, 0));
+		}
 	}
 	if (input_->PushKey(DIK_LEFT))
 	{
 		isLeft_ = true;
 
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(-0.1f, 0, 0));
+		viewProjection_->SetUp(viewProjection_->up_ + Vector3(0.005f, 0, 0));
 	}
 	else
 	{
@@ -1045,6 +1054,10 @@ void GamePlayScene::MoveCamera()
 		if (viewProjection_->target_.x <= normalTargetNum_.x)
 		{
 			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0.1f, 0, 0));
+		}
+		if (viewProjection_->up_.x >= normalUpNum_.x)
+		{
+			viewProjection_->SetUp(viewProjection_->up_ + Vector3(-0.005f, 0, 0));
 		}
 	}
 	if (input_->PushKey(DIK_DOWN))
@@ -1071,6 +1084,10 @@ void GamePlayScene::MoveCamera()
 	viewProjection_->target_.x = min(viewProjection_->target_.x, +kTargetLimitX);
 	viewProjection_->target_.y = max(viewProjection_->target_.y, -kTargetLimitY);
 	viewProjection_->target_.y = min(viewProjection_->target_.y, +kTargetLimitY);
+
+	const float kUpLimitX = 0.15f;
+	viewProjection_->up_.x = max(viewProjection_->up_.x, -kUpLimitX);
+	viewProjection_->up_.x = min(viewProjection_->up_.x, +kUpLimitX);
 }
 
 void GamePlayScene::LoadLevelData()
