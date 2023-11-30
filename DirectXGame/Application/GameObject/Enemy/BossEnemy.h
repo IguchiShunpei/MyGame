@@ -133,12 +133,8 @@ private:
 	float waitMotionTimerMax_;
 	//前のy座標
 	float beforeY_;
-	//浮上モーションの時間
-	float levTime_;
-	//浮上する向き
-	int levDirection_;
 	//範囲
-	float levRange_;
+	float waitMotionRange_;
 	//上昇しているか
 	bool isUp_;
 

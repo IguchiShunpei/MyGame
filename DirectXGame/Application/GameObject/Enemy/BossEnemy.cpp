@@ -26,6 +26,7 @@ void BossEnemy::BossEnemyInitialize()
 	beforeY_ = 120.0f;
 	SetPosition({ 0.0f,beforeY_,100.0f });
 	isInit_ = false;
+	initTime_ = 240.0f;
 
 	//死亡
 	isDead_ = false;
@@ -49,14 +50,15 @@ void BossEnemy::BossEnemyInitialize()
 	waitTimer_ = 0.0f;
 	waitTimerMax_ = 300.0f;
 	waitMotionTimer_ = 0.0f;
-	waitMotionTimerMax_ = 30.0f;
-	initTime_ = 240.0f;
+	waitMotionTimerMax_ = 150.0f;
+	waitMotionRange_ = 1.0f;
+	isUp_ = false;
 
 	//離脱
 	leaveTimer_ = 0.0f;
 	leaveTimerMax_ = 120.0f;
 
-	phase_ = Phase::Turn;
+	phase_ = Phase::Wait;
 
 	hp_ = 50;
 }
@@ -137,7 +139,36 @@ void BossEnemy::Wait()
 
 void BossEnemy::WaitMotion()
 {
-
+	//上昇
+	if (isUp_ == true)
+	{
+		if (waitMotionTimer_ < waitMotionTimerMax_)
+		{
+			worldTransform_.position_.y = beforeY_ + waitMotionRange_ * MathFunc::easeOutSine(waitMotionTimer_ / waitMotionTimerMax_);
+			waitMotionTimer_++;
+		}
+		else
+		{
+			isUp_ = false;
+			waitMotionTimer_ = 0;
+			beforeY_ = worldTransform_.position_.y;
+		}
+	}
+	//下降
+	else
+	{
+		if (waitMotionTimer_ < waitMotionTimerMax_)
+		{
+			worldTransform_.position_.y = beforeY_ + waitMotionRange_ * -MathFunc::easeOutSine(waitMotionTimer_ / waitMotionTimerMax_);
+			waitMotionTimer_++;
+		}
+		else
+		{
+			isUp_ = true;
+			waitMotionTimer_ = 0;
+			beforeY_ = worldTransform_.position_.y;
+		}
+	}
 }
 
 void BossEnemy::Move()
@@ -237,9 +268,9 @@ void BossEnemy::TurnAttack(Vector3 pos)
 		if (turnAttackTimer_ < turnAttackTimerMax_)
 		{
 			//自機の位置に接近
-			worldTransform_.position_.x = turnAttackPos_.x + (turnAttackPos_.x + playerPos_.x) * -MathFunc::easeOutSine(turnAttackTimer_ / turnAttackTimerMax_);
-			worldTransform_.position_.y = turnAttackPos_.y + (turnAttackPos_.y + playerPos_.y) * -MathFunc::easeOutSine(turnAttackTimer_ / turnAttackTimerMax_);
-			worldTransform_.position_.z = turnAttackPos_.z + (turnAttackPos_.z + playerPos_.z) * -MathFunc::easeOutSine(turnAttackTimer_ / turnAttackTimerMax_);
+			worldTransform_.position_.x = turnAttackPos_.x + (turnAttackPos_.x - playerPos_.x) * -MathFunc::easeOutSine(turnAttackTimer_ / turnAttackTimerMax_);
+			worldTransform_.position_.y = turnAttackPos_.y + (turnAttackPos_.y - playerPos_.y) * -MathFunc::easeOutSine(turnAttackTimer_ / turnAttackTimerMax_);
+			worldTransform_.position_.z = turnAttackPos_.z + (turnAttackPos_.z - playerPos_.z + 3.0f) * -MathFunc::easeOutSine(turnAttackTimer_ / turnAttackTimerMax_);
 			turnAttackTimer_++;
 		}
 		else
@@ -266,6 +297,7 @@ void BossEnemy::InitMotion()
 			//初期位置をセット
 			normalPos_ = worldTransform_.position_;
 			turnAttackPos_ = GetPosition();
+			beforeY_ = worldTransform_.position_.y;
 		}
 	}
 }
@@ -300,13 +332,13 @@ void BossEnemy::Leave()
 		//原点に戻る
 		worldTransform_.position_.x = beforeLeavePos_.x + (turnAttackPos_.x - beforeLeavePos_.x) * MathFunc::easeOutSine(leaveTimer_ / leaveTimerMax_);
 		worldTransform_.position_.y = beforeLeavePos_.y + (turnAttackPos_.y - beforeLeavePos_.y) * MathFunc::easeOutSine(leaveTimer_ / leaveTimerMax_);
-		worldTransform_.position_.z = beforeLeavePos_.z + (turnAttackPos_.z - beforeLeavePos_.z) * MathFunc::easeOutSine(leaveTimer_ / leaveTimerMax_);
+		worldTransform_.position_.z = beforeLeavePos_.z + (turnAttackPos_.z - beforeLeavePos_.z - 3.0f) * MathFunc::easeOutSine(leaveTimer_ / leaveTimerMax_);
 		leaveTimer_++;
 	}
 	else
 	{
 		leaveTimer_ = 0.0f;
-		isTurn_ = true;
+		isTurn_ = false;
 		phase_ = Phase::Wait;
 	}
 }

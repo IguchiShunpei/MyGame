@@ -8,7 +8,7 @@ void Meteor::MeteorInitialize()
 	// 3Dオブジェクト生成
 	Create();
 
-	speed_ = 0.05f;
+	speed_ = 0.1f;
 	frontX_ = -20.0f;
 	backZ_ = 70.0f;
 	levRange_ = 1.0f;
