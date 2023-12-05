@@ -42,7 +42,7 @@ void BossEnemy::BossEnemyInitialize()
 	turnSpeed_ = 0.0f;
 	turnSpeedMax_ = 30.0f;
 	turnAttackTimer_ = 0.0f;
-	turnAttackTimerMax_ = 60.0f;
+	turnAttackTimerMax_ = 45.0f;
 	playerPos_ = { 0.0f,0.0f,0.0f };
 	backRotaY_ = 0.0f;
 

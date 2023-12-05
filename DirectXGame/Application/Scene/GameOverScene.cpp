@@ -31,13 +31,13 @@ void GameOverScene::Initialize()
 
 	space_ = new Sprite;
 	space_->Initialize(dxCommon_);
-	space_->LoadTexture(0, L"Resources/space.png", dxCommon_);
+	space_->LoadTexture(0, L"Resources/2d/space.png", dxCommon_);
 	space_->SetScale({ 4,1 });
 	space_->SetPosition({ 450,550,0 });
 
 	gameOverLogo_ = new Sprite;
 	gameOverLogo_->Initialize(dxCommon_);
-	gameOverLogo_->LoadTexture(0, L"Resources/gameOver.png", dxCommon_);
+	gameOverLogo_->LoadTexture(0, L"Resources/2d/gameOver.png", dxCommon_);
 	gameOverLogo_->SetScale({ 10,4 });
 	gameOverLogo_->SetPosition({ 170,-60,0 });
 	

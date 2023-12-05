@@ -37,13 +37,13 @@ void GameTitleScene::Initialize()
 
 	titleLogo_ = new Sprite;
 	titleLogo_->Initialize(dxCommon_);
-	titleLogo_->LoadTexture(0, L"Resources/title01.png", dxCommon_);
+	titleLogo_->LoadTexture(0, L"Resources/2d/title01.png", dxCommon_);
 	titleLogo_->SetScale({ 10,4 });
 	titleLogo_->SetPosition({ 170,-60,0 });
 
 	space_ = new Sprite;
 	space_->Initialize(dxCommon_);
-	space_->LoadTexture(0, L"Resources/space.png", dxCommon_);
+	space_->LoadTexture(0, L"Resources/2d/space.png", dxCommon_);
 	space_->SetScale({ 4,1 });
 	space_->SetPosition({ 450,550,0 });
 

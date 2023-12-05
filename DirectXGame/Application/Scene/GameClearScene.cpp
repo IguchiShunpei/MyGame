@@ -31,13 +31,13 @@ void GameClearScene::Initialize()
 
 	space_ = new Sprite;
 	space_->Initialize(dxCommon_);
-	space_->LoadTexture(0, L"Resources/space.png", dxCommon_);
+	space_->LoadTexture(0, L"Resources/2d/space.png", dxCommon_);
 	space_->SetScale({ 4,1 });
 	space_->SetPosition({ 450,550,0 });
 
 	gameClearLogo_ = new Sprite;
 	gameClearLogo_->Initialize(dxCommon_);
-	gameClearLogo_->LoadTexture(0, L"Resources/gameClear01.png", dxCommon_);
+	gameClearLogo_->LoadTexture(0, L"Resources/2d/gameClear01.png", dxCommon_);
 	gameClearLogo_->SetScale({ 10,4 });
 	gameClearLogo_->SetPosition({ 170,-60,0 });
 

@@ -11,6 +11,7 @@
 #include "ParticleManager.h"
 #include "SkyDome.h"
 #include "LevelLoader.h"
+#include "Stardust.h"
 #include "Meteor.h"
 #include "Player.h"
 #include "Enemy.h"
@@ -191,6 +192,10 @@ private://メンバ変数
 	Particle* p_bDmg = nullptr;
 	ParticleManager* pm_bDmg = nullptr;
 
+	Stardust* objStardust = nullptr;
+	Model* modelStardust = nullptr;
+	Stardust* stardust = nullptr;
+
 	Meteor* objMeteor = nullptr;
 	Model* modelMeteor = nullptr;
 	Meteor* meteor = nullptr;
@@ -242,11 +247,20 @@ private://メンバ変数
 	float UIMoveRange_;
 
 	//レベルデータ
-	LevelData* levelData = nullptr;
+	//星屑
+	LevelData* backGroundStardust_ = nullptr;
 	//モデル
-	std::map<std::string, Model*> meteorModels;
+	std::map<std::string, Model*> stardustModels_;
 	//オブジェクト
-	std::vector<Meteor*> meteorObjects;
+	std::vector<Stardust*> stardustObjects_;
+
+	//隕石
+	LevelData* backGroundMeteor_ = nullptr;
+	//モデル
+	std::map<std::string, Model*> meteorModels_;
+	//オブジェクト
+	std::vector<Meteor*> meteorObjects_;
+
 
 	//シーン番号
 	int gameNum_;

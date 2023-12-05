@@ -43,6 +43,7 @@ void GamePlayScene::Initialize()
 	//天球
 	sky_ = new SkyDome;
 	sky_->SkyDomeInitialize();
+	sky_->SetPosition({ 0.0f,0.0f,500.0f });
 
 	//黒
 	black_ = new Black;
@@ -154,7 +155,7 @@ void GamePlayScene::Initialize()
 	hitPlayerTimer_ = 0;
 	hitEnemyTimer_ = 0;
 	clearCameraTimer_ = 0.0f;
-	clearCameraTimerMax_ = 90.0f;
+	clearCameraTimerMax_ = 180.0f;
 	playerShakeTimer_ = 0;
 }
 
@@ -186,14 +187,19 @@ void GamePlayScene::Update()
 	UpdateEnemyPop();
 
 	//天球
-	sky_->Update();
+	sky_->SkyDomeUpdate();
 	//自機登場演出
 	PlayerInit();
 	//UIの登場モーション
 	UIInitMotion();
 	//"CHANGE"を読み取ったらカメラ切り替え
 	ChangeCameraDirection();
-	for (auto& object : meteorObjects)
+	for (auto& object : stardustObjects_)
+	{
+		object->StardustUpdate();
+	}
+
+	for (auto& object : meteorObjects_)
 	{
 		object->MeteorUpdate();
 	}
@@ -386,7 +392,7 @@ void GamePlayScene::Update()
 		{
 			if (hitEnemyTimer_ % 2 != 1)
 			{
-				CameraShake(0.3f, 0.0f);
+				CameraShake(0.3f, 0.3f);
 			}
 			else
 			{
@@ -440,8 +446,15 @@ void GamePlayScene::Draw()
 		player->BulletDraw(viewProjection_);
 	}
 
-	for (auto& object : meteorObjects) {
+	for (auto& object : stardustObjects_) {
 		object->Draw(viewProjection_);
+	}
+
+	for (auto& object : meteorObjects_) {
+		if (object->GetIsDelete() == false)
+		{
+			object->Draw(viewProjection_);
+		}
 	}
 	switch (gameNum_)
 	{
@@ -516,7 +529,10 @@ void GamePlayScene::Draw()
 
 void GamePlayScene::Finalize()
 {
-	for (Meteor*& object : meteorObjects) {
+	for (Stardust*& object : stardustObjects_) {
+		delete(object);
+	}
+	for (Meteor*& object : meteorObjects_) {
 		delete(object);
 	}
 
@@ -761,7 +777,7 @@ void GamePlayScene::PlayerInitCameraWork()
 void GamePlayScene::PlayerDead()
 {
 	//自機を動かす
-	player->worldTransform_.rotation_.z += 10.0f;
+	player->worldTransform_.rotation_.z += 8.0f;
 	if (player->worldTransform_.rotation_.z >= 720.0f)
 	{
 		isPlayerDead_ = true;
@@ -806,6 +822,7 @@ void GamePlayScene::BossInitCameraWork()
 		{
 			bossInitNum_ = InitCameraWork;
 			bossAppTimer_ = 0;
+			viewProjection_->up_ = { 0.0f,1.0f,0.0f };
 		}
 		break;
 	case InitCameraWork:
@@ -926,7 +943,9 @@ void GamePlayScene::ToClearScene()
 			black_->SetIsFinish(true);
 			//自機を動かす
 			player->worldTransform_.rotation_.z++;
+			player->worldTransform_.position_.x -= 0.05f;
 			player->worldTransform_.position_.z++;
+			viewProjection_->eye_.z -= 0.5f;
 			// ワールドトランスフォームの行列更新と転送
 			player->worldTransform_.UpdateMatrix();
 			//自機が移動しきったらシーン遷移
@@ -953,15 +972,12 @@ void GamePlayScene::ToClearCameraWork()
 		case 1:
 			viewProjection_->eye_.x = normalEyeNum_.x + (0.0f - normalEyeNum_.x) * MathFunc::easeOutSine(clearCameraTimer_ / clearCameraTimerMax_);
 			viewProjection_->eye_.z = normalEyeNum_.z + (-20.0f - normalEyeNum_.z) * MathFunc::easeOutSine(clearCameraTimer_ / clearCameraTimerMax_);
-			viewProjection_->target_.y = normalTargetNum_.y + (-2.0f - normalTargetNum_.x) * MathFunc::easeOutSine(clearCameraTimer_ / clearCameraTimerMax_);
-			viewProjection_->target_.z = normalTargetNum_.z + 50.0f * MathFunc::easeOutSine(clearCameraTimer_ / clearCameraTimerMax_);
 			break;
 		case 2:
 			//1回転したらカメラワークフラグをtrueに
 			isClearCameraWork_ = true;
 			viewProjection_->eye_.x = 0.0f;
 			viewProjection_->eye_.z = -20.0f;
-			viewProjection_->SetTarget({ 0.0f, -2.0f, 50.0f });
 			break;
 		}
 		clearCameraTimer_++;
@@ -970,6 +986,7 @@ void GamePlayScene::ToClearCameraWork()
 	else
 	{
 		clearCameraTimer_ = 0.0f;
+		clearCameraTimerMax_ = 90.0f;
 		normalEyeNum_ = viewProjection_->eye_;
 		clearCameraNum_++;
 	}
@@ -985,8 +1002,10 @@ void GamePlayScene::ToGameOverScene()
 		player->worldTransform_.UpdateMatrix();
 		if (isGameOver_ == true)
 		{
+			CameraShake(0.1f, 0.0f);
 			if (explosion03_->GetIsFinish() == true)
 			{
+				viewProjection_->eye_ = normalEyeNum_;
 				black_->SetIsFinish(true);
 				gameOverNum_++;
 				// ワールドトランスフォームの行列更新と転送
@@ -1015,6 +1034,7 @@ void GamePlayScene::ToGameOverCameraWork()
 		}
 		else
 		{
+			normalEyeNum_ = viewProjection_->eye_;
 			black_->SetRotation({ 0.0f,-90.0f,0.0f });
 			black_->SetPosition(Vector3(viewProjection_->eye_.x - 1.0f, viewProjection_->eye_.y, viewProjection_->eye_.z - 2.0f));
 		}
@@ -1200,20 +1220,63 @@ void GamePlayScene::MoveCamera()
 
 void GamePlayScene::LoadLevelData()
 {
-	// レベルデータの読み込み
-	levelData = LevelLoader::LoadFile("backGround");
+	//背景オブジェクトデータの読み込み
+	backGroundStardust_ = LevelLoader::LoadFile("stardust");
+	backGroundMeteor_ = LevelLoader::LoadFile("meteor");
 
 	//モデル読み込み
+	modelStardust = Model::LoadFromOBJ("stardust");
 	modelMeteor = Model::LoadFromOBJ("meteor");
 
-	meteorModels.insert(std::make_pair("meteor", modelMeteor));
+	stardustModels_.insert(std::make_pair("stardust", modelStardust));
+	meteorModels_.insert(std::make_pair("meteor", modelMeteor));
 
 	// レベルデータからオブジェクトを生成、配置
-	for (auto& objectData : levelData->objects) {
+	//星屑
+	for (auto& objectData : backGroundStardust_->objects) {
 		// ファイル名から登録済みモデルを検索
 		Model* model = nullptr;
-		decltype(meteorModels)::iterator it = meteorModels.find(objectData.fileName);
-		if (it != meteorModels.end()) {
+		decltype(stardustModels_)::iterator it = stardustModels_.find(objectData.fileName);
+		if (it != stardustModels_.end()) {
+			model = it->second;
+		}
+
+		// モデルを指定して3Dオブジェクトを生成
+		stardust = new Stardust;
+		stardust->StardustInitialize();
+		stardust->SetModel(model);
+
+		// 座標
+		Vector3 pos;
+		//データの値を代入
+		pos.x = objectData.translation.m128_f32[0];
+		pos.y = objectData.translation.m128_f32[1];
+		pos.z = objectData.translation.m128_f32[2];
+		//newObjectにセット
+		stardust->SetPosition(pos);
+		//初期Y座標を保存しておく
+		stardust->SetBeforeY(pos.y);
+
+		// 回転角
+		Vector3 rot;
+		//データの値を代入
+		rot.x = objectData.rotation.m128_f32[0];
+		rot.y = objectData.rotation.m128_f32[1];
+		rot.z = objectData.rotation.m128_f32[2];
+		//newObjectにセット
+		stardust->SetRotation(rot);
+
+		stardust->SetSize();
+
+		// 配列に登録
+		stardustObjects_.push_back(stardust);
+	}
+	//隕石
+	for (auto& objectData : backGroundMeteor_->objects) {
+		// ファイル名から登録済みモデルを検索
+		Model* model = nullptr;
+		decltype(meteorModels_)::iterator it = meteorModels_.find(objectData.fileName);
+		if (it != meteorModels_.end()) {
 			model = it->second;
 		}
 
@@ -1230,8 +1293,6 @@ void GamePlayScene::LoadLevelData()
 		pos.z = objectData.translation.m128_f32[2];
 		//newObjectにセット
 		meteor->SetPosition(pos);
-		//初期Y座標を保存しておく
-		meteor->SetBeforeY(pos.y);
 
 		// 回転角
 		Vector3 rot;
@@ -1252,7 +1313,7 @@ void GamePlayScene::LoadLevelData()
 		meteor->SetScale(scale);
 
 		// 配列に登録
-		meteorObjects.push_back(meteor);
+		meteorObjects_.push_back(meteor);
 	}
 }
 
@@ -1278,42 +1339,42 @@ void GamePlayScene::UIInitialize()
 
 	arrowUpOn = new Sprite;
 	arrowUpOn->Initialize(dxCommon_);
-	arrowUpOn->LoadTexture(0, L"Resources/offUp.png", dxCommon_);
+	arrowUpOn->LoadTexture(0, L"Resources/2d/offUp.png", dxCommon_);
 	arrowUpOn->SetScale({ 0.8f,0.8f });
 	arrowUpOn->SetPosition({ 600,0 - UIInitRange_,0 });
 	arrowUpOff = new Sprite;
 	arrowUpOff->Initialize(dxCommon_);
-	arrowUpOff->LoadTexture(0, L"Resources/onUp.png", dxCommon_);
+	arrowUpOff->LoadTexture(0, L"Resources/2d/onUp.png", dxCommon_);
 	arrowUpOff->SetScale({ 0.8f,0.8f });
 	arrowUpOff->SetPosition({ 600,0 - UIInitRange_,0 });
 	arrowDownOn = new Sprite;
 	arrowDownOn->Initialize(dxCommon_);
-	arrowDownOn->LoadTexture(0, L"Resources/offDown.png", dxCommon_);
+	arrowDownOn->LoadTexture(0, L"Resources/2d/offDown.png", dxCommon_);
 	arrowDownOn->SetScale({ 0.8f,0.8f });
 	arrowDownOn->SetPosition({ 600,640 + UIInitRange_,0 });
 	arrowDownOff = new Sprite;
 	arrowDownOff->Initialize(dxCommon_);
-	arrowDownOff->LoadTexture(0, L"Resources/onDown.png", dxCommon_);
+	arrowDownOff->LoadTexture(0, L"Resources/2d/onDown.png", dxCommon_);
 	arrowDownOff->SetScale({ 0.8f,0.8f });
 	arrowDownOff->SetPosition({ 600,640 + UIInitRange_,0 });
 	arrowRightOn = new Sprite;
 	arrowRightOn->Initialize(dxCommon_);
-	arrowRightOn->LoadTexture(0, L"Resources/offRight.png", dxCommon_);
+	arrowRightOn->LoadTexture(0, L"Resources/2d/offRight.png", dxCommon_);
 	arrowRightOn->SetScale({ 0.8f,0.8f });
 	arrowRightOn->SetPosition({ 1200 + UIInitRange_,300,0 });
 	arrowRightOff = new Sprite;
 	arrowRightOff->Initialize(dxCommon_);
-	arrowRightOff->LoadTexture(0, L"Resources/onRight.png", dxCommon_);
+	arrowRightOff->LoadTexture(0, L"Resources/2d/onRight.png", dxCommon_);
 	arrowRightOff->SetScale({ 0.8f,0.8f });
 	arrowRightOff->SetPosition({ 1200 + UIInitRange_,300,0 });
 	arrowLeftOn = new Sprite;
 	arrowLeftOn->Initialize(dxCommon_);
-	arrowLeftOn->LoadTexture(0, L"Resources/offLeft.png", dxCommon_);
+	arrowLeftOn->LoadTexture(0, L"Resources/2d/offLeft.png", dxCommon_);
 	arrowLeftOn->SetScale({ 0.8f,0.8f });
 	arrowLeftOn->SetPosition({ 0 - UIInitRange_,300,0 });
 	arrowLeftOff = new Sprite;
 	arrowLeftOff->Initialize(dxCommon_);
-	arrowLeftOff->LoadTexture(0, L"Resources/onLeft.png", dxCommon_);
+	arrowLeftOff->LoadTexture(0, L"Resources/2d/onLeft.png", dxCommon_);
 	arrowLeftOff->SetScale({ 0.8f,0.8f });
 	arrowLeftOff->SetPosition({ 0 - UIInitRange_,300,0 });
 }
