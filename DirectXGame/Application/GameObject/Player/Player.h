@@ -32,6 +32,9 @@ public:
 	//登場モーション
 	void IntitMotion();
 
+	//振動
+	void Shake(float x,float y);
+
 	//移動
 	void Move();
 

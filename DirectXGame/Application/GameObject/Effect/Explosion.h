@@ -10,7 +10,9 @@ public:
 	//初期化
 	void ExplosionInitialize(int num);
 
-	void ExplosionUpdate(Vector3 bossDeadpos);
+	void EnemyExplosionUpdate(Vector3 bossDeadpos);
+
+	void PlayerExplosionUpdate(Vector3 playerDeadpos);
 
 	void ExplosionDraw(ViewProjection* viewProjection_);
 
@@ -21,6 +23,7 @@ private:
 	// モデル
 	Model* explosionModel01_ = nullptr;
 	Model* explosionModel02_ = nullptr;
+	Model* explosionModel03_ = nullptr;
 
 	Vector3 scaleNum_;
 

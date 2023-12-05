@@ -6,7 +6,7 @@ PlayerBullet::~PlayerBullet()
 	delete playerBulletModel_;
 }
 
-void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3& velocity,int bulletDir)
+void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3& velocity, int bulletDir)
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
@@ -30,6 +30,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 	velocity_ = velocity;
 	isDelete_ = false;
 	chargeTime = 0;
+	deleteTimer_ = 60.0f;
 }
 
 void PlayerBullet::ColliderUpdate()
@@ -44,35 +45,20 @@ void PlayerBullet::ColliderUpdate()
 
 void PlayerBullet::Update()
 {
-	if (isCharge_ == false)
+	worldTransform_.UpdateMatrix();
+
+	if (worldTransform_.scale_.x >= 0.7f)
 	{
-		if (bulletNum_ == 0)
-		{
-			worldTransform_.UpdateMatrix();
-		}
-		else if (bulletNum_ == 1)
-		{
-			MathFunc::HorizontalProjection(worldTransform_, startSpeed, G, flame);
-		}
-		else if (bulletNum_ == 2)
-		{
-			isCharge_ = true;
-			worldTransform_.scale_ += scaleNum;
-		}
+		worldTransform_.scale_ -= Vector3(0.3f, 0.3f, 0.3f);
+	}
 
-		if (worldTransform_.scale_.x >= 0.7f)
-		{
-			worldTransform_.scale_ -= Vector3(0.3f, 0.3f, 0.3f);
-		}
+	//座標を移動させる
+	worldTransform_.position_ += velocity_;
 
-		//座標を移動させる
-		worldTransform_.position_ += velocity_;
-
-		//時間経過で弾が消える
-		if (--deleteTimer_ <= 0)
-		{
-			isDelete_ = true;
-		}
+	//時間経過で弾が消える
+	if (--deleteTimer_ <= 0)
+	{
+		isDelete_ = true;
 	}
 }
 
@@ -85,7 +71,7 @@ void PlayerBullet::OnCollision([[maybe_unused]] const CollisionInfo& info)
 
 	//相手がEnemy
 	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 ||
-		strcmp(toCollisionName, str3) == 0 || strcmp(toCollisionName, str4) == 0) 
+		strcmp(toCollisionName, str3) == 0 || strcmp(toCollisionName, str4) == 0)
 	{
 		isDelete_ = true;
 	}

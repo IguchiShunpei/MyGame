@@ -5,6 +5,7 @@ Explosion::~Explosion()
 {
 	delete explosionModel01_;
 	delete explosionModel02_;
+	delete explosionModel03_;
 }
 
 void Explosion::ExplosionInitialize(int num)
@@ -33,6 +34,17 @@ void Explosion::ExplosionInitialize(int num)
 		scaleNum_ = Vector3(0.1f, 0.1f, 0.1f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}
+	else if (num == 2)
+	{
+		// OBJからモデルデータを読み込む
+		explosionModel03_ = Model::LoadFromOBJ("explosion03");
+		// 3Dオブジェクト生成
+		Create();
+		// オブジェクトにモデルをひも付ける
+		SetModel(explosionModel03_);
+		scaleNum_ = Vector3(0.5f, 0.5f, 0.5f);
+		SetScale(Vector3(0.3f, 0.3f, 0.3f));
+	}
 	SetPosition(Vector3(0.0f, 0.0f, 0.0f));
 	color_ = Vector3(1.0f, 1.0f, 1.0f);
 
@@ -43,7 +55,7 @@ void Explosion::ExplosionInitialize(int num)
 	alpha_ = 0.8f;
 }
 
-void Explosion::ExplosionUpdate(Vector3 bossDeadPos)
+void Explosion::EnemyExplosionUpdate(Vector3 bossDeadPos)
 {
 	if (updateTimer_ % 2 != 1)
 	{
@@ -70,6 +82,30 @@ void Explosion::ExplosionUpdate(Vector3 bossDeadPos)
 		isFinish_ = true;
 	}
 	Update();
+}
+
+void Explosion::PlayerExplosionUpdate(Vector3 playerDeadpos)
+{
+	SetPosition(playerDeadpos);
+	if (isFinish_ == false)
+	{
+		if (worldTransform_.scale_.x <= 50.0f)
+		{
+			worldTransform_.scale_ += scaleNum_;
+			Update();
+		}
+		else
+		{
+			if (alpha_ >= 0.0f)
+			{
+				alpha_ -= 0.025f;
+			}
+			else
+			{
+				isFinish_ = true;
+			}
+		}
+	}
 }
 
 void Explosion::ExplosionDraw(ViewProjection* viewProjection_)

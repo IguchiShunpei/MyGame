@@ -37,7 +37,7 @@ void Player::PlayerInitialize()
 	bulletNum_ = 0;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
-	hp_ = 3;
+	hp_ = 1;
 	initSpeedZ_ = 0.5f;
 	initRotaZ_ = 400.0f;
 	initMotionTimeMax_ = 40.0f;
@@ -93,7 +93,7 @@ void Player::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	//相手がEnemy
 	if (isInv_ == false)
 	{
-		if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0)
+		if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 )
 		{
 			isHit_ = true;
 		}
@@ -130,6 +130,18 @@ void Player::IntitMotion()
 		}
 	}
 	// ワールドトランスフォームの行列更新と転送
+	worldTransform_.UpdateMatrix();
+}
+
+void Player::Shake(float x,float y)
+{
+	//乱数生成装置
+	std::random_device seed_gen;
+	std::mt19937_64 engine(seed_gen());
+	std::uniform_real_distribution<float>dist(-x, x);
+	std::uniform_real_distribution<float>dist2(-y, y);
+
+	worldTransform_.position_ = worldTransform_.position_ + Vector3(dist(engine), dist2(engine), dist2(engine));
 	worldTransform_.UpdateMatrix();
 }
 
@@ -447,50 +459,35 @@ void Player::Rotate()
 
 void Player::Attack()
 {
-	if (input_->PushKey(DIK_SPACE))
+	if (input_->TriggerKey(DIK_SPACE))
 	{
-		if (bulletNum_ == 2)
-		{
-
-		}
-
-		dalayTimer_ -= 0.1f;
-
 		//自キャラの座標をコピー
 		Vector3 position = GetWorldPosition();
 
 		//弾の速度
 		if (isChangeDir_ == false)
 		{
-			kBulletSpeed_ = 1.0f;
+			kBulletSpeed_ = 3.0f;
 			bulletDir_ = 0;
 		}
 		else
 		{
-			kBulletSpeed_ = -1.0f;
+			kBulletSpeed_ = -3.0f;
 			bulletDir_ = 1;
 		}
 		Vector3 velocity(0, 0, kBulletSpeed_);
 
-		//クールタイムが０になったとき
-		if (dalayTimer_ <= 0)
-		{
-			//球の生成
-			std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-			//球の初期化
-			newBullet->PlayerBulletInitialize(position, velocity, bulletDir_);
+		//球の生成
+		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+		//球の初期化
+		newBullet->PlayerBulletInitialize(position, velocity, bulletDir_);
 
-			//コライダーの追加
-			newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
+		//コライダーの追加
+		newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
 
-			//弾種類をセット
-			newBullet->SetBulletNum(bulletNum_);
+		//球の登録
+		bullets_.push_back(std::move(newBullet));
 
-			//球の登録
-			bullets_.push_back(std::move(newBullet));
-
-			dalayTimer_ = 0.6f;
-		}
 	}
 }
 
