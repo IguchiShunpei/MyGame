@@ -1,9 +1,9 @@
-﻿#include "MathFunc.h"
+#include "MathFunc.h"
 
 float MathFunc::easeInSine(float a)
 { 
 	const float PI = 3.141592f;
-	return 1.0f - cos((a * PI) / 2);
+	return 1.0f - cos((a * PI) / 2.0f);
 }
 
 float MathFunc::easeOutSine(float a)

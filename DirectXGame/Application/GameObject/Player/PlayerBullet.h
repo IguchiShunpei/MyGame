@@ -34,9 +34,9 @@ private:
 	//削除フラグ
 	bool isDelete_ = false;
 	//弾種類
-	int bulletNum_ = 0;
+	int bulletNum_;
 	//削除タイマー
-	float deleteTimer_ = 110.0f;
+	float deleteTimer_;
 	//速度
 	Vector3 velocity_;
 	//当たったか

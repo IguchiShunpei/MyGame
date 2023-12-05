@@ -117,6 +117,9 @@ public:
 	//Clear画面への演出
 	void ToClearScene();
 
+	//clearカメラワーク
+	void ToClearCameraWork();
+
 	//GameOver画面への演出
 	void ToGameOverScene();
 
@@ -194,6 +197,7 @@ private://メンバ変数
 
 	Explosion* explosion01_ = nullptr;
 	Explosion* explosion02_ = nullptr;
+	Explosion* explosion03_ = nullptr;
 
 	Black* black_ = nullptr;
 	Red* red_ = nullptr;
@@ -269,18 +273,26 @@ private://メンバ変数
 	float moveTargetZ_;
 	//移動前の座標を保存
 	Vector3 beforeMoveCameraPos_;
+	//基本eye
+	Vector3 normalEyeNum_;
 	//基本target
 	Vector3 normalTargetNum_;
 	//基本up
 	Vector3 normalUpNum_;
+	//変化前eye
+	Vector3 beforeEyeNum_;
 	//変化前target
 	Vector3 beforeTargetNum_;
+	//変化前up
+	Vector3 beforeUpNum_;
 	//targetを変化させるときに入れる変数
 	Vector3 changeTargetNum_;
 	//ボスの死亡座標を保存
 	Vector3 bossDeadPos_;
 	//自機の死亡座標を保存
 	Vector3 playerDeadPos_;
+	//自機のクリア演出座標
+	Vector3 playerClearPos_;
 	
 	//墜落演出の墜落量
 	int gameOverNum_;
@@ -305,6 +317,8 @@ private://メンバ変数
 	bool isWait_;
 	//クリア演出フラグ
 	bool isClearScene_;
+	//クリア画面カメラワーク
+	bool isClearCameraWork_;
 	//敵を倒した時のカメラシェイク
 	bool isEnemyDeadCameraShake_;
 	//敵死亡時のパーティクルフラグ
@@ -335,6 +349,10 @@ private://メンバ変数
 	int waitTimer_;
 	//Clearに移行する演出のタイマー
 	float clearTimer_;
+	int playerShakeTimer_;
+	float clearCameraTimer_;
+	float clearCameraTimerMax_;
+	int clearCameraNum_;
 	//敵が死んだ時の演出時間
 	int hitEnemyTimer_;
 	//自機が攻撃に当たった時の演出時間

@@ -60,7 +60,7 @@ void BossEnemy::BossEnemyInitialize()
 
 	phase_ = Phase::Wait;
 
-	hp_ = 50;
+	hp_ = 30;
 }
 
 void BossEnemy::Update()
