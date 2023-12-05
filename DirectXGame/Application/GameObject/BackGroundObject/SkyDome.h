@@ -1,4 +1,4 @@
-﻿#pragma once 
+#pragma once 
 #include "Object3d.h"
 
 class SkyDome : public Object3d
@@ -8,6 +8,8 @@ public:
 	~SkyDome();
 	//初期化
 	void SkyDomeInitialize();
+
+	void SkyDomeUpdate();
 
 private:
 	// モデル

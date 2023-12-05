@@ -216,7 +216,7 @@
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\WeakEnemy.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.cpp">
+    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.cpp">
@@ -236,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\GameObject\Effect\Black.cpp">
       <Filter>ソース ファイル\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.cpp">
+      <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -429,7 +432,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\Player\PlayerBullet.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.h">
+    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.h">
@@ -449,6 +452,9 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\3D\Particle.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.h">
+      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

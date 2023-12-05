@@ -56,7 +56,7 @@ public:// パブリック変数
 	// 注視点座標
 	Vector3 target_ = { 0.0f, 0.0f, 100.0f };
 	// 上方向ベクトル
-	Vector3 up_ = { 1.0f, 1.0f, 1.0f };
+	Vector3 up_ = { 0.0f, 1.0f, 0.0f };
 #pragma endregion
 
 #pragma region 射影行列の設定

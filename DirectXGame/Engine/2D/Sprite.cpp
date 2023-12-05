@@ -8,7 +8,7 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 //デフォルトテクスチャ格納ディレクトリ
-std::string Sprite::kDefaultTextureDirectoryPath = "Resources/";
+std::string Sprite::kDefaultTextureDirectoryPath = "Resources/2d/";
 
 //静的メンバ変数
 XMMATRIX Sprite::matView{};
