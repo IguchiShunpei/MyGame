@@ -1226,7 +1226,7 @@ void GamePlayScene::LoadLevelData()
 
 	//モデル読み込み
 	modelStardust = Model::LoadFromOBJ("stardust");
-	modelMeteor = Model::LoadFromOBJ("meteor");
+	modelMeteor = Model::LoadFromOBJ("meteor02");
 
 	stardustModels_.insert(std::make_pair("stardust", modelStardust));
 	meteorModels_.insert(std::make_pair("meteor", modelMeteor));
