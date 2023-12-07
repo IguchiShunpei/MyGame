@@ -34,7 +34,7 @@ private:
 	//回転速度
 	float rotaSpeed_;
 
-	int rotaDirection_;
+	int isRota_;
 
 	//手前
 	float frontZ_;
