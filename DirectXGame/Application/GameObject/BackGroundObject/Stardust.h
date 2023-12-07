@@ -37,7 +37,7 @@ private:
 	//速度
 	float speed_;
 	//手前
-	float frontX_;
+	float frontZ_;
 	//奥
 	float backZ_;
 	//高さ

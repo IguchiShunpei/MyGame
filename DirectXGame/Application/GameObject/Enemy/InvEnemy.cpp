@@ -23,9 +23,10 @@ void InvEnemy::InvEnemyInitialize()
 	isHit_ = false;
 	isInit_ = false;
 	initTime_ = 60.0f;
+	velocity_ = { 0.0f,0.0f,0.0f };
 }
 
-void InvEnemy::Update()
+void InvEnemy::Update(Vector3 playerPos_)
 {
 	InitMotion();
 	if (isInit_ == true)
@@ -39,7 +40,7 @@ void InvEnemy::Update()
 				isTurn_ = true;
 			}
 		}
-		Turn();
+		Turn(playerPos_);
 		Move();
 	}
 	BackMotion();
@@ -75,7 +76,7 @@ void InvEnemy::Move()
 {
 	if (isStart_ == true)
 	{
-		worldTransform_.position_.z -= 3.0f;
+		worldTransform_.position_ -= velocity_;
 		if (worldTransform_.position_.z <= -20.0f)
 		{
 			isBack_ = true;
@@ -83,7 +84,7 @@ void InvEnemy::Move()
 	}
 }
 
-void InvEnemy::Turn()
+void InvEnemy::Turn(Vector3 playerPos_)
 {
 	if (isTurn_ == true)
 	{
@@ -94,6 +95,25 @@ void InvEnemy::Turn()
 			worldTransform_.rotation_.z = 360.0f;
 			isTurn_ = false;
 			isStart_ = true;
+
+			//敵の速度
+			const float kEnemySpeed = 3.0f;
+
+			//プレイヤーのワールド座標の取得
+			Vector3 playerPosition;
+			playerPosition = playerPos_;
+			//自キャラの座標をコピー
+			Vector3 enemyPosition = GetPosition();
+
+			//差分ベクトルを求める
+			velocity_ = enemyPosition - playerPosition;
+
+			//長さを求める
+			velocity_.length();
+			//正規化
+			velocity_.normalize();
+			//ベクトルの長さを,速さに合わせる
+			velocity_ *= kEnemySpeed;//これが速度になる
 		}
 	}
 }

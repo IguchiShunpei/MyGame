@@ -9,7 +9,7 @@ void Stardust::StardustInitialize()
 	Create();
 
 	speed_ = 0.2f;
-	frontX_ = -20.0f;
+	frontZ_ = -100.0f;
 	backZ_ = 70.0f;
 	levRange_ = 1.0f;
 
@@ -62,7 +62,7 @@ void Stardust::Move()
 	//移動
 	worldTransform_.position_.z -= speed_;
 	//カメラの裏まで進んだら画面奥まで戻る
-	if (worldTransform_.position_.z <= frontX_)
+	if (worldTransform_.position_.z <= frontZ_)
 	{
 		worldTransform_.position_.z = backZ_;
 	}

@@ -30,7 +30,7 @@ public:
 	void EnemyInitialize();
 
 	//更新
-	void Update();
+	void Update(Vector3 playerPos_);
 
 	//当たり判定更新
 	void ColliderUpdate();
@@ -51,7 +51,7 @@ public:
 	void OnCollision(const CollisionInfo& info) override;
 
 	//攻撃
-	void Attack();
+	void Attack(Vector3 playerPos_);
 	
 	//移動
 	void Move();
@@ -150,4 +150,6 @@ private:
 
 	//初期Y座標
 	float beforeY_;
+
+	int bulletNum_;
 };

@@ -20,7 +20,7 @@ public:
 	void InvEnemyInitialize();
 
 	//更新
-	void Update();
+	void Update(Vector3 playerPos_);
 
 	//当たり判定更新
 	void ColliderUpdate();
@@ -38,7 +38,7 @@ public:
 	void Move();
 
 	//回転
-	void Turn();
+	void Turn(Vector3 playerPos_);
 
 	//登場モーション
 	void InitMotion();
@@ -86,5 +86,7 @@ private:
 	//発射したか
 	bool isStart_ = false;
 	//予備動作をしたか
-	bool isTurn_ = false;;
+	bool isTurn_ = false;
+
+	Vector3 velocity_;
 };
