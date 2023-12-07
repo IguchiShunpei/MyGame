@@ -38,9 +38,14 @@ void Red::Finish()
 		else
 		{
 			isRed_ = false;
-			alpha_ = 0.5f;
+			alpha_ = 0.0f;
 		}
 	}
+}
+
+void Red::Reset()
+{
+	alpha_ = 0.5f;
 }
 
 void Red::RedDraw(ViewProjection* viewProjection_)

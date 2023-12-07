@@ -153,6 +153,7 @@ void GamePlayScene::Initialize()
 	targetMoveTimer_ = 0.0f;
 	targetMoveTimerMax_ = cameraMoveTimerMax_ * 2.0f;
 	hitPlayerTimer_ = 0;
+	hitPlayerTimerMax_ = 32;
 	hitEnemyTimer_ = 0;
 	clearCameraTimer_ = 0.0f;
 	clearCameraTimerMax_ = 180.0f;
@@ -215,13 +216,13 @@ void GamePlayScene::Update()
 		}
 		for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
 		{
-			invEnemys->Update();
+			invEnemys->Update(player->GetPosition());
 			invEnemys->ColliderUpdate();
 		}
 		//敵
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
-			enemys->Update();
+			enemys->Update(player->GetPosition());
 			enemys->ColliderUpdate();
 		}
 		break;
@@ -331,7 +332,7 @@ void GamePlayScene::Update()
 				red_->SetIsRed(true);
 				//無敵時間
 				hitPlayerTimer_++;
-				if (hitPlayerTimer_ < 16)
+				if (hitPlayerTimer_ < hitPlayerTimerMax_)
 				{
 					if (hitPlayerTimer_ % 2 != 1)
 					{
@@ -346,6 +347,7 @@ void GamePlayScene::Update()
 				{
 					player->SetIsHit(false);
 					player->SetIsInv(false);
+					red_->Reset();
 					viewProjection_->SetEye(cameraShakePos_);
 					hitPlayerTimer_ = 0;
 				}

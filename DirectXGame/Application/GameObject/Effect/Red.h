@@ -18,6 +18,8 @@ public:
 
 	void Finish();
 
+	void Reset();
+
 	//描画
 	void RedDraw(ViewProjection* viewProjection_);
 

@@ -371,6 +371,7 @@ private://メンバ変数
 	int hitEnemyTimer_;
 	//自機が攻撃に当たった時の演出時間
 	int hitPlayerTimer_;
+	int hitPlayerTimerMax_;
 	//ボス登場タイマー
 	int bossInitTimer_;
 	//スタート演出

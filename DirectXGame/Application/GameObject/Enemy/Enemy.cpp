@@ -2,6 +2,7 @@
 #include "SphereCollider.h"
 #include "GamePlayScene.h"
 #include "string.h"
+#include "Vector3.h"
 
 //デストラクタ
 Enemy::~Enemy()
@@ -27,9 +28,10 @@ void Enemy::EnemyInitialize()
 	isHit_ = false;
 	isInit_ = false;
 	initTime_ = 60.0f;
+	bulletNum_ = 0;
 }
 
-void Enemy::Update()
+void Enemy::Update(Vector3 playerPos_)
 {
 	isHit_ = false;
 	enemyColor_ = { 1.0f,1.0f,1.0f };
@@ -45,7 +47,7 @@ void Enemy::Update()
 	{
 		if (isAttack_ == false)
 		{
-		Attack();
+		Attack(playerPos_);
 		}
 		else
 		{
@@ -97,16 +99,30 @@ void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	}
 }
 
-void Enemy::Attack()
+void Enemy::Attack(Vector3 playerPos_)
 {
 	dalayTimer_ -= 0.1f;
 
-	//自キャラの座標をコピー
-	Vector3 position = GetPosition();
-
 	//弾の速度
 	const float kBulletSpeed = 1.5f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+
+	//プレイヤーのワールド座標の取得
+	Vector3 playerPosition;
+	playerPosition = playerPos_;
+	//自キャラの座標をコピー
+	Vector3 enemyPosition = GetPosition();
+
+	Vector3 velocity(0, 0, 0);
+
+	//差分ベクトルを求める
+	velocity = enemyPosition - playerPosition;
+
+	//長さを求める
+	velocity.length();
+	//正規化
+	velocity.normalize();
+	//ベクトルの長さを,速さに合わせる
+	velocity *= kBulletSpeed;//これが速度になる
 
 	//クールタイムが０になったとき
 	if (dalayTimer_ <= 0)
@@ -114,7 +130,7 @@ void Enemy::Attack()
 		//球の生成
 		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
 		//球の初期化
-		newBullet->EnemyBulletInitialize(position, velocity);
+		newBullet->EnemyBulletInitialize(enemyPosition, velocity);
 
 		//コライダーの追加
 		newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
@@ -122,7 +138,12 @@ void Enemy::Attack()
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
 
-		isAttack_ = true;
+		dalayTimer_ = 0.5f;
+		bulletNum_++;
+		if (bulletNum_ > 3)
+		{
+			isAttack_ = true;
+		}
 	}
 }
 
