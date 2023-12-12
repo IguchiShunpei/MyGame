@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include"Input.h"
 #include"WinApp.h"
 #include"DirectXCommon.h"
@@ -22,7 +22,7 @@ public://メンバ関数
 	//更新
 	virtual void Update();
 	//描画
-	virtual void Draw() = 0;
+	virtual void Draw();
 	//終了チェック
 	virtual bool IsEndRequest() { return endRequest; }
 

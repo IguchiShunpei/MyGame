@@ -329,11 +329,11 @@ void GamePlayScene::Update()
 			//攻撃を受けた時の無敵フラグがtrueになったら
 			if (player->GetIsInv() == true)
 			{
-				red_->SetIsRed(true);
 				//無敵時間
 				hitPlayerTimer_++;
 				if (hitPlayerTimer_ < hitPlayerTimerMax_)
 				{
+					red_->SetIsRed(true);
 					if (hitPlayerTimer_ % 2 != 1)
 					{
 						CameraShake(0.2f, 0.2f);
@@ -347,7 +347,6 @@ void GamePlayScene::Update()
 				{
 					player->SetIsHit(false);
 					player->SetIsInv(false);
-					red_->Reset();
 					viewProjection_->SetEye(cameraShakePos_);
 					hitPlayerTimer_ = 0;
 				}
