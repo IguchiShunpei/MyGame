@@ -104,7 +104,7 @@ void Enemy::Attack(Vector3 playerPos_)
 	dalayTimer_ -= 0.1f;
 
 	//弾の速度
-	const float kBulletSpeed = 1.5f;
+	const float kBulletSpeed = 2.0f;
 
 	//プレイヤーのワールド座標の取得
 	Vector3 playerPosition;
@@ -138,7 +138,7 @@ void Enemy::Attack(Vector3 playerPos_)
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
 
-		dalayTimer_ = 0.5f;
+		dalayTimer_ = 1.5f;
 		bulletNum_++;
 		if (bulletNum_ > 3)
 		{
