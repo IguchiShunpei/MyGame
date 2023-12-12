@@ -162,27 +162,7 @@ void GamePlayScene::Initialize()
 
 void GamePlayScene::Update()
 {
-	//デスフラグの立った敵を削除
-	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
-		{
-			return wEnemy->GetIsDead();
-		});
-	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
-		{
-			return wEnemy->GetIsDelete();
-		});
-	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
-		{
-			return enemy->GetIsDead();
-		});
-	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
-		{
-			return enemy->GetIsDelete();
-		});
-	invEnemys_.remove_if([](std::unique_ptr <InvEnemy>& invEnemy)
-		{
-			return invEnemy->GetIsDelete();
-		});
+	DeleteObject();
 
 	//更新コマンド
 	UpdateEnemyPop();
@@ -200,9 +180,26 @@ void GamePlayScene::Update()
 		object->StardustUpdate();
 	}
 
-	for (auto& object : meteorObjects_)
+	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
-		object->MeteorUpdate();
+		meteors->MeteorUpdate();
+		if (meteors->GetIsDead() == true)
+		{
+			//敵の生成
+			std::unique_ptr<Item> newItem = std::make_unique<Item>();
+			//敵の初期化
+			newItem->ItemInitialize(meteors->GetPosition());
+			//コライダーの追加
+			newItem->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			//登録
+			items_.push_back(std::move(newItem));
+		}
+	}
+
+	for (std::unique_ptr<Item>& items : items_)
+	{
+		items->ItemUpdate();
+		items->ColliderUpdate();
 	}
 
 	switch (gameNum_)
@@ -329,11 +326,11 @@ void GamePlayScene::Update()
 			//攻撃を受けた時の無敵フラグがtrueになったら
 			if (player->GetIsInv() == true)
 			{
-				red_->SetIsRed(true);
 				//無敵時間
 				hitPlayerTimer_++;
 				if (hitPlayerTimer_ < hitPlayerTimerMax_)
 				{
+					red_->SetIsRed(true);
 					if (hitPlayerTimer_ % 2 != 1)
 					{
 						CameraShake(0.2f, 0.2f);
@@ -347,7 +344,6 @@ void GamePlayScene::Update()
 				{
 					player->SetIsHit(false);
 					player->SetIsInv(false);
-					red_->Reset();
 					viewProjection_->SetEye(cameraShakePos_);
 					hitPlayerTimer_ = 0;
 				}
@@ -452,11 +448,16 @@ void GamePlayScene::Draw()
 		object->Draw(viewProjection_);
 	}
 
-	for (auto& object : meteorObjects_) {
-		if (object->GetIsDelete() == false)
+	for (std::unique_ptr<Meteor>& meteors : meteors_)
+	{
+		if (meteors->GetIsDelete() == false)
 		{
-			object->Draw(viewProjection_);
+			meteors->Draw(viewProjection_);
 		}
+	}
+	for (std::unique_ptr<Item>& items : items_)
+	{
+		items->Draw(viewProjection_);
 	}
 	switch (gameNum_)
 	{
@@ -488,10 +489,6 @@ void GamePlayScene::Draw()
 		}
 		break;
 	}
-
-	Object3d::PostDraw();
-
-	Object3d::PreDraw(dxCommon_->GetCommandList());
 
 	if (isBEnemyDeadScene_ == true)
 	{
@@ -532,9 +529,6 @@ void GamePlayScene::Draw()
 void GamePlayScene::Finalize()
 {
 	for (Stardust*& object : stardustObjects_) {
-		delete(object);
-	}
-	for (Meteor*& object : meteorObjects_) {
 		delete(object);
 	}
 
@@ -695,6 +689,35 @@ void GamePlayScene::UpdateEnemyPop()
 			//登録
 			invEnemys_.push_back(std::move(newInvEnemy));
 		}
+		//meteor
+		else if (key == "meteor") {
+			std::string word;
+			getline(line_stream, word, ' ');
+			//敵の生成
+			std::unique_ptr<Meteor> newMeteor = std::make_unique<Meteor>();
+			//敵の初期化
+			newMeteor->MeteorInitialize();
+			//コライダーの追加
+			newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 3.5f));
+			if (word.find("HP") == 0)
+			{
+				std::string num;
+				getline(line_stream, num, ' ');
+				//hpを保存
+				int32_t hpNum = atoi(num.c_str());
+				newMeteor->SetHp(hpNum);
+			}
+			// X,Y,Z座標読み込み
+			Vector3 position{};
+			line_stream >> position.x;
+			line_stream >> position.y;
+			line_stream >> position.z;
+			// 座標データに追加
+			newMeteor->SetPosition(position);
+			newMeteor->worldTransform_.UpdateMatrix();
+			//登録
+			meteors_.push_back(std::move(newMeteor));
+		}
 		//待機時間を読み取る
 		else if (key == "wait")
 		{
@@ -727,6 +750,43 @@ void GamePlayScene::UpdateEnemyPop()
 			changeTargetNum_ = viewProjection_->target_;
 		}
 	}
+}
+
+void GamePlayScene::DeleteObject()
+{
+	//デスフラグの立った敵を削除
+	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
+		{
+			return wEnemy->GetIsDead();
+		});
+	wEnemys_.remove_if([](std::unique_ptr <WeakEnemy>& wEnemy)
+		{
+			return wEnemy->GetIsDelete();
+		});
+	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+		{
+			return enemy->GetIsDead();
+		});
+	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+		{
+			return enemy->GetIsDelete();
+		});
+	invEnemys_.remove_if([](std::unique_ptr <InvEnemy>& invEnemy)
+		{
+			return invEnemy->GetIsDelete();
+		});
+	items_.remove_if([](std::unique_ptr <Item>& item)
+		{
+			return item->GetIsDelete();
+		});
+	meteors_.remove_if([](std::unique_ptr <Meteor>& meteor)
+		{
+			return meteor->GetIsDelete();
+		});
+	meteors_.remove_if([](std::unique_ptr <Meteor>& meteor)
+		{
+			return meteor->GetIsDead();
+		});
 }
 
 void GamePlayScene::PlayerInit()
@@ -1224,14 +1284,11 @@ void GamePlayScene::LoadLevelData()
 {
 	//背景オブジェクトデータの読み込み
 	backGroundStardust_ = LevelLoader::LoadFile("stardust");
-	backGroundMeteor_ = LevelLoader::LoadFile("meteor");
 
 	//モデル読み込み
 	modelStardust = Model::LoadFromOBJ("stardust");
-	modelMeteor = Model::LoadFromOBJ("meteor02");
 
 	stardustModels_.insert(std::make_pair("stardust", modelStardust));
-	meteorModels_.insert(std::make_pair("meteor", modelMeteor));
 
 	// レベルデータからオブジェクトを生成、配置
 	//星屑
@@ -1272,50 +1329,6 @@ void GamePlayScene::LoadLevelData()
 
 		// 配列に登録
 		stardustObjects_.push_back(stardust);
-	}
-	//隕石
-	for (auto& objectData : backGroundMeteor_->objects) {
-		// ファイル名から登録済みモデルを検索
-		Model* model = nullptr;
-		decltype(meteorModels_)::iterator it = meteorModels_.find(objectData.fileName);
-		if (it != meteorModels_.end()) {
-			model = it->second;
-		}
-
-		// モデルを指定して3Dオブジェクトを生成
-		meteor = new Meteor;
-		meteor->MeteorInitialize();
-		meteor->SetModel(model);
-
-		// 座標
-		Vector3 pos;
-		//データの値を代入
-		pos.x = objectData.translation.m128_f32[0];
-		pos.y = objectData.translation.m128_f32[1];
-		pos.z = objectData.translation.m128_f32[2];
-		//newObjectにセット
-		meteor->SetPosition(pos);
-
-		// 回転角
-		Vector3 rot;
-		//データの値を代入
-		rot.x = objectData.rotation.m128_f32[0];
-		rot.y = objectData.rotation.m128_f32[1];
-		rot.z = objectData.rotation.m128_f32[2];
-		//newObjectにセット
-		meteor->SetRotation(rot);
-
-		// 座標
-		Vector3 scale;
-		//データの値を代入
-		scale.x = objectData.scaling.m128_f32[0];
-		scale.y = objectData.scaling.m128_f32[1];
-		scale.z = objectData.scaling.m128_f32[2];
-		//newObjectにセット
-		meteor->SetScale(scale);
-
-		// 配列に登録
-		meteorObjects_.push_back(meteor);
 	}
 }
 

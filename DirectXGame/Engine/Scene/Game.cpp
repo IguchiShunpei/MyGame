@@ -13,24 +13,3 @@ void Game::Initialize()
 	// シーンマネージャに最初のシーンをセット
 	sceneManager_->ChangeScene("TITLE");
 }
-
-void Game::Finalize()
-{
-	//基底クラスの終了処理
-	SIFrameWork::Finalize();
-}
-
-void Game::Update()
-{
-	//基底クラスの更新処理
-	SIFrameWork::Update();
-}
-
-void Game::Draw()
-{
-	//コマンドリストの取得
-	[[maybe_unused]] ID3D12GraphicsCommandList* cmdList = dxCommon->GetCommandList();
-
-	//シーンマネージャの描画
-	sceneManager_->Draw();
-}

@@ -1,4 +1,4 @@
-﻿#include "SIFrameWork.h"
+#include "SIFrameWork.h"
 
 void SIFrameWork::Initialize()
 {
@@ -53,6 +53,12 @@ void SIFrameWork::Update()
 
 	// シーンマネージャの更新
 	sceneManager_->Update();
+}
+
+void SIFrameWork::Draw()
+{
+	//シーンマネージャの描画
+	sceneManager_->Draw();
 }
 
 void SIFrameWork::Run()

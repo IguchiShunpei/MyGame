@@ -1,6 +1,8 @@
 //雑魚敵戦(道中)
 wait 150
 
+//WAVE01
+
 wEnemy L 0 0 100 //雑魚敵 曲がる方向 生成座標
 
 wait 20
@@ -39,7 +41,13 @@ wait 20
 
 wEnemy L 0 0 100 
 
+wait 20
+
+meteor 3 0 0 80
+
 wait 200
+
+//WAVE02
 
 invEnemy 10 0 100 //無敵敵 生成座標
 
@@ -61,9 +69,13 @@ wEnemy R 10 5 100
 
 enemy 5 -8 10 100
 
+wait 20
+
 enemy 5 8 -10 100
 
-wait 20
+wait 200
+
+//WAVE03
 
 wEnemy R 10 5 100 
 
@@ -90,7 +102,10 @@ wEnemy R 10 5 100
 
 wait 200
 
+//WAVE04
+
 wEnemy L -10 -5 100 
+invEnemy -10 10 100
 
 wait 20
 
@@ -99,6 +114,7 @@ wEnemy L -10 -5 100
 wait 20
 
 wEnemy L -10 -5 100 
+invEnemy 10 10 100
 
 wait 20
 
@@ -107,6 +123,7 @@ wEnemy L -10 -5 100
 wait 20
 
 wEnemy L -10 -5 100 
+invEnemy -10 -15 100
 
 wait 20
 
@@ -115,6 +132,7 @@ wEnemy L -10 -5 100
 wait 20
 
 wEnemy L -10 -5 100 
+invEnemy 10 -15 100
 
 wait 20
 
@@ -129,7 +147,7 @@ wait 20
 
 wEnemy L -10 -5 100 
 
-wait 300
+wait 350
 
 //ボス戦
 BOSS
