@@ -38,6 +38,9 @@ public:
 	bool GetIsDelete() const { return isDelete_; };
 	bool GetIsDead() const { return isDead_; }
 
+	//Color
+	Vector3 GetColor() const { return color_; }
+
 	//HP
 	void SetHp(int hp) { this->hp_ = hp; }
 
@@ -64,12 +67,15 @@ private:
 
 	//当たったか
 	bool isHit_;
+	bool isHitEnd_;
 
 	//死亡
 	bool isDead_;
 
 	//Hp
 	int hp_;
+
+	Vector3 color_;
 
 	// モデル
 	Model* meteorModel_ = nullptr;

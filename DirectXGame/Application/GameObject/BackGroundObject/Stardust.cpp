@@ -18,6 +18,12 @@ void Stardust::StardustInitialize()
 	//乱数生成装置
 	std::random_device seed_gen;
 	std::mt19937 engine(seed_gen());
+	//白～青～黒の間でランダムに色を割り当てる
+	std::uniform_real_distribution<float>R(0,1);
+	color_.x = R(engine);
+	color_.y = 0.0f;
+	std::uniform_real_distribution<float>B(0,1);
+	color_.z = B(engine);
 	//ランダムで回転方向を割り当てる
 	std::uniform_int_distribution<> rotaDirection(0, 5);
 	rotaDirection_ = rotaDirection(engine);
@@ -49,10 +55,10 @@ void Stardust::SetSize()
 	switch (stardustSize_)
 	{
 	case 0:
-		SetScale({ 0.06f,0.06f,0.06f });
+		SetScale({ 0.1f,0.1f,0.1f });
 		break;
 	case 1:
-		SetScale({ 0.04f,0.04f,0.04f });
+		SetScale({ 0.05f,0.05f,0.05f });
 		break;
 	}
 }

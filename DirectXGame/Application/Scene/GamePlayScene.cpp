@@ -186,7 +186,7 @@ void GamePlayScene::Update()
 		if (meteors->GetIsDead() == true)
 		{
 			//敵の生成
-			std::unique_ptr<Item> newItem = std::make_unique<Item>();
+ 			std::unique_ptr<Item> newItem = std::make_unique<Item>();
 			//敵の初期化
 			newItem->ItemInitialize(meteors->GetPosition());
 			//コライダーの追加
@@ -444,15 +444,16 @@ void GamePlayScene::Draw()
 		player->BulletDraw(viewProjection_);
 	}
 
+	//星屑
 	for (auto& object : stardustObjects_) {
-		object->Draw(viewProjection_);
+		object->Draw(viewProjection_,1.0f,object->GetColor());
 	}
 
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
 		if (meteors->GetIsDelete() == false)
 		{
-			meteors->Draw(viewProjection_);
+			meteors->Draw(viewProjection_,1.0f,meteors->GetColor());
 		}
 	}
 	for (std::unique_ptr<Item>& items : items_)
@@ -698,7 +699,7 @@ void GamePlayScene::UpdateEnemyPop()
 			//敵の初期化
 			newMeteor->MeteorInitialize();
 			//コライダーの追加
-			newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 3.5f));
+			newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
 			if (word.find("HP") == 0)
 			{
 				std::string num;
