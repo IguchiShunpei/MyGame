@@ -26,10 +26,10 @@ void Item::ItemInitialize(Vector3 initPos_)
 	frontZ_ = -100.0f;
 
 	//ヒット
-	hitRotaSpeed_ = 6.0f;
+	hitRotaSpeed_ = 20.0f;
 	hitScale_ = { 5.0f,5.0f,5.0f };
 	HitMotionTime_ = 0.0f;
-	HitMotionTimeMax_ = 20.0f;
+	HitMotionTimeMax_ = 30.0f;
 }
 
 void Item::ItemUpdate()

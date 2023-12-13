@@ -3,6 +3,7 @@
 #include "Object3d.h"
 #include "WinApp.h"
 #include "Vector3.h"
+#include <memory>
 
 //GameSceneの前方宣言
 class GamePlayScene;
@@ -31,6 +32,9 @@ public:
 	//setter
 	void SetBeforeY(float beforeY) { this->beforeY_ = beforeY; }
 
+	//色
+	Vector3 GetColor() const { return color_; }
+
 private:
 	//座標
 	Vector3 position_;
@@ -58,4 +62,6 @@ private:
 	float rotaSpeed_;
 	//サイズ乱数を受け取る変数
 	int stardustSize_;
+	//色
+	Vector3 color_;
 };

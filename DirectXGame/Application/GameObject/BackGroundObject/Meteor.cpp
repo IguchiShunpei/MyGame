@@ -28,12 +28,15 @@ void Meteor::MeteorInitialize()
 	std::uniform_int_distribution<> isRotation(0, 1);
 	isRota_ = isRotation(engine);
 
+	isHit_ = false;
+	isHitEnd_ = true;
 }
 
 void Meteor::MeteorUpdate()
 {
 	if (isDead_ == false)
 	{
+		color_ = { 1.0f,1.0f,1.0f };
 		//移動
 		Move();
 		//回転
@@ -73,12 +76,13 @@ void Meteor::Damage()
 	if (isHit_ == true)
 	{
 		hp_--;
+		color_ = { 3.0f,3.0f,3.0f };
 		if (hp_ <= 0)
 		{
 			isDead_ = true;
 		}
-		isHit_ = false;
 	}
+	isHit_ = false;
 }
 
 void Meteor::ColliderUpdate()
