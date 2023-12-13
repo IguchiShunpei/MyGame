@@ -41,6 +41,10 @@ wait 20
 
 wEnemy L 0 0 100 
 
+wait 20
+
+meteor 3 0 0 80
+
 wait 200
 
 //WAVE02
