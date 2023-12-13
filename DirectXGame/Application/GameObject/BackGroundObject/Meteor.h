@@ -3,6 +3,9 @@
 #include "Object3d.h"
 #include "WinApp.h"
 #include "Vector3.h"
+#include "Model.h"
+#include <memory>
+#include <list>
 
 //GameSceneの前方宣言
 class GamePlayScene;
@@ -22,7 +25,21 @@ public:
 	//回転
 	void Rotate();
 
+	//ダメージ
+	void Damage();
+
+	//当たり判定更新
+	void ColliderUpdate();
+
+	//当たり判定コールバック
+	void OnCollision(const CollisionInfo& info) override;
+
+	//削除フラグgetter
 	bool GetIsDelete() const { return isDelete_; };
+	bool GetIsDead() const { return isDead_; }
+
+	//HP
+	void SetHp(int hp) { this->hp_ = hp; }
 
 private:
 	//座標
@@ -44,4 +61,16 @@ private:
 
 	//線引きするサイズ
 	Vector3 size_;
+
+	//当たったか
+	bool isHit_;
+
+	//死亡
+	bool isDead_;
+
+	//Hp
+	int hp_;
+
+	// モデル
+	Model* meteorModel_ = nullptr;
 };

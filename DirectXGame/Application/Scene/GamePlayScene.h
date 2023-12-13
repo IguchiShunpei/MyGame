@@ -22,6 +22,7 @@
 #include "Explosion.h"
 #include "Black.h"
 #include "Red.h"
+#include "Item.h"
 
 #include<cassert>
 #include<vector>
@@ -93,9 +94,15 @@ public:
 	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
 	const std::list<std::unique_ptr<InvEnemy>>& GetInvEnemys() { return invEnemys_; }
 
+	//アイテムリスト
+	const std::list<std::unique_ptr<Item>>& GetItems() { return items_; }
+
 	//敵データ読み込み
 	void LoadEnemyPop();
 	void UpdateEnemyPop();
+
+	//リスト削除
+	void DeleteObject();
 
 	//プレイヤー登場演出
 	void PlayerInit();
@@ -173,6 +180,14 @@ private://メンバ変数
 	std::list<std::unique_ptr<Enemy>> enemys_;
 	std::list<std::unique_ptr<WeakEnemy>> wEnemys_;
 	std::list<std::unique_ptr<InvEnemy>> invEnemys_;
+
+	//背景
+	Meteor* meteor_;
+	std::list<std::unique_ptr<Meteor>> meteors_;
+
+	//アイテム
+	Item* item_;
+	std::list<std::unique_ptr<Item>> items_;
 
 	//敵発生コマンド
 	std::stringstream enemyPopCommands;
@@ -253,14 +268,6 @@ private://メンバ変数
 	std::map<std::string, Model*> stardustModels_;
 	//オブジェクト
 	std::vector<Stardust*> stardustObjects_;
-
-	//隕石
-	LevelData* backGroundMeteor_ = nullptr;
-	//モデル
-	std::map<std::string, Model*> meteorModels_;
-	//オブジェクト
-	std::vector<Meteor*> meteorObjects_;
-
 
 	//シーン番号
 	int gameNum_;
