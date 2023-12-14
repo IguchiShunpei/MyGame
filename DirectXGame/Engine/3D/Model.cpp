@@ -262,7 +262,7 @@ void Model::LoadTexture(const std::string& filename)
 
 }
 
-void Model::Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial, float alpha_,Vector3 color_)
+void Model::Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial, float alpha,Vector3 color)
 {
 	// nullptrチェック
 	assert(device_);
@@ -273,9 +273,9 @@ void Model::Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial
 	// インデックスバッファの設定
 	cmdList->IASetIndexBuffer(&ibView);
 	//alpha値設定
-	SetAlpha(alpha_);
+	SetAlpha(alpha);
 	//color
-	SetColor(color_);
+	SetColor(color);
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(rootParamIndexMaterial,
 		constBuffB1->GetGPUVirtualAddress());
@@ -518,7 +518,7 @@ void Model::CreateBuffers()
 	}
 }
 
-void Model::SetAlpha(float alpha_) {
+void Model::SetAlpha(float alpha) {
 
 	HRESULT result = S_FALSE;
 
@@ -526,7 +526,7 @@ void Model::SetAlpha(float alpha_) {
 	ConstBufferDataB1* constMap1 = nullptr;
 	result = constBuffB1->Map(0, nullptr, (void**)&constMap1);
 	if (SUCCEEDED(result)) {
-		constMap1->alpha = alpha_;
+		constMap1->alpha = alpha;
 		constBuffB1->Unmap(0, nullptr);
 	}
 }

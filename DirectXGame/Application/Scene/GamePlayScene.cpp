@@ -91,6 +91,11 @@ void GamePlayScene::Initialize()
 	pm_bDmg = ParticleManager::Create();
 	pm_bDmg->SetParticleModel(p_bDmg);
 	pm_bDmg->SetXMViewProjection(xmViewProjection);
+	//meteorテクスチャ
+	p_meteor = Particle::LoadParticleTexture("effect04.png");
+	pm_meteor = ParticleManager::Create();
+	pm_meteor->SetParticleModel(p_meteor);
+	pm_meteor->SetXMViewProjection(xmViewProjection);
 
 	UIInitialize();
 
@@ -136,7 +141,7 @@ void GamePlayScene::Initialize()
 	isStart_ = false;
 	isChangeCameraDir_ = false;
 	isPassPoint_ = false;
-	isEnemyDeadCameraShake_ = false;
+	isDeadCameraShake_ = false;
 
 	//タイマー
 	delayTimer_ = 0.0f;
@@ -190,7 +195,7 @@ void GamePlayScene::Update()
 			//敵の初期化
 			newItem->ItemInitialize(meteors->GetPosition());
 			//コライダーの追加
-			newItem->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			newItem->SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.5f));
 			//登録
 			items_.push_back(std::move(newItem));
 		}
@@ -356,7 +361,7 @@ void GamePlayScene::Update()
 	{
 		if (wEnemys->GetIsDead() == true)
 		{
-			isEnemyDeadCameraShake_ = true;
+			isDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = wEnemys->GetPosition();
 			pm_eDmg->Fire(p_wDmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 5, { 8.0f, 0.0f });
@@ -383,7 +388,20 @@ void GamePlayScene::Update()
 			pm_dmg->Fire(p_dmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 12, { 4.0f, 0.0f });
 		}
 	}
-	if (isEnemyDeadCameraShake_ == true)
+
+	//隕石のパーティクル
+	for (std::unique_ptr<Meteor>& meteors : meteors_)
+	{
+		if (meteors->GetIsDead() == true)
+		{
+			isDeadCameraShake_ = true;
+			Vector3 deadPos{};
+			deadPos = meteors->GetPosition();
+			pm_dmg->Fire(p_dmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 5, { 8.0f, 0.0f });
+		}
+	}
+
+	if (isDeadCameraShake_ == true)
 	{
 		hitEnemyTimer_++;
 		if (hitEnemyTimer_ < 16)
@@ -400,7 +418,7 @@ void GamePlayScene::Update()
 		else
 		{
 			hitEnemyTimer_ = 0;
-			isEnemyDeadCameraShake_ = false;
+			isDeadCameraShake_ = false;
 		}
 	}
 	//ボス敵の被ダメージ処理
@@ -453,7 +471,7 @@ void GamePlayScene::Draw()
 	{
 		if (meteors->GetIsDelete() == false)
 		{
-			meteors->Draw(viewProjection_,1.0f,meteors->GetColor());
+			meteors->Draw(viewProjection_, meteors->GetAlpha(), meteors->GetColor());
 		}
 	}
 	for (std::unique_ptr<Item>& items : items_)
@@ -510,6 +528,7 @@ void GamePlayScene::Draw()
 	pm_dmg->Draw();
 	pm_eDmg->Draw();
 	pm_bDmg->Draw();
+	pm_meteor->Draw();
 
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();

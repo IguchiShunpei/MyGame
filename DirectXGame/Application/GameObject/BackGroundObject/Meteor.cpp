@@ -30,10 +30,23 @@ void Meteor::MeteorInitialize()
 
 	isHit_ = false;
 	isHitEnd_ = true;
+	isInit_ = false;
+
+	alpha_ = 0.0;
 }
 
 void Meteor::MeteorUpdate()
 {
+	if (isInit_ == false)
+	{
+		alpha_ += 0.01f;
+		if (alpha_ > 1.0f)
+		{
+			isInit_ = true;
+			alpha_ = 1.0f;
+		}
+	}
+
 	if (isDead_ == false)
 	{
 		color_ = { 1.0f,1.0f,1.0f };
