@@ -38,6 +38,8 @@ public:
 	bool GetIsDelete() const { return isDelete_; };
 	bool GetIsDead() const { return isDead_; }
 
+	float GetAlpha() const { return alpha_; }
+
 	//Color
 	Vector3 GetColor() const { return color_; }
 
@@ -69,6 +71,8 @@ private:
 	bool isHit_;
 	bool isHitEnd_;
 
+	bool isInit_;
+
 	//死亡
 	bool isDead_;
 
@@ -76,6 +80,8 @@ private:
 	int hp_;
 
 	Vector3 color_;
+
+	float alpha_;
 
 	// モデル
 	Model* meteorModel_ = nullptr;

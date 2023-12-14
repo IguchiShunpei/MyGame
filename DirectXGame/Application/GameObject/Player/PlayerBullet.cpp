@@ -68,10 +68,12 @@ void PlayerBullet::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	const char* str2 = "class WeakEnemy";
 	const char* str3 = "class EnemyBullet";
 	const char* str4 = "class InvEnemy";
+	const char* str5 = "class Meteor";
 
 	//相手がEnemy
 	if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 ||
-		strcmp(toCollisionName, str3) == 0 || strcmp(toCollisionName, str4) == 0)
+		strcmp(toCollisionName, str3) == 0 || strcmp(toCollisionName, str4) == 0 ||
+		strcmp(toCollisionName, str5) == 0)
 	{
 		isDelete_ = true;
 	}

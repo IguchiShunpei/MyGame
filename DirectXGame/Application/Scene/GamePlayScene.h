@@ -207,6 +207,9 @@ private://メンバ変数
 	Particle* p_bDmg = nullptr;
 	ParticleManager* pm_bDmg = nullptr;
 
+	Particle* p_meteor = nullptr;
+	ParticleManager* pm_meteor = nullptr;
+
 	Stardust* objStardust = nullptr;
 	Model* modelStardust = nullptr;
 	Stardust* stardust = nullptr;
@@ -340,8 +343,8 @@ private://メンバ変数
 	bool isClearScene_;
 	//クリア画面カメラワーク
 	bool isClearCameraWork_;
-	//敵を倒した時のカメラシェイク
-	bool isEnemyDeadCameraShake_;
+	//倒した時のカメラシェイク
+	bool isDeadCameraShake_;
 	//敵死亡時のパーティクルフラグ
 	bool isBossEffect_;
 	//ボス死亡フラグ
