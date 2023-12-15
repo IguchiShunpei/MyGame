@@ -47,7 +47,7 @@ void Enemy::Update(Vector3 playerPos_)
 	{
 		if (isAttack_ == false)
 		{
-		Attack(playerPos_);
+			Attack(playerPos_);
 		}
 		else
 		{
@@ -81,6 +81,18 @@ void Enemy::ColliderUpdate()
 	}
 }
 
+void Enemy::Damage(int damage)
+{
+	//攻撃を受けたときに変色
+	enemyColor_ = { 3.0f,3.0f,3.0f };
+	//ダメージ処理
+	hp_ -= damage;
+	if (hp_ <= 0)
+	{
+		isDead_ = true;
+	}
+}
+
 void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class PlayerBullet";
@@ -88,14 +100,8 @@ void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	//相手がplayerBullet
 	if (strcmp(toCollisionName, str1) == 0)
 	{
-
 		isHit_ = true;
-		enemyColor_ = { 3.0f,3.0f,3.0f };
-		hp_--;
-		if (hp_ <= 0)
-		{
-			isDead_ = true;
-		}
+		Damage(damage_);
 	}
 }
 

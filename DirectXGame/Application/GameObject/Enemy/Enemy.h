@@ -35,6 +35,9 @@ public:
 	//当たり判定更新
 	void ColliderUpdate();
 
+	//ダメージ
+	void Damage(int damage);
+
 	//getter
 	//IsDead
 	bool GetIsDead() const { return isDead_; }
@@ -87,6 +90,8 @@ public:
 	void SetIsDead(bool isDead) { this->isDead_ = isDead; }
 	//beforeY
 	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
+	//damage
+	void SetDamage(int damage) { damage_ = damage; }
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -152,4 +157,7 @@ private:
 	float beforeY_;
 
 	int bulletNum_;
+
+	//ダメージ
+	int damage_;
 };

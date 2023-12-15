@@ -113,12 +113,7 @@ void BossEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 		if (isInit_ == true && isTurn_ == false)
 		{
 			isHit_ = true;
-			bossColor_ = { 3.0f,3.0f,3.0f };
-			hp_--;
-			if (hp_ == 0)
-			{
-				isDeathTimer_ = true;
-			}
+			Damage(damage_);
 		}
 	}
 }
@@ -302,9 +297,14 @@ void BossEnemy::InitMotion()
 	}
 }
 
-void BossEnemy::Damage()
+void BossEnemy::Damage(int damage)
 {
-
+	bossColor_ = { 3.0f,3.0f,3.0f };
+	hp_ -= damage;
+	if (hp_ <= 0)
+	{
+		isDeathTimer_ = true;
+	}
 }
 
 void BossEnemy::ActiveDeathTimer()

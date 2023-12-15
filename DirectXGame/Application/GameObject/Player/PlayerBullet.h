@@ -9,7 +9,7 @@ public:
 	//デストラクタ
 	~PlayerBullet();
 	//初期化
-	void PlayerBulletInitialize(const Vector3& position, const Vector3& velocity,int bulletDir);
+	void PlayerBulletInitialize(const Vector3& position, const Vector3& velocity,int bulletDir,int bulletLevel);
 	//当たり判定更新
 	void ColliderUpdate();
 
@@ -43,6 +43,7 @@ private:
 	bool isHit_ = false;
 	//倒したか
 	bool isBurst_ = false;
+
 
 	//重力
 	const float G = 0.3f;

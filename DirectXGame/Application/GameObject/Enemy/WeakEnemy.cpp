@@ -26,6 +26,8 @@ void WeakEnemy::WEnemyInitialize()
 
 void WeakEnemy::Update()
 {
+	enemyColor_ = { 1.0f,1.0f,1.0f };
+
 	//登場モーション
 	InitMotion();
 	//登場したら移動
@@ -47,6 +49,16 @@ void WeakEnemy::ColliderUpdate()
 	}
 }
 
+void WeakEnemy::Damage(int damage)
+{
+	enemyColor_ = { 3.0f,3.0f,3.0f };
+	hp_-= damage;
+	if (hp_ <= 0)
+	{
+		isDead_ = true;
+	}
+}
+
 void WeakEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class PlayerBullet";
@@ -57,11 +69,7 @@ void WeakEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 		if (strcmp(toCollisionName, str1) == 0)
 		{
 			isHit_ = true;
-			hp_--;
-			if (hp_ == 0)
-			{
-				isDead_ = true;
-			}
+			Damage(damage_);
 		}
 	}
 }

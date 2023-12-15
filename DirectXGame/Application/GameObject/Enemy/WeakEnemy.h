@@ -32,6 +32,9 @@ public:
 	//当たり判定更新
 	void ColliderUpdate();
 
+	//ダメージ
+	void Damage(int damage);
+
 	//setter
 	//gameScene
 	void SetGameScene(GamePlayScene* gameScene) { gameScene_ = gameScene; }
@@ -41,12 +44,18 @@ public:
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
 
+	//damage
+	void SetDamage(int damage) { damage_ = damage; }
+
 	bool GetIsDead() const { return isDead_; }
 
 	bool GetIsDelete() const { return isDelete_; }
 
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
+
+	//color
+	Vector3 GetColor() const { return enemyColor_; }
 
 	//移動
 	void Move();
@@ -98,5 +107,9 @@ private:
 	//落下時間
 	float flame = 0.0f;
 	//体力
-	int hp_ = 1;
+	int hp_ = 2;
+	//ダメージ
+	int damage_;
+
+	Vector3 enemyColor_;
 };

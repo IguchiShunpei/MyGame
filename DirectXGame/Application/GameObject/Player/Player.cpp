@@ -34,13 +34,15 @@ void Player::PlayerInitialize()
 	speedL_ = 0.0f;
 	speedMax_ = 0.2f;
 	speedChange_ = 0.01f;
-	bulletNum_ = 0;
+	bulletLevel_ = 1;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
 	hp_ = 3;
 	initSpeedZ_ = 0.5f;
 	initRotaZ_ = 400.0f;
 	initMotionTimeMax_ = 40.0f;
+
+	bulletPower_ = 1;
 
 	//フラグ
 	isMoveUp_ = false;
@@ -65,7 +67,7 @@ void Player::Update()
 
 		Rotate();
 
-		//ChangeBullet();
+		BulletPowerUp();
 
 		Attack();
 	}
@@ -480,7 +482,7 @@ void Player::Attack()
 		//球の生成
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 		//球の初期化
-		newBullet->PlayerBulletInitialize(position, velocity, bulletDir_);
+		newBullet->PlayerBulletInitialize(position, velocity, bulletDir_,bulletLevel_);
 
 		//コライダーの追加
 		newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
@@ -504,25 +506,19 @@ void Player::Damage()
 	}
 }
 
-void Player::ChangeBullet()
+void Player::BulletPowerUp()
 {
-
-	if (input_->TriggerKey(DIK_B) && !input_->PushKey(DIK_SPACE))
+	switch (bulletPower_)
 	{
-		if (bulletNum_ == 0)
-		{
-			bulletNum_ = 1;
-		}
-		else if (bulletNum_ == 1)
-		{
-			bulletNum_ = 2;
-		}
-		else if (bulletNum_ == 2)
-		{
-			bulletNum_ = 0;
-		}
+	case 1:
+		bulletPower_ = 1;
+		break;
+	case 2:
+		bulletPower_ = 3;
+		break;
 	}
 }
+
 
 void Player::BulletUpdate()
 {

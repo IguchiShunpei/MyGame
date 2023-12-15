@@ -83,9 +83,9 @@ void GamePlayScene::Initialize()
 	pm_dmg->SetXMViewProjection(xmViewProjection);
 	//wEnemyテクスチャ
 	p_wDmg = Particle::LoadParticleTexture("effect02.png");
-	pm_eDmg = ParticleManager::Create();
-	pm_eDmg->SetParticleModel(p_wDmg);
-	pm_eDmg->SetXMViewProjection(xmViewProjection);
+	pm_wDmg = ParticleManager::Create();
+	pm_wDmg->SetParticleModel(p_wDmg);
+	pm_wDmg->SetXMViewProjection(xmViewProjection);
 	//bEnemyテクスチャ
 	p_bDmg = Particle::LoadParticleTexture("effect03.png");
 	pm_bDmg = ParticleManager::Create();
@@ -205,6 +205,13 @@ void GamePlayScene::Update()
 	{
 		items->ItemUpdate();
 		items->ColliderUpdate();
+		if (items->GetIsHit() == true)
+		{
+			if (player->GetBulletLevel() != 2)
+			{
+				player->SetBulletLevel(player->GetBulletLevel() + 1);
+			}
+		}
 	}
 
 	switch (gameNum_)
@@ -214,6 +221,7 @@ void GamePlayScene::Update()
 		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 		{
 			wEnemys->Update();
+			wEnemys->SetDamage(player->GetBulletPower());
 			wEnemys->ColliderUpdate();
 		}
 		for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
@@ -225,6 +233,7 @@ void GamePlayScene::Update()
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
 			enemys->Update(player->GetPosition());
+			enemys->SetDamage(player->GetBulletPower());
 			enemys->ColliderUpdate();
 		}
 		break;
@@ -239,6 +248,7 @@ void GamePlayScene::Update()
 			if (bEnemy->GetIsDeathTimer() == false)
 			{
 				bEnemy->Update();
+				bEnemy->SetDamage(player->GetBulletPower());
 				bEnemy->PhaseChange(player->GetPosition());
 				bEnemy->ColliderUpdate();
 			}
@@ -298,8 +308,9 @@ void GamePlayScene::Update()
 
 			//パーティクル更新
 			pm_dmg->Update();
-			pm_eDmg->Update();
+			pm_wDmg->Update();
 			pm_bDmg->Update();
+			pm_meteor->Update();
 			//UI更新
 			UIUpdate();
 		}
@@ -309,8 +320,9 @@ void GamePlayScene::Update()
 			UIUpdate();
 			//パーティクル更新
 			pm_dmg->Update();
-			pm_eDmg->Update();
+			pm_wDmg->Update();
 			pm_bDmg->Update();
+			pm_meteor->Update();
 			player->BulletUpdate();
 			bEnemy->BulletUpdate();
 		}
@@ -364,7 +376,7 @@ void GamePlayScene::Update()
 			isDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = wEnemys->GetPosition();
-			pm_eDmg->Fire(p_wDmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 5, { 8.0f, 0.0f });
+			pm_wDmg->Fire(p_wDmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 5, { 8.0f, 0.0f });
 		}
 	}
 	//無敵敵に弾が当たった時
@@ -397,7 +409,7 @@ void GamePlayScene::Update()
 			isDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = meteors->GetPosition();
-			pm_dmg->Fire(p_dmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 5, { 8.0f, 0.0f });
+			pm_meteor->Fire(p_meteor, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 16, { 8.0f, 0.0f });
 		}
 	}
 
@@ -484,7 +496,7 @@ void GamePlayScene::Draw()
 		//雑魚敵
 		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 		{
-			wEnemys->Draw(viewProjection_);
+			wEnemys->Draw(viewProjection_, 1.0f, wEnemys->GetColor());
 		}
 		for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
 		{
@@ -526,7 +538,7 @@ void GamePlayScene::Draw()
 	ParticleManager::PreDraw(dxCommon_->GetCommandList());
 
 	pm_dmg->Draw();
-	pm_eDmg->Draw();
+	pm_wDmg->Draw();
 	pm_bDmg->Draw();
 	pm_meteor->Draw();
 
@@ -560,8 +572,15 @@ void GamePlayScene::Finalize()
 	delete invEnemy;
 	delete p_dmg;
 	delete pm_dmg;
+	delete p_wDmg;
+	delete pm_wDmg;
+	delete p_bDmg;
+	delete pm_bDmg;
+	delete p_meteor;
+	delete pm_meteor;
 	delete explosion01_;
 	delete explosion02_;
+	delete explosion03_;
 	delete black_;
 	delete red_;
 

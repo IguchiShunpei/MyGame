@@ -21,7 +21,7 @@ void Item::ItemInitialize(Vector3 initPos_)
 	isHit_ = false;
 
 	//通常
-	moveSpeed_ = 0.2f;
+	moveSpeed_ = 0.3f;
 	normalRotaSpeed_ = 3.0f;
 	frontZ_ = -100.0f;
 

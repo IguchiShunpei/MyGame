@@ -6,11 +6,19 @@ PlayerBullet::~PlayerBullet()
 	delete playerBulletModel_;
 }
 
-void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3& velocity, int bulletDir)
+void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3& velocity, int bulletDir,int bulletLevel)
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet");
+	switch (bulletLevel)
+	{
+	case 1:
+		playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet01");
+		break;
+	case 2:
+		playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet02");
+		break;
+	}
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
