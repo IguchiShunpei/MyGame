@@ -50,8 +50,8 @@ public:
 	//ダメージ
 	void Damage();
 
-	//弾切り替え
-	void ChangeBullet();
+	//弾の威力の変更
+	void BulletPowerUp();
 
 	//弾更新
 	void BulletUpdate();
@@ -74,6 +74,10 @@ public:
 	bool GetIsDead() const { return isDead_; }
 	//IsInv
 	bool GetIsInv() const { return isInv_; }
+	//bulletLevel
+	int GetBulletLevel() const { return bulletLevel_; }
+	//bulletDamage
+	int GetBulletPower()const { return bulletPower_; };
 
 	//setter
 	//IsHit
@@ -84,6 +88,10 @@ public:
 	void SetIsInv(bool isInv) { isInv_ = isInv; }
 	//IsChangeDir
 	void SetIsChangeDir(bool isChangeDir) { isChangeDir_ = isChangeDir; }
+	//bulletLevel
+	void SetBulletLevel(int bulletLevel) { bulletLevel_ = bulletLevel; }
+	//bulletPower
+	void SetBulletPower(int bulletPower) { bulletPower_ = bulletPower; }
 
 private:
 	//入力
@@ -109,13 +117,16 @@ private:
 	float speedMax_;
 
 	//弾種類
-	int bulletNum_;
+	int bulletLevel_;
+	int bulletDamage_;
 	//体力
 	int hp_;
 	//弾の速度
 	float kBulletSpeed_;
 	//弾の向き
 	int bulletDir_;
+	//弾の威力
+	int bulletPower_;
 
 	//登場モーションに使う変数
 	float initSpeedZ_;

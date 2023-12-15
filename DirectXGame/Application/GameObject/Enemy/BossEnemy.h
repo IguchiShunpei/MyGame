@@ -80,7 +80,8 @@ public:
 	//登場モーション
 	void InitMotion();
 
-	void Damage();
+	//ダメージ処理
+	void Damage(int damage);
 
 	//死亡するまでのタイマー処理
 	void ActiveDeathTimer();
@@ -99,11 +100,14 @@ public:
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
 	//deathTimer
-	void SetDeathTimer(int deathTimer) { this->deathTimer_ = deathTimer; }
+	void SetDeathTimer(int deathTimer) { deathTimer_ = deathTimer; }
 	//alpha
-	void SetAlpha(float) {}
+	void SetAlpha(float alpha) { alpha_ = alpha; }
 	//beforeY
 	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
+	//damage
+	void SetDamage(int damage) { damage_ = damage; }
+
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -198,4 +202,7 @@ private:
 
 	//alpha
 	float alpha_ = 1.0f;
+
+	//ダメージ量
+	int damage_;
 };

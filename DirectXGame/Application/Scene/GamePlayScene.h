@@ -202,7 +202,7 @@ private://メンバ変数
 	ParticleManager* pm_dmg = nullptr;
 
 	Particle* p_wDmg = nullptr;
-	ParticleManager* pm_eDmg = nullptr;
+	ParticleManager* pm_wDmg = nullptr;
 
 	Particle* p_bDmg = nullptr;
 	ParticleManager* pm_bDmg = nullptr;
