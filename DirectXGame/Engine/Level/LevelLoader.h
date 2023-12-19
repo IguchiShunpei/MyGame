@@ -9,7 +9,7 @@ struct LevelData {
 
 	struct ObjectData {
 		// 平行移動
-		DirectX::XMVECTOR translation;
+		DirectX::XMVECTOR transform;
 		// 回転
 		DirectX::XMVECTOR rotation;
 		// スケール

@@ -1324,32 +1324,23 @@ void GamePlayScene::LoadLevelData()
 	//背景オブジェクトデータの読み込み
 	backGroundStardust_ = LevelLoader::LoadFile("stardust");
 
-	//モデル読み込み
-	modelStardust = Model::LoadFromOBJ("stardust");
-
-	stardustModels_.insert(std::make_pair("stardust", modelStardust));
-
 	// レベルデータからオブジェクトを生成、配置
 	//星屑
 	for (auto& objectData : backGroundStardust_->objects) {
-		// ファイル名から登録済みモデルを検索
-		Model* model = nullptr;
-		decltype(stardustModels_)::iterator it = stardustModels_.find(objectData.fileName);
-		if (it != stardustModels_.end()) {
-			model = it->second;
-		}
 
 		// モデルを指定して3Dオブジェクトを生成
 		stardust = new Stardust;
 		stardust->StardustInitialize();
-		stardust->SetModel(model);
-
+		//モデル読み込み
+		modelStardust = Model::LoadFromOBJ("stardust");
+		stardustModels_.insert(std::make_pair("stardust", modelStardust));
+		stardust->SetModel(modelStardust);
 		// 座標
 		Vector3 pos;
 		//データの値を代入
-		pos.x = objectData.translation.m128_f32[0];
-		pos.y = objectData.translation.m128_f32[1];
-		pos.z = objectData.translation.m128_f32[2];
+		pos.x = objectData.transform.m128_f32[0];
+		pos.y = objectData.transform.m128_f32[1];
+		pos.z = objectData.transform.m128_f32[2];
 		//newObjectにセット
 		stardust->SetPosition(pos);
 		//初期Y座標を保存しておく
@@ -1364,6 +1355,7 @@ void GamePlayScene::LoadLevelData()
 		//newObjectにセット
 		stardust->SetRotation(rot);
 
+		stardust->SetColor();
 		stardust->SetSize();
 
 		// 配列に登録
