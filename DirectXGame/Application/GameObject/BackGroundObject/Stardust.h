@@ -20,6 +20,9 @@ public:
 	//サイズを設定
 	void SetSize();
 
+	//色を設定
+	void SetColor();
+
 	//移動
 	void Move();
 
@@ -64,4 +67,6 @@ private:
 	int stardustSize_;
 	//色
 	Vector3 color_;
+	//色をランダムで割り当てる変数
+	int colorNum_;
 };
