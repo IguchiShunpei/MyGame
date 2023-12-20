@@ -509,6 +509,28 @@
         },
         {
             "type": "MESH",
+            "name": "stardust.1023",
+            "transform": {
+                "translation": [
+                    -79.18121337890625,
+                    -23.656494140625,
+                    -1.3347253799438477
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0636199712753296,
+                    1.0636199712753296,
+                    1.0636199712753296
+                ]
+            },
+            "file_name": "stardust"
+        },
+        {
+            "type": "MESH",
             "name": "stardust.1026",
             "transform": {
                 "translation": [

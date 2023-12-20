@@ -8,7 +8,7 @@ void Stardust::StardustInitialize()
 	// 3Dオブジェクト生成
 	Create();
 
-	speed_ = 0.2f;
+	speed_ = 0.1f;
 	frontZ_ = -100.0f;
 	backZ_ = 70.0f;
 	levRange_ = 1.0f;

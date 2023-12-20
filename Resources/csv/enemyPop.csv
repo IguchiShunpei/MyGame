@@ -43,7 +43,7 @@ wEnemy L 0 0 100
 
 wait 20
 
-meteor 3 0 0 80
+meteor 3 10 5 80
 
 wait 200
 
@@ -68,6 +68,8 @@ invEnemy 0 -2 100
 wEnemy R 10 5 100 
 
 enemy 5 -8 10 100
+
+meteor 3 -10 -5 80
 
 wait 20
 
@@ -128,6 +130,7 @@ invEnemy -10 -15 100
 wait 20
 
 wEnemy L -10 -5 100 
+meteor 3 10 -5 80
 
 wait 20
 
@@ -142,6 +145,7 @@ enemy 5 8 8 100
 wait 20
 
 wEnemy L -10 -5 100 
+meteor 3 -10 5 80
 
 wait 20
 

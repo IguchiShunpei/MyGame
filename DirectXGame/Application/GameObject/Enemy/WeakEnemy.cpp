@@ -51,7 +51,7 @@ void WeakEnemy::ColliderUpdate()
 
 void WeakEnemy::Damage(int damage)
 {
-	enemyColor_ = { 3.0f,3.0f,3.0f };
+  	enemyColor_ = { 3.0f,3.0f,3.0f };
 	hp_-= damage;
 	if (hp_ <= 0)
 	{
@@ -68,7 +68,6 @@ void WeakEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 		//相手がplayerBullet
 		if (strcmp(toCollisionName, str1) == 0)
 		{
-			isHit_ = true;
 			Damage(damage_);
 		}
 	}

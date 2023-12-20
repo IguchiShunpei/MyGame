@@ -71,6 +71,7 @@ void GamePlayScene::Initialize()
 	bEnemy = new BossEnemy;
 	bEnemy->BossEnemyInitialize();
 	bEnemy->worldTransform_.UpdateMatrix();
+	bEnemy->ColliderUpdate();
 
 	//敵ファイル読み込み
 	LoadEnemyPop();
@@ -191,7 +192,7 @@ void GamePlayScene::Update()
 		if (meteors->GetIsDead() == true)
 		{
 			//敵の生成
- 			std::unique_ptr<Item> newItem = std::make_unique<Item>();
+			std::unique_ptr<Item> newItem = std::make_unique<Item>();
 			//敵の初期化
 			newItem->ItemInitialize(meteors->GetPosition());
 			//コライダーの追加
@@ -359,6 +360,7 @@ void GamePlayScene::Update()
 				}
 				else
 				{
+					red_->Reset();
 					player->SetIsHit(false);
 					player->SetIsInv(false);
 					viewProjection_->SetEye(cameraShakePos_);
@@ -476,7 +478,7 @@ void GamePlayScene::Draw()
 
 	//星屑
 	for (auto& object : stardustObjects_) {
-		object->Draw(viewProjection_,1.0f,object->GetColor());
+		object->Draw(viewProjection_, 1.0f, object->GetColor());
 	}
 
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
@@ -977,11 +979,15 @@ void GamePlayScene::BossInitCameraWork()
 void GamePlayScene::BossDead()
 {
 	UIOutMotion();
-	explosion01_->EnemyExplosionUpdate(bossDeadPos_);
-	explosion02_->EnemyExplosionUpdate(bossDeadPos_);
+	explosion01_->EnemyExplosionUpdate();
+	explosion02_->EnemyExplosionUpdate();
 	//墜落
-	bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
-	bEnemy->worldTransform_.scale_ -= Vector3(0.005f, 0.005f, 0.005f);
+	if (bEnemy->worldTransform_.position_.x > 0.0f)
+	{
+		bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
+	}
+
+	bEnemy->worldTransform_.scale_ -= Vector3(0.01f, 0.01f, 0.01f);
 	//左右にシェイク
 	if (bossShake_ == true)
 	{
