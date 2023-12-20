@@ -10,7 +10,7 @@ public:
 	//初期化
 	void ExplosionInitialize(int num);
 
-	void EnemyExplosionUpdate(Vector3 bossDeadpos);
+	void EnemyExplosionUpdate();
 
 	void PlayerExplosionUpdate(Vector3 playerDeadpos);
 
@@ -28,8 +28,6 @@ private:
 	Vector3 scaleNum_;
 
 	float alpha_;
-
-	int updateTimer_;
 
 	bool isFinish_;
 

@@ -24,6 +24,7 @@ public:
 	void RedDraw(ViewProjection* viewProjection_);
 
 	void SetIsRed(bool isRed){ this->isRed_ = isRed; }
+	void SetIsFinish(bool isFinish) { this->isFinish_ = isFinish; }
 
 private:
 	// モデル
@@ -31,4 +32,5 @@ private:
 
 	float alpha_;
 	bool isRed_;
+	bool isFinish_;
 };

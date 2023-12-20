@@ -37,7 +37,7 @@ void Player::PlayerInitialize()
 	bulletLevel_ = 1;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
-	hp_ = 3;
+	hp_ = 7;
 	initSpeedZ_ = 0.5f;
 	initRotaZ_ = 400.0f;
 	initMotionTimeMax_ = 40.0f;
@@ -91,11 +91,12 @@ void Player::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class EnemyBullet";
 	const char* str2 = "class InvEnemy";
+	const char* str3 = "class BossEnemy";
 
 	//相手がEnemy
 	if (isInv_ == false)
 	{
-		if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 )
+		if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 || strcmp(toCollisionName, str3) == 0)
 		{
 			isHit_ = true;
 		}
@@ -194,13 +195,14 @@ void Player::Move()
 
 	//移動限界座標
 	const float kMoveLimitX = 9.0f * 1.7f;
-	const float kMoveLimitY = 6.0f * 1.7f;
+	const float kMoveLimitYUp = 6.0f * 1.7f;
+	const float kMoveLimitYDown = 3.0f * 1.7f;
 
 	//範囲を超えない処理
 	worldTransform_.position_.x = max(worldTransform_.position_.x, -kMoveLimitX);
 	worldTransform_.position_.x = min(worldTransform_.position_.x, kMoveLimitX);
-	worldTransform_.position_.y = max(worldTransform_.position_.y, -kMoveLimitY);
-	worldTransform_.position_.y = min(worldTransform_.position_.y, kMoveLimitY);
+	worldTransform_.position_.y = max(worldTransform_.position_.y, -kMoveLimitYDown);
+	worldTransform_.position_.y = min(worldTransform_.position_.y, kMoveLimitYUp);
 }
 
 void Player::SpeedChange()

@@ -20,7 +20,7 @@ void Explosion::ExplosionInitialize(int num)
 		Create();
 		// オブジェクトにモデルをひも付ける
 		SetModel(explosionModel01_);
-		scaleNum_ = Vector3(0.1f, 0.1f, 0.1f);
+		scaleNum_ = Vector3(0.2f, 0.2f, 0.2f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}
 	else if (num == 1)
@@ -48,35 +48,18 @@ void Explosion::ExplosionInitialize(int num)
 	SetPosition(Vector3(0.0f, 0.0f, 0.0f));
 	color_ = Vector3(1.0f, 1.0f, 1.0f);
 
-	updateTimer_ = 0;
-
 	isFinish_ = false;
 
 	alpha_ = 0.8f;
 }
 
-void Explosion::EnemyExplosionUpdate(Vector3 bossDeadPos)
+void Explosion::EnemyExplosionUpdate()
 {
 	worldTransform_.rotation_.y += 5.0f;
-	if (updateTimer_ % 2 != 1)
-	{
-		//乱数生成装置
-		std::random_device seed_gen;
-		std::mt19937_64 engine(seed_gen());
-		std::uniform_real_distribution<float>dist(-1.0, 1.0);
-		std::uniform_real_distribution<float>dist2(-1.0, 1.0);
-
-		worldTransform_.position_ = Vector3(dist(engine), dist2(engine), bossDeadPos.z);
-	}
-	else
-	{
-		SetPosition(bossDeadPos);
-	}
-	updateTimer_++;
 	worldTransform_.scale_ += scaleNum_;
 	if (alpha_ >= 0.0f)
 	{
-		alpha_ -= 0.0045f;
+		alpha_ -= 0.005f;
 	}
 	else
 	{

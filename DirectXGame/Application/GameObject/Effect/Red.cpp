@@ -38,7 +38,6 @@ void Red::Finish()
 		else
 		{
 			isRed_ = false;
-			alpha_ = 0.5f;
 		}
 	}
 }

@@ -19,8 +19,8 @@ void BossEnemy::BossEnemyInitialize()
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyModel);
-	SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
-	SetScale({ 1.0f,1.0f,1.0f });
+	SetCollider(new SphereCollider(Vector3(0, 0, 0), 3.0f));
+	SetScale({ 2.0f,2.0f,2.0f });
 
 	//登場
 	beforeY_ = 120.0f;
@@ -283,7 +283,7 @@ void BossEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ * MathFunc::easeInSine(initTime_ / 240.0f);
+		worldTransform_.position_.y = -2.0f + beforeY_ * MathFunc::easeInSine(initTime_ / 240.0f);
 		worldTransform_.UpdateMatrix();
 		initTime_--;
 		if (initTime_ <= 0.0f)

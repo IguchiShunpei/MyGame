@@ -82,8 +82,6 @@ private:
 	bool isDead_ = false;
 	//デスポーンしたか
 	bool isDelete_ = false;
-	//弾が当たったか
-	bool isHit_ = false;
 	//登場したか
 	bool isInit_ = false;
 	//退場したか
