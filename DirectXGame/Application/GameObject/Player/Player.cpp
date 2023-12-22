@@ -34,6 +34,8 @@ void Player::PlayerInitialize()
 	speedL_ = 0.0f;
 	speedMax_ = 0.2f;
 	speedChange_ = 0.01f;
+	rota_ = 0.5f;
+	rotaMax_ = 30.0f;
 	bulletLevel_ = 1;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
@@ -366,31 +368,31 @@ void Player::Rotate()
 	//上キーを押したときの傾き処理
 	if (isMoveUp_ == true)
 	{
-		if (worldTransform_.rotation_.x > -30.0f)
+		if (worldTransform_.rotation_.x > -rotaMax_)
 		{
-			SetRotation(GetRotation() - Vector3(1.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(rota_, 0.0f, 0.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.x < 0.0f)
 		{
-			SetRotation(GetRotation() + Vector3(1.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(rota_, 0.0f, 0.0f));
 		}
 	}
 	//下キーを押したときの傾き処理
 	if (isMoveDown_ == true)
 	{
-		if (worldTransform_.rotation_.x < 30.0f)
+		if (worldTransform_.rotation_.x < rotaMax_)
 		{
-			SetRotation(GetRotation() + Vector3(1.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(rota_, 0.0f, 0.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.x > 0.0f)
 		{
-			SetRotation(GetRotation() - Vector3(1.0f, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(rota_, 0.0f, 0.0f));
 		}
 	}
 	if (isChangeDir_ == false)
@@ -398,31 +400,31 @@ void Player::Rotate()
 		//右キーを押したとき
 		if (isMoveRight_ == true)
 		{
-			if (worldTransform_.rotation_.z > -30.0f)
+			if (worldTransform_.rotation_.z > -rotaMax_)
 			{
-				SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+				SetRotation(GetRotation() - Vector3(0.0f, -rota_, rota_));
 			}
 		}
 		else
 		{
 			if (worldTransform_.rotation_.z < 0.0f)
 			{
-				SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+				SetRotation(GetRotation() + Vector3(0.0f, -rota_, rota_));
 			}
 		}
 		//左キーを押したとき
 		if (isMoveLeft_ == true)
 		{
-			if (worldTransform_.rotation_.z < 30.0f)
+			if (worldTransform_.rotation_.z < rotaMax_)
 			{
-				SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+				SetRotation(GetRotation() + Vector3(0.0f, -rota_, rota_));
 			}
 		}
 		else
 		{
 			if (worldTransform_.rotation_.z > 0.0f)
 			{
-				SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+				SetRotation(GetRotation() - Vector3(0.0f, -rota_, rota_));
 			}
 		}
 	}
@@ -481,6 +483,11 @@ void Player::Attack()
 		}
 		Vector3 velocity(0, 0, kBulletSpeed_);
 
+		//自機の向いてる方向に弾を撃つ
+		velocity = bVelocity(velocity, worldTransform_);
+
+		velocity.normalize() * kBulletSpeed_;
+
 		//球の生成
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 		//球の初期化
@@ -493,6 +500,26 @@ void Player::Attack()
 		bullets_.push_back(std::move(newBullet));
 
 	}
+}
+
+Vector3 Player::bVelocity(Vector3& velocity, WorldTransform& worldTransform)
+{
+	Vector3 result = { 0,0,0 };
+
+	//内積
+	result.z = velocity.x * worldTransform.matWorld_.m[0][2] +
+		velocity.y * worldTransform.matWorld_.m[1][2] +
+		velocity.z * worldTransform.matWorld_.m[2][2];
+
+	result.x = velocity.x * worldTransform.matWorld_.m[0][0] +
+		velocity.y * worldTransform.matWorld_.m[1][0] +
+		velocity.z * worldTransform.matWorld_.m[2][0];
+
+	result.y = velocity.x * worldTransform.matWorld_.m[0][1] +
+		velocity.y * worldTransform.matWorld_.m[1][1] +
+		velocity.z * worldTransform.matWorld_.m[2][1];
+
+	return result;
 }
 
 void Player::Damage()
@@ -510,7 +537,7 @@ void Player::Damage()
 
 void Player::BulletPowerUp()
 {
-	switch (bulletPower_)
+	switch (bulletLevel_)
 	{
 	case 1:
 		bulletPower_ = 1;

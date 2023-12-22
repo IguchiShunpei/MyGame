@@ -46,6 +46,8 @@ public:
 
 	//攻撃
 	void Attack();
+	//キャラの向きに応じた方向に球を出す
+	Vector3 bVelocity(Vector3& velocity, WorldTransform& worldTransform);
 
 	//ダメージ
 	void Damage();
@@ -115,6 +117,10 @@ private:
 	float speedChange_;
 	//最高速度
 	float speedMax_;
+	//回転値
+	float rota_;
+	//最大角度
+	float rotaMax_;
 
 	//弾種類
 	int bulletLevel_;

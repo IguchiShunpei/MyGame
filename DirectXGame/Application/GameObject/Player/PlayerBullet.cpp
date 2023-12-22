@@ -38,7 +38,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 	velocity_ = velocity;
 	isDelete_ = false;
 	chargeTime = 0;
-	deleteTimer_ = 60.0f;
+	deleteTimer_ = 120.0f;
 }
 
 void PlayerBullet::ColliderUpdate()

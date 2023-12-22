@@ -208,7 +208,7 @@ void GamePlayScene::Update()
 		items->ColliderUpdate();
 		if (items->GetIsHit() == true)
 		{
-			if (player->GetBulletLevel() != 2)
+			if (player->GetBulletLevel() < 2)
 			{
 				player->SetBulletLevel(player->GetBulletLevel() + 1);
 			}
