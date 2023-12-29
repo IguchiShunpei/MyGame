@@ -22,21 +22,33 @@ public:
 	//更新
 	void RedUpdate();
 
-	void Finish();
+	//フェードアウト(alpha値マイナス)
+	void FadeOut();
 
+	//リセット
 	void Reset();
 
 	//描画
 	void RedDraw(ViewProjection* viewProjection_);
 
+	//setter
+	//isRed
 	void SetIsRed(bool isRed){ this->isRed_ = isRed; }
-	void SetIsFinish(bool isFinish) { this->isFinish_ = isFinish; }
+	//isOut
+	void SetIsOut(bool isOut) { this->isOut_ = isOut; }
 
 private:
 	// モデル
 	Model* redModel_ = nullptr;
 
+	//alpha値
 	float alpha_;
+	//alpha最大値
+	float alphaMax_;
+	//alpha変動値
+	float alphaNum_;
+	//赤画面になったか
 	bool isRed_;
-	bool isFinish_;
+	//フェードアウトしたか
+	bool isOut_;
 };

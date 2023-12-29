@@ -213,7 +213,7 @@ void GameTitleScene::StartCameraWork(int num)
 		viewProjection_->eye_.z = cameraWorkPos_.z + 30.0f * MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		break;
 	case 3:
-		black_->SetIsFinish(true);
+		black_->SetIsIn(true);
 		//自機を動かす
 		player->worldTransform_.position_.z++;
 		viewProjection_->eye_.z -= 1.5f;

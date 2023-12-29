@@ -20,5 +20,5 @@ void SkyDome::SkyDomeInitialize()
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(skyModel);
-	SetScale(Vector3(1500.0f, 1500.0f, 1500.0f));
+	SetScale(Vector3(1400.0f, 1400.0f, 1400.0f));
 }

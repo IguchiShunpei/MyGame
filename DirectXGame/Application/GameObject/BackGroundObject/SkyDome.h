@@ -15,8 +15,6 @@ public:
 	//初期化
 	void SkyDomeInitialize();
 
-	void SkyDomeUpdate();
-
 private:
 	// モデル
 	Model* skyModel = nullptr;
