@@ -174,7 +174,7 @@ void GamePlayScene::Update()
 	UpdateEnemyPop();
 
 	//天球
-	sky_->SkyDomeUpdate();
+	sky_->worldTransform_.UpdateMatrix();
 	//自機登場演出
 	PlayerInit();
 	//UIの登場モーション
@@ -916,7 +916,7 @@ void GamePlayScene::BossInitCameraWork()
 		else
 		{
 			//寄ったら黒フェード
-			black_->SetIsFinish(true);
+			black_->SetIsIn(true);
 		}
 		bossAppTimer_++;
 
@@ -929,7 +929,7 @@ void GamePlayScene::BossInitCameraWork()
 		}
 		break;
 	case InitCameraWork:
-		black_->SetIsStart(true);
+		black_->SetIsOut(true);
 		viewProjection_->SetTarget(bEnemy->GetPosition());
 		bEnemy->InitMotion();
 
@@ -951,7 +951,7 @@ void GamePlayScene::BossInitCameraWork()
 			else
 			{
 				bossInitTimer_ = 0;
-				black_->SetIsStart(false);
+				black_->SetIsOut(false);
 				viewProjection_->SetEye(bossInitCameraPos_);
 				bossInitNum_ = Loose;
 			}
@@ -1047,7 +1047,7 @@ void GamePlayScene::ToClearScene()
 		}
 		else
 		{
-			black_->SetIsFinish(true);
+			black_->SetIsIn(true);
 			//自機を動かす
 			player->worldTransform_.rotation_.z++;
 			player->worldTransform_.position_.x -= 0.05f;
@@ -1113,7 +1113,7 @@ void GamePlayScene::ToGameOverScene()
 			if (explosion03_->GetIsFinish() == true)
 			{
 				viewProjection_->eye_ = normalEyeNum_;
-				black_->SetIsFinish(true);
+				black_->SetIsIn(true);
 				gameOverNum_++;
 				// ワールドトランスフォームの行列更新と転送
 				if (gameOverNum_ >= 60)
