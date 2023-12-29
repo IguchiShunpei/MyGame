@@ -1,3 +1,9 @@
+/**
+* @file Explosion.cpp
+* @brief 爆発の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "Object3d.h"
 #include "Model.h"

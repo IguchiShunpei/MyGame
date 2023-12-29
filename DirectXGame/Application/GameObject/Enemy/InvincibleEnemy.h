@@ -1,3 +1,9 @@
+/**
+* @file InvincibleEnemy.cpp
+* @brief 攻撃では倒せない敵の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "Object3d.h"
 #include "WinApp.h"
@@ -11,13 +17,13 @@
 //GameSceneの前方宣言
 class GameScene;
 
-class InvEnemy : public Object3d
+class InvincibleEnemy : public Object3d
 {
 public:
 	//デストラクタ
-	~InvEnemy();
+	~InvincibleEnemy();
 	//初期化
-	void InvEnemyInitialize();
+	void InvincibleEnemyInitialize();
 
 	//更新
 	void Update(Vector3 playerPos_);

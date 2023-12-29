@@ -1,4 +1,10 @@
-﻿#include "WinApp.h"
+/**
+* @file WinApp.h
+* @brief WindowsAPIに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "WinApp.h"
 
 #pragma comment(lib,"winmm.lib")
 

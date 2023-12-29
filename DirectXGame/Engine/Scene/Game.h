@@ -1,3 +1,9 @@
+/**
+* @file Game.cpp
+* @brief シーン生成クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include "SIFrameWork.h"

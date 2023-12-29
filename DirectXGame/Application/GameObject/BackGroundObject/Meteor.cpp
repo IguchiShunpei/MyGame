@@ -1,3 +1,9 @@
+/**
+* @file Meteor.cpp
+* @brief 隕石の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Meteor.h"
 #include "GamePlayScene.h"
 #include "SphereCollider.h"

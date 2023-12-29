@@ -1,3 +1,9 @@
+/**
+* @file LevelLoader.cpp
+* @brief レベルデータ処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "LevelLoader.h"
 
 #include <json.hpp>

@@ -1,3 +1,9 @@
+/**
+* @file Player.cpp
+* @brief 自機の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "Object3d.h"
 #include "WinApp.h"

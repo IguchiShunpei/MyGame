@@ -1,3 +1,9 @@
+/**
+* @file ViewProjection.h
+* @brief 自作の数学クラスを用いたカメラクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include"Vector3.h"
 #include "Vector4.h"

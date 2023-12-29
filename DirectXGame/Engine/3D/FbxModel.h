@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file FbxModel.h
+* @brief  Fbxのモデルに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #include <vector>
 #include <string>
 #include <DirectXMath.h>

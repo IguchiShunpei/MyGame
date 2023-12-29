@@ -1,4 +1,10 @@
-﻿#include "Vector4.h"
+/**
+* @file Vector4.cpp
+* @brief Vector4を扱う計算処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "Vector4.h"
 
 Vector4::Vector4()
 	:x(0), y(0), z(0), w(0)

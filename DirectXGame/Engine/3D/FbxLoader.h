@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file FbxLoader.h
+* @brief  Fbxの読み込みに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #include "fbxsdk.h"
 #include "FbxModel.h"
 #include "Matrix4.h"

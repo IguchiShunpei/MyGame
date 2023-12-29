@@ -1,3 +1,9 @@
+/**
+* @file GameTitleScene.cpp
+* @brief タイトル画面のシーンクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "GameTitleScene.h"
 
 using namespace DirectX;

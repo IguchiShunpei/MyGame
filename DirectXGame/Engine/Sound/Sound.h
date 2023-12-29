@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file Sound.cpp
+* @brief サウンド処理を行うクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")

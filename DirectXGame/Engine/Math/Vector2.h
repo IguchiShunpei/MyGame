@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file Vector2.cpp
+* @brief Vector2を扱う計算処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 class Vector2
 {
 public:

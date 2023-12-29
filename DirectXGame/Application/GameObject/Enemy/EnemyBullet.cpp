@@ -1,3 +1,9 @@
+/**
+* @file EnemyBullet.cpp
+* @brief 敵の弾の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "EnemyBullet.h"
 #include "SphereCollider.h"
 

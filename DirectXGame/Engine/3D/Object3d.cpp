@@ -1,3 +1,9 @@
+/**
+* @file Object3d.cpp
+* @brief  3Dオブジェクトに関するクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Object3d.h"
 #include "BaseCollider.h"
 #include <d3dcompiler.h>

@@ -1,3 +1,9 @@
+/**
+* @file SphereCollider.cpp
+* @brief 球の衝突判定オブジェクト
+* @author イグチ_シュンペイ
+*/
+
 #include "SphereCollider.h"
 
 void SphereCollider::Update()

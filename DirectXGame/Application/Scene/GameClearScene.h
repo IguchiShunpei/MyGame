@@ -1,3 +1,9 @@
+/**
+* @file GameClearScene.cpp
+* @brief ゲームクリア画面のシーンクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include "Input.h"

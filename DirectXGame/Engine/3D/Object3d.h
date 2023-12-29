@@ -1,3 +1,9 @@
+/**
+* @file Object3d.h
+* @brief  3Dオブジェクトに関するクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include <Windows.h>

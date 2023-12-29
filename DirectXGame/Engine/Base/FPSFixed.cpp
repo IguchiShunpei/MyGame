@@ -1,4 +1,10 @@
-﻿#include "FPSFixed.h"
+/**
+* @file FPSFixed.cpp
+* @brief FPSに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "FPSFixed.h"
 
 void FPSFixed::InitializeFixFPS() {
 	// 現在時間を記録する

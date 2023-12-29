@@ -1,3 +1,9 @@
+/**
+* @file ViewProjection.cpp
+* @brief 自作の数学クラスを用いたカメラクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "ViewProjection.h"
 #include <d3dx12.h>
 #include <cassert>

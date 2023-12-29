@@ -1,6 +1,9 @@
-// ========================
-// Matrix4 型 Matrix4.cpp
-// ========================
+/**
+* @file Matrix4.cpp
+* @brief Matrix4を扱う計算処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Matrix4.h"
 #include "Vector3.h"
 #include <cmath> // sin cos

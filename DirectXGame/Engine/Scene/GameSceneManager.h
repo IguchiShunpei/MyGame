@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file GameSceneManager.cpp
+* @brief シーン切り替えを行うクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include "GameBaseScene.h"
 #include "AbstractSceneFactory.h"

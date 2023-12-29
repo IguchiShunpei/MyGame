@@ -1,3 +1,9 @@
+/**
+* @file GameClearScene.cpp
+* @brief ゲームクリア画面のシーンクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "GameClearScene.h"
 
 using namespace DirectX;
@@ -29,12 +35,14 @@ void GameClearScene::Initialize()
 	black_->BlackInitialize();
 	black_->SetPosition(Vector3(0.0f, 0.0f, 21.0f));
 
+	//ロゴ
+	//スペースキー
 	space_ = new Sprite;
 	space_->Initialize(dxCommon_);
 	space_->LoadTexture(0, L"Resources/2d/space.png", dxCommon_);
 	space_->SetScale({ 4,1 });
 	space_->SetPosition({ 450,550,0 });
-
+	//ゲームクリア
 	gameClearLogo_ = new Sprite;
 	gameClearLogo_->Initialize(dxCommon_);
 	gameClearLogo_->LoadTexture(0, L"Resources/2d/gameClear01.png", dxCommon_);
@@ -48,6 +56,7 @@ void GameClearScene::Initialize()
 
 void GameClearScene::Update()
 {
+	//黒更新
 	black_->BlackUpdate();
 	//天球
 	sky_->Update();
@@ -86,7 +95,7 @@ void GameClearScene::Update()
 	}
 	if (isToTitle_ == true)
 	{
-		black_->SetIsFinish(true);
+		black_->SetIsIn(true);
 		toTitleTimer_++;
 		if (toTitleTimer_ >= 100)
 		{
@@ -103,10 +112,12 @@ void GameClearScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
+	//天球
 	sky_->Draw(viewProjection_);
 
 	Object3d::PostDraw();
 
+	//ロゴ
 	space_->SetTextureCommands(0, dxCommon_);
 	space_->Draw(dxCommon_);
 	gameClearLogo_->SetTextureCommands(0, dxCommon_);
@@ -114,6 +125,7 @@ void GameClearScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
+	//黒
 	black_->BlackDraw(viewProjection_);
 
 	Object3d::PostDraw();

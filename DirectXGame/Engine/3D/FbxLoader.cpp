@@ -1,3 +1,9 @@
+/**
+* @file FbxLoader.cpp
+* @brief  Fbxの読み込みに関するクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "FbxLoader.h"
 #include <cassert>
 

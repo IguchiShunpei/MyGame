@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file XMViewProjection.h
+* @brief DirectXの数学クラスを用いたカメラクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #include <DirectXMath.h>
 #include <wrl.h>
 

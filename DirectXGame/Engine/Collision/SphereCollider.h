@@ -1,3 +1,9 @@
+/**
+* @file SphereCollider.h
+* @brief 球の衝突判定オブジェクト
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "BaseCollider.h"
 #include "CollisionPrimitive.h"

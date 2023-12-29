@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file WinApp.h
+* @brief WindowsAPIに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #include <windows.h>
 
 class WinApp

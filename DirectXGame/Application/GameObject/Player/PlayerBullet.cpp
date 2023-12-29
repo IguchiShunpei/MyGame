@@ -1,3 +1,9 @@
+/**
+* @file PlayerBullet.cpp
+* @brief 自機の弾の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "PlayerBullet.h"
 #include "SphereCollider.h"
 

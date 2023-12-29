@@ -1,3 +1,9 @@
+/**
+* @file ParticleManager.cpp
+* @brief パーティクル管理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include "Particle.h"

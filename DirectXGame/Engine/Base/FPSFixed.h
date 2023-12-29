@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file FPSFixed.h
+* @brief FPSに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include <chrono>
 #include <thread>

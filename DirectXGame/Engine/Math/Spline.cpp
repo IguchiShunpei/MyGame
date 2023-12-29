@@ -1,3 +1,9 @@
+/**
+* @file Spline.cpp
+* @brief Spline曲線の計算処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Spline.h"
 #include <windows.h>
 #include <sysinfoapi.h>

@@ -1,3 +1,9 @@
+/**
+* @file Item.cpp
+* @brief アイテムの処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Item.h"
 #include "SphereCollider.h"
 #include "string.h"

@@ -1,4 +1,10 @@
-﻿#include "XMViewProjection.h"
+/**
+* @file XMViewProjection.cpp
+* @brief DirectXの数学クラスを用いたカメラクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "XMViewProjection.h"
 #include "WinApp.h"
 
 using namespace DirectX;

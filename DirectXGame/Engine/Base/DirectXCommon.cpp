@@ -1,3 +1,9 @@
+/**
+* @file DirectXCommon.cpp
+* @brief DirectXの基盤クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "DirectXCommon.h"
 
 #include <cassert>

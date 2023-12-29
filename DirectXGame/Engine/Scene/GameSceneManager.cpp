@@ -1,4 +1,10 @@
-﻿#include "GameSceneManager.h"
+/**
+* @file GameSceneManager.cpp
+* @brief シーン切り替えを行うクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "GameSceneManager.h"
 
 GameSceneManager::~GameSceneManager()
 {

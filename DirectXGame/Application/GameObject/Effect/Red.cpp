@@ -1,3 +1,9 @@
+/**
+* @file Red.cpp
+* @brief 赤画面の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Red.h"
 
 Red::~Red()
@@ -7,6 +13,7 @@ Red::~Red()
 
 void Red::RedInitialize()
 {
+	//初期化
 	Initialize();
 
 	// OBJからモデルデータを読み込む
@@ -18,22 +25,25 @@ void Red::RedInitialize()
 	SetScale(Vector3(100.0f, 100.0f, 0.01f));
 
 	alpha_ = 0.5f;
+	alphaMax_ = 0.5f;
+	alphaNum_ = 0.02f;
 	isRed_ = false;
 }
 
 void Red::RedUpdate()
 {
-	Finish();
+	FadeOut();
 	Update();
 }
 
-void Red::Finish()
+void Red::FadeOut()
 {
 	if (isRed_ == true)
 	{
+		//alphaが0以上ならマイナス
 		if (alpha_ >= 0.0f)
 		{
-			alpha_ -= 0.02f;
+			alpha_ -= alphaNum_;
 		}
 		else
 		{
@@ -44,7 +54,8 @@ void Red::Finish()
 
 void Red::Reset()
 {
-	alpha_ = 0.5f;
+	//alpha値リセット
+	alpha_ = alphaMax_;
 }
 
 void Red::RedDraw(ViewProjection* viewProjection_)

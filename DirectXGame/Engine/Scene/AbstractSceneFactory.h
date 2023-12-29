@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file SceneFactory.h
+* @brief シーンを生成するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include "GameBaseScene.h"
 #include <string>

@@ -1,3 +1,9 @@
+/**
+* @file Red.cpp
+* @brief 赤画面の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include "Object3d.h"

@@ -1,4 +1,10 @@
-﻿#include "Vector2.h"
+/**
+* @file Vector2.cpp
+* @brief Vector2を扱う計算処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "Vector2.h"
 #include <cmath>      // sqrt
 
 Vector2::Vector2()

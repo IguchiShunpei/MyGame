@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file CollisionPrimitive.h
+* @brief 当たり判定プリミティブクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #pragma once
 #include<DirectXMath.h>
 #include "Vector3.h"

@@ -1,3 +1,9 @@
+/**
+* @file Game.h
+* @brief シーン全体クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Game.h"
 
 #include "SceneFactory.h"

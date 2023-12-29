@@ -225,7 +225,7 @@ void GamePlayScene::Update()
 			wEnemys->SetDamage(player->GetBulletPower());
 			wEnemys->ColliderUpdate();
 		}
-		for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
+		for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
 		{
 			invEnemys->Update(player->GetPosition());
 			invEnemys->ColliderUpdate();
@@ -382,7 +382,7 @@ void GamePlayScene::Update()
 		}
 	}
 	//無敵敵に弾が当たった時
-	for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
+	for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
 	{
 		if (invEnemys->GetIsHit() == true)
 		{
@@ -500,7 +500,7 @@ void GamePlayScene::Draw()
 		{
 			wEnemys->Draw(viewProjection_, 1.0f, wEnemys->GetColor());
 		}
-		for (std::unique_ptr<InvEnemy>& invEnemys : invEnemys_)
+		for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
 		{
 			invEnemys->Draw(viewProjection_);
 		}
@@ -571,7 +571,7 @@ void GamePlayScene::Finalize()
 	delete enemy;
 	delete wEnemy;
 	delete bEnemy;
-	delete invEnemy;
+	delete invincibleEnemy;
 	delete p_dmg;
 	delete pm_dmg;
 	delete p_wDmg;
@@ -711,24 +711,24 @@ void GamePlayScene::UpdateEnemyPop()
 		// invEnemy
 		else if (key == "invEnemy") {
 			//敵の生成
-			std::unique_ptr<InvEnemy> newInvEnemy = std::make_unique<InvEnemy>();
+			std::unique_ptr<InvincibleEnemy> newInvincibleEnemy = std::make_unique<InvincibleEnemy>();
 			//敵の初期化
-			newInvEnemy->InvEnemyInitialize();
+			newInvincibleEnemy->InvincibleEnemyInitialize();
 			//コライダーの追加
-			newInvEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			newInvincibleEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
 			// X,Y,Z座標読み込み
 			Vector3 position{};
 			line_stream >> position.x;
 			line_stream >> position.y;
 			line_stream >> position.z;
-			newInvEnemy->SetBeforeY(position.y);
+			newInvincibleEnemy->SetBeforeY(position.y);
 			position.y += 20.0f;
 			// 座標データに追加
-			newInvEnemy->SetPosition(position);
-			newInvEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
-			newInvEnemy->worldTransform_.UpdateMatrix();
+			newInvincibleEnemy->SetPosition(position);
+			newInvincibleEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
+			newInvincibleEnemy->worldTransform_.UpdateMatrix();
 			//登録
-			invEnemys_.push_back(std::move(newInvEnemy));
+			invincibleEnemys_.push_back(std::move(newInvincibleEnemy));
 		}
 		//meteor
 		else if (key == "meteor") {
@@ -812,7 +812,7 @@ void GamePlayScene::DeleteObject()
 		{
 			return enemy->GetIsDelete();
 		});
-	invEnemys_.remove_if([](std::unique_ptr <InvEnemy>& invEnemy)
+	invincibleEnemys_.remove_if([](std::unique_ptr <InvincibleEnemy>& invEnemy)
 		{
 			return invEnemy->GetIsDelete();
 		});

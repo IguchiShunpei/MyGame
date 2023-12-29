@@ -1,3 +1,9 @@
+/**
+* @file SlFrameWork.cpp
+* @brief メインループを行うクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include"Input.h"
 #include"WinApp.h"
