@@ -1,3 +1,9 @@
+/**
+* @file ParticleManager.cpp
+* @brief パーティクル管理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "ParticleManager.h"
 #include <d3dcompiler.h>
 #include <DirectXTex.h>

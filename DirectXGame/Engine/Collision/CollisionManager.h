@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file CollisionManager.h
+* @brief 当たり判定を管理するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #include "CollisionPrimitive.h"
 #include "RaycastHit.h"
 

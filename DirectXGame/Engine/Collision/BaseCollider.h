@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file BaseCollider.cpp
+* @brief コライダーの基底クラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include "CollisionTypes.h"
 #include "Object3d.h"

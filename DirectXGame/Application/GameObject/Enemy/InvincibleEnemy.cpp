@@ -1,16 +1,16 @@
-#include "InvEnemy.h"
+#include "InvincibleEnemy.h"
 #include "SphereCollider.h"
 #include "GamePlayScene.h"
 #include "string.h"
 
 //デストラクタ
-InvEnemy::~InvEnemy()
+InvincibleEnemy::~InvincibleEnemy()
 {
 	delete enemyModel;
 }
 
 //初期化
-void InvEnemy::InvEnemyInitialize()
+void InvincibleEnemy::InvincibleEnemyInitialize()
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
@@ -26,7 +26,7 @@ void InvEnemy::InvEnemyInitialize()
 	velocity_ = { 0.0f,0.0f,0.0f };
 }
 
-void InvEnemy::Update(Vector3 playerPos_)
+void InvincibleEnemy::Update(Vector3 playerPos_)
 {
 	InitMotion();
 	if (isInit_ == true)
@@ -49,7 +49,7 @@ void InvEnemy::Update(Vector3 playerPos_)
 	worldTransform_.UpdateMatrix();
 }
 
-void InvEnemy::ColliderUpdate()
+void InvincibleEnemy::ColliderUpdate()
 {
 	//当たり判定更新
 	if (collider)
@@ -58,7 +58,7 @@ void InvEnemy::ColliderUpdate()
 	}
 }
 
-void InvEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
+void InvincibleEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class PlayerBullet";
 
@@ -72,7 +72,7 @@ void InvEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	}
 }
 
-void InvEnemy::Move()
+void InvincibleEnemy::Move()
 {
 	if (isStart_ == true)
 	{
@@ -84,7 +84,7 @@ void InvEnemy::Move()
 	}
 }
 
-void InvEnemy::Turn(Vector3 playerPos_)
+void InvincibleEnemy::Turn(Vector3 playerPos_)
 {
 	if (isTurn_ == true)
 	{
@@ -118,7 +118,7 @@ void InvEnemy::Turn(Vector3 playerPos_)
 	}
 }
 
-void InvEnemy::InitMotion()
+void InvincibleEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
@@ -132,7 +132,7 @@ void InvEnemy::InitMotion()
 	}
 }
 
-void InvEnemy::BackMotion()
+void InvincibleEnemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
@@ -147,7 +147,7 @@ void InvEnemy::BackMotion()
 }
 
 
-Vector3 InvEnemy::GetPosition()
+Vector3 InvincibleEnemy::GetPosition()
 {
 	Vector3 worldPos;
 

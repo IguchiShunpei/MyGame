@@ -1,3 +1,9 @@
+/**
+* @file Model.cpp
+* @brief  モデルの読み込みに関するクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Model.h"
 
 #include <d3dcompiler.h>

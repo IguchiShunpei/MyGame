@@ -1,3 +1,9 @@
+/**
+* @file MathFunc.cpp
+* @brief 物理挙動やイージングなどの処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "MathFunc.h"
 
 float MathFunc::easeInSine(float a)

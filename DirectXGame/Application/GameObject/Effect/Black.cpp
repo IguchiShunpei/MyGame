@@ -1,3 +1,9 @@
+/**
+* @file Black.cpp
+* @brief 黒画面の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Black.h"
 
 Black::~Black()
@@ -18,48 +24,55 @@ void Black::BlackInitialize()
 	SetScale(Vector3(100.0f, 100.0f, 0.01f));
 
 	alpha_ = 1.0f;
+	alphaMax_ = 1.0f;
+	alphaNum_ = 0.02f;
 	isBlack_ = true;
-	isStart_ = true;
-	isFinish_ = false;
+	isOut_ = true;
+	isIn_ = false;
 }
 
 void Black::BlackUpdate()
 {
-	Start();
-	Finish();
+	//フェードアウト
+	FadeOut();
+	//フェードイン
+	FadeIn();
+	//更新
 	Update();
 }
 
-void Black::Start()
+void Black::FadeOut()
 {
-	if (isStart_ == true && isBlack_ == true)
+	if (isOut_ == true && isBlack_ == true)
 	{
+		//alphaが0以上ならマイナス
 		if (alpha_ >= 0.0f)
 		{
-			alpha_ -= 0.02f;
+			alpha_ -= alphaNum_;
 		}
 		else
 		{
 			alpha_ = 0.0f;
 			isBlack_ = false;
-			isStart_ = false;
+			isOut_ = false;
 		}
 	}
 }
 
-void Black::Finish()
+void Black::FadeIn()
 {
-	if (isFinish_ == true && isBlack_ == false)
+	if (isIn_ == true && isBlack_ == false)
 	{
-		if (alpha_ <= 1.0f)
+		//alphaが1以下ならプラス
+		if (alpha_ <= alphaMax_)
 		{
-			alpha_ += 0.02f;
+			alpha_ += alphaNum_;
 		}
 		else
 		{
-			alpha_ = 1.0f;
+			alpha_ = alphaMax_;
 			isBlack_ = true;
-			isFinish_ = false;
+			isIn_ = false;
 		}
 	}
 }

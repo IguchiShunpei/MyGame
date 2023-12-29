@@ -1,3 +1,9 @@
+/**
+* @file BossEnemy.h
+* @brief ボス敵の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "BossEnemy.h"
 #include "SphereCollider.h"
 #include "GamePlayScene.h"

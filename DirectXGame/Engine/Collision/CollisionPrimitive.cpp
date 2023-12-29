@@ -1,4 +1,10 @@
-﻿#include "CollisionPrimitive.h"
+/**
+* @file CollisionPrimitive.cpp
+* @brief 当たり判定プリミティブクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "CollisionPrimitive.h"
 
 void Triangle::ComputeNormal()
 {

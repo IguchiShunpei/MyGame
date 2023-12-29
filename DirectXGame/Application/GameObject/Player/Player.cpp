@@ -1,3 +1,9 @@
+/**
+* @file Player.cpp
+* @brief 自機の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Player.h"
 #include "SphereCollider.h"
 #include "string.h"

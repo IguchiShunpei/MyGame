@@ -1,3 +1,9 @@
+/**
+* @file GameOverScene.cpp
+* @brief ゲームオーバー画面のシーンクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "GameOverScene.h"
 
 using namespace DirectX;
@@ -29,12 +35,14 @@ void GameOverScene::Initialize()
 	black_->BlackInitialize();
 	black_->SetPosition(Vector3(0.0f, 0.0f, 21.0f));
 
+	//ロゴ
+	//スペースキー
 	space_ = new Sprite;
 	space_->Initialize(dxCommon_);
 	space_->LoadTexture(0, L"Resources/2d/space.png", dxCommon_);
 	space_->SetScale({ 4,1 });
 	space_->SetPosition({ 450,550,0 });
-
+	//ゲームオーバー
 	gameOverLogo_ = new Sprite;
 	gameOverLogo_->Initialize(dxCommon_);
 	gameOverLogo_->LoadTexture(0, L"Resources/2d/gameOver.png", dxCommon_);
@@ -85,7 +93,7 @@ void GameOverScene::Update()
 	}
 	if (isToTitle_ == true)
 	{
-		black_->SetIsFinish(true);
+		black_->SetIsIn(true);
 		toTitleTimer_++;
 		if (toTitleTimer_ >= 100)
 		{
@@ -102,10 +110,12 @@ void GameOverScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
+	//天球
 	sky_->Draw(viewProjection_);
 
 	Object3d::PostDraw();
 
+	//ロゴ
 	space_->SetTextureCommands(0, dxCommon_);
 	space_->Draw(dxCommon_);
 	gameOverLogo_->SetTextureCommands(0, dxCommon_);
@@ -113,6 +123,7 @@ void GameOverScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
+	//黒
 	black_->BlackDraw(viewProjection_);
 
 	Object3d::PostDraw();

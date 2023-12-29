@@ -1,3 +1,9 @@
+/**
+* @file SlFrameWork.cpp
+* @brief メインループを行うクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "SIFrameWork.h"
 
 void SIFrameWork::Initialize()

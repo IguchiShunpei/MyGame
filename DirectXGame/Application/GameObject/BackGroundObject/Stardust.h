@@ -1,3 +1,9 @@
+/**
+* @file Stardust.cpp
+* @brief 背景の星屑の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include "Object3d.h"

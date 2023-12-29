@@ -1,3 +1,9 @@
+/**
+* @file Sprite.h
+* @brief  スプライトに関するクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "DirectXCommon.h"
 #include <wrl.h>

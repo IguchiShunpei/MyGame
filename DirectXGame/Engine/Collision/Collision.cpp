@@ -1,4 +1,10 @@
-﻿#include "Collision.h"
+/**
+* @file Collider.cpp
+* @brief 当たり判定に関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "Collision.h"
 using namespace DirectX;
 
 

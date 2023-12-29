@@ -1,3 +1,9 @@
+/**
+* @file GamePlayScene.cpp
+* @brief ゲームのメイン部分
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include "GameBaseScene.h"
@@ -15,7 +21,7 @@
 #include "Meteor.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "InvEnemy.h"
+#include "InvincibleEnemy.h"
 #include "WeakEnemy.h"
 #include "BossEnemy.h"
 #include "Sound.h"
@@ -92,7 +98,7 @@ public:
 	//敵リスト
 	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
 	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
-	const std::list<std::unique_ptr<InvEnemy>>& GetInvEnemys() { return invEnemys_; }
+	const std::list<std::unique_ptr<InvincibleEnemy>>& GetInvEnemys() { return invincibleEnemys_; }
 
 	//アイテムリスト
 	const std::list<std::unique_ptr<Item>>& GetItems() { return items_; }
@@ -173,13 +179,13 @@ private://メンバ変数
 	//敵
 	Enemy* enemy;
 	WeakEnemy* wEnemy;
-	InvEnemy* invEnemy;
+	InvincibleEnemy* invincibleEnemy;
 	BossEnemy* bEnemy;
 
 	//敵
 	std::list<std::unique_ptr<Enemy>> enemys_;
 	std::list<std::unique_ptr<WeakEnemy>> wEnemys_;
-	std::list<std::unique_ptr<InvEnemy>> invEnemys_;
+	std::list<std::unique_ptr<InvincibleEnemy>> invincibleEnemys_;
 
 	//背景
 	Meteor* meteor_;

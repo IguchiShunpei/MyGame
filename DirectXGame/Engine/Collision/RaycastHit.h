@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file RaycastHit.h
+* @brief レイキャストの処理クラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #include "BaseCollider.h"
 #include <DirectXMath.h>
 

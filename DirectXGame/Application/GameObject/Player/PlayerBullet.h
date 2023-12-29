@@ -1,3 +1,9 @@
+/**
+* @file PlayerBullet.cpp
+* @brief 自機の弾の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "Object3d.h"
 #include "Model.h"

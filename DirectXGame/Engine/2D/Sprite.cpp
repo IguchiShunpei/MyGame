@@ -1,3 +1,9 @@
+/**
+* @file Sprite.cpp
+* @brief  スプライトに関するクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Sprite.h"
 #include<d3dcompiler.h>
 #include<DirectXTex.h>

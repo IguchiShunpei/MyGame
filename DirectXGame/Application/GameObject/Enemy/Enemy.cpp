@@ -1,3 +1,9 @@
+/**
+* @file Enemy.cpp
+* @brief 弾を発射する敵の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Enemy.h"
 #include "SphereCollider.h"
 #include "GamePlayScene.h"

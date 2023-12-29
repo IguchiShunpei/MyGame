@@ -1,4 +1,10 @@
-﻿#include "FbxObject3d.h"
+/**
+* @file FbxObject3d.cpp
+* @brief  Fbxのオブジェクトに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "FbxObject3d.h"
 #include <d3dcompiler.h>
 #include <DirectXTex.h>
 #include <fstream>

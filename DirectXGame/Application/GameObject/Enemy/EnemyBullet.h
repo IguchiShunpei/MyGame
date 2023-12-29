@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file EnemyBullet.cpp
+* @brief 敵の弾の処理クラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #include "Object3d.h"
 #include "Model.h"
 

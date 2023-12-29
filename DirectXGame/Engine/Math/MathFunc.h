@@ -1,3 +1,9 @@
+/**
+* @file MathFunc.cpp
+* @brief 物理挙動やイージングなどの処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "WorldTransform.h"
 #include "Vector2.h"

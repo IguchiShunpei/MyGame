@@ -1,3 +1,9 @@
+/**
+* @file GameOverScene.cpp
+* @brief ゲームオーバー画面のシーンクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include "Input.h"

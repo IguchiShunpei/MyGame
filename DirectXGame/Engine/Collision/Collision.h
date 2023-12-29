@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file Collider.cpp
+* @brief 当たり判定に関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include "CollisionPrimitive.h"
 

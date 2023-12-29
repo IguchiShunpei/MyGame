@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file Vector4.cpp
+* @brief Vector4を扱う計算処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include <cmath>
 

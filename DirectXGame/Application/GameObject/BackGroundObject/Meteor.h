@@ -1,3 +1,9 @@
+/**
+* @file Meteor.cpp
+* @brief 隕石の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include "Object3d.h"

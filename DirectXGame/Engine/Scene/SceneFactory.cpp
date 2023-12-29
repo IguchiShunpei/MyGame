@@ -1,4 +1,10 @@
-﻿#include "SceneFactory.h"
+/**
+* @file SceneFactory.cpp
+* @brief 次のシーンを生成するクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "SceneFactory.h"
 
 GameBaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 {

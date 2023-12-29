@@ -1,3 +1,9 @@
+/**
+* @file LevelLoader.cpp
+* @brief レベルデータ処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include <string>

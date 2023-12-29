@@ -1,3 +1,9 @@
+/**
+* @file WeakEnemy.cpp
+* @brief 攻撃せずに移動するだけの敵クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "Object3d.h"
 #include "WinApp.h"

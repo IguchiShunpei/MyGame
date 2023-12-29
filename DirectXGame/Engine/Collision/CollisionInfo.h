@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file CollisionInfo.cpp
+* @brief 衝突情報に関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 #include"Vector3.h"
 
 class Object3d;

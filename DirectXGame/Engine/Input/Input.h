@@ -1,3 +1,9 @@
+/**
+* @file Input.cpp
+* @brief 入力による処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #define DIRECTINPUT_VERSION    0x0800 //DirectInputのバージョン指定
 

@@ -1,3 +1,9 @@
+/**
+* @file WeakEnemy.cpp
+* @brief 攻撃せずに移動するだけの敵クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "WeakEnemy.h"
 #include "SphereCollider.h"
 #include "GamePLayScene.h"

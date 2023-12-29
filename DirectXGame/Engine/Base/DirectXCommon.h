@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file DirectXCommon.h
+* @brief DirectXの基盤クラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include <cstdlib>
 #include<chrono>

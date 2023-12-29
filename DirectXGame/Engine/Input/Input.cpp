@@ -1,4 +1,10 @@
-﻿#include "Input.h"
+/**
+* @file Input.cpp
+* @brief 入力による処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "Input.h"
 #include <cassert>
 
 #pragma comment(lib, "dinput8.lib")

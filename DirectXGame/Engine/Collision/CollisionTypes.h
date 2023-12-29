@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file CollisionTypes.h
+* @brief 衝突判定用関連の型定義クラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 //衝突判定用の型定義
 

@@ -1,6 +1,9 @@
-﻿// ===================
-// Vector3 型
-// ===================
+/**
+* @file Vector3.cpp
+* @brief Vector3を扱う計算処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Vector3.h"
 
 Vector3::Vector3()

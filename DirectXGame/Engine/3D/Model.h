@@ -1,3 +1,9 @@
+/**
+* @file Model.h
+* @brief  モデルの読み込みに関するクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 
 #include <Windows.h>

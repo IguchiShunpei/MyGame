@@ -1,3 +1,9 @@
+/**
+* @file WorldTransform.cpp
+* @brief  オブジェクトの座標クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "WorldTransform.h"
 #include<cassert>
 #include <d3dx12.h>

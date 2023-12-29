@@ -1,4 +1,10 @@
-﻿#include "FbxModel.h"
+/**
+* @file FbxModel.cpp
+* @brief  Fbxのモデルに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "FbxModel.h"
 
 ID3D12Device* FbxModel::device_ = nullptr;
 

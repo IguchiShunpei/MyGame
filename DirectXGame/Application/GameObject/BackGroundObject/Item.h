@@ -1,3 +1,9 @@
+/**
+* @file Item.cpp
+* @brief アイテムの処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include "Object3d.h"
 #include "WinApp.h"

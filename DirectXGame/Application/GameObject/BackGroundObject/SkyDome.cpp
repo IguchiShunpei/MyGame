@@ -1,3 +1,9 @@
+/**
+* @file SkyDome.cpp
+* @brief 背景の天球の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "SkyDome.h"
 
 SkyDome::~SkyDome()
@@ -15,10 +21,4 @@ void SkyDome::SkyDomeInitialize()
 	// オブジェクトにモデルをひも付ける
 	SetModel(skyModel);
 	SetScale(Vector3(1500.0f, 1500.0f, 1500.0f));
-}
-
-void SkyDome::SkyDomeUpdate()
-{
-	worldTransform_.position_.z -= 0.1f;
-	Update();
 }

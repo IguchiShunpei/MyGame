@@ -1,3 +1,9 @@
+/**
+* @file Explosion.cpp
+* @brief 爆発の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #include "Explosion.h"
 #include "GamePlayScene.h"
 

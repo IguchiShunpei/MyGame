@@ -1,4 +1,10 @@
-﻿#include "Particle.h"
+/**
+* @file Particle.cpp
+* @brief パーティクルに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "Particle.h"
 #include <DirectXTex.h>
 #include <Windows.h>
 #include <cassert>

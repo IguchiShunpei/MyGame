@@ -1,4 +1,10 @@
-﻿#include "Sound.h"
+/**
+* @file Sound.cpp
+* @brief サウンド処理を行うクラス
+* @author イグチ_シュンペイ
+*/
+
+#include "Sound.h"
 
 Microsoft::WRL::ComPtr<IXAudio2>Sound::xAudio2_;
 IXAudio2MasteringVoice* Sound::masterVoice_;

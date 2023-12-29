@@ -1,3 +1,9 @@
+/**
+* @file SkyDome.cpp
+* @brief 背景の天球の処理クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once 
 #include "Object3d.h"
 

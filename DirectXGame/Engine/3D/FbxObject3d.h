@@ -1,4 +1,10 @@
-﻿#pragma once
+/**
+* @file FbxObject3d.h
+* @brief  Fbxのオブジェクトに関するクラス
+* @author イグチ_シュンペイ
+*/
+
+#pragma once
 
 #include <Windows.h>
 #include <wrl.h>

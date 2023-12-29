@@ -1,3 +1,9 @@
+/**
+* @file WorldTransform.h
+* @brief  オブジェクトの座標クラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include"Vector3.h"
 #include "Vector4.h"

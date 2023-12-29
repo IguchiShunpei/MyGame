@@ -1,3 +1,9 @@
+/**
+* @file Vector3.cpp
+* @brief Vector3を扱う計算処理をまとめたクラス
+* @author イグチ_シュンペイ
+*/
+
 #pragma once
 #include <cmath>
 
