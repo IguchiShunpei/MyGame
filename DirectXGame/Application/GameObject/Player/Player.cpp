@@ -27,8 +27,13 @@ void Player::PlayerInitialize()
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerModel_);
+
+	colliderPos_ = {0.0f,0.0f,0.0f};
+	playerColliderRadius_ = 1.0f;
+	bulletColliderRadius_ = 0.5f;
+
 	//半径分だけ足元から浮いた座標を球の中心にする
-	SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.0f));
+	SetCollider(new SphereCollider(colliderPos_, playerColliderRadius_));
 	SetPosition(Vector3(0, -2, -20));
 	SetScale(Vector3(0.5f, 0.5f, 0.5f));
 
@@ -40,8 +45,8 @@ void Player::PlayerInitialize()
 	speedL_ = 0.0f;
 	speedMax_ = 0.2f;
 	speedChange_ = 0.01f;
-	rota_ = 0.5f;
-	rotaMax_ = 30.0f;
+	moveRota_ = 0.5f;
+	moveRotaMax_ = 30.0f;
 	bulletLevel_ = 1;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
@@ -51,6 +56,13 @@ void Player::PlayerInitialize()
 	initMotionTimeMax_ = 40.0f;
 
 	bulletPower_ = 1;
+	kBulletSpeed_ = 3.0f;
+
+	initPos_ = { 0.0f,-2.0f,0.0f };
+	initRota_ = { 0.0f,0.0f,0.0f };
+	initRotaMax_ = 360.0f;
+
+	backRota_ = 4.0f;
 
 	//フラグ
 	isMoveUp_ = false;
@@ -109,10 +121,11 @@ void Player::OnCollision([[maybe_unused]] const CollisionInfo& info)
 			isHit_ = true;
 		}
 	}
+	//ダメージ処理
 	Damage();
 }
 
-void Player::IntitMotion()
+void Player::InitMotion()
 {
 	if (isInit_ == false && isInitAfter_ == false)
 	{
@@ -124,18 +137,18 @@ void Player::IntitMotion()
 		//初期座標に来たら固定
 		if (worldTransform_.position_.z >= 0.0f)
 		{
-			SetPosition(Vector3(0.0f, -2.0f, 0.0f));
+			SetPosition(initPos_);
 			isInitAfter_ = true;
-			initMotionTime_ = 10.0f;
 		}
 	}
 	//余分に回転した分を戻す処理
 	if (isInitAfter_ == true)
 	{
-		worldTransform_.rotation_.z += 4.0f;
-		if (worldTransform_.rotation_.z >= -360.0f)
+		worldTransform_.rotation_.z += backRota_;
+		//戻り切ったらフラグを切り替え
+		if (worldTransform_.rotation_.z >= -initRotaMax_)
 		{
-			SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+			SetRotation(initRota_);
 			isInitAfter_ = false;
 			isInit_ = true;
 		}
@@ -199,6 +212,7 @@ void Player::Move()
 		isMoveLeft_ = false;
 	}
 
+	//速度変化
 	SpeedChange();
 
 	//移動限界座標
@@ -216,6 +230,7 @@ void Player::Move()
 void Player::SpeedChange()
 {
 	//キーを押しているときに加速
+	//キーを離したら減速
 	//上
 	if (isMoveUp_ == true)
 	{
@@ -374,31 +389,31 @@ void Player::Rotate()
 	//上キーを押したときの傾き処理
 	if (isMoveUp_ == true)
 	{
-		if (worldTransform_.rotation_.x > -rotaMax_)
+		if (worldTransform_.rotation_.x > -moveRotaMax_)
 		{
-			SetRotation(GetRotation() - Vector3(rota_, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(moveRota_, 0.0f, 0.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.x < 0.0f)
 		{
-			SetRotation(GetRotation() + Vector3(rota_, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(moveRota_, 0.0f, 0.0f));
 		}
 	}
 	//下キーを押したときの傾き処理
 	if (isMoveDown_ == true)
 	{
-		if (worldTransform_.rotation_.x < rotaMax_)
+		if (worldTransform_.rotation_.x < moveRotaMax_)
 		{
-			SetRotation(GetRotation() + Vector3(rota_, 0.0f, 0.0f));
+			SetRotation(GetRotation() + Vector3(moveRota_, 0.0f, 0.0f));
 		}
 	}
 	else
 	{
 		if (worldTransform_.rotation_.x > 0.0f)
 		{
-			SetRotation(GetRotation() - Vector3(rota_, 0.0f, 0.0f));
+			SetRotation(GetRotation() - Vector3(moveRota_, 0.0f, 0.0f));
 		}
 	}
 	if (isChangeDir_ == false)
@@ -406,31 +421,31 @@ void Player::Rotate()
 		//右キーを押したとき
 		if (isMoveRight_ == true)
 		{
-			if (worldTransform_.rotation_.z > -rotaMax_)
+			if (worldTransform_.rotation_.z > -moveRotaMax_)
 			{
-				SetRotation(GetRotation() - Vector3(0.0f, -rota_, rota_));
+				SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
 			}
 		}
 		else
 		{
 			if (worldTransform_.rotation_.z < 0.0f)
 			{
-				SetRotation(GetRotation() + Vector3(0.0f, -rota_, rota_));
+				SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
 			}
 		}
 		//左キーを押したとき
 		if (isMoveLeft_ == true)
 		{
-			if (worldTransform_.rotation_.z < rotaMax_)
+			if (worldTransform_.rotation_.z < moveRotaMax_)
 			{
-				SetRotation(GetRotation() + Vector3(0.0f, -rota_, rota_));
+				SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
 			}
 		}
 		else
 		{
 			if (worldTransform_.rotation_.z > 0.0f)
 			{
-				SetRotation(GetRotation() - Vector3(0.0f, -rota_, rota_));
+				SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
 			}
 		}
 	}
@@ -439,31 +454,31 @@ void Player::Rotate()
 		//右キーを押したとき
 		if (isMoveRight_ == true)
 		{
-			if (worldTransform_.rotation_.z < 30.0f)
+			if (worldTransform_.rotation_.z < moveRotaMax_)
 			{
-				SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+				SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
 			}
 		}
 		else
 		{
 			if (worldTransform_.rotation_.z > 0.0f)
 			{
-				SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+				SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
 			}
 		}
 		//左キーを押したとき
 		if (isMoveLeft_ == true)
 		{
-			if (worldTransform_.rotation_.z > -30.0f)
+			if (worldTransform_.rotation_.z > -moveRotaMax_)
 			{
-				SetRotation(GetRotation() - Vector3(0.0f, -1.0f, 1.0f));
+				SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
 			}
 		}
 		else
 		{
 			if (worldTransform_.rotation_.z < 0.0f)
 			{
-				SetRotation(GetRotation() + Vector3(0.0f, -1.0f, 1.0f));
+				SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
 			}
 		}
 	}
@@ -471,27 +486,19 @@ void Player::Rotate()
 
 void Player::Attack()
 {
+	//Spaceキーを押したとき
 	if (input_->TriggerKey(DIK_SPACE))
 	{
 		//自キャラの座標をコピー
 		Vector3 position = GetWorldPosition();
 
 		//弾の速度
-		if (isChangeDir_ == false)
-		{
-			kBulletSpeed_ = 3.0f;
-			bulletDir_ = 0;
-		}
-		else
-		{
-			kBulletSpeed_ = -3.0f;
-			bulletDir_ = 1;
-		}
 		Vector3 velocity(0, 0, kBulletSpeed_);
 
 		//自機の向いてる方向に弾を撃つ
 		velocity = bVelocity(velocity, worldTransform_);
 
+		//速度と向きを合成
 		velocity.normalize() * kBulletSpeed_;
 
 		//球の生成
@@ -500,7 +507,7 @@ void Player::Attack()
 		newBullet->PlayerBulletInitialize(position, velocity, bulletDir_,bulletLevel_);
 
 		//コライダーの追加
-		newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
+		newBullet->SetCollider(new SphereCollider(colliderPos_, bulletColliderRadius_));
 
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
@@ -543,6 +550,7 @@ void Player::Damage()
 
 void Player::BulletPowerUp()
 {
+    //ダメージ量を変更
 	switch (bulletLevel_)
 	{
 	case 1:

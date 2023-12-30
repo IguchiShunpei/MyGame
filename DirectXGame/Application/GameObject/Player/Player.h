@@ -36,7 +36,7 @@ public:
 	void OnCollision(const CollisionInfo& info) override;
 
 	//登場モーション
-	void IntitMotion();
+	void InitMotion();
 
 	//振動
 	void Shake(float x,float y);
@@ -113,6 +113,11 @@ private:
 	//弾リスト
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 
+	//collider関係
+	Vector3 colliderPos_;
+	float playerColliderRadius_;
+	float bulletColliderRadius_;
+
 	//移動速度
 	Vector3 speed_;
 	float speedU_;
@@ -124,9 +129,9 @@ private:
 	//最高速度
 	float speedMax_;
 	//回転値
-	float rota_;
+	float moveRota_;
 	//最大角度
-	float rotaMax_;
+	float moveRotaMax_;
 
 	//弾種類
 	int bulletLevel_;
@@ -144,6 +149,14 @@ private:
 	float initSpeedZ_;
 	float initMotionTimeMax_;
 	float initRotaZ_;
+	//登場座標
+	Vector3 initPos_;
+	//角度
+	Vector3 initRota_;
+	//回転を戻す
+	float backRota_;
+	//登場時の最大角度
+	float initRotaMax_;
 
 	//タイマー
 	//打ち出すまでの時間
