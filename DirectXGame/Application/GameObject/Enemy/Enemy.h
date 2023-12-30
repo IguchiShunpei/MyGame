@@ -54,30 +54,19 @@ public:
 	//HP
 	int GetHP() const { return hp_; };
 	//color
-	Vector3 GetColor() const { return enemyColor_; }
+	Vector3 GetColor() const { return originalColor_; }
 	
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
 
 	//攻撃
 	void Attack(Vector3 playerPos_);
-	
-	//移動
-	void Move();
 
 	//登場モーション
 	void InitMotion();
 
 	//退場モーション
 	void BackMotion();
-
-	//接近
-	void Approach();
-	//離脱
-	void Leave();
-	//カーブ
-	void Curve();
-	void ReCurve();
 
 	//弾を描画
 	void BulletDraw(ViewProjection* viewProjection_);
@@ -107,7 +96,9 @@ private:
 	GameScene* gameScene_ = nullptr;
 
 	//色
-	Vector3 enemyColor_ = {1.0f,1.0f,1.0f};
+	Vector3 enemyColor_;
+	Vector3 originalColor_;
+	Vector3 changeColor_;
 
 	//デスフラグ
 	//倒されたか
@@ -122,7 +113,9 @@ private:
 	//退場したか
 	bool isBack_ = false;
 	//登場時間
-	float initTime_ = 0.0f;
+	float initTime_;
+	//登場時間
+	float initTimeMax_;
 	//退場までの時間
 	float deleteTimer_;
 	//攻撃したか
@@ -137,8 +130,19 @@ private:
 	//弾リスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
+	//弾の速度
+	float kBulletSpeed;
+	//移動量
+	Vector3 velocity_;
+
 	//弾を打ち出すまでの時間
-	float dalayTimer_ = 15.0f;
+	float dalayTimer_;
+	//最大
+	float delayTImerMax_;
+
+	//弾のcollider
+	Vector3 bulletColliderPos_;
+	float bulletColliderRadius_;
 
 	//接近速度
 	Vector3 approach_ = { 0.0f,0.0f,-0.3f };
@@ -162,7 +166,14 @@ private:
 	//初期Y座標
 	float beforeY_;
 
+	//登場時の移動量
+	float moveY_;
+
+	//弾の数
 	int bulletNum_;
+
+	//弾の最大数
+	int bulletMax_;
 
 	//ダメージ
 	int damage_;

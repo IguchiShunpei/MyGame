@@ -27,20 +27,33 @@ void Enemy::EnemyInitialize()
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyModel);
+
+	bulletColliderPos_ = {0.0f,0.0f,0.0f};
+	bulletColliderRadius_ = 0.5f;
+
+	kBulletSpeed = 2.0f;
+
 	dalayTimer_ = 5.0f;
+	delayTImerMax_ = 15.0f;
 	deleteTimer_ = 200.0f;
 	isDead_ = false;
 	isDelete_ = false;
 	isHit_ = false;
 	isInit_ = false;
-	initTime_ = 60.0f;
+	initTime_ = 0.0f;
+	initTimeMax_ = 60.0f;
+	moveY_ = 60.0f;
 	bulletNum_ = 0;
+	bulletMax_ = 3;
+	enemyColor_ = { 0.0f,0.0f,0.0f };
+	originalColor_ = { 1.0f,1.0f,1.0f };
+	changeColor_ = { 3.0f,3.0f,3.0f };
 }
 
 void Enemy::Update(Vector3 playerPos_)
 {
 	isHit_ = false;
-	enemyColor_ = { 1.0f,1.0f,1.0f };
+	enemyColor_ = originalColor_;
 
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
@@ -48,9 +61,11 @@ void Enemy::Update(Vector3 playerPos_)
 			return bullet->GetIsDelete();
 		});
 
+	//登場モーション
 	InitMotion();
 	if (isInit_ == true)
 	{
+		//攻撃したら退場
 		if (isAttack_ == false)
 		{
 			Attack(playerPos_);
@@ -65,6 +80,7 @@ void Enemy::Update(Vector3 playerPos_)
 		}
 	}
 
+	//退場モーション
 	BackMotion();
 
 	//弾更新
@@ -90,7 +106,7 @@ void Enemy::ColliderUpdate()
 void Enemy::Damage(int damage)
 {
 	//攻撃を受けたときに変色
-	enemyColor_ = { 3.0f,3.0f,3.0f };
+	enemyColor_ = changeColor_;
 	//ダメージ処理
 	hp_ -= damage;
 	if (hp_ <= 0)
@@ -113,10 +129,7 @@ void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 
 void Enemy::Attack(Vector3 playerPos_)
 {
-	dalayTimer_ -= 0.1f;
-
-	//弾の速度
-	const float kBulletSpeed = 2.0f;
+	dalayTimer_--;
 
 	//プレイヤーのワールド座標の取得
 	Vector3 playerPosition;
@@ -124,17 +137,15 @@ void Enemy::Attack(Vector3 playerPos_)
 	//自キャラの座標をコピー
 	Vector3 enemyPosition = GetPosition();
 
-	Vector3 velocity(0, 0, 0);
-
-	//差分ベクトルを求める
-	velocity = enemyPosition - playerPosition;
+	//自機の座標との差分ベクトルを求める
+	velocity_ = enemyPosition - playerPosition;
 
 	//長さを求める
-	velocity.length();
+	velocity_.length();
 	//正規化
-	velocity.normalize();
+	velocity_.normalize();
 	//ベクトルの長さを,速さに合わせる
-	velocity *= kBulletSpeed;//これが速度になる
+	velocity_ *= kBulletSpeed;//これが速度になる
 
 	//クールタイムが０になったとき
 	if (dalayTimer_ <= 0)
@@ -142,41 +153,21 @@ void Enemy::Attack(Vector3 playerPos_)
 		//球の生成
 		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
 		//球の初期化
-		newBullet->EnemyBulletInitialize(enemyPosition, velocity);
+		newBullet->EnemyBulletInitialize(enemyPosition, velocity_);
 
 		//コライダーの追加
-		newBullet->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
+		newBullet->SetCollider(new SphereCollider(bulletColliderPos_,bulletColliderRadius_));
 
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
 
-		dalayTimer_ = 1.5f;
+		dalayTimer_ = delayTImerMax_;
 		bulletNum_++;
-		if (bulletNum_ > 3)
+		//最大数発射するまで繰り返す
+		if (bulletNum_ > bulletMax_)
 		{
 			isAttack_ = true;
 		}
-	}
-}
-
-void Enemy::Move()
-{
-	switch (phase_)
-	{
-	case Phase::Approach: //接近フェーズ
-	default:
-		//移動(ベクトルを加算)
-		Approach();
-		break;
-	case Phase::Leave:   //離脱フェーズ
-		Leave();
-		break;
-	case Phase::Curve:   //カーブフェーズ
-		Curve();
-		break;
-	case Phase::ReCurve:   //カーブフェーズ
-		ReCurve();
-		break;
 	}
 }
 
@@ -184,12 +175,13 @@ void Enemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ + 60.0f * MathFunc::easeInSine(initTime_ / 60.0f);
-		initTime_--;
-		if (initTime_ <= 0.0f)
+		worldTransform_.position_.y = beforeY_ + -moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_);
+		initTime_++;
+		if (initTime_ >= initTimeMax_)
 		{
 			isInit_ = true;
 			initTime_ = 0.0f;
+			beforeY_ = 0.0f;
 		}
 	}
 }
@@ -198,46 +190,14 @@ void Enemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
-		worldTransform_.position_.y = beforeY_ + 120.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_);
 		initTime_++;
-		if (initTime_ >= 60.0f)
+		if (initTime_ >= initTimeMax_)
 		{
 			isBack_ = true;
 			isDelete_ = true;
 		}
 	}
-}
-
-void Enemy::Approach()
-{
-	worldTransform_.position_ += approach_;
-
-	//既定の位置に着いたら離脱へ
-	if (worldTransform_.position_.z <= 30.0f)
-	{
-		phase_ = Phase::Leave;
-	}
-}
-
-void Enemy::Leave()
-{
-	worldTransform_.position_ += leave_;
-
-	//既定の位置に着いたらカーブへ
-	if (worldTransform_.position_.z >= 100.0f)
-	{
-		phase_ = Phase::Approach;
-	}
-}
-
-void Enemy::Curve()
-{
-	MathFunc::CurveProjection(worldTransform_, startSpeed, C, flame);
-}
-
-void Enemy::ReCurve()
-{
-	MathFunc::CurveProjection(worldTransform_, { -startSpeed.x,startSpeed.y,startSpeed.z }, -C, flame);
 }
 
 void Enemy::BulletDraw(ViewProjection* viewProjection_)

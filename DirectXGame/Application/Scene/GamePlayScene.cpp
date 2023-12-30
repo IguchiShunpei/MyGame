@@ -36,6 +36,7 @@ void GamePlayScene::Initialize()
 	viewProjection_->SetEye({ -15.0f,0.0f,10.0f });
 	viewProjection_->SetUp({ 0.0f,1.0f,0.0f });
 	startCameraPos_ = viewProjection_->GetEye();
+	startCamoreMovePos_ = { 15.0f,5.0f,30.0f };
 	beforeTargetNum_ = viewProjection_->target_;
 	normalTargetNum_ = viewProjection_->target_;
 	normalUpNum_ = viewProjection_->up_;
@@ -106,10 +107,19 @@ void GamePlayScene::Initialize()
 	cameraPos_ = CameraPos::Back;
 	cameraShakePos_ = { 0.0f,0.0f,0.0f };
 	deadCameraPos_ = { 0.0f,0.0f,0.0f };
+	deadCameraMovePos_ = { 20.0f ,0.0f,35.0f };
 	bossInitCameraPos_ = { 0.0f,0.0f,0.0f };
 
 	//基本target
 	changeTargetNum_ = { 0.0f,0.0f,0.0f };
+	//登場した後にtargetを戻す値
+	changeTargetMoveNum_ = { 0.0f,0.0f,50.0f };
+
+	//登場した後の各座標
+	afterInitCameraPos_ = { 0.0f, 5.0f, -20.0f };
+	afterInitCameraTarget_ = { 0.0f, -2.0f, 50.0f };
+
+	allZero_ = { 0.0f,0.0f,0.0f };
 
 	//ゲーム中のシーン番号
 	gameNum_ = GameNum::FirstScene;
@@ -118,6 +128,8 @@ void GamePlayScene::Initialize()
 
 	//墜落量
 	gameOverNum_ = 0;
+	//最大
+	gameOvernumMax_ = 60;
 	//シェイク範囲
 	shakeRange_ = 3.0f;
 	//シェイク移動量
@@ -126,10 +138,25 @@ void GamePlayScene::Initialize()
 	bossDownSpeed_ = 0.01f;
 	//ボスalpha
 	bossAlpha_ = 1.0f;
+	bossAlpha_ = 1.0f;
+	bossAlpha_ = 0.5f;
 	//ボスalphaに代入する数
 	bossAlphaNum_ = 0.05f;
+	bossScaleNum_ = { 0.01f,0.01f,0.01f };
 
 	clearCameraNum_ = 0;
+	gameClearmoveZ_ = 0.5f;
+	gameClearPosZ_ = 100.0f;
+
+	//シェイク
+	playerCameraShake_ = 0.2f;
+	bossCameraShake_ = 1.5f;
+	enemyCameraShake_ = 0.3f;
+
+	//ボス登場
+	upZ_ = 10.0f;
+	looseZ_ = 1.0f;
+	blackAlphaMax_ = 1.0f;
 
 	//フラグ
 	isWait_ = false;
@@ -147,9 +174,11 @@ void GamePlayScene::Initialize()
 	//タイマー
 	delayTimer_ = 0.0f;
 	bossAppTimer_ = 0.0f;
+	bossAppTimerMax_ = 180.0f;
 	waitTimer_ = 0;
 	clearTimer_ = 0.0f;
 	bossInitTimer_ = 0;
+	bossInitTimerMax_ = 24;
 	startTimer_ = 0.0f;
 	startTimerMax_ = 120.0f;
 	cameraMoveTimer_ = 0.0f;
@@ -262,9 +291,10 @@ void GamePlayScene::Update()
 				BossDead();
 				if (isClearScene_ == false)
 				{
+					//deathTimerが奇数なら
 					if (bEnemy->GetDeathTimer() % 2 != 1)
 					{
-						CameraShake(0.3f, 0.3f);
+						CameraShake(enemyCameraShake_, enemyCameraShake_);
 					}
 					else
 					{
@@ -351,7 +381,7 @@ void GamePlayScene::Update()
 					red_->SetIsRed(true);
 					if (hitPlayerTimer_ % 2 != 1)
 					{
-						CameraShake(0.2f, 0.2f);
+						CameraShake(enemyCameraShake_, enemyCameraShake_);
 					}
 					else
 					{
@@ -422,7 +452,7 @@ void GamePlayScene::Update()
 		{
 			if (hitEnemyTimer_ % 2 != 1)
 			{
-				CameraShake(0.3f, 0.3f);
+				CameraShake(playerCameraShake_, playerCameraShake_);
 			}
 			else
 			{
@@ -837,7 +867,7 @@ void GamePlayScene::PlayerInit()
 		//カメラワーク
 		PlayerInitCameraWork();
 		//自機の登場モーション
-		player->IntitMotion();
+		player->InitMotion();
 		//カメラワークが終わったらフラグtrue
 		if (isStart_ == true)
 		{
@@ -854,23 +884,21 @@ void GamePlayScene::PlayerInitCameraWork()
 		//自機が到着したらカメラを初期位置へ
 		if (player->GetIsInit() == true)
 		{
-			viewProjection_->eye_.x = startCameraPos_.x + 15.0f * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
-			viewProjection_->eye_.y = startCameraPos_.y + 5.0f * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
-			viewProjection_->eye_.z = startCameraPos_.z + 30.0f * -MathFunc::easeOutSine(startTimer_ / startTimerMax_);
-			viewProjection_->target_.z = changeTargetNum_.z + 50.0f * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
+			viewProjection_->eye_.x = startCameraPos_.x + startCamoreMovePos_.x * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
+			viewProjection_->eye_.y = startCameraPos_.y + startCamoreMovePos_.y * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
+			viewProjection_->eye_.z = startCameraPos_.z + startCamoreMovePos_.z * -MathFunc::easeOutSine(startTimer_ / startTimerMax_);
+			viewProjection_->target_.z = changeTargetNum_.z + changeTargetMoveNum_.z * MathFunc::easeOutSine(startTimer_ / startTimerMax_);
 			startTimer_++;
 			if (startTimer_ > startTimerMax_)
 			{
-				viewProjection_->SetEye({ 0.0f, 5.0f, -20.0f });
-				viewProjection_->SetTarget({ 0.0f, -2.0f, 50.0f });
-				beforeEyeNum_ = { 0.0f,0.0f,0.0f };
-				beforeTargetNum_ = { 0.0f,0.0f,0.0f };
-				beforeUpNum_ = { 0.0f,0.0f,0.0f };
+				viewProjection_->SetEye(afterInitCameraPos_);
+				viewProjection_->SetTarget(afterInitCameraTarget_);
+				beforeEyeNum_ = allZero_;
+				beforeTargetNum_ = allZero_;
+				beforeUpNum_ = allZero_;
 				normalEyeNum_ = viewProjection_->eye_;
 				normalTargetNum_ = viewProjection_->target_;
 				normalUpNum_ = viewProjection_->up_;
-				black_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 2.0f));
-				red_->SetPosition(Vector3(0.0f, viewProjection_->eye_.y, viewProjection_->eye_.z + 1.0f));
 				isStart_ = true;
 			}
 		}
@@ -909,9 +937,9 @@ void GamePlayScene::BossInitCameraWork()
 		break;
 	case Up:
 		//カメラを寄せる
-		if (viewProjection_->eye_.z <= 10.0f)
+		if (viewProjection_->eye_.z <= upZ_)
 		{
-			viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0, 10) * MathFunc::easeInSine(bossAppTimer_ / 180.0f));
+			viewProjection_->SetEye(viewProjection_->GetEye() + Vector3(0, 0, upZ_) * MathFunc::easeInSine(bossAppTimer_ / bossAppTimerMax_));
 		}
 		else
 		{
@@ -921,7 +949,7 @@ void GamePlayScene::BossInitCameraWork()
 		bossAppTimer_++;
 
 		//黒フェードが完了したら登場カメラワークへ
-		if (black_->GetAlpha() >= 1.0f)
+		if (black_->GetAlpha() >= blackAlphaMax_)
 		{
 			bossInitNum_ = InitCameraWork;
 			bossAppTimer_ = 0;
@@ -937,11 +965,12 @@ void GamePlayScene::BossInitCameraWork()
 		{
 			//登場カメラシェイク時間
 			bossInitTimer_++;
-			if (bossInitTimer_ < 24)
+			if (bossInitTimer_ < bossInitTimerMax_)
 			{
+				//bossInitTimerが奇数ならカメラシェイク
 				if (bossInitTimer_ % 2 != 1)
 				{
-					CameraShake(1.5f, 1.5f);
+					CameraShake(bossCameraShake_, bossCameraShake_);
 				}
 				else
 				{
@@ -963,21 +992,24 @@ void GamePlayScene::BossInitCameraWork()
 
 		break;
 	case Loose:
-		if (viewProjection_->eye_.z > -20.0f)
+		if (viewProjection_->eye_.z > afterInitCameraPos_.z)
 		{
-			viewProjection_->SetEye(viewProjection_->GetEye() - Vector3(0, 0, 1.0f));
+			viewProjection_->SetEye(viewProjection_->GetEye() - Vector3(0, 0, looseZ_));
 		}
 		else
 		{
-			viewProjection_->eye_.z = -20.0f;
+			viewProjection_->eye_.z = afterInitCameraPos_.z;
 			isBossInitCamera_ = false;
 			bossInitNum_ = None;
 		}
 		break;
 	}
 }
+
+//↓ボスクラスに移植する
 void GamePlayScene::BossDead()
 {
+	//UI退場
 	UIOutMotion();
 	explosion01_->EnemyExplosionUpdate();
 	explosion02_->EnemyExplosionUpdate();
@@ -987,7 +1019,8 @@ void GamePlayScene::BossDead()
 		bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
 	}
 
-	bEnemy->worldTransform_.scale_ -= Vector3(0.01f, 0.01f, 0.01f);
+	bEnemy->worldTransform_.scale_ -= bossScaleNum_;
+
 	//左右にシェイク
 	if (bossShake_ == true)
 	{
@@ -1014,7 +1047,7 @@ void GamePlayScene::BossDead()
 	//alpha値を変化
 	if (isBossAlpha_ == true)
 	{
-		if (bossAlpha_ <= 1.0f)
+		if (bossAlpha_ <= bossAlphaMax_)
 		{
 			bossAlpha_ += bossAlphaNum_;
 		}
@@ -1025,7 +1058,7 @@ void GamePlayScene::BossDead()
 	}
 	else
 	{
-		if (bossAlpha_ >= 0.5f)
+		if (bossAlpha_ >= bossAlphaMin_)
 		{
 			bossAlpha_ -= bossAlphaNum_;
 		}
@@ -1043,20 +1076,22 @@ void GamePlayScene::ToClearScene()
 	{
 		if (isClearCameraWork_ == false)
 		{
+			//カメラワーク
 			ToClearCameraWork();
 		}
 		else
 		{
+			//黒フェードイン
 			black_->SetIsIn(true);
 			//自機を動かす
 			player->worldTransform_.rotation_.z++;
-			player->worldTransform_.position_.x -= 0.05f;
+			player->worldTransform_.position_.x--;
 			player->worldTransform_.position_.z++;
-			viewProjection_->eye_.z -= 0.5f;
+			viewProjection_->eye_.z -= gameClearmoveZ_;
 			// ワールドトランスフォームの行列更新と転送
 			player->worldTransform_.UpdateMatrix();
 			//自機が移動しきったらシーン遷移
-			if (player->worldTransform_.position_.z >= 100)
+			if (player->worldTransform_.position_.z >= gameClearPosZ_)
 			{
 				GameSceneManager::GetInstance()->ChangeScene("CLEAR");
 				isClearScene_ = false;
@@ -1103,8 +1138,11 @@ void GamePlayScene::ToGameOverScene()
 {
 	if (player->GetIsDead() == true)
 	{
+		//UI退場
 		UIOutMotion();
+		//カメラワーク
 		ToGameOverCameraWork();
+		//自機死亡演出
 		PlayerDead();
 		player->worldTransform_.UpdateMatrix();
 		if (isGameOver_ == true)
@@ -1115,8 +1153,8 @@ void GamePlayScene::ToGameOverScene()
 				viewProjection_->eye_ = normalEyeNum_;
 				black_->SetIsIn(true);
 				gameOverNum_++;
-				// ワールドトランスフォームの行列更新と転送
-				if (gameOverNum_ >= 60)
+				//gameoverシーンへ
+				if (gameOverNum_ >= gameOvernumMax_)
 				{
 					GameSceneManager::GetInstance()->ChangeScene("GAMEOVER");
 				}
@@ -1135,8 +1173,8 @@ void GamePlayScene::ToGameOverCameraWork()
 	{
 		if (playerDeadTimer_ <= playerDeadTimerMax_)
 		{
-			viewProjection_->eye_.x = deadCameraPos_.x + 20.0f * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
-			viewProjection_->eye_.z = deadCameraPos_.z + 35.0f * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
+			viewProjection_->eye_.x = deadCameraPos_.x + deadCameraMovePos_.x * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
+			viewProjection_->eye_.z = deadCameraPos_.z + deadCameraMovePos_.z * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
 			playerDeadTimer_++;
 		}
 		else
