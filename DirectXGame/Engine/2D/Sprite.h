@@ -5,66 +5,126 @@
 */
 
 #pragma once
+#include <Windows.h>
+#include <D3dx12.h>
+#include <d3dcompiler.h>
 #include "DirectXCommon.h"
-#include <wrl.h>
+#include <cassert>
+#include"Vector2.h"
+#include"Vector3.h"
+#include"Vector4.h"
+#include"Matrix4.h"
+
 #include<DirectXMath.h>
+#include <DirectXTex.h>
+#include <wrl.h>
 #include<array>
+#pragma comment(lib, "d3dcompiler.lib")
 
-struct Vertex
-{
-	DirectX::XMFLOAT3 pos; //xyz座標
+using namespace DirectX;
+using namespace Microsoft::WRL;
+using namespace std;
 
-	DirectX::XMFLOAT2 uv;  //uv座標
+// パイプラインセット
+struct PipelineSet {
+	// パイプラインステートオブジェクト
+	ComPtr<ID3D12PipelineState> pipelinestate;
+	// ルートシグネチャ
+	ComPtr<ID3D12RootSignature> rootsignature;
+};
+
+// スプライトの共通データ
+struct SpriteCommon {
+	// パイプラインセット
+	PipelineSet pipelineSet;
+	// 射影行列
+	Matrix4 matProjection{};
+	// テクスチャ用デスクリプタヒープの生成
+	ComPtr<ID3D12DescriptorHeap> descHeap;
+	// SRVの最大枚数
+	static const size_t kMaxSRVCount = 512;
+	// テクスチャソース(テクスチャバッファ)の配列
+	ComPtr<ID3D12Resource> texBuff[kMaxSRVCount];
+	// テクスチャバッファ取得
+	ID3D12Resource* GetTexBuffer(uint32_t index) const { return texBuff[index].Get(); }
 };
 
 class Sprite
 {
-private:
-	// DirectX::を省略
-	using XMFLOAT2 = DirectX::XMFLOAT2;
-	using XMFLOAT3 = DirectX::XMFLOAT3;
-	using XMFLOAT4 = DirectX::XMFLOAT4;
-	using XMMATRIX = DirectX::XMMATRIX;
 public: // サブクラス
 
 // 定数バッファ用データ構造体
 	struct ConstBufferDataB0
 	{
-		//XMFLOAT4 color;	// 色 (RGBA)
-		XMMATRIX mat;	// ３Ｄ変換行列
+		Vector4 color_;	// 色 (RGBA)
+		Matrix4 mat_;	// ３Ｄ変換行列
+	};
+
+	// 頂点データ
+	struct VertexPosUv {
+		Vector3 pos_;
+		Vector2 uv_;
 	};
 
 public:
-	void Initialize(DirectXCommon*dxCommon_);
+	//インストラクタ
+	Sprite();
 
-	void Update();
+	// スプライト共通データ生成
+	SpriteCommon SpriteCommonCreate(ID3D12Device* device);
 
-	void Draw(DirectXCommon* dxCommon_);
+	// 3Dオブジェクト用パイプライン生成
+	PipelineSet SpriteCreateGraphicsPipeline(ID3D12Device* device);
 
-	void LoadTexture(uint32_t index, const wchar_t* fileName,DirectXCommon* dxCommon_);
+	//生成初期化
+	void Initialize(ID3D12Device* device, UINT texNumber, Vector2 anchorpPoint, bool isFlipX, bool isFlipY);
 
-	void SetTextureCommands([[maybe_unused]] uint32_t index, DirectXCommon* dxCommon_);
+	//更新
+	void Update(Sprite& sprite, const SpriteCommon& spriteCommon_);
+
+	//描画前処理
+	static void PreDraw(ID3D12GraphicsCommandList* cmdList, const SpriteCommon& spriteCommon);
+
+	//描画
+	void Draw(ID3D12GraphicsCommandList* cmdList, const SpriteCommon& spriteCommon,
+		ID3D12Device* device);
+
+	//テクスチャ読み込み
+	void LoadTexture(SpriteCommon& spriteCommon, UINT texnumber,const wchar_t* filename, ID3D12Device* device);
+
+	//スプライト単体頂点バッファの転送
+	void SpriteTransferVertexBuffer(const Sprite& sprite, uint32_t texIndex = UINT32_MAX);
+
+public:
+
+	// 色設定
+	void SetColor(Sprite sprite, const Vector4& color);
+
+	// 透過度を設定
+	void SetAlpha(Sprite sprite, float alpha_);
 
 	//座標setter
-	void SetPosition(const XMFLOAT3& position) { this->position_ = position; }
+	void SetPosition(const Vector3& position) { this->position_ = position; }
 	//座標getter
-	const XMFLOAT3& GetPosition() const { return position_; }
+	const Vector3& GetPosition() const { return position_; }
 	//回転setter
-	void SetRotation(const XMFLOAT3& rotation) { rotation_ = rotation; }
+	void SetRotation(const Vector3& rotation) { rotation_ = rotation; }
 	//回転getter
-	const XMFLOAT3& GetRotation() const { return rotation_; }
-	//色setter
-	void SetColor(const XMFLOAT4& color) { color_ = color; }
+	const Vector3& GetRotation() const { return rotation_; }
+	//scaleGetter
+	Vector2 GetScale() { return scale_; }
+	//scaleSetter
+	void SetScale(Vector2 scale) { scale_ = Vector2(scale.x, scale.y); }
 	//色getter
-	const XMFLOAT4& GetColor() const { return color_; }
+	const Vector4& GetColor() const { return color_; }
 	//表示サイズsetter
-	void SetSize(const XMFLOAT2& size) { size_ = size; }
+	void SetSize(const Vector2& size) { texSize_ = size; }
 	//表示サイズgetter
-	const XMFLOAT2& GetSize() const { return size_; }
+	const Vector2& GetSize() const { return texSize_; }
 	//アンカーポイントsetter
-	void SetAnchorPoint(const XMFLOAT2& anchorPoint) { anchorPoint_ = anchorPoint; }
+	void SetAnchorPoint(const Vector2& anchorPoint) { anchorPoint_ = anchorPoint; }
 	//アンカーポイントgetter
-	const XMFLOAT2& GetAnchorPoint() const { return anchorPoint_; }
+	const Vector2& GetAnchorPoint() const { return anchorPoint_; }
 	//左右フリップsetter
 	bool SetFripX(bool isFlipX) { isFlipX_ = isFlipX; }
 	//左右フリップgetter
@@ -78,86 +138,65 @@ public:
 	//非表示フラグgetter
 	bool GetInvisible() const { return isInvisible_; }
 	//テクスチャ番号setter
-	int SetTextureIndex(int textureIndex) { textureIndex_ = textureIndex; }
+	void SetTextureIndex(UINT texNumber) { texNumber = texNumber_; }
 	//テクスチャ番号getter
-	int GetTextureIndex() const { return textureIndex_; }
-	//scaleGetter
-	XMFLOAT3 GetScale() { return scale_; }
-	//scaleSetter
-	void SetScale(XMFLOAT2 scale) { scale_ = XMFLOAT3(scale.x, scale.y, 1); }
-public:
-	Sprite() = default;
-	Sprite(UINT texNumber, XMFLOAT3 pos, XMFLOAT2 size, XMFLOAT4 color, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY);
-	~Sprite() = default;;
+	UINT GetTextureIndex() const { return texNumber_; }
 
-protected:
-	DirectXCommon* dxCommon = nullptr;
-	// ビュー行列
-	static XMMATRIX matView;
-	// 射影行列
-	static XMMATRIX matProjection;
-	//SRVの最大個数
-	static const size_t kMaxSRVCount = 2056;
-	//デフォルトテクスチャ格納ディレクトリ
-	static std::string kDefaultTextureDirectoryPath;
+private:
 	//頂点バッファ
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;
-	//定数バッファ
-	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffMaterial_;
-	//テクスチャバッファ
-	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>,kMaxSRVCount> textureBuffers_;
+	ComPtr<ID3D12Resource> vertBuff_;
 	//頂点バッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vbView{};
-	//ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
-	//パイプラインステート
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState_;
+	D3D12_VERTEX_BUFFER_VIEW vbView_{};
+	D3D12_RESOURCE_DESC resDesc_ = CD3DX12_RESOURCE_DESC();
+
+private:
+	//DirectXCommonのインスタンス
+	DirectXCommon* dxCommon_;
+	//SpriteCommonのインスタンス
+	SpriteCommon spriteCommon_;
+	//コマンドリスト
+	ComPtr<ID3D12GraphicsCommandList> cmdList_;
 	//デスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
-	//定数バッファのGPUリソースのポインタ
-	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffTransform_;
+	ComPtr<ID3D12DescriptorHeap> descHeap_;
+	//SRVの最大個数
+	static const size_t kMaxSRVCount_ = 2056;
+	//定数バッファ
+	ComPtr<ID3D12Resource> constBuffMaterial_;
+	// マッピング済みアドレス
+	ConstBufferDataB0* constMap_ = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc_ = {};
+	//テクスチャバッファ
+	array<ComPtr<ID3D12Resource>,kMaxSRVCount_> textureBuffers_;
 
-	// 結果確認
-	HRESULT result;
 
-	//横方向ピクセル数
-	const size_t textureWidth = 256;
-
-	//縦方向ピクセル数
-	const size_t textureHeight = 256;
+	// テクスチャ番号
+	UINT texNumber_ = 0;
+	uint32_t texIndex_ = 0;
 
 	//座標
-	XMFLOAT3 position_ = {0.0f,0.0f,0.0f };
+	Vector3 position_ = {0.0f,0.0f,0.0f };
 	//スケール
-	XMFLOAT3 scale_ = { 1,1,1 };
+	Vector2 scale_ = { 1,1 };
 	//回転
-	XMFLOAT3 rotation_ = { 0.0f,0.0f,0.0f };
+	Vector3 rotation_ = { 0.0f,0.0f,0.0f };
 	// ローカルワールド変換行列
-	XMMATRIX matWorld;
+	Matrix4 matWorld_;
 	//色(RGBA)
-	XMFLOAT4 color_ = { 1,1,1,1 };
-	//表示サイズ
-	XMFLOAT2 size_ = { 100.0f,100.0f };
-	//頂点番号
-	enum VertexNumber
-	{
-		LB,  //左下
-		LT,  //左上
-		RB,  //右下
-		RT,  //右上
-	};
+	Vector4 color_ = { 1,1,1,1 };
+	// テクスチャ左上座標設定
+	Vector2 texLeftTop_ = { 50.0f, 50.0f };
+	// テクスチャ切り出しサイズ
+	Vector2 texSize_ = { 100.0f, 100.0f };
 	//アンカーポイント
-	XMFLOAT2 anchorPoint_ = { 0.0f,0.0f };
+	Vector2 anchorPoint_ = { 0.0f,0.0f };
+
+	// Z軸回りの回転
+	float rotationZ_ = 0.0f;
 	//左右フリップ
 	bool isFlipX_ = false;
 	//上下フリップ
 	bool isFlipY_ = false;
 	//非表示フラグ
 	bool isInvisible_ = false;
-	//テクスチャ番号
-	uint32_t textureIndex_ = 0;
-	//配列の要素数
-	const size_t imageDataCount = textureWidth * textureHeight;
-
 };
 

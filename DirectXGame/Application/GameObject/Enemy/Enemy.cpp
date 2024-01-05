@@ -43,6 +43,7 @@ void Enemy::EnemyInitialize()
 	initTime_ = 0.0f;
 	initTimeMax_ = 60.0f;
 	moveY_ = 60.0f;
+	afterMoveY_ = 60.0f;
 	bulletNum_ = 0;
 	bulletMax_ = 3;
 	enemyColor_ = { 0.0f,0.0f,0.0f };
@@ -175,13 +176,12 @@ void Enemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ + -moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_);
+ 		worldTransform_.position_.y = beforeY_ + (afterMoveY_ - (moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_)));
 		initTime_++;
-		if (initTime_ >= initTimeMax_)
+		if (initTime_ > initTimeMax_)
 		{
 			isInit_ = true;
 			initTime_ = 0.0f;
-			beforeY_ = 0.0f;
 		}
 	}
 }
@@ -192,7 +192,7 @@ void Enemy::BackMotion()
 	{
 		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_);
 		initTime_++;
-		if (initTime_ >= initTimeMax_)
+		if (initTime_ > initTimeMax_)
 		{
 			isBack_ = true;
 			isDelete_ = true;

@@ -26,8 +26,6 @@
 #include "BossEnemy.h"
 #include "Sound.h"
 #include "Explosion.h"
-#include "Black.h"
-#include "Red.h"
 #include "Item.h"
 
 #include<cassert>
@@ -228,18 +226,39 @@ private://メンバ変数
 	Explosion* explosion02_ = nullptr;
 	Explosion* explosion03_ = nullptr;
 
-	Black* black_ = nullptr;
-	Red* red_ = nullptr;
+	//ロゴやUI
+	Sprite* sprite_;
+	SpriteCommon spriteCommon_;
+	Sprite arrowUpOn_;
+	Sprite arrowUpOff_;
+	Sprite arrowDownOn_;
+	Sprite arrowDownOff_;
+	Sprite arrowRightOn_;
+	Sprite arrowRightOff_;
+	Sprite arrowLeftOn_;
+	Sprite arrowLeftOff_;
+	//画面
+	Sprite black_;
+	Sprite red_;
 
-	//UI
-	Sprite* arrowUpOn = nullptr;
-	Sprite* arrowUpOff = nullptr;
-	Sprite* arrowDownOn = nullptr;
-	Sprite* arrowDownOff = nullptr;
-	Sprite* arrowRightOn = nullptr;
-	Sprite* arrowRightOff = nullptr;
-	Sprite* arrowLeftOn = nullptr;
-	Sprite* arrowLeftOff = nullptr;
+	//黒alpha値
+	float blackAlpha_;
+	//変動値
+	float blackAlphaNum_;
+	//最大値
+	float blackAlphaNumMax_;
+	//最小値
+	float blackAlphaNumMin_;
+	//赤alpha値
+	float redAlpha_;
+	//変動値
+	float redAlphaNum_;
+	//最大値
+	float redAlphaNumMax_;
+	//最小値
+	float redAlphaNumMin_;
+	//被ダメージフラグ
+	bool isRed_;
 
 	//各方向フラグ
 	bool isUp_;
@@ -336,6 +355,8 @@ private://メンバ変数
 	Vector3 playerClearPos_;
 	float gameClearmoveZ_;
 	float gameClearPosZ_;
+	//カメラ
+	float clearCameraMoveZ_;
 	
 	//墜落演出の墜落量
 	int gameOverNum_;

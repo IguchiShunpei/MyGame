@@ -16,8 +16,6 @@
 #include "viewProjection.h"
 #include "Sound.h"
 #include "Player.h"
-#include"Explosion.h"
-#include"Black.h"
 
 #include <DirectXMath.h>
 
@@ -60,20 +58,23 @@ private: // メンバ変数
 	//プレイヤー
 	Player* player;
 
-	Explosion* ex;
-
 	//カメラ
 	ViewProjection* viewProjection_ = nullptr;
 
 	//ロゴやUI
-	Sprite* titleLogo_ = nullptr;
-	Sprite* space_ = nullptr;
-	Sprite* loading = nullptr;
-	
-	Black* black_ = nullptr;
-
-	//カメラワーク時の黒い縁
-	Sprite* outBlack[2];
+	Sprite* sprite_;
+	SpriteCommon spriteCommon_;
+	Sprite titleLogo_;
+	Sprite space_;
+	Sprite black_;
+	//黒alpha値
+	float blackAlpha_;
+	//変動値
+	float blackAlphaNum_;
+	//最大値
+	float blackAlphaNumMax_;
+	//最小値
+	float blackAlphaNumMin_;
 
 	//タイトル
 	float logoTime_;
@@ -95,5 +96,6 @@ private: // メンバ変数
 
 	//カメラ座標を保存する変数
 	Vector3 cameraWorkPos_;
+
 
 };

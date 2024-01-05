@@ -37,21 +37,37 @@ void GameTitleScene::Initialize()
 	sky = new SkyDome;
 	sky->SkyDomeInitialize();
 
-	black_ = new Black;
-	black_->BlackInitialize();
-	black_->SetPosition(Vector3(0.0f, 4.0f, 17.0f));
+	sprite_ = new Sprite();
+	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
-	titleLogo_ = new Sprite;
-	titleLogo_->Initialize(dxCommon_);
-	titleLogo_->LoadTexture(0, L"Resources/2d/title01.png", dxCommon_);
-	titleLogo_->SetScale({ 10,4 });
-	titleLogo_->SetPosition({ 170,-60,0 });
+	//タイトルロゴ
+	titleLogo_.Initialize(dxCommon_->GetDevice(), 0, Vector2(0.0f, 0.0f), false, false);
+	titleLogo_.SetScale(Vector2(800, 300));
+	titleLogo_.SetPosition({ 250,-30,0 });
+	titleLogo_.SpriteTransferVertexBuffer(titleLogo_, 0);
+	titleLogo_.Update(titleLogo_, spriteCommon_);
+	titleLogo_.LoadTexture(spriteCommon_, 0, L"Resources/2d/title01.png", dxCommon_->GetDevice());
 
-	space_ = new Sprite;
-	space_->Initialize(dxCommon_);
-	space_->LoadTexture(0, L"Resources/2d/space.png", dxCommon_);
-	space_->SetScale({ 4,1 });
-	space_->SetPosition({ 450,550,0 });
+	//スペースキー
+	space_.Initialize(dxCommon_->GetDevice(), 1, Vector2(0.0f, 0.0f), false, false);
+	space_.SetScale(Vector2(400 , 150));
+	space_.SetPosition({ 450,500,0 });
+	space_.SpriteTransferVertexBuffer(space_, 1);
+	space_.Update(space_, spriteCommon_);
+	space_.LoadTexture(spriteCommon_, 1, L"Resources/2d/Space.png", dxCommon_->GetDevice());
+
+	//黒
+	blackAlpha_ = 1.0f;
+	blackAlphaNum_ = 0.02f;
+	blackAlphaNumMax_ = 1.0f;
+	blackAlphaNumMin_ = 0.0f;
+	black_.Initialize(dxCommon_->GetDevice(), 2, Vector2(0.0f, 0.0f), false, false);
+	black_.SetScale(Vector2(1280 * 1, 720 * 1));
+	black_.SetPosition({ 0,0,0 });
+	black_.SpriteTransferVertexBuffer(black_, 2);
+	black_.SetAlpha(black_, blackAlpha_);
+	black_.Update(black_, spriteCommon_);
+	black_.LoadTexture(spriteCommon_, 2, L"Resources/2d/black.png", dxCommon_->GetDevice());
 
 	//タイトルカメラワーク
 	titleNum = 0;
@@ -63,14 +79,20 @@ void GameTitleScene::Initialize()
 	//フラグ
 	isBeforeCameraWork_ = false;
 	isTitleCameraWork_ = false;
+
 }
 
 void GameTitleScene::Update()
 {
-	black_->BlackUpdate();
 	//待機時
 	if (isBeforeCameraWork_ == false)
 	{
+		//黒フェードアウト
+		if (blackAlpha_ > blackAlphaNumMin_)
+		{
+			blackAlpha_ -= blackAlphaNum_;
+			black_.SetAlpha(black_, blackAlpha_);
+		}
 		viewProjection_->SetTarget(player->GetWorldPosition());
 		if (player->worldTransform_.rotation_.y <= 360.0f)
 		{
@@ -157,8 +179,9 @@ void GameTitleScene::Update()
 	viewProjection_->UpdateMatrix();
 
 	//ロゴやUI
-	titleLogo_->Update();
-	space_->Update();
+	titleLogo_.Update(titleLogo_, spriteCommon_);
+	space_.Update(space_, spriteCommon_);
+	black_.Update(black_, spriteCommon_);
 }
 
 void GameTitleScene::Draw()
@@ -172,17 +195,13 @@ void GameTitleScene::Draw()
 
 	Object3d::PostDraw();
 
-	titleLogo_->SetTextureCommands(0, dxCommon_);
-	titleLogo_->Draw(dxCommon_);
+	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
 
-	space_->SetTextureCommands(0, dxCommon_);
-	space_->Draw(dxCommon_);
+	titleLogo_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
-	Object3d::PreDraw(dxCommon_->GetCommandList());
+	space_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
-	black_->BlackDraw(viewProjection_);
-
-	Object3d::PostDraw();
+	black_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
 	dxCommon_->PostDraw();
 }
@@ -192,9 +211,6 @@ void GameTitleScene::Finalize()
 	delete sky;
 	delete player;
 	delete viewProjection_;
-	delete titleLogo_;
-	delete space_;
-	delete black_;
 }
 
 void GameTitleScene::StartCameraWork(int num)
@@ -213,7 +229,13 @@ void GameTitleScene::StartCameraWork(int num)
 		viewProjection_->eye_.z = cameraWorkPos_.z + 30.0f * MathFunc::easeOutSine(titleTimer_ / 60.0f);
 		break;
 	case 3:
-		black_->SetIsIn(true);
+		//黒フェードイン
+		if (blackAlpha_ < blackAlphaNumMax_)
+		{
+			blackAlpha_ += blackAlphaNum_;
+			black_.SetAlpha(black_, blackAlpha_);
+		}
+		black_.Update(black_, spriteCommon_);
 		//自機を動かす
 		player->worldTransform_.position_.z++;
 		viewProjection_->eye_.z -= 1.5f;
@@ -230,7 +252,7 @@ void GameTitleScene::LogoOut()
 	{
 		logoY_ = 300.0f * MathFunc::easeInSine(logoTime_ / 30.0f);
 		logoTime_++;
-		titleLogo_->SetPosition({ 170,-60 - logoY_,0 });
-		space_->SetPosition({ 450,550 + logoY_,0 });
+		titleLogo_.SetPosition({ 250,-30 - logoY_,0 });
+		space_.SetPosition({ 450,500 + logoY_,0 });
 	}
 }

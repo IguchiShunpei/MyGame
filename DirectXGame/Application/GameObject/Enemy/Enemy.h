@@ -168,6 +168,7 @@ private:
 
 	//登場時の移動量
 	float moveY_;
+	float afterMoveY_;
 
 	//弾の数
 	int bulletNum_;
