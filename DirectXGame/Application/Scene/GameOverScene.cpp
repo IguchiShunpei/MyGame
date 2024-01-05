@@ -108,7 +108,8 @@ void GameOverScene::Update()
 	{
 		if (blackAlpha_ < blackAlphaNumMax_)
 		{
-			black_.SetAlpha(black_, blackAlpha_ + blackAlphaNum_);
+			blackAlpha_ += blackAlphaNum_;
+			black_.SetAlpha(black_, blackAlpha_);
 		}
 		toTitleTimer_++;
 		if (toTitleTimer_ >= 100)

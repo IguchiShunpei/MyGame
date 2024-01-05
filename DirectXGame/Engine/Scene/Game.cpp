@@ -17,5 +17,5 @@ void Game::Initialize()
 	sceneFactory_ = new SceneFactory();
 	sceneManager_->SetSceneFactory(sceneFactory_);
 	// シーンマネージャに最初のシーンをセット
-	sceneManager_->ChangeScene("GAMEOVER");
+	sceneManager_->ChangeScene("GAMEPLAY");
 }

@@ -89,8 +89,10 @@ void GamePlayScene::Initialize()
 	pm_meteor->SetParticleModel(p_meteor);
 	pm_meteor->SetXMViewProjection(xmViewProjection);
 
+	//UIの初期化
 	UIInitialize();
 
+	//レベルデータのロード
 	LoadLevelData();
 
 	//メンバ変数の初期化
@@ -321,8 +323,9 @@ void GamePlayScene::Update()
 		{
 			MoveCamera();
 
-			player->Update();
+			player->Update(viewProjection_);
 			player->ColliderUpdate();
+			player->ReticleUpdate(viewProjection_);
 
 			//パーティクル更新
 			pm_dmg->Update();
@@ -569,6 +572,10 @@ void GamePlayScene::Draw()
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();
 
+	//描画前処理
+	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
+
+	player->ReticleDraw();
 	UIDraw();
 
 	// 描画後処理
@@ -1433,44 +1440,44 @@ void GamePlayScene::UIInitialize()
 
 	//上
 	arrowUpOn_.Initialize(dxCommon_->GetDevice(), 0, Vector2(0.0f, 0.0f), false, false);
-	arrowUpOn_.SetScale({ 50,50 });
-	arrowUpOn_.SetPosition({ 600,0 - UIInitRange_,0 });
+	arrowUpOn_.SetScale({ 60,60 });
+	arrowUpOn_.SetPosition({ 650,0 - UIInitRange_,0 });
 	arrowUpOn_.SpriteTransferVertexBuffer(arrowUpOn_, 0);
 	arrowUpOn_.Update(arrowUpOn_, spriteCommon_);
 	arrowUpOn_.LoadTexture(spriteCommon_, 0, L"Resources/2d/onUp.png", dxCommon_->GetDevice());
 
 	arrowUpOff_.Initialize(dxCommon_->GetDevice(), 1, Vector2(0.0f, 0.0f), false, false);
-	arrowUpOff_.SetScale({ 50,50 });
-	arrowUpOff_.SetPosition({ 600,0 - UIInitRange_,0 });
+	arrowUpOff_.SetScale({ 60,60 });
+	arrowUpOff_.SetPosition({ 650,0 - UIInitRange_,0 });
 	arrowUpOff_.SpriteTransferVertexBuffer(arrowUpOff_, 1);
 	arrowUpOff_.Update(arrowUpOff_, spriteCommon_);
 	arrowUpOff_.LoadTexture(spriteCommon_, 1, L"Resources/2d/offUp.png", dxCommon_->GetDevice());
 
 	//下
 	arrowDownOn_.Initialize(dxCommon_->GetDevice(), 2, Vector2(0.0f, 0.0f), false, false);
-	arrowDownOn_.SetScale({ 50,50 });
-	arrowDownOn_.SetPosition({ 600,640 + UIInitRange_,0 });
+	arrowDownOn_.SetScale({ 60,60 });
+	arrowDownOn_.SetPosition({ 650,640 + UIInitRange_,0 });
 	arrowDownOn_.SpriteTransferVertexBuffer(arrowDownOn_, 2);
 	arrowDownOn_.Update(arrowDownOn_, spriteCommon_);
 	arrowDownOn_.LoadTexture(spriteCommon_, 2, L"Resources/2d/onDown.png", dxCommon_->GetDevice());
 
 	arrowDownOff_.Initialize(dxCommon_->GetDevice(), 3, Vector2(0.0f, 0.0f), false, false);
-	arrowDownOff_.SetScale({ 50,50 });
-	arrowDownOff_.SetPosition({ 600,640 + UIInitRange_,0 });
+	arrowDownOff_.SetScale({ 60,60 });
+	arrowDownOff_.SetPosition({ 650,640 + UIInitRange_,0 });
 	arrowDownOff_.SpriteTransferVertexBuffer(arrowDownOff_, 3);
 	arrowDownOff_.Update(arrowDownOff_, spriteCommon_);
 	arrowDownOff_.LoadTexture(spriteCommon_, 3, L"Resources/2d/offDown.png", dxCommon_->GetDevice());
 
 	//右
 	arrowRightOn_.Initialize(dxCommon_->GetDevice(), 4, Vector2(0.0f, 0.0f), false, false);
-	arrowRightOn_.SetScale({ 50,50 });
+	arrowRightOn_.SetScale({ 60,60 });
 	arrowRightOn_.SetPosition({ 1200 + UIInitRange_,300,0 });
 	arrowRightOn_.SpriteTransferVertexBuffer(arrowRightOn_, 4);
 	arrowRightOn_.Update(arrowRightOn_, spriteCommon_);
 	arrowRightOn_.LoadTexture(spriteCommon_, 4, L"Resources/2d/onRight.png", dxCommon_->GetDevice());
 
 	arrowRightOff_.Initialize(dxCommon_->GetDevice(), 5, Vector2(0.0f, 0.0f), false, false);
-	arrowRightOff_.SetScale({ 50,50 });
+	arrowRightOff_.SetScale({ 60,60 });
 	arrowRightOff_.SetPosition({ 1200 + UIInitRange_,300,0 });
 	arrowRightOff_.SpriteTransferVertexBuffer(arrowRightOff_, 5);
 	arrowRightOff_.Update(arrowRightOff_, spriteCommon_);
@@ -1478,14 +1485,14 @@ void GamePlayScene::UIInitialize()
 
 	//左
 	arrowLeftOn_.Initialize(dxCommon_->GetDevice(), 6, Vector2(0.0f, 0.0f), false, false);
-	arrowLeftOn_.SetScale({ 50,50 });
+	arrowLeftOn_.SetScale({ 60,60 });
 	arrowLeftOn_.SetPosition({ 0 - UIInitRange_,300,0 });
 	arrowLeftOn_.SpriteTransferVertexBuffer(arrowLeftOn_, 6);
 	arrowLeftOn_.Update(arrowLeftOn_, spriteCommon_);
 	arrowLeftOn_.LoadTexture(spriteCommon_, 6, L"Resources/2d/onLeft.png", dxCommon_->GetDevice());
 
 	arrowLeftOff_.Initialize(dxCommon_->GetDevice(), 7, Vector2(0.0f, 0.0f), false, false);
-	arrowLeftOff_.SetScale({ 50,50 });
+	arrowLeftOff_.SetScale({ 60,60 });
 	arrowLeftOff_.SetPosition({ 0 - UIInitRange_,300,0 });
 	arrowLeftOff_.SpriteTransferVertexBuffer(arrowLeftOff_, 7);
 	arrowLeftOff_.Update(arrowLeftOff_, spriteCommon_);
@@ -1526,10 +1533,10 @@ void GamePlayScene::UIInitMotion()
 	{
 		UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
 		UIInitTime_++;
-		arrowUpOn_.SetPosition({ 600,0 - UIInitRange_ + UIInitPos_,0 });
-		arrowUpOff_.SetPosition({ 600,0 - UIInitRange_ + UIInitPos_,0 });
-		arrowDownOn_.SetPosition({ 600,640 + UIInitRange_ - UIInitPos_,0 });
-		arrowDownOff_.SetPosition({ 600,640 + UIInitRange_ - UIInitPos_,0 });
+		arrowUpOn_.SetPosition({ 610,0 - UIInitRange_ + UIInitPos_,0 });
+		arrowUpOff_.SetPosition({ 610,0 - UIInitRange_ + UIInitPos_,0 });
+		arrowDownOn_.SetPosition({ 610,640 + UIInitRange_ - UIInitPos_,0 });
+		arrowDownOff_.SetPosition({ 610,640 + UIInitRange_ - UIInitPos_,0 });
 		arrowRightOn_.SetPosition({ 1200 + UIInitRange_ - UIInitPos_,300,0 });
 		arrowRightOff_.SetPosition({ 1200 + UIInitRange_ - UIInitPos_,300,0 });
 		arrowLeftOn_.SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
@@ -1550,10 +1557,10 @@ void GamePlayScene::UIOutMotion()
 		{
 			UIOutPos_ = UIOutRange_ * MathFunc::easeOutSine(UIOutTime_ / 30.0f);
 			UIOutTime_++;
-			arrowUpOn_.SetPosition({ 600.0f,0.0f - UIOutPos_,0.0f });
-			arrowUpOff_.SetPosition({ 600.0f,0.0f - UIOutPos_,0.0f });
-			arrowDownOn_.SetPosition({ 600.0f,640.0f + UIOutPos_,0.0f });
-			arrowDownOff_.SetPosition({ 600.0f,640.0f + UIOutPos_,0.0f });
+			arrowUpOn_.SetPosition({ 610.0f,0.0f - UIOutPos_,0.0f });
+			arrowUpOff_.SetPosition({ 610.0f,0.0f - UIOutPos_,0.0f });
+			arrowDownOn_.SetPosition({ 610.0f,640.0f + UIOutPos_,0.0f });
+			arrowDownOff_.SetPosition({ 610.0f,640.0f + UIOutPos_,0.0f });
 			arrowRightOn_.SetPosition({ 1200.0f + UIOutPos_,300.0f,0.0f });
 			arrowRightOff_.SetPosition({ 1200.0f + UIOutPos_,300.0f,0.0f });
 			arrowLeftOn_.SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
@@ -1584,8 +1591,6 @@ void GamePlayScene::UIUpdate()
 
 void GamePlayScene::UIDraw()
 {
-	//描画前処理
-	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
 
 	//移動時のUI切り替え
 	if (isUp_ == true)
@@ -1653,10 +1658,10 @@ void GamePlayScene::UIMove()
 				UIMoveTime_ = 0.0f;
 			}
 		}
-		arrowUpOn_.SetPosition({ 600,-UIMovePos_,0 });
-		arrowUpOff_.SetPosition({ 600,-UIMovePos_,0 });
-		arrowDownOn_.SetPosition({ 600,640 + UIMovePos_,0 });
-		arrowDownOff_.SetPosition({ 600,640 + UIMovePos_,0 });
+		arrowUpOn_.SetPosition({ 610,-UIMovePos_,0 });
+		arrowUpOff_.SetPosition({ 610,-UIMovePos_,0 });
+		arrowDownOn_.SetPosition({ 610,640 + UIMovePos_,0 });
+		arrowDownOff_.SetPosition({ 610,640 + UIMovePos_,0 });
 		arrowRightOn_.SetPosition({ 1200 + UIMovePos_,300,0 });
 		arrowRightOff_.SetPosition({ 1200 + UIMovePos_,300,0 });
 		arrowLeftOn_.SetPosition({ -UIMovePos_ ,300,0 });

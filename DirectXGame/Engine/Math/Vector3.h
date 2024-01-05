@@ -24,6 +24,8 @@ public:
 	static float dot(const Vector3& v, const Vector3& v2);   //内積を求める
 	Vector3 cross(const Vector3& v)const; //外積を求める
 
+	static const Vector3 AddVector3(const Vector3& v1, const Vector3& v2);
+
 	// 線形補間(1次関数補間)
 	static const Vector3 lerp(const Vector3& start, const Vector3& end, const float t);
 

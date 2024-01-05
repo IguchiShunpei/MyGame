@@ -237,6 +237,7 @@ private://メンバ変数
 	Sprite arrowRightOff_;
 	Sprite arrowLeftOn_;
 	Sprite arrowLeftOff_;
+
 	//画面
 	Sprite black_;
 	Sprite red_;
