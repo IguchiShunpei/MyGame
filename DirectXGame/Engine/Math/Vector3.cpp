@@ -40,6 +40,16 @@ Vector3 Vector3::cross(const Vector3& v)const
 	return temp;
 }
 
+const Vector3 Vector3::AddVector3(const Vector3& v1, const Vector3& v2)
+{
+	Vector3 addVec;
+	addVec.x = v1.x + v2.x;
+	addVec.y = v1.y + v2.y;
+	addVec.z = v1.z + v2.z;
+
+	return addVec;
+}
+
 const Vector3 Vector3::lerp(const Vector3& start, const Vector3& end, const float t)
 {
 	return start * (1.0f - t) + end * t;
