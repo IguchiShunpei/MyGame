@@ -102,6 +102,7 @@ void InvincibleEnemy::Turn(Vector3 playerPos_)
 			//プレイヤーのワールド座標の取得
 			Vector3 playerPosition;
 			playerPosition = playerPos_;
+
 			//自キャラの座標をコピー
 			Vector3 enemyPosition = GetPosition();
 
@@ -112,6 +113,7 @@ void InvincibleEnemy::Turn(Vector3 playerPos_)
 			velocity_.length();
 			//正規化
 			velocity_.normalize();
+
 			//ベクトルの長さを,速さに合わせる
 			velocity_ *= kEnemySpeed;//これが速度になる
 		}

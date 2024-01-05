@@ -30,24 +30,37 @@ void GameClearScene::Initialize()
 	viewProjection_->Initialize();
 	viewProjection_->SetEye(Vector3(0.0f, 0.0f, 20.0f));
 
-	//黒
-	black_ = new Black;
-	black_->BlackInitialize();
-	black_->SetPosition(Vector3(0.0f, 0.0f, 21.0f));
+	sprite_ = new Sprite();
+	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
-	//ロゴ
+	//クリアーロゴ
+	clearLogo_.Initialize(dxCommon_->GetDevice(), 0, Vector2(0.0f, 0.0f), false, false);
+	clearLogo_.SetScale(Vector2(800, 300));
+	clearLogo_.SetPosition({ 250,0,0 });
+	clearLogo_.SpriteTransferVertexBuffer(clearLogo_, 0);
+	clearLogo_.Update(clearLogo_, spriteCommon_);
+	clearLogo_.LoadTexture(spriteCommon_, 0, L"Resources/2d/gameClear01.png", dxCommon_->GetDevice());
+
 	//スペースキー
-	space_ = new Sprite;
-	space_->Initialize(dxCommon_);
-	space_->LoadTexture(0, L"Resources/2d/space.png", dxCommon_);
-	space_->SetScale({ 4,1 });
-	space_->SetPosition({ 450,550,0 });
-	//ゲームクリア
-	gameClearLogo_ = new Sprite;
-	gameClearLogo_->Initialize(dxCommon_);
-	gameClearLogo_->LoadTexture(0, L"Resources/2d/gameClear01.png", dxCommon_);
-	gameClearLogo_->SetScale({ 10,4 });
-	gameClearLogo_->SetPosition({ 170,-60,0 });
+	space_.Initialize(dxCommon_->GetDevice(), 1, Vector2(0.0f, 0.0f), false, false);
+	space_.SetScale(Vector2(400, 120));
+	space_.SetPosition({ 450,500,0 });
+	space_.SpriteTransferVertexBuffer(space_, 1);
+	space_.Update(space_, spriteCommon_);
+	space_.LoadTexture(spriteCommon_, 1, L"Resources/2d/Space.png", dxCommon_->GetDevice());
+
+	//黒
+	blackAlpha_ = 1.0f;
+	blackAlphaNum_ = 0.02f;
+	blackAlphaNumMax_ = 1.0f;
+	blackAlphaNumMin_ = 0.0f;
+	black_.Initialize(dxCommon_->GetDevice(), 2, Vector2(0.0f, 0.0f), false, false);
+	black_.SetScale(Vector2(1280 * 1, 720 * 1));
+	black_.SetPosition({ 0,0,0 });
+	black_.SpriteTransferVertexBuffer(black_, 2);
+	black_.SetAlpha(black_, 0.0f);
+	black_.Update(black_, spriteCommon_);
+	black_.LoadTexture(spriteCommon_, 2, L"Resources/2d/black.png", dxCommon_->GetDevice());
 
 	isUp_ = true;
 	isToTitle_ = false;
@@ -56,13 +69,9 @@ void GameClearScene::Initialize()
 
 void GameClearScene::Update()
 {
-	//黒更新
-	black_->BlackUpdate();
 	//天球
 	sky_->Update();
 	viewProjection_->UpdateMatrix();
-
-	space_->Update();
 
 	//ロゴやUI
 	if (isUp_ == true)
@@ -85,9 +94,11 @@ void GameClearScene::Update()
 			logoTime_ = 0;
 		}
 	}
-	gameClearLogo_->SetPosition({ 160,logoY_,0 });
-	gameClearLogo_->Update();
-	black_->BlackUpdate();
+	clearLogo_.SetPosition({ 250,30 + logoY_,0 });
+	//ロゴやUI
+	clearLogo_.Update(clearLogo_, spriteCommon_);
+	space_.Update(space_, spriteCommon_);
+	black_.Update(black_, spriteCommon_);
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE) == true)
 	{
@@ -95,12 +106,24 @@ void GameClearScene::Update()
 	}
 	if (isToTitle_ == true)
 	{
-		black_->SetIsIn(true);
+		if (blackAlpha_ < blackAlphaNumMax_)
+		{
+			blackAlpha_ += blackAlphaNum_;
+			black_.SetAlpha(black_, blackAlpha_);
+		}
 		toTitleTimer_++;
 		if (toTitleTimer_ >= 100)
 		{
 			//TITLE（次シーン）を生成
 			GameSceneManager::GetInstance()->ChangeScene("TITLE");
+		}
+	}
+	else
+	{
+		if (blackAlpha_ > blackAlphaNumMin_)
+		{
+			blackAlpha_ -= blackAlphaNum_;
+			black_.SetAlpha(black_, blackAlpha_);
 		}
 	}
 }
@@ -117,18 +140,13 @@ void GameClearScene::Draw()
 
 	Object3d::PostDraw();
 
-	//ロゴ
-	space_->SetTextureCommands(0, dxCommon_);
-	space_->Draw(dxCommon_);
-	gameClearLogo_->SetTextureCommands(0, dxCommon_);
-	gameClearLogo_->Draw(dxCommon_);
+	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
 
-	Object3d::PreDraw(dxCommon_->GetCommandList());
+	clearLogo_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
-	//黒
-	black_->BlackDraw(viewProjection_);
+	space_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
-	Object3d::PostDraw();
+	black_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
 	// 描画後処理
 	dxCommon_->PostDraw();

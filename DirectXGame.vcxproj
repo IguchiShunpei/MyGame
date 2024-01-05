@@ -108,9 +108,7 @@
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Effect\Black.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Effect\Explosion.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Effect\Red.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\BossEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyBullet.cpp" />
@@ -236,9 +234,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Effect\Black.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Effect\Explosion.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Effect\Red.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\BossEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyBullet.h" />

@@ -228,12 +228,6 @@
     <ClCompile Include="DirectXGame\Application\GameObject\Effect\Explosion.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Effect\Red.cpp">
-      <Filter>ソース ファイル\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Effect\Black.cpp">
-      <Filter>ソース ファイル\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Item.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
@@ -441,13 +435,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Effect\Black.h">
-      <Filter>ヘッダー ファイル\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\Effect\Explosion.h">
-      <Filter>ヘッダー ファイル\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Effect\Red.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\3D\ParticleManager.h">
