@@ -29,7 +29,7 @@ public:
 	void PlayerInitialize();
 
 	//更新
-	void Update(ViewProjection* viewProjection_);
+	void Update(WorldTransform worldTransform3DReticle);
 
 	//当たり判定更新
 	void ColliderUpdate();
@@ -53,16 +53,11 @@ public:
 	void Rotate();
 
 	//攻撃
-	void Attack();
+	void Attack(WorldTransform worldTransform3DReticle);
 
 	//キャラの向きに応じた方向に球を出す
 	Vector3 bVelocity(Vector3& velocity, WorldTransform& worldTransform);
-	//ベクトルと行列を掛け算
-	Vector3 MatVector(Vector3 v, Matrix4 mat);
-	//ビューポート行列をセット
-	Matrix4 SetViewport(const Vector3& v);
-	//ワールド→スクリーン座標変換
-	Vector3 Division(const Vector3& v, Matrix4 mat);
+
 	//ダメージ
 	void Damage();
 
@@ -71,12 +66,6 @@ public:
 
 	//弾更新
 	void BulletUpdate();
-
-	//レティクル更新
-	void ReticleUpdate(ViewProjection* viewProjection_);
-
-	//レティクル描画
-	void ReticleDraw();
 
 	//弾描画
 	void BulletDraw(ViewProjection* viewProjection_);
@@ -129,25 +118,7 @@ private:
 	//弾リスト
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 
-	//レティクル
-	WorldTransform worldTransform3DReticle_;
-	//スプライト
-	Sprite* sprite_;
-	SpriteCommon spriteCommon_;
-	//2Dレティクル用スプライト
-	Sprite reticle_;
-	//自機からレティクルまでの距離
-	float distancePlayerToReticle_;
-	//レティクルalpha値
-	float reticleAlpha_;
-	//変動値
-	float reticleAlphaNum_;
-	//最大値
-	float reticleAlphaNumMax_;
-	//最小値
-	float reticleAlphaNumMin_;
-	//レティクル表示フラグ
-	bool isInvicibleReticle_;
+	Vector3 reticleWorldPos_;
 
 	//collider関係
 	Vector3 colliderPos_;
