@@ -323,9 +323,8 @@ void GamePlayScene::Update()
 		{
 			MoveCamera();
 
-			player->Update(viewProjection_);
+			player->Update(worldTransform3DReticle_);
 			player->ColliderUpdate();
-			player->ReticleUpdate(viewProjection_);
 
 			//パーティクル更新
 			pm_dmg->Update();
@@ -575,7 +574,6 @@ void GamePlayScene::Draw()
 	//描画前処理
 	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
 
-	player->ReticleDraw();
 	UIDraw();
 
 	// 描画後処理
@@ -940,6 +938,7 @@ void GamePlayScene::BossInitCameraWork()
 		}
 		else
 		{
+			isInvicibleReticle_ = false;
 			//寄ったら黒フェード
 			if (blackAlpha_ < blackAlphaNumMax_)
 			{
@@ -1003,6 +1002,7 @@ void GamePlayScene::BossInitCameraWork()
 		}
 		else
 		{
+			isInvicibleReticle_ = true;
 			viewProjection_->eye_.z = afterInitCameraPos_.z;
 			isBossInitCamera_ = false;
 			bossInitNum_ = None;
@@ -1525,12 +1525,37 @@ void GamePlayScene::UIInitialize()
 	red_.Update(red_, spriteCommon_);
 	red_.LoadTexture(spriteCommon_, 9, L"Resources/2d/red.png", dxCommon_->GetDevice());
 
+	//レティクル
+	reticle_.Initialize(dxCommon_->GetDevice(), 10, Vector2(0.5f,0.5f), false, false);
+	reticle_.SetScale({ 100,100 });
+	reticle_.SetPosition({ 0,0,0 });
+	reticle_.SetAlpha(reticle_, reticleAlpha_);
+	reticle_.SpriteTransferVertexBuffer(reticle_, 10);
+	reticle_.Update(reticle_, spriteCommon_);
+	reticle_.LoadTexture(spriteCommon_, 10, L"Resources/2d/reticle.png", dxCommon_->GetDevice());
+
+	//レティクル関係変数初期化
+	reticleWorldPos_ = { 0.0f,0.0f,0.0f };
+	matViewport_.identity();
+	matViewprojectionViewport_.identity();
+
+	//レティクルのワールドトランスフォーム初期化
+	worldTransform3DReticle_.Initialize();
+
+	distancePlayerToReticle_ = 50.0f;
+	reticleAlpha_ = 0.0f;
+	reticleAlphaNum_ = 0.1f;
+	reticleAlphaNumMax_ = 1.0f;
+	reticleAlphaNumMin_ = 0.0f;
+	isInvicibleReticle_ = true;
+
 }
 
 void GamePlayScene::UIInitMotion()
 {
 	if (isUIInit_ == false && isPlayerInit_ == true)
 	{
+	isInvicibleReticle_ = true;
 		UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
 		UIInitTime_++;
 		arrowUpOn_.SetPosition({ 610,0 - UIInitRange_ + UIInitPos_,0 });
@@ -1551,6 +1576,7 @@ void GamePlayScene::UIInitMotion()
 void GamePlayScene::UIOutMotion()
 {
 	isNeutral_ = false;
+	isInvicibleReticle_ = false;
 	if (isUIOut_ == false)
 	{
 		if (UIOutPos_ < UIOutRange_)
@@ -1587,6 +1613,7 @@ void GamePlayScene::UIUpdate()
 	arrowLeftOff_.Update(arrowLeftOff_, spriteCommon_);
 	black_.Update(black_, spriteCommon_);
 	red_.Update(red_, spriteCommon_);
+	ReticleUpdate();
 }
 
 void GamePlayScene::UIDraw()
@@ -1632,6 +1659,7 @@ void GamePlayScene::UIDraw()
 	{
 		red_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	}
+	reticle_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 }
 
 void GamePlayScene::UIMove()
@@ -1667,4 +1695,90 @@ void GamePlayScene::UIMove()
 		arrowLeftOn_.SetPosition({ -UIMovePos_ ,300,0 });
 		arrowLeftOff_.SetPosition({ -UIMovePos_ ,300,0 });
 	}
+}
+
+void GamePlayScene::ReticleUpdate()
+{
+	if (isInvicibleReticle_ == true)
+	{
+		if (reticleAlpha_ < reticleAlphaNumMax_)
+		{
+			reticleAlpha_ += reticleAlphaNum_;
+			reticle_.SetAlpha(reticle_, reticleAlpha_);
+		}
+	}
+	else
+	{
+		if (reticleAlpha_ > reticleAlphaNumMin_)
+		{
+			reticleAlpha_ -= reticleAlphaNum_;
+			reticle_.SetAlpha(reticle_, reticleAlpha_);
+		}
+	}
+	//自機のワールド座標から3Dレティクルのワールド座標を計算
+	{
+		//自機から3Dレティクルへのオフセット(Z+向き)
+		Vector3 offSet = { 0,0,1.0f };
+		//自機のワールド行列の回転を反映
+		offSet = MatVector(offSet, player->worldTransform_.matWorld_);
+		//長さを整える
+		offSet = offSet.normalize()* distancePlayerToReticle_;
+		//3Dレティクルの座標を設定
+		worldTransform3DReticle_.position_ = Vector3::AddVector3(player->GetWorldPosition(), offSet);
+		worldTransform3DReticle_.UpdateMatrix();
+	}
+	//3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
+	{
+		// 3Dレティクルのワールド行列から,ワールド座標を取得
+		reticleWorldPos_.x = worldTransform3DReticle_.matWorld_.m[3][0];
+		reticleWorldPos_.y = worldTransform3DReticle_.matWorld_.m[3][1];
+		reticleWorldPos_.z = worldTransform3DReticle_.matWorld_.m[3][2];
+
+		//ビューポート行列
+		matViewport_ = SetViewport(Vector3(0, 0, 0));
+
+		//ビュー行列とプロジェクション行列,ビューポート行列を合成する
+		matViewprojectionViewport_ =
+			viewProjection_->matView * viewProjection_->matProjection * matViewport_;
+		//ワールド→スクリーン座標変換
+		reticleWorldPos_ = Transform(reticleWorldPos_, matViewprojectionViewport_);
+		//座標設定
+		reticle_.SetPosition(Vector3(reticleWorldPos_.x, reticleWorldPos_.y, 0.0f));
+	}
+	reticle_.Update(reticle_, spriteCommon_);
+}
+
+Vector3 GamePlayScene::MatVector(Vector3 v, Matrix4 mat)
+{
+	Vector3 pos;
+	pos.x = -mat.m[0][0] * v.x + -mat.m[0][1] * v.y + -mat.m[0][2] * v.z + mat.m[0][3] * 1;
+	pos.y = -mat.m[1][0] * v.x + -mat.m[1][1] * v.y + -mat.m[1][2] * v.z + mat.m[1][3] * 1;
+	pos.z = mat.m[2][0] * v.x + mat.m[2][1] * v.y + mat.m[2][2] * v.z + mat.m[2][3] * 1;
+
+	return pos;
+}
+
+Matrix4 GamePlayScene::SetViewport(const Vector3& v)
+{
+	//単位行列の設定
+	Matrix4 matViewport = Matrix4::identity();
+	matViewport.m[0][0] = 1280.0f / 2.0f;
+	matViewport.m[1][1] = -720.0f / 2.0f;
+	matViewport.m[3][0] = (1280.0f / 2.0f) + v.x;
+	matViewport.m[3][1] = (720.0f / 2.0f) + v.y;
+	return matViewport;
+}
+
+Vector3 GamePlayScene::Transform(const Vector3& v, const Matrix4& m)
+{
+	float w = v.x * m.m[0][3] + v.y * m.m[1][3] + v.z * m.m[2][3] + m.m[3][3];
+
+	Vector3 result
+	{
+		(v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + m.m[3][0]) / w,
+		(v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + m.m[3][1]) / w,
+		(v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2]) / w
+	};
+
+	return result;
 }

@@ -27,6 +27,7 @@
 #include "Sound.h"
 #include "Explosion.h"
 #include "Item.h"
+#include "Matrix4.h"
 
 #include<cassert>
 #include<vector>
@@ -159,6 +160,16 @@ public:
 	void UIDraw();
 	void UIMove();
 
+	//レティクル更新
+	void ReticleUpdate();
+
+	//ベクトルと行列を掛け算
+	Vector3 MatVector(Vector3 v, Matrix4 mat);
+	//ビューポート行列をセット
+	Matrix4 SetViewport(const Vector3& v);
+	// 座標変換（ベクトルと行列の掛け算をする）
+	Vector3 Transform(const Vector3& v, const Matrix4& m);
+
 private://メンバ変数
 	//背景
 	SkyDome* sky_;
@@ -260,6 +271,27 @@ private://メンバ変数
 	float redAlphaNumMin_;
 	//被ダメージフラグ
 	bool isRed_;
+
+	//レティクル
+	WorldTransform worldTransform3DReticle_;
+	//2Dレティクル用スプライト
+	Sprite reticle_;
+	//自機からレティクルまでの距離
+	float distancePlayerToReticle_;
+	//レティクルalpha値
+	float reticleAlpha_;
+	//変動値
+	float reticleAlphaNum_;
+	//最大値
+	float reticleAlphaNumMax_;
+	//最小値
+	float reticleAlphaNumMin_;
+	//レティクル表示フラグ
+	bool isInvicibleReticle_;
+
+	Vector3 reticleWorldPos_;
+	Matrix4 matViewport_;
+	Matrix4 matViewprojectionViewport_;
 
 	//各方向フラグ
 	bool isUp_;

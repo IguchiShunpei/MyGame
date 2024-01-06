@@ -32,29 +32,6 @@ void Player::PlayerInitialize()
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerModel_);
 
-    //レティクルのワールドトランスフォーム初期化
-	worldTransform3DReticle_.Initialize();
-
-	sprite_ = new Sprite();
-	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
-
-	distancePlayerToReticle_ = 15.0f;
-	reticleAlpha_ = 0.0f;
-	reticleAlphaNum_ = 0.2f;
-	reticleAlphaNumMax_ = 1.0f;
-	reticleAlphaNumMin_ = 0.0f;
-	isInvicibleReticle_ = false;
-
-	//レティクル
-	reticle_.Initialize(dxCommon_->GetDevice(), 0, Vector2(50.0f,50.0f), false, false);
-	reticle_.SetScale({ 100,100 });
-	reticle_.SetPosition({ 0,0,0 });
-	reticle_.SetAlpha(reticle_, reticleAlpha_);
-	reticle_.SpriteTransferVertexBuffer(reticle_, 0);
-	reticle_.Update(reticle_, spriteCommon_);
-	reticle_.LoadTexture(spriteCommon_, 0, L"Resources/2d/reticle.png", dxCommon_->GetDevice());
-
-
 	//コライダー関係の変数
 	colliderPos_ = {0.0f,0.0f,0.0f};
 	playerColliderRadius_ = 1.0f;
@@ -90,7 +67,7 @@ void Player::PlayerInitialize()
 	initRota_ = { 0.0f,0.0f,0.0f };
 	initRotaMax_ = 360.0f;
 
-	backRota_ = 4.0f;
+	backRota_ = 2.0f;
 
 	//フラグ
 	isMoveUp_ = false;
@@ -105,20 +82,18 @@ void Player::PlayerInitialize()
 	isChangeDir_ = false;
 }
 
-void Player::Update(ViewProjection* viewProjection_)
+void Player::Update(WorldTransform worldTransform3DReticle)
 {
 
 	if (isDead_ == false)
 	{
-		ReticleUpdate(viewProjection_);
-
 		Move();
 
 		Rotate();
 
 		BulletPowerUp();
 
-		Attack();
+		Attack(worldTransform3DReticle);
 	}
 
 	BulletUpdate();
@@ -513,7 +488,7 @@ void Player::Rotate()
 	}
 }
 
-void Player::Attack()
+void Player::Attack(WorldTransform worldTransform3DReticle)
 {
 	//Spaceキーを押したとき
 	if (input_->TriggerKey(DIK_SPACE))
@@ -528,14 +503,12 @@ void Player::Attack()
 		velocity = bVelocity(velocity, worldTransform_);
 	
 		//レティクルのワールド座標を取得
-		Vector3 reticleWorldPos;
-
-		reticleWorldPos.x = worldTransform3DReticle_.matWorld_.m[3][0];
-		reticleWorldPos.y = worldTransform3DReticle_.matWorld_.m[3][1];
-		reticleWorldPos.z = worldTransform3DReticle_.matWorld_.m[3][2];
+		reticleWorldPos_.x = worldTransform3DReticle.matWorld_.m[3][0];
+		reticleWorldPos_.y = worldTransform3DReticle.matWorld_.m[3][1];
+		reticleWorldPos_.z = worldTransform3DReticle.matWorld_.m[3][2];
 
 		//自機から標準オブジェクトへのベクトル
-		velocity = reticleWorldPos - GetWorldPosition();
+		velocity = reticleWorldPos_ - GetWorldPosition();
 
 		//速度と向きを合成
 		velocity = velocity.normalize() * kBulletSpeed_;
@@ -550,7 +523,6 @@ void Player::Attack()
 
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
-
 	}
 }
 
@@ -572,42 +544,6 @@ Vector3 Player::bVelocity(Vector3& velocity, WorldTransform& worldTransform)
 		velocity.z * worldTransform.matWorld_.m[2][1];
 
 	return result;
-}
-
-Vector3 Player::MatVector(Vector3 v, Matrix4 mat)
-{
-	Vector3 pos;
-	pos.x = mat.m[0][0] * v.x + mat.m[0][1] * v.y + mat.m[0][2] * v.z + mat.m[0][3] * 1;
-	pos.y = mat.m[1][0] * v.x + mat.m[1][1] * v.y + mat.m[1][2] * v.z + mat.m[1][3] * 1;
-	pos.z = mat.m[2][0] * v.x + mat.m[2][1] * v.y + mat.m[2][2] * v.z + mat.m[2][3] * 1;
-
-	return pos;
-}
-
-Matrix4 Player::SetViewport(const Vector3& v)
-{
-	//単位行列の設定
-	Matrix4 matViewport = Matrix4::identity();
-	matViewport.m[0][0] = 1280.0f / 2.0f;
-	matViewport.m[1][1] = -720.0f / 2.0f;
-	matViewport.m[3][0] = (1280.0f / 2.0f) + v.x;
-	matViewport.m[3][1] = (720.0f / 2.0f) + v.y;
-	return matViewport;
-}
-
-Vector3 Player::Division(const Vector3& v, Matrix4 mat)
-{
-	Vector4 devision;
-	devision.x = mat.m[0][0] * v.x + mat.m[1][0] * v.y + mat.m[2][0] * v.z + mat.m[3][0] * 1;
-	devision.y = mat.m[0][1] * v.x + mat.m[1][1] * v.y + mat.m[2][1] * v.z + mat.m[3][1] * 1;
-	devision.z = mat.m[0][2] * v.x + mat.m[1][2] * v.y + mat.m[2][2] * v.z + mat.m[3][2] * 1;
-	devision.w = mat.m[0][3] * v.x + mat.m[1][3] * v.y + mat.m[2][3] * v.z + mat.m[3][3] * 1;
-
-	devision.x = devision.x / devision.w;
-	devision.y = devision.y / devision.w;
-	devision.z = devision.z / devision.w;
-
-	return { devision.x, devision.y, devision.z };
 }
 
 void Player::Damage()
@@ -653,63 +589,6 @@ void Player::BulletUpdate()
 		bullet->ColliderUpdate();
 	}
 
-}
-
-void Player::ReticleUpdate(ViewProjection* viewProjection_)
-{
-	if (isInvicibleReticle_ == false)
-	{
-		if (reticleAlpha_ < reticleAlphaNumMax_)
-		{
-			reticleAlpha_ += reticleAlphaNum_;
-			reticle_.SetAlpha(reticle_, reticleAlpha_);
-		}
-	}
-	else
-	{
-		if (reticleAlpha_ > reticleAlphaNumMin_)
-		{
-			reticleAlpha_ -= reticleAlphaNum_;
-			reticle_.SetAlpha(reticle_, reticleAlpha_);
-		}
-	}
-	//自機のワールド座標から3Dレティクルのワールド座標を計算
-	{
-		//自機から3Dレティクルへのオフセット(Z+向き)
-		Vector3 offSet = { 0,0,1.0f };
-		//自機のワールド行列の回転を反映
-		offSet = MatVector(offSet, worldTransform_.matWorld_);
-		//長さを整える
-		offSet.normalize() * distancePlayerToReticle_;
-		//3Dレティクルの座標を設定
-		worldTransform3DReticle_.position_ = Vector3::AddVector3(GetWorldPosition(), offSet);
-		worldTransform3DReticle_.UpdateMatrix();
-	}
-	//3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
-	{
-		// 3Dレティクルのワールド行列から,ワールド座標を取得
-		Vector3 reticleWorldPos;
-
-		reticleWorldPos.x = worldTransform3DReticle_.matWorld_.m[3][0];
-		reticleWorldPos.y = worldTransform3DReticle_.matWorld_.m[3][1];
-		reticleWorldPos.z = worldTransform3DReticle_.matWorld_.m[3][2];
-		//ビューポート行列
-		Matrix4 matViewport = SetViewport(Vector3(0, 0, 0));
-
-		//ビュー行列とプロジェクション行列,ビューポート行列を合成する
-		Matrix4 matViewprojectionViewport =
-			viewProjection_->matView * viewProjection_->matProjection * matViewport;
-		//ワールド→スクリーン座標変換
-		reticleWorldPos = Division(reticleWorldPos, matViewprojectionViewport);
-		//座標設定
-		reticle_.SetPosition(Vector3(reticleWorldPos.x, reticleWorldPos.y,0.0f));
-	}
-	reticle_.Update(reticle_, spriteCommon_);
-}
-
-void Player::ReticleDraw()
-{
-	reticle_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 }
 
 void Player::BulletDraw(ViewProjection* viewProjection_)
