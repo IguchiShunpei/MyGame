@@ -21,9 +21,10 @@ void Meteor::MeteorInitialize()
 
 	speed_ = 0.2f;
 	frontZ_ = -100.0f;
+	backZ_ = 600.0f;
 
 	rotaSpeed_ = 1.0f;
-	size_ = Vector3(5.0f, 5.0f, 5.0f);
+	worldTransform_.scale_ = Vector3(1.0f, 1.0f, 1.0f);
 
 	hp_ = 3;
 
@@ -31,27 +32,29 @@ void Meteor::MeteorInitialize()
 	std::random_device seed_gen;
 	std::mt19937 engine(seed_gen());
 	//ランダムで回転方向を割り当てる
-	std::uniform_int_distribution<> isRotation(0, 1);
-	isRota_ = isRotation(engine);
+	std::uniform_int_distribution<> rotaDirection(0, 5);
+	rotaDirection_ = rotaDirection(engine);
 
 	isHit_ = false;
 	isHitEnd_ = true;
 	isInit_ = false;
 
 	alpha_ = 0.0;
+	alphaMax_ = 1.0f;
 }
 
 void Meteor::MeteorUpdate()
 {
-	if (isInit_ == false)
+	if (alpha_ < 1.0f)
 	{
 		alpha_ += 0.01f;
-		if (alpha_ > 1.0f)
-		{
-			isInit_ = true;
-			alpha_ = 1.0f;
-		}
 	}
+	else
+	{
+		isInit_ = true;
+		alpha_ = 1.0f;
+	}
+
 
 	if (isDead_ == false)
 	{
@@ -62,8 +65,11 @@ void Meteor::MeteorUpdate()
 		Rotate();
 		//当たり判定更新
 		ColliderUpdate();
-		//ダメージ
-		Damage();
+		if (isBack_ == false)
+		{
+			//ダメージ処理
+			Damage();
+		}
 	}
 	//更新
 	Update();
@@ -73,20 +79,47 @@ void Meteor::Move()
 {
 	//移動
 	worldTransform_.position_.z -= speed_;
-
 	//カメラよりも奥に進んだら削除
 	if (worldTransform_.position_.z <= frontZ_)
 	{
-		isDelete_ = true;
+		//背景フラグで処理を変える
+		if (isBack_ == false)
+		{
+			//削除
+			isDelete_ = true;
+		}
+		else
+		{
+			//画面奥まで戻る
+			worldTransform_.position_.z = backZ_;
+			alpha_ = 0.0f;
+		}
 	}
 }
 
 void Meteor::Rotate()
 {
-	//基準のサイズよりも小さい物は回転させる
-	if (isRota_ == 1)
+	//割り当てられた回転の向きを実行
+	switch (rotaDirection_)
 	{
+	case 0:
+		worldTransform_.rotation_.x += rotaSpeed_;
+		break;
+	case 1:
 		worldTransform_.rotation_.x -= rotaSpeed_;
+		break;
+	case 2:
+		worldTransform_.rotation_.y += rotaSpeed_;
+		break;
+	case 3:
+		worldTransform_.rotation_.y -= rotaSpeed_;
+		break;
+	case 4:
+		worldTransform_.rotation_.z += rotaSpeed_;
+		break;
+	case 5:
+		worldTransform_.rotation_.z -= rotaSpeed_;
+		break;
 	}
 }
 

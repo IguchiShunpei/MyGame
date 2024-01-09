@@ -52,6 +52,12 @@ public:
 	//HP
 	void SetHp(int hp) { this->hp_ = hp; }
 
+	//Alpha
+	void SetAlpha(float alpha) { this->alpha_ = alpha; }
+
+	//isBack
+	void SetIsBack(bool isBack) { this->isBack_ = isBack; }
+
 private:
 	//座標
 	Vector3 position_;
@@ -62,21 +68,23 @@ private:
 	//回転速度
 	float rotaSpeed_;
 
-	int isRota_;
+	//回転の向き
+	int rotaDirection_;
 
 	//手前
 	float frontZ_;
 
+	//奥
+	float backZ_;
+
 	//消去フラグ
 	bool isDelete_;
-
-	//線引きするサイズ
-	Vector3 size_;
 
 	//当たったか
 	bool isHit_;
 	bool isHitEnd_;
 
+	//登場
 	bool isInit_;
 
 	//死亡
@@ -85,10 +93,16 @@ private:
 	//Hp
 	int hp_;
 
+	//色
 	Vector3 color_;
 
+	//alpha
 	float alpha_;
+	float alphaMax_;
 
 	// モデル
 	Model* meteorModel_ = nullptr;
+
+	//背景フラグ
+	bool isBack_;
 };
