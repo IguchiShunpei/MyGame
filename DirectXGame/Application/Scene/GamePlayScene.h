@@ -225,13 +225,13 @@ private://メンバ変数
 	Particle* p_meteor = nullptr;
 	ParticleManager* pm_meteor = nullptr;
 
-	Stardust* objStardust = nullptr;
-	Model* modelStardust = nullptr;
-	Stardust* stardust = nullptr;
+	Stardust* backObjStardust = nullptr;
+	Model* backModelStardust = nullptr;
+	Stardust* backStardust = nullptr;
 
-	Meteor* objMeteor = nullptr;
-	Model* modelMeteor = nullptr;
-	Meteor* meteor = nullptr;
+	Meteor* backObjMeteor = nullptr;
+	Model* backModelMeteor = nullptr;
+	Meteor* backMeteor = nullptr;
 
 	Explosion* explosion01_ = nullptr;
 	Explosion* explosion02_ = nullptr;
@@ -323,12 +323,14 @@ private://メンバ変数
 	float UIMoveRange_;
 
 	//レベルデータ
-	//星屑
 	LevelData* backGroundStardust_ = nullptr;
+	LevelData* backGroundMeteor_ = nullptr;
 	//モデル
 	std::map<std::string, Model*> stardustModels_;
+	std::map<std::string, Model*> meteorModels_;
 	//オブジェクト
 	std::vector<Stardust*> stardustObjects_;
+	std::vector<Meteor*> meteorObjects_;
 
 	//シーン番号
 	int gameNum_;

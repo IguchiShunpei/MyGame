@@ -35,7 +35,7 @@ void Player::PlayerInitialize()
 	//コライダー関係の変数
 	colliderPos_ = {0.0f,0.0f,0.0f};
 	playerColliderRadius_ = 1.0f;
-	bulletColliderRadius_ = 0.5f;
+	bulletColliderRadius_ = 3.0f;
 
 	//半径分だけ足元から浮いた座標を球の中心にする
 	SetCollider(new SphereCollider(colliderPos_, playerColliderRadius_));
@@ -114,13 +114,15 @@ void Player::ColliderUpdate()
 void Player::OnCollision([[maybe_unused]] const CollisionInfo& info)
 {
 	const char* str1 = "class EnemyBullet";
-	const char* str2 = "class InvEnemy";
+	const char* str2 = "class InvincibleEnemy";
 	const char* str3 = "class BossEnemy";
+	const char* str4 = "class Meteor";
 
 	//相手がEnemy
 	if (isInv_ == false)
 	{
-		if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 || strcmp(toCollisionName, str3) == 0)
+		if (strcmp(toCollisionName, str1) == 0 || strcmp(toCollisionName, str2) == 0 ||
+			strcmp(toCollisionName, str3) == 0 || strcmp(toCollisionName, str4) == 0)
 		{
 			isHit_ = true;
 		}

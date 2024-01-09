@@ -207,6 +207,10 @@ void GamePlayScene::Update()
 	{
 		object->StardustUpdate();
 	}
+	for (auto& object : meteorObjects_)
+	{
+		object->MeteorUpdate();
+	}
 
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
@@ -504,6 +508,10 @@ void GamePlayScene::Draw()
 	for (auto& object : stardustObjects_) {
 		object->Draw(viewProjection_, 1.0f, object->GetColor());
 	}
+	//隕石
+	for (auto& object : meteorObjects_) {
+		object->Draw(viewProjection_, object->GetAlpha(), object->GetColor());
+	}
 
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
@@ -583,6 +591,9 @@ void GamePlayScene::Draw()
 void GamePlayScene::Finalize()
 {
 	for (Stardust*& object : stardustObjects_) {
+		delete(object);
+	}
+	for (Meteor*& object : meteorObjects_) {
 		delete(object);
 	}
 
@@ -1375,28 +1386,29 @@ void GamePlayScene::LoadLevelData()
 {
 	//背景オブジェクトデータの読み込み
 	backGroundStardust_ = LevelLoader::LoadFile("stardust");
+	backGroundMeteor_ = LevelLoader::LoadFile("meteor");
 
 	// レベルデータからオブジェクトを生成、配置
 	//星屑
 	for (auto& objectData : backGroundStardust_->objects) {
 
 		// モデルを指定して3Dオブジェクトを生成
-		stardust = new Stardust;
-		stardust->StardustInitialize();
+		backStardust = new Stardust;
+		backStardust->StardustInitialize();
 		//モデル読み込み
-		modelStardust = Model::LoadFromOBJ("stardust");
-		stardustModels_.insert(std::make_pair("stardust", modelStardust));
-		stardust->SetModel(modelStardust);
+		backModelStardust = Model::LoadFromOBJ("stardust");
+		stardustModels_.insert(std::make_pair("stardust", backModelStardust));
+		backStardust->SetModel(backModelStardust);
 		// 座標
 		Vector3 pos;
 		//データの値を代入
-		pos.x = objectData.transform.m128_f32[0];
-		pos.y = objectData.transform.m128_f32[1];
-		pos.z = objectData.transform.m128_f32[2];
+		pos.x = objectData.translation.m128_f32[0];
+		pos.y = objectData.translation.m128_f32[1];
+		pos.z = objectData.translation.m128_f32[2];
 		//newObjectにセット
-		stardust->SetPosition(pos);
+		backStardust->SetPosition(pos);
 		//初期Y座標を保存しておく
-		stardust->SetBeforeY(pos.y);
+		backStardust->SetBeforeY(pos.y);
 
 		// 回転角
 		Vector3 rot;
@@ -1405,13 +1417,48 @@ void GamePlayScene::LoadLevelData()
 		rot.y = objectData.rotation.m128_f32[1];
 		rot.z = objectData.rotation.m128_f32[2];
 		//newObjectにセット
-		stardust->SetRotation(rot);
+		backStardust->SetRotation(rot);
 
-		stardust->SetColor();
-		stardust->SetSize();
+		backStardust->SetColor();
+		backStardust->SetSize();
 
 		// 配列に登録
-		stardustObjects_.push_back(stardust);
+		stardustObjects_.push_back(backStardust);
+	}
+	//隕石
+	for (auto& objectData : backGroundMeteor_->objects) {
+
+		// モデルを指定して3Dオブジェクトを生成
+		backMeteor = new Meteor;
+		backMeteor->MeteorInitialize();
+		//モデル読み込み
+		backModelMeteor = Model::LoadFromOBJ("bigMeteor");
+		meteorModels_.insert(std::make_pair("meteor", backModelMeteor));
+		backMeteor->SetModel(backModelMeteor);
+		// 座標
+		Vector3 pos;
+		//データの値を代入
+		pos.x = objectData.translation.m128_f32[0];
+		pos.y = objectData.translation.m128_f32[1];
+		pos.z = objectData.translation.m128_f32[2];
+		//newObjectにセット
+		backMeteor->SetPosition(pos);
+
+		// 回転角
+		Vector3 rot;
+		//データの値を代入
+		rot.x = objectData.rotation.m128_f32[0];
+		rot.y = objectData.rotation.m128_f32[1];
+		rot.z = objectData.rotation.m128_f32[2];
+		//newObjectにセット
+		backMeteor->SetRotation(rot);
+
+		backMeteor->SetIsBack(true);
+		backMeteor->SetAlpha(1.0f);
+		backMeteor->SetScale({8.0f,8.0f,8.0f});
+
+		// 配列に登録
+		meteorObjects_.push_back(backMeteor);
 	}
 }
 
