@@ -55,13 +55,13 @@ void Player::PlayerInitialize()
 	bulletLevel_ = 1;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
-	hp_ = 7;
+	hp_ = 1;
 	initSpeedZ_ = 0.5f;
 	initRotaZ_ = 400.0f;
 	initMotionTimeMax_ = 40.0f;
 
-	bulletPower_ = 1;
-	kBulletSpeed_ = 3.0f;
+	bulletPower_ = 5;
+	kBulletSpeed_ = 10.0f;
 
 	initPos_ = { 0.0f,-2.0f,0.0f };
 	initRota_ = { 0.0f,0.0f,0.0f };

@@ -31,7 +31,6 @@ void GamePlayScene::Initialize()
 
 	//カメラ初期化
 	viewProjection_ = new ViewProjection();
-	xmViewProjection = new XMViewProjection();
 	viewProjection_->Initialize();
 	viewProjection_->SetEye({ -15.0f,0.0f,10.0f });
 	viewProjection_->SetUp({ 0.0f,1.0f,0.0f });
@@ -68,26 +67,31 @@ void GamePlayScene::Initialize()
 	LoadEnemyPop();
 
 	//パーティクル
-	//自機の弾テクスチャ
-	p_dmg = Particle::LoadParticleTexture("effect01.png");
-	pm_dmg = ParticleManager::Create();
-	pm_dmg->SetParticleModel(p_dmg);
-	pm_dmg->SetXMViewProjection(xmViewProjection);
+	//ヒットテクスチャ
+	p_Hit = Particle::LoadParticleTexture("effect01.png");
+	pm_Hit = ParticleManager::Create();
+	pm_Hit->SetParticleModel(p_Hit);
+	pm_Hit->SetViewProjection(viewProjection_);
 	//wEnemyテクスチャ
 	p_wDmg = Particle::LoadParticleTexture("effect02.png");
 	pm_wDmg = ParticleManager::Create();
 	pm_wDmg->SetParticleModel(p_wDmg);
-	pm_wDmg->SetXMViewProjection(xmViewProjection);
+	pm_wDmg->SetViewProjection(viewProjection_);
 	//bEnemyテクスチャ
 	p_bDmg = Particle::LoadParticleTexture("effect03.png");
 	pm_bDmg = ParticleManager::Create();
 	pm_bDmg->SetParticleModel(p_bDmg);
-	pm_bDmg->SetXMViewProjection(xmViewProjection);
+	pm_bDmg->SetViewProjection(viewProjection_);
 	//meteorテクスチャ
 	p_meteor = Particle::LoadParticleTexture("effect04.png");
 	pm_meteor = ParticleManager::Create();
 	pm_meteor->SetParticleModel(p_meteor);
-	pm_meteor->SetXMViewProjection(xmViewProjection);
+	pm_meteor->SetViewProjection(viewProjection_);
+	//爆発テクスチャ
+	p_Ex = Particle::LoadParticleTexture("effect05.png");
+	pm_Ex = ParticleManager::Create();
+	pm_Ex->SetParticleModel(p_Ex);
+	pm_Ex->SetViewProjection(viewProjection_);
 
 	//UIの初期化
 	UIInitialize();
@@ -331,10 +335,11 @@ void GamePlayScene::Update()
 			player->ColliderUpdate();
 
 			//パーティクル更新
-			pm_dmg->Update();
+			pm_Hit->Update();
 			pm_wDmg->Update();
 			pm_bDmg->Update();
 			pm_meteor->Update();
+			pm_Ex->Update();
 			//UI更新
 			UIUpdate();
 		}
@@ -343,10 +348,11 @@ void GamePlayScene::Update()
 			//UI更新
 			UIUpdate();
 			//パーティクル更新
-			pm_dmg->Update();
+			pm_Hit->Update();
 			pm_wDmg->Update();
 			pm_bDmg->Update();
 			pm_meteor->Update();
+			pm_Ex->Update();
 			player->BulletUpdate();
 			bEnemy->BulletUpdate();
 		}
@@ -409,7 +415,9 @@ void GamePlayScene::Update()
 			isDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = wEnemys->GetPosition();
-			pm_wDmg->Fire(p_wDmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 5, { 8.0f, 0.0f });
+ 			pm_wDmg->Fire(p_wDmg, 50, deadPos,12,false, { 1.0f, 0.0f });
+			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 6.0f, 0.0f });
+			pm_Ex->Fire(p_Ex, 20, deadPos, 1,true,{ 16.0f, 0.0f });
 		}
 	}
 	//無敵敵に弾が当たった時
@@ -419,7 +427,7 @@ void GamePlayScene::Update()
 		{
 			Vector3 hitPos{};
 			hitPos = invEnemys->GetPosition();
-			pm_dmg->Fire(p_dmg, 10, { hitPos.x,hitPos.y,hitPos.z }, 0, 5, { 4.0f, 0.0f });
+			pm_Hit->Fire(p_Hit, 30, hitPos, 5, false, { 1.0f, 0.0f });
 		}
 	}
 
@@ -430,7 +438,8 @@ void GamePlayScene::Update()
 		{
 			Vector3 deadPos{};
 			deadPos = enemys->GetPosition();
-			pm_dmg->Fire(p_dmg, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 12, { 4.0f, 0.0f });
+			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 6.0f, 0.0f });
+			pm_Ex->Fire(p_Ex, 20, deadPos,1, true, { 4.0f, 0.0f });
 		}
 	}
 
@@ -442,7 +451,9 @@ void GamePlayScene::Update()
 			isDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = meteors->GetPosition();
-			pm_meteor->Fire(p_meteor, 20, { deadPos.x,deadPos.y,deadPos.z }, 0, 16, { 8.0f, 0.0f });
+			pm_meteor->Fire(p_meteor, 50, deadPos,12, false, { 1.0f, 0.0f });
+			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 6.0f, 0.0f });
+			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 16.0f, 0.0f });
 		}
 	}
 
@@ -476,7 +487,7 @@ void GamePlayScene::Update()
 				bossDeadPos_ = bEnemy->GetPosition();
 				explosion01_->SetPosition(Vector3(bossDeadPos_.x, bossDeadPos_.y, bossDeadPos_.z));
 				explosion02_->SetPosition(Vector3(bossDeadPos_.x, bossDeadPos_.y, bossDeadPos_.z));
-				pm_bDmg->Fire(p_bDmg, 50, { bossDeadPos_.x,bossDeadPos_.y,bossDeadPos_.z }, 0, 4, { 4.0f, 0.0f });
+				pm_bDmg->Fire(p_bDmg, 50, bossDeadPos_, 4, false, { 4.0f, 0.0f });
 			}
 		}
 	}
@@ -571,7 +582,8 @@ void GamePlayScene::Draw()
 	//エフェクト描画前処理
 	ParticleManager::PreDraw(dxCommon_->GetCommandList());
 
-	pm_dmg->Draw();
+	pm_Hit->Draw();
+	pm_Ex->Draw();
 	pm_wDmg->Draw();
 	pm_bDmg->Draw();
 	pm_meteor->Draw();
@@ -603,21 +615,22 @@ void GamePlayScene::Finalize()
 	delete wEnemy;
 	delete bEnemy;
 	delete invincibleEnemy;
-	delete p_dmg;
-	delete pm_dmg;
+	delete p_Hit;
+	delete pm_Hit;
 	delete p_wDmg;
 	delete pm_wDmg;
 	delete p_bDmg;
 	delete pm_bDmg;
 	delete p_meteor;
 	delete pm_meteor;
+	delete p_Ex;
+	delete pm_Ex;
 	delete explosion01_;
 	delete explosion02_;
 	delete explosion03_;
 
 	//カメラ解放
 	delete viewProjection_;
-	delete xmViewProjection;
 }
 
 void GamePlayScene::GameReset()
@@ -1786,7 +1799,7 @@ void GamePlayScene::ReticleUpdate()
 
 		//ビュー行列とプロジェクション行列,ビューポート行列を合成する
 		matViewprojectionViewport_ =
-			viewProjection_->matView * viewProjection_->matProjection * matViewport_;
+			viewProjection_->matView_ * viewProjection_->matProjection_ * matViewport_;
 		//ワールド→スクリーン座標変換
 		reticleWorldPos_ = Transform(reticleWorldPos_, matViewprojectionViewport_);
 		//座標設定

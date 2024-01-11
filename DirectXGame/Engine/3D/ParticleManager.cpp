@@ -16,8 +16,8 @@ using namespace Microsoft::WRL;
 /// 静的メンバ変数の実体
 ID3D12Device* ParticleManager::device_ = nullptr;
 ID3D12GraphicsCommandList* ParticleManager::cmdList_ = nullptr;
-ComPtr<ID3D12RootSignature> ParticleManager::rootsignature;
-ComPtr<ID3D12PipelineState> ParticleManager::pipelinestate;
+ComPtr<ID3D12RootSignature> ParticleManager::rootSignature_;
+ComPtr<ID3D12PipelineState> ParticleManager::pipelineState_;
 
 void ParticleManager::StaticInitialize(ID3D12Device* device)
 {
@@ -41,9 +41,9 @@ void ParticleManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 	ParticleManager::cmdList_ = cmdList;
 
 	// パイプラインステートの設定
-	cmdList->SetPipelineState(pipelinestate.Get());
+	cmdList->SetPipelineState(pipelineState_.Get());
 	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(rootsignature.Get());
+	cmdList->SetGraphicsRootSignature(rootSignature_.Get());
 	// プリミティブ形状を設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 }
@@ -239,13 +239,13 @@ void ParticleManager::InitializeGraphicsPipeline()
 	// バージョン自動判定のシリアライズ
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	// ルートシグネチャの生成
-	result = device_->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
+	result = device_->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(result));
 
-	gpipeline.pRootSignature = rootsignature.Get();
+	gpipeline.pRootSignature = rootSignature_.Get();
 
 	// グラフィックスパイプラインの生成
-	result = device_->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelinestate));
+	result = device_->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineState_));
 	assert(SUCCEEDED(result));
 
 }
@@ -278,16 +278,14 @@ void ParticleManager::Update()
 {
 	HRESULT result;
 
-	particle->Update();
-	XMMATRIX matView = xmViewProjection_->GetMatViewProjection();
-	XMMATRIX matBillboard = xmViewProjection_->GetMatBillboard();
+	particle_->Update();
+	Matrix4 matView = viewProjection_->GetMatViewProjection();
 
 	// 定数バッファへデータ転送
 	ConstBufferData* constMap = nullptr;
 	result = constBuff->Map(0, nullptr, (void**)&constMap);
 	//行列の合成
 	constMap->mat = matView;
-	constMap->matBillboard = matBillboard;
 	constBuff->Unmap(0, nullptr);
 }
 
@@ -300,28 +298,56 @@ void ParticleManager::Draw()
 	// 定数バッファビューをセット
 	cmdList_->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
 
-	particle->Draw(cmdList_);
+	particle_->Draw(cmdList_);
 }
 
-void ParticleManager::Fire(Particle* particle_, int life, const XMFLOAT3& pos_,float setAcc,int setNum, const XMFLOAT2& setscale)
+void ParticleManager::Fire(Particle* particle, int life, const Vector3& pos_, int setNum, bool isStop, const Vector2& setscale)
 {
 	for (int i = 0; i < setNum; i++)
 	{
 		//乱数生成装置
 		std::random_device seed_gen;
 		std::mt19937_64 engine(seed_gen());
-		std::uniform_real_distribution<float>dist(-4.5f, 4.5f);
+		std::uniform_real_distribution<float>dist(-0.3f, 0.3f);
 
-		XMFLOAT3 vel{};
-		vel.x = dist(engine);
-		vel.y = dist(engine);
-		vel.z = dist(engine);
-		//重力に見立ててYのみ{0.001f,0}でランダムに分布
-		XMFLOAT3 acc{};
-		const float md_acc = setAcc;
-		acc.y = -(float)rand() / RAND_MAX * md_acc;
+		Vector3 vel{};
+		//固定させないならランダムで方向を割り当てる
+		if (isStop == false)
+		{
+			vel.x = dist(engine);
+			vel.y = dist(engine);
+			vel.z = -1.0f;
+		}
+		//追加
+		particle->Add(life, pos_, vel, setscale.x, setscale.y);
+	}
+}
+
+void ParticleManager::ChasePlayer(Particle* particle, int life, Vector3 pos_, const Vector2& setscale)
+{
+	pos_.y -= 3.0f;
+	//向きは固定
+	Vector3 vel{ 0.0f,0.0f,-1.0f };
+	//追加
+	particle->Add(life, pos_, vel, setscale.x, setscale.y);
+}
+
+void ParticleManager::PlayerEx(Particle* particle, int life, Vector3 pos_, int setNum, const Vector2& setscale)
+{
+	for (int i = 0; i < setNum; i++)
+	{
+		//乱数生成装置
+		std::random_device seed_gen;
+		std::mt19937_64 engine(seed_gen());
+		std::uniform_real_distribution<float>dist(-0.1f, 0.1f);
+
+		//z固定で上下左右に散らす
+		pos_.x = dist(engine);
+		pos_.y = dist(engine);
+		//移動する向きは固定
+		Vector3 vel{ 0.0f,0.0f,-1.0f };
 
 		//追加
-		particle_->Add(life, pos_, vel, acc, setscale.x, setscale.y);
+		particle->Add(life, pos_, vel, setscale.x, setscale.y);
 	}
 }

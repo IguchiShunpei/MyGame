@@ -36,6 +36,8 @@ public:// メンバ関数
 
 	const Vector3& GetEye() { return eye_; }
 
+	const Matrix4& GetMatViewProjection() { return matViewProjection_; }
+
 	void SetEye(const Vector3& eye) { this->eye_ = eye; }
 
 	void SetTarget(const Vector3& target) { this->target_ = target; }
@@ -77,9 +79,11 @@ public:// パブリック変数
 #pragma endregion
 
 	// ビュー行列
-	Matrix4 matView;
+	Matrix4 matView_;
 	// 射影行列
-	Matrix4 matProjection;
+	Matrix4 matProjection_;
+	// 合成
+	Matrix4 matViewProjection_;
 
 private:// メンバ変数
 

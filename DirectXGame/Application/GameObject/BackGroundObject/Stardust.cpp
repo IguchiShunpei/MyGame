@@ -57,7 +57,7 @@ void Stardust::SetSize()
 	switch (stardustSize_)
 	{
 	case 0:
-		SetScale({ 0.12f,0.12f,0.12f });
+		SetScale({ 0.1f,0.1f,0.1f });
 		break;
 	case 1:
 		SetScale({ 0.07f,0.07f,0.07f });
