@@ -24,7 +24,7 @@ void Meteor::MeteorInitialize()
 	backZ_ = 600.0f;
 
 	rotaSpeed_ = 1.0f;
-	worldTransform_.scale_ = Vector3(1.0f, 1.0f, 1.0f);
+	worldTransform_.scale_ = Vector3(2.0f, 2.0f,2.0f);
 
 	hp_ = 3;
 

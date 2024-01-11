@@ -22,6 +22,7 @@ void ViewProjection::Initialize()
 	CreateConstBuffer();
 	Map();
 	UpdateMatrix();
+	matViewProjection_ = matView_ * matProjection_;
 }
 
 void ViewProjection::CreateConstBuffer()
@@ -52,12 +53,12 @@ void ViewProjection::Map()
 void ViewProjection::UpdateMatrix()
 {
 	// ビュー行列の作成
-	matView.ViewMat(eye_, target_, up_);
+	matView_.ViewMat(eye_, target_, up_);
 	// 射影行列の作成
-	matProjection.ProjectionMat(fovAngleY, aspectRatio, nearZ, farZ);
+	matProjection_.ProjectionMat(fovAngleY, aspectRatio, nearZ, farZ);
 
 	// 定数バッファへの書き込み
-	constMap->view = matView;
-	constMap->projection = matProjection;
+	constMap->view = matView_;
+	constMap->projection = matProjection_;
 	constMap->cameraPos = eye_;
 }

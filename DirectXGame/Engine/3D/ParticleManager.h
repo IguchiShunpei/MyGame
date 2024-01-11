@@ -7,33 +7,31 @@
 #pragma once
 
 #include "Particle.h"
-#include "XMViewProjection.h"
+#include "ViewProjection.h"
 #include <Windows.h>
 #include <wrl.h>
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include <d3dx12.h>
 #include <random>
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include "Matrix4.h"
 
 /// 3Dオブジェクト
 class ParticleManager
 {
-private: // エイリアス
+private:
 	// Microsoft::WRL::を省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// DirectX::を省略
-	using XMFLOAT2 = DirectX::XMFLOAT2;
-	using XMFLOAT3 = DirectX::XMFLOAT3;
-	using XMFLOAT4 = DirectX::XMFLOAT4;
-	using XMMATRIX = DirectX::XMMATRIX;
-
 public: // サブクラス
 	// 定数バッファ用データ構造体
 	struct ConstBufferData
 	{
-		//XMFLOAT4 color;	// 色 (RGBA)
-		XMMATRIX mat;	// ３Ｄ変換行列
-		XMMATRIX matBillboard;	//ビルボード行列
+		Vector4 color;	// 色 (RGBA)
+		Matrix4 mat;	// ３Ｄ変換行列
+		Matrix4 matBillboard;	//ビルボード行列
 	};
 public: // 静的メンバ関数
 	/// 静的初期化
@@ -54,9 +52,9 @@ private: // 静的メンバ変数
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList_;
 	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootsignature;
+	static ComPtr<ID3D12RootSignature> rootSignature_;
 	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelinestate;
+	static ComPtr<ID3D12PipelineState> pipelineState_;
 
 private:// 静的メンバ関数
 
@@ -72,21 +70,26 @@ public: // メンバ関数
 	void Draw();
 
 	/// パーティクル発射
-	void Fire(Particle* particle, int life, const XMFLOAT3& pos_ ,float setAcc, int setNum, const XMFLOAT2& setscale);
+	void Fire(Particle* particle, int life, const Vector3& pos_ , int setNum,bool isStop, const Vector2& setscale);
+
+	//player関係のエフェクト
+	void ChasePlayer(Particle* particle, int life,Vector3 pos_, const Vector2& setscale);
+	//player死亡時の爆発
+	void PlayerEx(Particle* particle, int life,Vector3 pos_, int setNum, const Vector2& setscale);
 
 private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuff; // 定数バッファ
 	//スケール
-	XMFLOAT3 scale = { 1,1,1 };
+	Vector3 scale = { 1,1,1 };
 
-	//DirectXMathを使ったViewProjection
-	XMViewProjection* xmViewProjection_;
+	//ViewProjection
+	ViewProjection* viewProjection_;
 	//パーティクル
-	Particle* particle;
+	Particle* particle_;
 
 public://setter
 	//パーティクルモデル
-	void SetParticleModel(Particle* particlemodel) { this->particle = particlemodel; }
+	void SetParticleModel(Particle* particleModel) { this->particle_ = particleModel; }
 	//カメラ
-	void SetXMViewProjection(XMViewProjection* xmViewProjection) { this->xmViewProjection_ = xmViewProjection; }
+	void SetViewProjection(ViewProjection* viewProjection) { this->viewProjection_ = viewProjection; }
 };

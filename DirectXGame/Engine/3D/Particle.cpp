@@ -260,7 +260,7 @@ void Particle::Draw(ID3D12GraphicsCommandList* cmdList)
 
 }
 
-void Particle::Add(int life, XMFLOAT3 position, XMFLOAT3 velocity, XMFLOAT3 accel, float start_scale, float end_scale)
+void Particle::Add(int life, Vector3 position, Vector3 velocity, float start_scale, float end_scale)
 {
 	//リストに要素を追加
 	particles_.emplace_front();
@@ -269,20 +269,9 @@ void Particle::Add(int life, XMFLOAT3 position, XMFLOAT3 velocity, XMFLOAT3 acce
 	//値セット
 	p.position = position;
 	p.velocity = velocity;
-	p.accel = accel;
 	p.num_frame = life;
 
 	p.s_Scale = start_scale;
 	p.e_Scale = end_scale;
 	p.scale = p.s_Scale;
-}
-
-const DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
-{
-	XMFLOAT3 result;
-
-	result.x = lhs.x + rhs.x;
-	result.y = lhs.y + rhs.y;
-	result.z = lhs.z + rhs.z;
-	return result;
 }

@@ -133,7 +133,6 @@
     <ClCompile Include="DirectXGame\Engine\Base\FPSFixed.cpp" />
     <ClCompile Include="DirectXGame\Engine\Base\WinApp.cpp" />
     <ClCompile Include="DirectXGame\Engine\Camera\ViewProjection.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Camera\XMViewProjection.cpp" />
     <ClCompile Include="DirectXGame\Engine\Collision\Collision.cpp" />
     <ClCompile Include="DirectXGame\Engine\Collision\CollisionManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Collision\CollisionPrimitive.cpp" />
@@ -259,7 +258,6 @@
     <ClInclude Include="DirectXGame\Engine\Base\FPSFixed.h" />
     <ClInclude Include="DirectXGame\Engine\Base\WinApp.h" />
     <ClInclude Include="DirectXGame\Engine\Camera\ViewProjection.h" />
-    <ClInclude Include="DirectXGame\Engine\Camera\XMViewProjection.h" />
     <ClInclude Include="DirectXGame\Engine\Collision\BaseCollider.h" />
     <ClInclude Include="DirectXGame\Engine\Collision\Collision.h" />
     <ClInclude Include="DirectXGame\Engine\Collision\CollisionInfo.h" />

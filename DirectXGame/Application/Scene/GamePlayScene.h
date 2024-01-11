@@ -180,7 +180,6 @@ private://メンバ変数
 
 	//カメラ
 	ViewProjection* viewProjection_ = nullptr;
-	XMViewProjection* xmViewProjection = nullptr;
 
 	//プレイヤー
 	Player* player;
@@ -213,17 +212,21 @@ private://メンバ変数
 	CollisionManager* collisionManager = nullptr;
 
 	//パーティクル
-	Particle* p_dmg = nullptr;
-	ParticleManager* pm_dmg = nullptr;
-
+	//弾が当たったエフェクト
+	Particle* p_Hit = nullptr;
+	ParticleManager* pm_Hit = nullptr;
+	//雑魚敵が死亡したときのエフェクト
 	Particle* p_wDmg = nullptr;
 	ParticleManager* pm_wDmg = nullptr;
-
+	//ボスが死亡したときのエフェクト
 	Particle* p_bDmg = nullptr;
 	ParticleManager* pm_bDmg = nullptr;
-
+	//隕石を壊した時のエフェクト
 	Particle* p_meteor = nullptr;
 	ParticleManager* pm_meteor = nullptr;
+	//全般的な爆発エフェクト
+	Particle* p_Ex = nullptr;
+	ParticleManager* pm_Ex = nullptr;
 
 	Stardust* backObjStardust = nullptr;
 	Model* backModelStardust = nullptr;

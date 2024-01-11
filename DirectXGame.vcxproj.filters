@@ -123,9 +123,6 @@
     <ClCompile Include="DirectXGame\Engine\Camera\ViewProjection.cpp">
       <Filter>ソース ファイル\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Camera\XMViewProjection.cpp">
-      <Filter>ソース ファイル\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Collision\Collision.cpp">
       <Filter>ソース ファイル\Collision</Filter>
     </ClCompile>
@@ -322,9 +319,6 @@
       <Filter>ヘッダー ファイル\Base</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Camera\ViewProjection.h">
-      <Filter>ヘッダー ファイル\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Camera\XMViewProjection.h">
       <Filter>ヘッダー ファイル\Camera</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Collision\BaseCollider.h">
