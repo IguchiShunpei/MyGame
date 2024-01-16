@@ -70,12 +70,14 @@ public: // メンバ関数
 	void Draw();
 
 	/// パーティクル発射
-	void Fire(Particle* particle, int life, const Vector3& pos_ , int setNum,bool isStop, const Vector2& setscale);
+	void Fire(Particle* particle, int life, const Vector3& pos, int setNum,bool isStop, const Vector2& setScale);
 
 	//player関係のエフェクト
-	void ChasePlayer(Particle* particle, int life,Vector3 pos_, const Vector2& setscale);
-	//player死亡時の爆発
-	void PlayerEx(Particle* particle, int life,Vector3 pos_, int setNum, const Vector2& setscale);
+	void ChasePlayer(Particle* particle, int life,Vector3 pos, const Vector2& setScale);
+	//player爆発前のエフェクト
+	void PlayerExBefore(Particle* particle, int life,Vector3 pos, int setNum, const Vector2& setScale);
+	//player爆発後のエフェクト
+	void PlayerExAfter(Particle* particle, int life, Vector3 pos, int setNum, const Vector2& setScale);
 
 private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuff; // 定数バッファ
