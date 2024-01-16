@@ -216,17 +216,20 @@ private://メンバ変数
 	Particle* p_Hit = nullptr;
 	ParticleManager* pm_Hit = nullptr;
 	//雑魚敵が死亡したときのエフェクト
-	Particle* p_wDmg = nullptr;
-	ParticleManager* pm_wDmg = nullptr;
+	Particle* p_WDmg = nullptr;
+	ParticleManager* pm_WDmg = nullptr;
 	//ボスが死亡したときのエフェクト
-	Particle* p_bDmg = nullptr;
-	ParticleManager* pm_bDmg = nullptr;
+	Particle* p_BDmg = nullptr;
+	ParticleManager* pm_BDmg = nullptr;
 	//隕石を壊した時のエフェクト
-	Particle* p_meteor = nullptr;
-	ParticleManager* pm_meteor = nullptr;
+	Particle* p_Meteor = nullptr;
+	ParticleManager* pm_Meteor = nullptr;
 	//全般的な爆発エフェクト
 	Particle* p_Ex = nullptr;
 	ParticleManager* pm_Ex = nullptr;
+	//自機の死亡時エフェクト
+	Particle* p_PEx = nullptr;
+	ParticleManager* pm_PEx = nullptr;
 
 	Stardust* backObjStardust = nullptr;
 	Model* backModelStardust = nullptr;

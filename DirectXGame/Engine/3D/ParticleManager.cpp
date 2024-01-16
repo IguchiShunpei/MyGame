@@ -301,7 +301,7 @@ void ParticleManager::Draw()
 	particle_->Draw(cmdList_);
 }
 
-void ParticleManager::Fire(Particle* particle, int life, const Vector3& pos_, int setNum, bool isStop, const Vector2& setscale)
+void ParticleManager::Fire(Particle* particle, int life, const Vector3& pos_, int setNum, bool isStop, const Vector2& setScale)
 {
 	for (int i = 0; i < setNum; i++)
 	{
@@ -319,35 +319,60 @@ void ParticleManager::Fire(Particle* particle, int life, const Vector3& pos_, in
 			vel.z = -1.0f;
 		}
 		//追加
-		particle->Add(life, pos_, vel, setscale.x, setscale.y);
+		particle->Add(life, pos_, vel, setScale.x, setScale.y);
 	}
 }
 
-void ParticleManager::ChasePlayer(Particle* particle, int life, Vector3 pos_, const Vector2& setscale)
+void ParticleManager::ChasePlayer(Particle* particle, int life, Vector3 pos_, const Vector2& setScale)
 {
 	pos_.y -= 3.0f;
 	//向きは固定
 	Vector3 vel{ 0.0f,0.0f,-1.0f };
 	//追加
-	particle->Add(life, pos_, vel, setscale.x, setscale.y);
+	particle->Add(life, pos_, vel, setScale.x, setScale.y);
 }
 
-void ParticleManager::PlayerEx(Particle* particle, int life, Vector3 pos_, int setNum, const Vector2& setscale)
+void ParticleManager::PlayerExBefore(Particle* particle, int life, Vector3 pos, int setNum, const Vector2& setScale)
 {
 	for (int i = 0; i < setNum; i++)
 	{
 		//乱数生成装置
 		std::random_device seed_gen;
 		std::mt19937_64 engine(seed_gen());
-		std::uniform_real_distribution<float>dist(-0.1f, 0.1f);
+		std::uniform_real_distribution<float>dist(-1.5f, 1.5f);
 
-		//z固定で上下左右に散らす
-		pos_.x = dist(engine);
-		pos_.y = dist(engine);
+		//散らす
+		pos.x = dist(engine);
+		pos.y = dist(engine);
+		pos.z -= 0.5f;
 		//移動する向きは固定
-		Vector3 vel{ 0.0f,0.0f,-1.0f };
+		Vector3 vel{ -0.5f,0.0f,0.0f };
 
 		//追加
-		particle->Add(life, pos_, vel, setscale.x, setscale.y);
+		particle->Add(life, pos, vel, setScale.x, setScale.y);
 	}
+}
+
+void ParticleManager::PlayerExAfter(Particle* particle, int life, Vector3 pos, int setNum, const Vector2& setScale)
+{
+	for (int i = 0; i < setNum; i++)
+	{
+		//乱数生成装置
+		std::random_device seed_gen;
+		std::mt19937_64 engine(seed_gen());
+		std::uniform_real_distribution<float>dist(-0.3f, 0.3f);
+
+		//配置座標を散らす
+		pos.x = dist(engine);
+		pos.y = dist(engine);
+		pos.z += 20.0f;
+		//移動する向きを散らす
+		Vector3 vel;
+		vel.x = dist(engine);
+		vel.y = dist(engine);
+
+		//追加
+		particle->Add(life, pos, vel, setScale.x, setScale.y);
+	}
+	
 }
