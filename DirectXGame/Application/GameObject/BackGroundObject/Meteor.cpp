@@ -20,13 +20,15 @@ void Meteor::MeteorInitialize()
 	SetModel(meteorModel_);
 
 	speed_ = 0.2f;
-	frontZ_ = -100.0f;
+	frontZ_ = -200.0f;
 	backZ_ = 600.0f;
 
 	rotaSpeed_ = 1.0f;
 	worldTransform_.scale_ = Vector3(2.0f, 2.0f,2.0f);
 
 	hp_ = 3;
+
+	hitColor_ = {3.0f,3.0f,3.0f};
 
 	//乱数生成装置
 	std::random_device seed_gen;
@@ -35,24 +37,32 @@ void Meteor::MeteorInitialize()
 	std::uniform_int_distribution<> rotaDirection(0, 5);
 	rotaDirection_ = rotaDirection(engine);
 
+	std::uniform_int_distribution<> size(0, 2);
+	sizeNum_ = size(engine);
+
 	isHit_ = false;
 	isHitEnd_ = true;
 	isInit_ = false;
 
 	alpha_ = 0.0;
 	alphaMax_ = 1.0f;
-}
+
+	sizes_[0] = 4.0f;
+	sizes_[1] = 8.0f;
+	sizes_[2] = 12.0f;
+
+};
 
 void Meteor::MeteorUpdate()
 {
-	if (alpha_ < 1.0f)
+	if (alpha_ < alphaMax_)
 	{
 		alpha_ += 0.01f;
 	}
 	else
 	{
 		isInit_ = true;
-		alpha_ = 1.0f;
+		alpha_ = alphaMax_;
 	}
 
 
@@ -128,7 +138,7 @@ void Meteor::Damage()
 	if (isHit_ == true)
 	{
 		hp_--;
-		color_ = { 3.0f,3.0f,3.0f };
+		color_ = hitColor_;
 		if (hp_ <= 0)
 		{
 			isDead_ = true;
@@ -154,6 +164,33 @@ void Meteor::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	if (strcmp(toCollisionName, str1) == 0)
 	{
 		isHit_ = true;
+	}
+}
+
+void Meteor::SetSpeed(float min,float max)
+{
+	//乱数生成装置
+	std::random_device seed_gen;
+	std::mt19937_64 engine(seed_gen());
+	std::uniform_real_distribution<float>speed(min, max);
+
+	speed_ = speed(engine);
+}
+
+void Meteor::SetRandomSize()
+{
+	//割り当てられた回転の向きを実行
+	switch (sizeNum_)
+	{
+	case 0:
+		worldTransform_.scale_ = {sizes_[0],sizes_[0],sizes_[0] };
+		break;
+	case 1:
+		worldTransform_.scale_ = { sizes_[1],sizes_[1],sizes_[1] };
+		break;
+	case 2:
+		worldTransform_.scale_ = { sizes_[2],sizes_[2],sizes_[2] };
+		break;
 	}
 }
 

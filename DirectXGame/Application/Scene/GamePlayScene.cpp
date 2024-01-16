@@ -68,7 +68,7 @@ void GamePlayScene::Initialize()
 
 	//パーティクル
 	//ヒットテクスチャ
-	p_Hit = Particle::LoadParticleTexture("effect01.png");
+	p_Hit = Particle::LoadParticleTexture("hitEffect.png");
 	pm_Hit = ParticleManager::Create();
 	pm_Hit->SetParticleModel(p_Hit);
 	pm_Hit->SetViewProjection(viewProjection_);
@@ -937,13 +937,13 @@ void GamePlayScene::PlayerDead()
 	if (isPlayerDead_ == false)
 	{
 		pm_Ex->PlayerExBefore(p_Ex, 20, player->GetPosition(), 1, { 2.0f, 0.0f });
-	}
-	//自機を動かす
-	player->worldTransform_.rotation_.z += 8.0f;
-	if (player->worldTransform_.rotation_.z >= 720.0f)
-	{
-		isPlayerDead_ = true;
-		explosion03_->PlayerExplosionUpdate(player->GetPosition());
+		//自機を動かす
+		player->worldTransform_.rotation_.z += 8.0f;
+		if (player->worldTransform_.rotation_.z >= 720.0f)
+		{
+			isPlayerDead_ = true;
+			pm_PEx->PlayerExAfter(p_PEx, 200, player->GetPosition(), 12, { 1.0f, 0.0f });
+		}
 	}
 }
 
@@ -1192,6 +1192,7 @@ void GamePlayScene::ToGameOverScene()
 		player->worldTransform_.UpdateMatrix();
 		if (isGameOver_ == true)
 		{
+			explosion03_->PlayerExplosionUpdate(player->GetPosition());
 			CameraShake(0.1f, 0.0f);
 			if (explosion03_->GetIsFinish() == true)
 			{
@@ -1207,10 +1208,6 @@ void GamePlayScene::ToGameOverScene()
 				{
 					GameSceneManager::GetInstance()->ChangeScene("GAMEOVER");
 				}
-			}
-			else
-			{
-				pm_PEx->PlayerExAfter(p_PEx, 60, player->GetPosition(), 1, { 0.3f, 0.0f });
 			}
 		}
 	}
@@ -1484,7 +1481,8 @@ void GamePlayScene::LoadLevelData()
 
 		backMeteor->SetIsBack(true);
 		backMeteor->SetAlpha(1.0f);
-		backMeteor->SetScale({ 8.0f,8.0f,8.0f });
+		backMeteor->SetSpeed(0.1f, 1.0f);
+		backMeteor->SetRandomSize();
 
 		// 配列に登録
 		meteorObjects_.push_back(backMeteor);

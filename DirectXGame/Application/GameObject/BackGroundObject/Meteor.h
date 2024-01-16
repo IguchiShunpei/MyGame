@@ -58,6 +58,12 @@ public:
 	//isBack
 	void SetIsBack(bool isBack) { this->isBack_ = isBack; }
 
+	//speed
+	void SetSpeed(float min ,float max);
+
+	//size
+	void SetRandomSize();
+
 private:
 	//座標
 	Vector3 position_;
@@ -87,7 +93,7 @@ private:
 	//登場
 	bool isInit_;
 
-	//死亡
+	//死亡フラグ
 	bool isDead_;
 
 	//Hp
@@ -95,6 +101,7 @@ private:
 
 	//色
 	Vector3 color_;
+	Vector3 hitColor_;
 
 	//alpha
 	float alpha_;
@@ -105,4 +112,8 @@ private:
 
 	//背景フラグ
 	bool isBack_;
+
+	//大きさ
+	int sizeNum_;
+	float sizes_[3];
 };
