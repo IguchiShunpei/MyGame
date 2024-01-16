@@ -360,12 +360,11 @@ void ParticleManager::PlayerExAfter(Particle* particle, int life, Vector3 pos, i
 		//乱数生成装置
 		std::random_device seed_gen;
 		std::mt19937_64 engine(seed_gen());
-		std::uniform_real_distribution<float>dist(-0.3f, 0.3f);
+		std::uniform_real_distribution<float>dist(-0.1f, 0.1f);
 
 		//配置座標を散らす
 		pos.x = dist(engine);
 		pos.y = dist(engine);
-		pos.z += 20.0f;
 		//移動する向きを散らす
 		Vector3 vel;
 		vel.x = dist(engine);
