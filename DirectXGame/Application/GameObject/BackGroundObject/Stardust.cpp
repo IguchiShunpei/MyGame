@@ -14,7 +14,7 @@ void Stardust::StardustInitialize()
 	// 3Dオブジェクト生成
 	Create();
 
-	speed_ = 0.1f;
+	speed_ = 0.2f;
 	frontZ_ = -100.0f;
 	backZ_ = 70.0f;
 	levRange_ = 1.0f;
@@ -60,7 +60,7 @@ void Stardust::SetSize()
 		SetScale({ 0.1f,0.1f,0.1f });
 		break;
 	case 1:
-		SetScale({ 0.07f,0.07f,0.07f });
+		SetScale({ 0.05f,0.05f,0.05f });
 		break;
 	}
 }

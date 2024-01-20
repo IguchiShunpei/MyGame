@@ -37,20 +37,12 @@ void Meteor::MeteorInitialize()
 	std::uniform_int_distribution<> rotaDirection(0, 5);
 	rotaDirection_ = rotaDirection(engine);
 
-	std::uniform_int_distribution<> size(0, 2);
-	sizeNum_ = size(engine);
-
 	isHit_ = false;
 	isHitEnd_ = true;
 	isInit_ = false;
 
 	alpha_ = 0.0;
 	alphaMax_ = 1.0f;
-
-	sizes_[0] = 4.0f;
-	sizes_[1] = 8.0f;
-	sizes_[2] = 12.0f;
-
 };
 
 void Meteor::MeteorUpdate()
@@ -175,22 +167,5 @@ void Meteor::SetSpeed(float min,float max)
 	std::uniform_real_distribution<float>speed(min, max);
 
 	speed_ = speed(engine);
-}
-
-void Meteor::SetRandomSize()
-{
-	//割り当てられた回転の向きを実行
-	switch (sizeNum_)
-	{
-	case 0:
-		worldTransform_.scale_ = {sizes_[0],sizes_[0],sizes_[0] };
-		break;
-	case 1:
-		worldTransform_.scale_ = { sizes_[1],sizes_[1],sizes_[1] };
-		break;
-	case 2:
-		worldTransform_.scale_ = { sizes_[2],sizes_[2],sizes_[2] };
-		break;
-	}
 }
 
