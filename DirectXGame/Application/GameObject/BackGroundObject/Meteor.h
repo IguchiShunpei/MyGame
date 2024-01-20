@@ -61,9 +61,6 @@ public:
 	//speed
 	void SetSpeed(float min ,float max);
 
-	//size
-	void SetRandomSize();
-
 private:
 	//座標
 	Vector3 position_;
@@ -112,8 +109,4 @@ private:
 
 	//背景フラグ
 	bool isBack_;
-
-	//大きさ
-	int sizeNum_;
-	float sizes_[3];
 };

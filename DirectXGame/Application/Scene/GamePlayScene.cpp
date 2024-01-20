@@ -68,7 +68,7 @@ void GamePlayScene::Initialize()
 
 	//パーティクル
 	//ヒットテクスチャ
-	p_Hit = Particle::LoadParticleTexture("hitEffect.png");
+	p_Hit = Particle::LoadParticleTexture("effect01.png");
 	pm_Hit = ParticleManager::Create();
 	pm_Hit->SetParticleModel(p_Hit);
 	pm_Hit->SetViewProjection(viewProjection_);
@@ -97,6 +97,11 @@ void GamePlayScene::Initialize()
 	pm_PEx = ParticleManager::Create();
 	pm_PEx->SetParticleModel(p_PEx);
 	pm_PEx->SetViewProjection(viewProjection_);
+	//自機爆発テクスチャ
+	p_Smoke = Particle::LoadParticleTexture("effect07.png");
+	pm_Smoke = ParticleManager::Create();
+	pm_Smoke->SetParticleModel(p_Smoke);
+	pm_Smoke->SetViewProjection(viewProjection_);
 
 	//UIの初期化
 	UIInitialize();
@@ -353,6 +358,7 @@ void GamePlayScene::Update()
 		pm_Meteor->Update();
 		pm_Ex->Update();
 		pm_PEx->Update();
+		pm_Smoke->Update();
 	}
 
 	//全ての衝突をチェック
@@ -415,6 +421,7 @@ void GamePlayScene::Update()
 			pm_WDmg->Fire(p_WDmg, 40, deadPos, 12, false, { 1.0f, 0.0f });
 			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 4.0f, 0.0f });
 			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 18.0f, 0.0f });
+			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, { 5.0f, 0.0f });
 		}
 	}
 	//無敵敵に弾が当たった時
@@ -439,6 +446,7 @@ void GamePlayScene::Update()
 			pm_Meteor->Fire(p_Meteor, 40, deadPos, 12, false, { 1.0f, 0.0f });
 			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 4.0f, 0.0f });
 			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 18.0f, 0.0f });
+			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, {5.0f, 0.0f });
 		}
 	}
 
@@ -453,6 +461,7 @@ void GamePlayScene::Update()
 			pm_Meteor->Fire(p_Meteor, 40, deadPos, 12, false, { 1.0f, 0.0f });
 			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 4.0f, 0.0f });
 			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 18.0f, 0.0f });
+			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, { 5.0f, 0.0f });
 		}
 	}
 
@@ -587,12 +596,13 @@ void GamePlayScene::Draw()
 	ParticleManager::PreDraw(dxCommon_->GetCommandList());
 
 	pm_Hit->Draw();
-	pm_Ex->Draw();
 
-	pm_PEx->Draw();
 	pm_WDmg->Draw();
 	pm_BDmg->Draw();
 	pm_Meteor->Draw();
+	pm_Ex->Draw();
+	pm_PEx->Draw();
+	pm_Smoke->Draw();
 
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();
@@ -633,6 +643,8 @@ void GamePlayScene::Finalize()
 	delete pm_Ex;
 	delete p_PEx;
 	delete pm_PEx;
+	delete p_Smoke;
+	delete pm_Smoke;
 	delete explosion01_;
 	delete explosion02_;
 	delete explosion03_;
@@ -936,7 +948,8 @@ void GamePlayScene::PlayerDead()
 {
 	if (isPlayerDead_ == false)
 	{
-		pm_Ex->PlayerExBefore(p_Ex, 20, player->GetPosition(), 1, { 2.0f, 0.0f });
+		pm_Smoke->PlayerExBefore(p_Smoke, 20, player->GetPosition(), 1, { 2.0f, 0.0f });
+		pm_Ex->PlayerExBefore(p_Ex, 20, player->GetPosition(), 2, { 2.0f, 0.0f });
 		//自機を動かす
 		player->worldTransform_.rotation_.z += 8.0f;
 		if (player->worldTransform_.rotation_.z >= 720.0f)
@@ -1224,6 +1237,7 @@ void GamePlayScene::ToGameOverCameraWork()
 		if (playerDeadTimer_ <= playerDeadTimerMax_)
 		{
 			viewProjection_->eye_.x = deadCameraPos_.x + deadCameraMovePos_.x * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
+			viewProjection_->eye_.y = deadCameraPos_.y + deadCameraMovePos_.y * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
 			viewProjection_->eye_.z = deadCameraPos_.z + deadCameraMovePos_.z * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
 			playerDeadTimer_++;
 		}
@@ -1479,10 +1493,18 @@ void GamePlayScene::LoadLevelData()
 		//newObjectにセット
 		backMeteor->SetRotation(rot);
 
+		// 大きさ
+		Vector3 scale;
+		//データの値を代入
+		scale.x = objectData.scaling.m128_f32[0];
+		scale.y = objectData.scaling.m128_f32[1];
+		scale.z = objectData.scaling.m128_f32[2];
+		//newObjectにセット
+		backMeteor->SetScale(scale);
+
 		backMeteor->SetIsBack(true);
 		backMeteor->SetAlpha(1.0f);
 		backMeteor->SetSpeed(0.1f, 1.0f);
-		backMeteor->SetRandomSize();
 
 		// 配列に登録
 		meteorObjects_.push_back(backMeteor);
@@ -1608,6 +1630,28 @@ void GamePlayScene::UIInitialize()
 	reticle_.Update(reticle_, spriteCommon_);
 	reticle_.LoadTexture(spriteCommon_, 10, L"Resources/2d/reticle.png", dxCommon_->GetDevice());
 
+	//hp関係
+	hpBar_.Initialize(dxCommon_->GetDevice(), 11, Vector2(0.5f, 1.0f), false, false);
+	hpBar_.SetScale({ 30,300 });
+	hpBar_.SetPosition({ 0 - UIInitRange_,550,0 });
+	hpBar_.SpriteTransferVertexBuffer(hpBar_, 11);
+	hpBar_.Update(hpBar_, spriteCommon_);
+	hpBar_.LoadTexture(spriteCommon_, 11, L"Resources/2d/hpBar.png", dxCommon_->GetDevice());
+	hpFrame_.Initialize(dxCommon_->GetDevice(), 12, Vector2(0.5f, 1.0f), false, false);
+	hpFrame_.SetScale({ 30,300 });
+	hpFrame_.SetPosition({ 0 - UIInitRange_,550,0 });
+	hpFrame_.SpriteTransferVertexBuffer(hpFrame_, 12);
+	hpFrame_.Update(hpFrame_, spriteCommon_);
+	hpFrame_.LoadTexture(spriteCommon_, 12, L"Resources/2d/hpFrame.png", dxCommon_->GetDevice());
+
+	//スコア
+	score_.Initialize(dxCommon_->GetDevice(), 13, Vector2(0.0f, 0.0f), false, false);
+	score_.SetScale({ 140,60 });
+	score_.SetPosition({ 50,0 - UIInitRange_,0 });
+	score_.SpriteTransferVertexBuffer(score_, 13);
+	score_.Update(score_, spriteCommon_);
+	score_.LoadTexture(spriteCommon_, 13, L"Resources/2d/score.png", dxCommon_->GetDevice());
+
 	//レティクル関係変数初期化
 	reticleWorldPos_ = { 0.0f,0.0f,0.0f };
 	matViewport_.identity();
@@ -1640,6 +1684,9 @@ void GamePlayScene::UIInitMotion()
 		arrowRightOff_.SetPosition({ 1200 + UIInitRange_ - UIInitPos_,300,0 });
 		arrowLeftOn_.SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
 		arrowLeftOff_.SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
+		hpBar_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,700,0 });
+		hpFrame_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,700,0 });
+		score_.SetPosition({ 30, 10 - UIInitRange_ + UIInitPos_, 0 });
 	}
 	if (UIInitPos_ >= UIInitRange_)
 	{
@@ -1665,6 +1712,9 @@ void GamePlayScene::UIOutMotion()
 			arrowRightOff_.SetPosition({ 1200.0f + UIOutPos_,300.0f,0.0f });
 			arrowLeftOn_.SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
 			arrowLeftOff_.SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
+			hpBar_.SetPosition({ 0 - UIOutPos_,700,0 });
+			hpFrame_.SetPosition({ 0 - UIOutPos_,700,0 });
+			score_.SetPosition({30.0f,10.0f - UIOutPos_,0.0f });
 		}
 		else
 		{
@@ -1687,6 +1737,10 @@ void GamePlayScene::UIUpdate()
 	arrowLeftOff_.Update(arrowLeftOff_, spriteCommon_);
 	black_.Update(black_, spriteCommon_);
 	red_.Update(red_, spriteCommon_);
+	hpBar_.Update(hpBar_, spriteCommon_);
+	hpFrame_.Update(hpFrame_,spriteCommon_);
+	score_.Update(score_,spriteCommon_);
+
 	ReticleUpdate();
 }
 
@@ -1734,6 +1788,10 @@ void GamePlayScene::UIDraw()
 		red_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	}
 	reticle_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+
+	hpFrame_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	hpBar_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	score_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 }
 
 void GamePlayScene::UIMove()

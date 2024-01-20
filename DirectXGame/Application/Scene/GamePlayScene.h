@@ -230,6 +230,9 @@ private://メンバ変数
 	//自機の死亡時エフェクト
 	Particle* p_PEx = nullptr;
 	ParticleManager* pm_PEx = nullptr;
+	//煙
+	Particle* p_Smoke = nullptr;
+	ParticleManager* pm_Smoke = nullptr;
 
 	Stardust* backObjStardust = nullptr;
 	Model* backModelStardust = nullptr;
@@ -254,6 +257,11 @@ private://メンバ変数
 	Sprite arrowRightOff_;
 	Sprite arrowLeftOn_;
 	Sprite arrowLeftOff_;
+	//hp
+	Sprite hpBar_;
+	Sprite hpFrame_;
+	//スコア
+	Sprite score_;
 
 	//画面
 	Sprite black_;

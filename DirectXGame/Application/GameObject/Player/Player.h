@@ -88,7 +88,11 @@ public:
 	//bulletLevel
 	int GetBulletLevel() const { return bulletLevel_; }
 	//bulletDamage
-	int GetBulletPower()const { return bulletPower_; };
+	int GetBulletPower()const { return bulletPower_; }
+	//hp
+	int GetHp()const { return hp_; }
+	//hpMax
+	int GetHpMax()const { return hpMax_; }
 
 	//setter
 	//IsHit
@@ -145,6 +149,7 @@ private:
 	int bulletDamage_;
 	//体力
 	int hp_;
+	int hpMax_;
 	//弾の速度
 	float kBulletSpeed_;
 	//弾の向き

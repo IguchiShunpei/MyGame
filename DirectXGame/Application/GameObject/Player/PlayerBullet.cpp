@@ -29,7 +29,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_);
-	SetScale(Vector3(2.5f, 2.5f, 2.5f));
+	SetScale(Vector3(1.5f, 1.5f, 1.5f));
 	if (bulletDir == 0)
 	{
 		SetRotation(Vector3(0.0f, -180.0f, 0.0f));
