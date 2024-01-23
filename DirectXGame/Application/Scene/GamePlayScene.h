@@ -285,6 +285,8 @@ private://メンバ変数
 	float redAlphaNumMin_;
 	//被ダメージフラグ
 	bool isRed_;
+	//ダメージ量
+	float hpDamage_;
 
 	//レティクル
 	WorldTransform worldTransform3DReticle_;

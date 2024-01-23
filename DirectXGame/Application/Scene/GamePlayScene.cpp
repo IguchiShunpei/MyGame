@@ -376,9 +376,7 @@ void GamePlayScene::Update()
 			//攻撃を受けた時の無敵フラグがtrueになったら
 			if (player->GetIsInv() == true)
 			{
-				//無敵時間
-				hitPlayerTimer_++;
-				if (hitPlayerTimer_ < hitPlayerTimerMax_)
+				if (hitPlayerTimer_ <= hitPlayerTimerMax_)
 				{
 					isRed_ = true;
 					//赤フェードアウト
@@ -396,6 +394,13 @@ void GamePlayScene::Update()
 					{
 						viewProjection_->SetEye(cameraShakePos_);
 					}
+					//ダメージのイージング処理
+					hpDamage_ = 0.0f + (1.0f * MathFunc::easeOutSine((float)hitPlayerTimer_ / (float)hitPlayerTimerMax_));
+					//hpのスケールに残りhpを反映
+					hpBar_.SetScale({ 24.0f,294.0f * ((((float)player->GetHp() + 1.0f) - hpDamage_) / (float)player->GetHpMax()) });
+					hpBar_.SpriteTransferVertexBuffer(hpBar_, 11);
+					//無敵時間
+					hitPlayerTimer_++;
 				}
 				else
 				{
@@ -404,6 +409,7 @@ void GamePlayScene::Update()
 					player->SetIsHit(false);
 					player->SetIsInv(false);
 					viewProjection_->SetEye(cameraShakePos_);
+					hpDamage_ = 0.0f;
 					hitPlayerTimer_ = 0;
 				}
 			}
@@ -446,7 +452,7 @@ void GamePlayScene::Update()
 			pm_Meteor->Fire(p_Meteor, 40, deadPos, 12, false, { 1.0f, 0.0f });
 			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 4.0f, 0.0f });
 			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 18.0f, 0.0f });
-			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, {5.0f, 0.0f });
+			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, { 5.0f, 0.0f });
 		}
 	}
 
@@ -1632,8 +1638,8 @@ void GamePlayScene::UIInitialize()
 
 	//hp関係
 	hpBar_.Initialize(dxCommon_->GetDevice(), 11, Vector2(0.5f, 1.0f), false, false);
-	hpBar_.SetScale({ 30,300 });
-	hpBar_.SetPosition({ 0 - UIInitRange_,550,0 });
+	hpBar_.SetScale({ 24,294 });
+	hpBar_.SetPosition({ 0 - UIInitRange_,703,0 });
 	hpBar_.SpriteTransferVertexBuffer(hpBar_, 11);
 	hpBar_.Update(hpBar_, spriteCommon_);
 	hpBar_.LoadTexture(spriteCommon_, 11, L"Resources/2d/hpBar.png", dxCommon_->GetDevice());
@@ -1643,6 +1649,8 @@ void GamePlayScene::UIInitialize()
 	hpFrame_.SpriteTransferVertexBuffer(hpFrame_, 12);
 	hpFrame_.Update(hpFrame_, spriteCommon_);
 	hpFrame_.LoadTexture(spriteCommon_, 12, L"Resources/2d/hpFrame.png", dxCommon_->GetDevice());
+
+	hpDamage_ = 0.0f;
 
 	//スコア
 	score_.Initialize(dxCommon_->GetDevice(), 13, Vector2(0.0f, 0.0f), false, false);
@@ -1667,6 +1675,7 @@ void GamePlayScene::UIInitialize()
 	reticleAlphaNumMin_ = 0.0f;
 	isInvicibleReticle_ = true;
 
+
 }
 
 void GamePlayScene::UIInitMotion()
@@ -1684,7 +1693,7 @@ void GamePlayScene::UIInitMotion()
 		arrowRightOff_.SetPosition({ 1200 + UIInitRange_ - UIInitPos_,300,0 });
 		arrowLeftOn_.SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
 		arrowLeftOff_.SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
-		hpBar_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,700,0 });
+		hpBar_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,697,0 });
 		hpFrame_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,700,0 });
 		score_.SetPosition({ 30, 10 - UIInitRange_ + UIInitPos_, 0 });
 	}
@@ -1712,9 +1721,9 @@ void GamePlayScene::UIOutMotion()
 			arrowRightOff_.SetPosition({ 1200.0f + UIOutPos_,300.0f,0.0f });
 			arrowLeftOn_.SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
 			arrowLeftOff_.SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
-			hpBar_.SetPosition({ 0 - UIOutPos_,700,0 });
+			hpBar_.SetPosition({ 0 - UIOutPos_,703,0 });
 			hpFrame_.SetPosition({ 0 - UIOutPos_,700,0 });
-			score_.SetPosition({30.0f,10.0f - UIOutPos_,0.0f });
+			score_.SetPosition({ 30.0f,10.0f - UIOutPos_,0.0f });
 		}
 		else
 		{
@@ -1738,8 +1747,8 @@ void GamePlayScene::UIUpdate()
 	black_.Update(black_, spriteCommon_);
 	red_.Update(red_, spriteCommon_);
 	hpBar_.Update(hpBar_, spriteCommon_);
-	hpFrame_.Update(hpFrame_,spriteCommon_);
-	score_.Update(score_,spriteCommon_);
+	hpFrame_.Update(hpFrame_, spriteCommon_);
+	score_.Update(score_, spriteCommon_);
 
 	ReticleUpdate();
 }
