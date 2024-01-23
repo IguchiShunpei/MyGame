@@ -55,7 +55,7 @@ void Player::PlayerInitialize()
 	bulletLevel_ = 1;
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0.0f;
-	hp_ = 3;
+	hp_ = 5;
 	hpMax_ = hp_;
 	initSpeedZ_ = 0.5f;
 	initRotaZ_ = 400.0f;
