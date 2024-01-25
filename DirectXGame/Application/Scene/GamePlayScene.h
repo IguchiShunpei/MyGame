@@ -67,11 +67,13 @@ public:
 	};
 
 public:
-	//カメラ位置切り替え
-	enum CameraPos
+	//向き
+	enum Direction
 	{
-		Front,
-		Back
+		UP,
+		DOWN,
+		RIGHT,
+		LEFT
 	};
 
 public:
@@ -115,7 +117,7 @@ public:
 	//プレイヤー登場カメラワーク
 	void PlayerInitCameraWork();
 
-	//プレイヤー死亡演出
+	//プレイヤー死亡演
 	void PlayerDead();
 
 	//BOSS戦前の演出
@@ -142,10 +144,6 @@ public:
 	//カメラシェイク
 	void CameraShake(float x,float y);
 
-	//カメラ向き変更
-	void ChangeCameraDirection();
-	void CameraMovePoint();
-
 	//カメラ基本移動
 	void MoveCamera();
 
@@ -159,6 +157,7 @@ public:
 	void UIUpdate();
 	void UIDraw();
 	void UIMove();
+	void UIColorChange();
 
 	//レティクル更新
 	void ReticleUpdate();
@@ -249,14 +248,10 @@ private://メンバ変数
 	//ロゴやUI
 	Sprite* sprite_;
 	SpriteCommon spriteCommon_;
-	Sprite arrowUpOn_;
-	Sprite arrowUpOff_;
-	Sprite arrowDownOn_;
-	Sprite arrowDownOff_;
-	Sprite arrowRightOn_;
-	Sprite arrowRightOff_;
-	Sprite arrowLeftOn_;
-	Sprite arrowLeftOff_;
+	Sprite arrowUp_;
+	Sprite arrowDown_;
+	Sprite arrowRight_;
+	Sprite arrowLeft_;
 	//hp
 	Sprite hpBar_;
 	Sprite hpFrame_;
@@ -266,6 +261,18 @@ private://メンバ変数
 	//画面
 	Sprite black_;
 	Sprite red_;
+	Sprite green_;
+
+	//画面端とUIの距離
+	float UiRange_;
+	//UIの色(押されていないの下限)
+	float uiColorNormal_;
+	//UIの色uiColor_(押されているときの上限)
+	float uiColorPush_;
+	//UIの色(現在)
+	float uiColor_[4];
+	//UIのいろの変動値
+	float uiColorNum_;
 
 	//黒alpha値
 	float blackAlpha_;
@@ -287,6 +294,8 @@ private://メンバ変数
 	bool isRed_;
 	//ダメージ量
 	float hpDamage_;
+	//緑alpha値
+	float greenAlpha_;
 
 	//レティクル
 	WorldTransform worldTransform3DReticle_;
@@ -364,17 +373,6 @@ private://メンバ変数
 	Vector3 cameraShakePos_;
 	//ボス登場時
 	Vector3 bossInitCameraPos_;
-	//カメラの向きが変わる時
-	//移動先
-	Vector3 cameraDirChangePos_;
-	//中間点
-	Vector3 cameraMovePoint_;
-	//中間点までのz移動量
-	float cameraMoveZ_;
-	//targetZ移動量
-	float moveTargetZ_;
-	//移動前の座標を保存
-	Vector3 beforeMoveCameraPos_;
 	//基本eye
 	Vector3 normalEyeNum_;
 	//基本target
@@ -468,10 +466,6 @@ private://メンバ変数
 	bool isStart_;
 	//ゲームオーバー演出
 	bool isGameOver_;
-	//カメラ向き変更フラグ
-	bool isChangeCameraDir_;
-	//カメラ移動時に中間点を通ったか
-	bool isPassPoint_;
 	//player死亡フラグ
 	bool isPlayerDead_;
 

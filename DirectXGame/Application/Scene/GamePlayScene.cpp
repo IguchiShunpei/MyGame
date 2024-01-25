@@ -110,7 +110,6 @@ void GamePlayScene::Initialize()
 	LoadLevelData();
 
 	//メンバ変数の初期化
-	cameraPos_ = CameraPos::Back;
 	cameraShakePos_ = { 0.0f,0.0f,0.0f };
 	deadCameraPos_ = { 0.0f,0.0f,0.0f };
 	deadCameraMovePos_ = { 20.0f ,0.0f,35.0f };
@@ -174,8 +173,6 @@ void GamePlayScene::Initialize()
 	isBossAlpha_ = true;
 	isBossInitCamera_ = false;
 	isStart_ = false;
-	isChangeCameraDir_ = false;
-	isPassPoint_ = false;
 	isDeadCameraShake_ = false;
 
 	//タイマー
@@ -215,8 +212,6 @@ void GamePlayScene::Update()
 	PlayerInit();
 	//UIの登場モーション
 	UIInitMotion();
-	//"CHANGE"を読み取ったらカメラ切り替え
-	ChangeCameraDirection();
 	for (auto& object : stardustObjects_)
 	{
 		object->StardustUpdate();
@@ -337,7 +332,7 @@ void GamePlayScene::Update()
 
 	if (isPlayerInit_ == true)
 	{
-		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false && isChangeCameraDir_ == false)
+		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
 			MoveCamera();
 
@@ -397,7 +392,7 @@ void GamePlayScene::Update()
 					//ダメージのイージング処理
 					hpDamage_ = 0.0f + (1.0f * MathFunc::easeOutSine((float)hitPlayerTimer_ / (float)hitPlayerTimerMax_));
 					//hpのスケールに残りhpを反映
-					hpBar_.SetScale({ 24.0f,294.0f * ((((float)player->GetHp() + 1.0f) - hpDamage_) / (float)player->GetHpMax()) });
+					hpBar_.SetScale({ 24.0f,234.0f * ((((float)player->GetHp() + 1.0f) - hpDamage_) / (float)player->GetHpMax()) });
 					hpBar_.SpriteTransferVertexBuffer(hpBar_, 11);
 					//無敵時間
 					hitPlayerTimer_++;
@@ -469,6 +464,13 @@ void GamePlayScene::Update()
 			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 18.0f, 0.0f });
 			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, { 5.0f, 0.0f });
 		}
+	}
+
+	//自機が残り体力1の時の煙
+	if (player->GetHp() == 1)
+	{
+		Vector3 pPos = player->GetPosition();
+		pm_Smoke->ChasePlayer(p_Smoke, 3, pPos,{ 1.0f, 0.0f });
 	}
 
 	//敵に弾が当たった時のカメラシェイク
@@ -849,14 +851,6 @@ void GamePlayScene::UpdateEnemyPop()
 			isBossInitCamera_ = true;
 			gameNum_ = GameNum::BossScene;
 			cameraShakePos_ = viewProjection_->GetEye();
-		}
-		//"CHANGE"を読み取ってカメラ向き変更
-		else if (key == "CHANGE")
-		{
-			isChangeCameraDir_ = true;
-			cameraDirChangePos_ = { -viewProjection_->eye_.x,viewProjection_->eye_.y,-viewProjection_->eye_.z };
-			beforeMoveCameraPos_ = viewProjection_->GetEye();
-			changeTargetNum_ = viewProjection_->target_;
 		}
 	}
 }
@@ -1270,86 +1264,12 @@ void GamePlayScene::CameraShake(float x, float y)
 	viewProjection_->UpdateMatrix();
 }
 
-void GamePlayScene::ChangeCameraDirection()
-{
-	if (isChangeCameraDir_ == true)
-	{
-		if (cameraPos_ == CameraPos::Back)
-		{
-			cameraMovePoint_ = { -20.0f,5.0f,0.0f };
-			cameraMoveZ_ = 20.0f;
-			beforeTargetNum_.z = 50.0f;
-			moveTargetZ_ = beforeTargetNum_.z * -2.0f;
-			player->SetIsChangeDir(true);
-		}
-		else if (cameraPos_ == CameraPos::Front)
-		{
-			cameraMovePoint_ = { 20.0f,5.0f,0.0f };
-			cameraMoveZ_ = -20.0f;
-			beforeTargetNum_.z = -50.0f;
-			moveTargetZ_ = beforeTargetNum_.z * -2.0f;
-			player->SetIsChangeDir(false);
-		}
-		CameraMovePoint();
-	}
-}
+void GamePlayScene::MoveCamera() {
 
-void GamePlayScene::CameraMovePoint()
-{
-	//ターゲット移動処理
-	if (targetMoveTimer_ < targetMoveTimerMax_)
-	{
-		viewProjection_->target_.z = changeTargetNum_.z + moveTargetZ_ * MathFunc::easeOutSine(targetMoveTimer_ / targetMoveTimerMax_);
-		targetMoveTimer_++;
-	}
-	else
-	{
-		viewProjection_->target_.z = -beforeTargetNum_.z;
-	}
-	//カメラ移動処理
-	if (isPassPoint_ == false)
-	{
-		viewProjection_->eye_.x = beforeMoveCameraPos_.x + (cameraMovePoint_.x - beforeMoveCameraPos_.x) * MathFunc::easeInSine(cameraMoveTimer_ / cameraMoveTimerMax_);
-		viewProjection_->eye_.z = beforeMoveCameraPos_.z + cameraMoveZ_ * MathFunc::easeInSine(cameraMoveTimer_ / cameraMoveTimerMax_);
-		cameraMoveTimer_++;
-		if (cameraMoveTimer_ > cameraMoveTimerMax_)
-		{
-			isPassPoint_ = true;
-			cameraMoveTimer_ = 0.0f;
-		}
-	}
-	else
-	{
-		viewProjection_->eye_.x = cameraMovePoint_.x + -cameraMovePoint_.x * MathFunc::easeOutSine(cameraMoveTimer_ / cameraMoveTimerMax_);
-		viewProjection_->eye_.z = cameraMovePoint_.z + cameraMoveZ_ * MathFunc::easeOutSine(cameraMoveTimer_ / cameraMoveTimerMax_);
-		cameraMoveTimer_++;
-		if (cameraMoveTimer_ > cameraMoveTimerMax_)
-		{
-			//位置のenumを切り替え
-			if (cameraPos_ == CameraPos::Back)
-			{
-				cameraPos_ = Front;
-			}
-			else
-			{
-				cameraPos_ = Back;
-			}
-			isPassPoint_ = false;
-			cameraMoveTimer_ = 0.0f;
-			isChangeCameraDir_ = false;
-			targetMoveTimer_ = 0.0f;
-			viewProjection_->eye_.z = cameraMoveZ_;
-		}
-	}
-}
-
-void GamePlayScene::MoveCamera()
-{
 	//カメラ移動処理
 	if (input_->PushKey(DIK_UP))
 	{
 		isUp_ = true;
-
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, 0.1f, 0));
 	}
 	else
@@ -1363,7 +1283,6 @@ void GamePlayScene::MoveCamera()
 	if (input_->PushKey(DIK_RIGHT))
 	{
 		isRight_ = true;
-
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0.1f, 0, 0));
 		viewProjection_->SetUp(viewProjection_->up_ + Vector3(-0.0025f, 0, 0));
 	}
@@ -1379,10 +1298,10 @@ void GamePlayScene::MoveCamera()
 			viewProjection_->SetUp(viewProjection_->up_ + Vector3(0.0025f, 0, 0));
 		}
 	}
+	arrowRight_.SetColor(arrowRight_, { uiColorPush_,uiColorPush_,uiColorPush_,1.0f });
 	if (input_->PushKey(DIK_LEFT))
 	{
 		isLeft_ = true;
-
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(-0.1f, 0, 0));
 		viewProjection_->SetUp(viewProjection_->up_ + Vector3(0.0025f, 0, 0));
 	}
@@ -1398,10 +1317,10 @@ void GamePlayScene::MoveCamera()
 			viewProjection_->SetUp(viewProjection_->up_ + Vector3(-0.0025f, 0, 0));
 		}
 	}
+
 	if (input_->PushKey(DIK_DOWN))
 	{
 		isDown_ = true;
-
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, -0.1f, 0));
 	}
 	else
@@ -1519,6 +1438,7 @@ void GamePlayScene::LoadLevelData()
 
 void GamePlayScene::UIInitialize()
 {
+	//UI入退場の変数
 	UIInitPos_ = 0.0f;
 	UIInitRange_ = 100.0f;
 	UIInitTime_ = 0.0f;
@@ -1528,6 +1448,23 @@ void GamePlayScene::UIInitialize()
 	UIMovePos_ = 0.0f;
 	UIMoveRange_ = 5.0f;
 	UIMoveTime_ = 0.0f;
+
+	//ダメージ
+	hpDamage_ = 0.0f;
+	//画面端との距離
+	UiRange_ = 30.0f;
+	//押されていないときの色
+	uiColorNormal_ = 0.5f;
+	//押されているときの色
+	uiColorPush_ = 3.0f;
+	//現在の色
+	for (int i = 0; i < 4; i++)
+	{
+		uiColor_[i] = uiColorNormal_;
+	}
+
+	//色の変動値
+	uiColorNum_ = 0.2f;
 
 	isUIInit_ = false;
 	isUIOut_ = false;
@@ -1541,77 +1478,49 @@ void GamePlayScene::UIInitialize()
 	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
 	//上
-	arrowUpOn_.Initialize(dxCommon_->GetDevice(), 0, Vector2(0.0f, 0.0f), false, false);
-	arrowUpOn_.SetScale({ 60,60 });
-	arrowUpOn_.SetPosition({ 650,0 - UIInitRange_,0 });
-	arrowUpOn_.SpriteTransferVertexBuffer(arrowUpOn_, 0);
-	arrowUpOn_.Update(arrowUpOn_, spriteCommon_);
-	arrowUpOn_.LoadTexture(spriteCommon_, 0, L"Resources/2d/onUp.png", dxCommon_->GetDevice());
-
-	arrowUpOff_.Initialize(dxCommon_->GetDevice(), 1, Vector2(0.0f, 0.0f), false, false);
-	arrowUpOff_.SetScale({ 60,60 });
-	arrowUpOff_.SetPosition({ 650,0 - UIInitRange_,0 });
-	arrowUpOff_.SpriteTransferVertexBuffer(arrowUpOff_, 1);
-	arrowUpOff_.Update(arrowUpOff_, spriteCommon_);
-	arrowUpOff_.LoadTexture(spriteCommon_, 1, L"Resources/2d/offUp.png", dxCommon_->GetDevice());
+	arrowUp_.Initialize(dxCommon_->GetDevice(), 0, Vector2(0.5f, 0.5f), false, false);
+	arrowUp_.SetScale({ 201,50 });
+	arrowUp_.SetPosition({ 640,-50,0 });
+	arrowUp_.SpriteTransferVertexBuffer(arrowUp_, 0);
+	arrowUp_.Update(arrowUp_, spriteCommon_);
+	arrowUp_.LoadTexture(spriteCommon_, 0, L"Resources/2d/up.png", dxCommon_->GetDevice());
 
 	//下
-	arrowDownOn_.Initialize(dxCommon_->GetDevice(), 2, Vector2(0.0f, 0.0f), false, false);
-	arrowDownOn_.SetScale({ 60,60 });
-	arrowDownOn_.SetPosition({ 650,640 + UIInitRange_,0 });
-	arrowDownOn_.SpriteTransferVertexBuffer(arrowDownOn_, 2);
-	arrowDownOn_.Update(arrowDownOn_, spriteCommon_);
-	arrowDownOn_.LoadTexture(spriteCommon_, 2, L"Resources/2d/onDown.png", dxCommon_->GetDevice());
-
-	arrowDownOff_.Initialize(dxCommon_->GetDevice(), 3, Vector2(0.0f, 0.0f), false, false);
-	arrowDownOff_.SetScale({ 60,60 });
-	arrowDownOff_.SetPosition({ 650,640 + UIInitRange_,0 });
-	arrowDownOff_.SpriteTransferVertexBuffer(arrowDownOff_, 3);
-	arrowDownOff_.Update(arrowDownOff_, spriteCommon_);
-	arrowDownOff_.LoadTexture(spriteCommon_, 3, L"Resources/2d/offDown.png", dxCommon_->GetDevice());
+	arrowDown_.Initialize(dxCommon_->GetDevice(), 1, Vector2(0.5f, 0.5f), false, false);
+	arrowDown_.SetScale({ 201,50 });
+	arrowDown_.SetPosition({ 640,770,0 });
+	arrowDown_.SpriteTransferVertexBuffer(arrowDown_, 1);
+	arrowDown_.Update(arrowDown_, spriteCommon_);
+	arrowDown_.LoadTexture(spriteCommon_, 1, L"Resources/2d/down.png", dxCommon_->GetDevice());
 
 	//右
-	arrowRightOn_.Initialize(dxCommon_->GetDevice(), 4, Vector2(0.0f, 0.0f), false, false);
-	arrowRightOn_.SetScale({ 60,60 });
-	arrowRightOn_.SetPosition({ 1200 + UIInitRange_,300,0 });
-	arrowRightOn_.SpriteTransferVertexBuffer(arrowRightOn_, 4);
-	arrowRightOn_.Update(arrowRightOn_, spriteCommon_);
-	arrowRightOn_.LoadTexture(spriteCommon_, 4, L"Resources/2d/onRight.png", dxCommon_->GetDevice());
-
-	arrowRightOff_.Initialize(dxCommon_->GetDevice(), 5, Vector2(0.0f, 0.0f), false, false);
-	arrowRightOff_.SetScale({ 60,60 });
-	arrowRightOff_.SetPosition({ 1200 + UIInitRange_,300,0 });
-	arrowRightOff_.SpriteTransferVertexBuffer(arrowRightOff_, 5);
-	arrowRightOff_.Update(arrowRightOff_, spriteCommon_);
-	arrowRightOff_.LoadTexture(spriteCommon_, 5, L"Resources/2d/offRight.png", dxCommon_->GetDevice());
+	arrowRight_.Initialize(dxCommon_->GetDevice(), 2, Vector2(0.5f, 0.5f), false, false);
+	arrowRight_.SetScale({ 50,201 });
+	arrowRight_.SetPosition({ 1330,360,0 });
+	arrowRight_.SpriteTransferVertexBuffer(arrowRight_, 2);
+	arrowRight_.Update(arrowRight_, spriteCommon_);
+	arrowRight_.LoadTexture(spriteCommon_, 2, L"Resources/2d/right.png", dxCommon_->GetDevice());
 
 	//左
-	arrowLeftOn_.Initialize(dxCommon_->GetDevice(), 6, Vector2(0.0f, 0.0f), false, false);
-	arrowLeftOn_.SetScale({ 60,60 });
-	arrowLeftOn_.SetPosition({ 0 - UIInitRange_,300,0 });
-	arrowLeftOn_.SpriteTransferVertexBuffer(arrowLeftOn_, 6);
-	arrowLeftOn_.Update(arrowLeftOn_, spriteCommon_);
-	arrowLeftOn_.LoadTexture(spriteCommon_, 6, L"Resources/2d/onLeft.png", dxCommon_->GetDevice());
-
-	arrowLeftOff_.Initialize(dxCommon_->GetDevice(), 7, Vector2(0.0f, 0.0f), false, false);
-	arrowLeftOff_.SetScale({ 60,60 });
-	arrowLeftOff_.SetPosition({ 0 - UIInitRange_,300,0 });
-	arrowLeftOff_.SpriteTransferVertexBuffer(arrowLeftOff_, 7);
-	arrowLeftOff_.Update(arrowLeftOff_, spriteCommon_);
-	arrowLeftOff_.LoadTexture(spriteCommon_, 7, L"Resources/2d/offLeft.png", dxCommon_->GetDevice());
+	arrowLeft_.Initialize(dxCommon_->GetDevice(), 3, Vector2(0.5f, 0.5f), false, false);
+	arrowLeft_.SetScale({ 50,201 });
+	arrowLeft_.SetPosition({ -50,360,0 });
+	arrowLeft_.SpriteTransferVertexBuffer(arrowLeft_, 3);
+	arrowLeft_.Update(arrowLeft_, spriteCommon_);
+	arrowLeft_.LoadTexture(spriteCommon_, 3, L"Resources/2d/left.png", dxCommon_->GetDevice());
 
 	//黒
 	blackAlpha_ = 1.0f;
 	blackAlphaNum_ = 0.02f;
 	blackAlphaNumMax_ = 1.0f;
 	blackAlphaNumMin_ = 0.0f;
-	black_.Initialize(dxCommon_->GetDevice(), 8, Vector2(0.0f, 0.0f), false, false);
+	black_.Initialize(dxCommon_->GetDevice(), 4, Vector2(0.0f, 0.0f), false, false);
 	black_.SetScale(Vector2(1280 * 1, 720 * 1));
 	black_.SetPosition({ 0,0,0 });
-	black_.SpriteTransferVertexBuffer(black_, 8);
+	black_.SpriteTransferVertexBuffer(black_, 4);
 	black_.SetAlpha(black_, blackAlpha_);
 	black_.Update(black_, spriteCommon_);
-	black_.LoadTexture(spriteCommon_, 8, L"Resources/2d/black.png", dxCommon_->GetDevice());
+	black_.LoadTexture(spriteCommon_, 4, L"Resources/2d/black.png", dxCommon_->GetDevice());
 
 	//赤
 	redAlpha_ = 0.5f;
@@ -1619,46 +1528,55 @@ void GamePlayScene::UIInitialize()
 	redAlphaNumMax_ = 0.5f;
 	redAlphaNumMin_ = 0.0f;
 	isRed_ = false;
-	red_.Initialize(dxCommon_->GetDevice(), 9, Vector2(0.0f, 0.0f), false, false);
+	red_.Initialize(dxCommon_->GetDevice(), 5, Vector2(0.0f, 0.0f), false, false);
 	red_.SetScale(Vector2(1280 * 1, 720 * 1));
 	red_.SetPosition({ 0,0,0 });
-	red_.SpriteTransferVertexBuffer(red_, 9);
+	red_.SpriteTransferVertexBuffer(red_, 5);
 	red_.SetAlpha(red_, redAlpha_);
 	red_.Update(red_, spriteCommon_);
-	red_.LoadTexture(spriteCommon_, 9, L"Resources/2d/red.png", dxCommon_->GetDevice());
+	red_.LoadTexture(spriteCommon_, 5, L"Resources/2d/red.png", dxCommon_->GetDevice());
 
 	//レティクル
-	reticle_.Initialize(dxCommon_->GetDevice(), 10, Vector2(0.5f, 0.5f), false, false);
+	reticle_.Initialize(dxCommon_->GetDevice(), 6, Vector2(0.5f, 0.5f), false, false);
 	reticle_.SetScale({ 100,100 });
 	reticle_.SetPosition({ 0,0,0 });
+	reticle_.SetColor(reticle_, { uiColorPush_,uiColorPush_ ,uiColorPush_ ,1.0f });
 	reticle_.SetAlpha(reticle_, reticleAlpha_);
-	reticle_.SpriteTransferVertexBuffer(reticle_, 10);
+	reticle_.SpriteTransferVertexBuffer(reticle_, 6);
 	reticle_.Update(reticle_, spriteCommon_);
-	reticle_.LoadTexture(spriteCommon_, 10, L"Resources/2d/reticle.png", dxCommon_->GetDevice());
+	reticle_.LoadTexture(spriteCommon_, 6, L"Resources/2d/reticle.png", dxCommon_->GetDevice());
 
 	//hp関係
-	hpBar_.Initialize(dxCommon_->GetDevice(), 11, Vector2(0.5f, 1.0f), false, false);
-	hpBar_.SetScale({ 24,294 });
-	hpBar_.SetPosition({ 0 - UIInitRange_,703,0 });
-	hpBar_.SpriteTransferVertexBuffer(hpBar_, 11);
+	hpBar_.Initialize(dxCommon_->GetDevice(), 7, Vector2(0.5f, 1.0f), false, false);
+	hpBar_.SetScale({ 24,234 });
+	hpBar_.SpriteTransferVertexBuffer(hpBar_, 7);
 	hpBar_.Update(hpBar_, spriteCommon_);
-	hpBar_.LoadTexture(spriteCommon_, 11, L"Resources/2d/hpBar.png", dxCommon_->GetDevice());
-	hpFrame_.Initialize(dxCommon_->GetDevice(), 12, Vector2(0.5f, 1.0f), false, false);
-	hpFrame_.SetScale({ 30,300 });
-	hpFrame_.SetPosition({ 0 - UIInitRange_,550,0 });
-	hpFrame_.SpriteTransferVertexBuffer(hpFrame_, 12);
+	hpBar_.LoadTexture(spriteCommon_, 7, L"Resources/2d/hpBar.png", dxCommon_->GetDevice());
+	//枠
+	hpFrame_.Initialize(dxCommon_->GetDevice(), 8, Vector2(0.5f, 1.0f), false, false);
+	hpFrame_.SetScale({ 30,240 });
+	hpFrame_.SpriteTransferVertexBuffer(hpFrame_, 8);
 	hpFrame_.Update(hpFrame_, spriteCommon_);
-	hpFrame_.LoadTexture(spriteCommon_, 12, L"Resources/2d/hpFrame.png", dxCommon_->GetDevice());
+	hpFrame_.LoadTexture(spriteCommon_, 8, L"Resources/2d/hpFrame.png", dxCommon_->GetDevice());
 
-	hpDamage_ = 0.0f;
+	//緑
+	greenAlpha_ = 0.1f;
+	green_.Initialize(dxCommon_->GetDevice(), 9, Vector2(0.0f, 0.0f), false, false);
+	green_.SetScale(Vector2(1280 * 1, 720 * 1));
+	green_.SetPosition({ 0,0,0 });
+	green_.SpriteTransferVertexBuffer(green_, 9);
+	green_.SetAlpha(green_, greenAlpha_);
+	green_.Update(green_, spriteCommon_);
+	green_.LoadTexture(spriteCommon_, 9, L"Resources/2d/green.png", dxCommon_->GetDevice());
 
 	//スコア
-	score_.Initialize(dxCommon_->GetDevice(), 13, Vector2(0.0f, 0.0f), false, false);
+	score_.Initialize(dxCommon_->GetDevice(), 10, Vector2(0.0f, 0.0f), false, false);
 	score_.SetScale({ 140,60 });
 	score_.SetPosition({ 50,0 - UIInitRange_,0 });
-	score_.SpriteTransferVertexBuffer(score_, 13);
+	score_.SetColor(score_, { uiColorPush_,uiColorPush_ ,uiColorPush_ ,1.0f });
+	score_.SpriteTransferVertexBuffer(score_, 10);
 	score_.Update(score_, spriteCommon_);
-	score_.LoadTexture(spriteCommon_, 13, L"Resources/2d/score.png", dxCommon_->GetDevice());
+	score_.LoadTexture(spriteCommon_, 10, L"Resources/2d/score.png", dxCommon_->GetDevice());
 
 	//レティクル関係変数初期化
 	reticleWorldPos_ = { 0.0f,0.0f,0.0f };
@@ -1674,8 +1592,6 @@ void GamePlayScene::UIInitialize()
 	reticleAlphaNumMax_ = 1.0f;
 	reticleAlphaNumMin_ = 0.0f;
 	isInvicibleReticle_ = true;
-
-
 }
 
 void GamePlayScene::UIInitMotion()
@@ -1685,14 +1601,10 @@ void GamePlayScene::UIInitMotion()
 		isInvicibleReticle_ = true;
 		UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
 		UIInitTime_++;
-		arrowUpOn_.SetPosition({ 610,0 - UIInitRange_ + UIInitPos_,0 });
-		arrowUpOff_.SetPosition({ 610,0 - UIInitRange_ + UIInitPos_,0 });
-		arrowDownOn_.SetPosition({ 610,640 + UIInitRange_ - UIInitPos_,0 });
-		arrowDownOff_.SetPosition({ 610,640 + UIInitRange_ - UIInitPos_,0 });
-		arrowRightOn_.SetPosition({ 1200 + UIInitRange_ - UIInitPos_,300,0 });
-		arrowRightOff_.SetPosition({ 1200 + UIInitRange_ - UIInitPos_,300,0 });
-		arrowLeftOn_.SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
-		arrowLeftOff_.SetPosition({ 0 - UIInitRange_ + UIInitPos_,300,0 });
+		arrowUp_.SetPosition({ 640,UiRange_ - UIInitRange_ + UIInitPos_,0 });
+		arrowDown_.SetPosition({ 640,720 - UiRange_ + UIInitRange_ - UIInitPos_,0 });
+		arrowRight_.SetPosition({ 1280 - UiRange_ + UIInitRange_ - UIInitPos_,360,0 });
+		arrowLeft_.SetPosition({ UiRange_ - UIInitRange_ + UIInitPos_,360,0 });
 		hpBar_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,697,0 });
 		hpFrame_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,700,0 });
 		score_.SetPosition({ 30, 10 - UIInitRange_ + UIInitPos_, 0 });
@@ -1713,15 +1625,11 @@ void GamePlayScene::UIOutMotion()
 		{
 			UIOutPos_ = UIOutRange_ * MathFunc::easeOutSine(UIOutTime_ / 30.0f);
 			UIOutTime_++;
-			arrowUpOn_.SetPosition({ 610.0f,0.0f - UIOutPos_,0.0f });
-			arrowUpOff_.SetPosition({ 610.0f,0.0f - UIOutPos_,0.0f });
-			arrowDownOn_.SetPosition({ 610.0f,640.0f + UIOutPos_,0.0f });
-			arrowDownOff_.SetPosition({ 610.0f,640.0f + UIOutPos_,0.0f });
-			arrowRightOn_.SetPosition({ 1200.0f + UIOutPos_,300.0f,0.0f });
-			arrowRightOff_.SetPosition({ 1200.0f + UIOutPos_,300.0f,0.0f });
-			arrowLeftOn_.SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
-			arrowLeftOff_.SetPosition({ 0.0f - UIOutPos_,300.0f,0.0f });
-			hpBar_.SetPosition({ 0 - UIOutPos_,703,0 });
+			arrowUp_.SetPosition({ 640.0f,UiRange_ - UIOutPos_,0.0f });
+			arrowDown_.SetPosition({ 640.0f,720.0f - UiRange_ + UIOutPos_,0.0f });
+			arrowRight_.SetPosition({ 1280 - UiRange_ + UIOutPos_,360.0f,0.0f });
+			arrowLeft_.SetPosition({ UiRange_ - UIOutPos_,360.0f,0.0f });
+			hpBar_.SetPosition({ 0 - UIOutPos_,697,0 });
 			hpFrame_.SetPosition({ 0 - UIOutPos_,700,0 });
 			score_.SetPosition({ 30.0f,10.0f - UIOutPos_,0.0f });
 		}
@@ -1735,17 +1643,19 @@ void GamePlayScene::UIOutMotion()
 
 void GamePlayScene::UIUpdate()
 {
+	//登場後モーション
 	UIMove();
-	arrowUpOn_.Update(arrowUpOn_, spriteCommon_);
-	arrowUpOff_.Update(arrowUpOff_, spriteCommon_);
-	arrowDownOn_.Update(arrowDownOn_, spriteCommon_);
-	arrowDownOff_.Update(arrowDownOff_, spriteCommon_);
-	arrowRightOn_.Update(arrowRightOn_, spriteCommon_);
-	arrowRightOff_.Update(arrowRightOff_, spriteCommon_);
-	arrowLeftOn_.Update(arrowLeftOn_, spriteCommon_);
-	arrowLeftOff_.Update(arrowLeftOff_, spriteCommon_);
+	//色変化
+	UIColorChange();
+
+	//更新
+	arrowUp_.Update(arrowUp_, spriteCommon_);
+	arrowDown_.Update(arrowDown_, spriteCommon_);
+	arrowRight_.Update(arrowRight_, spriteCommon_);
+	arrowLeft_.Update(arrowLeft_, spriteCommon_);
 	black_.Update(black_, spriteCommon_);
 	red_.Update(red_, spriteCommon_);
+	green_.Update(green_, spriteCommon_);
 	hpBar_.Update(hpBar_, spriteCommon_);
 	hpFrame_.Update(hpFrame_, spriteCommon_);
 	score_.Update(score_, spriteCommon_);
@@ -1755,42 +1665,14 @@ void GamePlayScene::UIUpdate()
 
 void GamePlayScene::UIDraw()
 {
-
 	//移動時のUI切り替え
-	if (isUp_ == true)
-	{
-		arrowUpOn_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
-	else
-	{
-		arrowUpOff_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
-	if (isDown_ == true)
-	{
-		arrowDownOn_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
-	else
-	{
-		arrowDownOff_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
-	if (isRight_ == true)
-	{
-		arrowRightOn_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
-	else
-	{
-		arrowRightOff_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
-	if (isLeft_ == true)
-	{
-		arrowLeftOn_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
-	else
-	{
-		arrowLeftOff_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
+	arrowUp_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	arrowDown_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	arrowRight_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	arrowLeft_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
 	//画面系
+	//green_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	black_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	if (isRed_ == true)
 	{
@@ -1827,15 +1709,77 @@ void GamePlayScene::UIMove()
 				UIMoveTime_ = 0.0f;
 			}
 		}
-		arrowUpOn_.SetPosition({ 610,-UIMovePos_,0 });
-		arrowUpOff_.SetPosition({ 610,-UIMovePos_,0 });
-		arrowDownOn_.SetPosition({ 610,640 + UIMovePos_,0 });
-		arrowDownOff_.SetPosition({ 610,640 + UIMovePos_,0 });
-		arrowRightOn_.SetPosition({ 1200 + UIMovePos_,300,0 });
-		arrowRightOff_.SetPosition({ 1200 + UIMovePos_,300,0 });
-		arrowLeftOn_.SetPosition({ -UIMovePos_ ,300,0 });
-		arrowLeftOff_.SetPosition({ -UIMovePos_ ,300,0 });
+		arrowUp_.SetPosition({ 640,UiRange_ - UIMovePos_,0 });
+		arrowDown_.SetPosition({ 640,720 - UiRange_ + UIMovePos_,0 });
+		arrowRight_.SetPosition({ 1280 - UiRange_ + UIMovePos_,360,0 });
+		arrowLeft_.SetPosition({ UiRange_ - UIMovePos_ ,360,0 });
 	}
+}
+
+void GamePlayScene::UIColorChange()
+{
+	//キーを押しているかで色を変化させる
+	if (isUp_ == true)
+	{
+		if (uiColor_[UP] < uiColorPush_)
+		{
+			uiColor_[UP] += uiColorNum_;
+		}
+	}
+	else
+	{
+		if (uiColor_[UP] > uiColorNormal_)
+		{
+			uiColor_[UP] -= uiColorNum_;
+		}
+	}
+	if (isDown_ == true)
+	{
+		if (uiColor_[DOWN] < uiColorPush_)
+		{
+			uiColor_[DOWN] += uiColorNum_;
+		}
+	}
+	else
+	{
+		if (uiColor_[DOWN] > uiColorNormal_)
+		{
+			uiColor_[DOWN] -= uiColorNum_;
+		}
+	}
+	if (isRight_ == true)
+	{
+		if (uiColor_[RIGHT] < uiColorPush_)
+		{
+			uiColor_[RIGHT] += uiColorNum_;
+		}
+	}
+	else
+	{
+		if (uiColor_[RIGHT] > uiColorNormal_)
+		{
+			uiColor_[RIGHT] -= uiColorNum_;
+		}
+	}
+	if (isLeft_ == true)
+	{
+		if (uiColor_[LEFT] < uiColorPush_)
+		{
+			uiColor_[LEFT] += uiColorNum_;
+		}
+	}
+	else
+	{
+		if (uiColor_[LEFT] > uiColorNormal_)
+		{
+			uiColor_[LEFT] -= uiColorNum_;
+		}
+	}
+	//色をセット
+	arrowUp_.SetColor(arrowUp_, { uiColor_[UP],uiColor_[UP] ,uiColor_[UP] ,1.0f });
+	arrowDown_.SetColor(arrowDown_, { uiColor_[DOWN],uiColor_[DOWN] ,uiColor_[DOWN] ,1.0f });
+	arrowRight_.SetColor(arrowRight_, { uiColor_[RIGHT],uiColor_[RIGHT] ,uiColor_[RIGHT] ,1.0f });
+	arrowLeft_.SetColor(arrowLeft_, { uiColor_[LEFT],uiColor_[LEFT] ,uiColor_[LEFT] ,1.0f });
 }
 
 void GamePlayScene::ReticleUpdate()

@@ -19,7 +19,7 @@ void Meteor::MeteorInitialize()
 	// オブジェクトにモデルをひも付ける
 	SetModel(meteorModel_);
 
-	speed_ = 0.2f;
+	speed_ = 0.3f;
 	frontZ_ = -200.0f;
 	backZ_ = 600.0f;
 

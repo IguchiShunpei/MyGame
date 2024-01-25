@@ -101,8 +101,6 @@ public:
 	void SetIsInit(bool isInit) { isInit_ = isInit; }
 	//IsInv
 	void SetIsInv(bool isInv) { isInv_ = isInv; }
-	//IsChangeDir
-	void SetIsChangeDir(bool isChangeDir) { isChangeDir_ = isChangeDir; }
 	//bulletLevel
 	void SetBulletLevel(int bulletLevel) { bulletLevel_ = bulletLevel; }
 	//bulletPower
@@ -192,6 +190,4 @@ private:
 	bool isInv_;
 	//死亡
 	bool isDead_;
-	//カメラの向きによって移動方向を変えるフラグ
-	bool isChangeDir_;
 };
