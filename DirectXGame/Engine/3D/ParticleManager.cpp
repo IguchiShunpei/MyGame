@@ -325,7 +325,6 @@ void ParticleManager::Fire(Particle* particle, int life, const Vector3& pos_, in
 
 void ParticleManager::ChasePlayer(Particle* particle, int life, Vector3 pos_, const Vector2& setScale)
 {
-	pos_.y -= 3.0f;
 	//向きは固定
 	Vector3 vel{ 0.0f,0.0f,-1.0f };
 	//追加

@@ -14,7 +14,7 @@ void Stardust::StardustInitialize()
 	// 3Dオブジェクト生成
 	Create();
 
-	speed_ = 0.2f;
+	speed_ = 0.3f;
 	frontZ_ = -100.0f;
 	backZ_ = 70.0f;
 	levRange_ = 1.0f;
@@ -76,7 +76,7 @@ void Stardust::SetColor()
 		break;
 	case 2:
 		//紫
-		color_ = { 0.8f,0.0f,1.0f };
+		color_ = { 0.6f,0.0f,0.8f };
 		break;
 	case 3:
 		//白

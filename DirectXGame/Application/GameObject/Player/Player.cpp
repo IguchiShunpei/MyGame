@@ -20,9 +20,9 @@ Player::~Player()
 void Player::PlayerInitialize()
 {
 	input_ = Input::GetInstance();
-	
+
 	dxCommon_ = DirectXCommon::GetInstance();
-	
+
 	Initialize();
 
 	// OBJからモデルデータを読み込む
@@ -33,7 +33,7 @@ void Player::PlayerInitialize()
 	SetModel(playerModel_);
 
 	//コライダー関係の変数
-	colliderPos_ = {0.0f,0.0f,0.0f};
+	colliderPos_ = { 0.0f,0.0f,0.0f };
 	playerColliderRadius_ = 1.0f;
 	bulletColliderRadius_ = 3.0f;
 
@@ -80,7 +80,6 @@ void Player::PlayerInitialize()
 	isHit_ = false;
 	isDead_ = false;
 	isInv_ = false;
-	isChangeDir_ = false;
 }
 
 void Player::Update(WorldTransform worldTransform3DReticle)
@@ -164,7 +163,7 @@ void Player::InitMotion()
 	worldTransform_.UpdateMatrix();
 }
 
-void Player::Shake(float x,float y)
+void Player::Shake(float x, float y)
 {
 	//乱数生成装置
 	std::random_device seed_gen;
@@ -284,105 +283,52 @@ void Player::SpeedChange()
 			speedD_ = 0.0f;
 		}
 	}
-	if (isChangeDir_ == false)
+	//右
+	if (isMoveRight_ == true)
 	{
-		//右
-		if (isMoveRight_ == true)
+		if (speedR_ <= speedMax_)
 		{
-			if (speedR_ <= speedMax_)
-			{
-				speedR_ += speedChange_;
-			}
-			else
-			{
-				speedR_ = speedMax_;
-			}
+			speedR_ += speedChange_;
 		}
 		else
 		{
-			if (speedR_ >= 0.0f)
-			{
-				speedR_ -= speedChange_;
-			}
-			else
-			{
-				speedR_ = 0.0f;
-			}
-		}
-		//左
-		if (isMoveLeft_ == true)
-		{
-			if (speedL_ >= -speedMax_)
-			{
-				speedL_ -= speedChange_;
-			}
-			else
-			{
-				speedL_ = -speedMax_;
-			}
-		}
-		else
-		{
-			if (speedL_ <= 0.0f)
-			{
-				speedL_ += speedChange_;
-			}
-			else
-			{
-				speedL_ = 0.0f;
-			}
+			speedR_ = speedMax_;
 		}
 	}
 	else
 	{
-		//右
-		if (isMoveRight_ == true)
+		if (speedR_ >= 0.0f)
 		{
-			if (speedL_ >= -speedMax_)
-			{
-				speedL_ -= speedChange_;
-			}
-			else
-			{
-				speedL_ = -speedMax_;
-			}
+			speedR_ -= speedChange_;
 		}
 		else
 		{
-			if (speedL_ <= 0.0f)
-			{
-				speedL_ += speedChange_;
-			}
-			else
-			{
-				speedL_ = 0.0f;
-			}
-		}
-		//左
-		if (isMoveLeft_ == true)
-		{
-			if (speedR_ <= speedMax_)
-			{
-				speedR_ += speedChange_;
-			}
-			else
-			{
-				speedR_ = speedMax_;
-			}
-		}
-		else
-		{
-			if (speedR_ >= 0.0f)
-			{
-				speedR_ -= speedChange_;
-			}
-			else
-			{
-				speedR_ = 0.0f;
-			}
+			speedR_ = 0.0f;
 		}
 	}
-
+	//左
+	if (isMoveLeft_ == true)
+	{
+		if (speedL_ >= -speedMax_)
+		{
+			speedL_ -= speedChange_;
+		}
+		else
+		{
+			speedL_ = -speedMax_;
+		}
+	}
+	else
+	{
+		if (speedL_ <= 0.0f)
+		{
+			speedL_ += speedChange_;
+		}
+		else
+		{
+			speedL_ = 0.0f;
+		}
+	}
 
 	speed_.x = speedR_ + speedL_;
 	speed_.y = speedU_ + speedD_;
@@ -423,70 +369,34 @@ void Player::Rotate()
 			SetRotation(GetRotation() - Vector3(moveRota_, 0.0f, 0.0f));
 		}
 	}
-	if (isChangeDir_ == false)
+	//右キーを押したとき
+	if (isMoveRight_ == true)
 	{
-		//右キーを押したとき
-		if (isMoveRight_ == true)
+		if (worldTransform_.rotation_.z > -moveRotaMax_)
 		{
-			if (worldTransform_.rotation_.z > -moveRotaMax_)
-			{
-				SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
-			}
-		}
-		else
-		{
-			if (worldTransform_.rotation_.z < 0.0f)
-			{
-				SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
-			}
-		}
-		//左キーを押したとき
-		if (isMoveLeft_ == true)
-		{
-			if (worldTransform_.rotation_.z < moveRotaMax_)
-			{
-				SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
-			}
-		}
-		else
-		{
-			if (worldTransform_.rotation_.z > 0.0f)
-			{
-				SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
-			}
+			SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
 		}
 	}
 	else
 	{
-		//右キーを押したとき
-		if (isMoveRight_ == true)
+		if (worldTransform_.rotation_.z < 0.0f)
 		{
-			if (worldTransform_.rotation_.z < moveRotaMax_)
-			{
-				SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
-			}
+			SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
 		}
-		else
+	}
+	//左キーを押したとき
+	if (isMoveLeft_ == true)
+	{
+		if (worldTransform_.rotation_.z < moveRotaMax_)
 		{
-			if (worldTransform_.rotation_.z > 0.0f)
-			{
-				SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
-			}
+			SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
 		}
-		//左キーを押したとき
-		if (isMoveLeft_ == true)
+	}
+	else
+	{
+		if (worldTransform_.rotation_.z > 0.0f)
 		{
-			if (worldTransform_.rotation_.z > -moveRotaMax_)
-			{
-				SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
-			}
-		}
-		else
-		{
-			if (worldTransform_.rotation_.z < 0.0f)
-			{
-				SetRotation(GetRotation() + Vector3(0.0f, -moveRota_, moveRota_));
-			}
+			SetRotation(GetRotation() - Vector3(0.0f, -moveRota_, moveRota_));
 		}
 	}
 }
@@ -504,7 +414,7 @@ void Player::Attack(WorldTransform worldTransform3DReticle)
 
 		//自機の向いてる方向に弾を撃つ
 		velocity = bVelocity(velocity, worldTransform_);
-	
+
 		//レティクルのワールド座標を取得
 		reticleWorldPos_.x = worldTransform3DReticle.matWorld_.m[3][0];
 		reticleWorldPos_.y = worldTransform3DReticle.matWorld_.m[3][1];
@@ -519,7 +429,7 @@ void Player::Attack(WorldTransform worldTransform3DReticle)
 		//球の生成
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 		//球の初期化
-		newBullet->PlayerBulletInitialize(position, velocity, bulletDir_,bulletLevel_);
+		newBullet->PlayerBulletInitialize(position, velocity, bulletDir_, bulletLevel_);
 
 		//コライダーの追加
 		newBullet->SetCollider(new SphereCollider(colliderPos_, bulletColliderRadius_));
@@ -564,7 +474,7 @@ void Player::Damage()
 
 void Player::BulletPowerUp()
 {
-    //ダメージ量を変更
+	//ダメージ量を変更
 	switch (bulletLevel_)
 	{
 	case 1:
