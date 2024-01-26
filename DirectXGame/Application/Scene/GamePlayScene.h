@@ -150,7 +150,7 @@ public:
 	//レベルデータのロード
 	void LoadLevelData();
 
-	//UIの処理が多いので関数化
+	//UIの処理が多いので関数化(早急にクラス分けする)
 	void UIInitialize();
 	void UIInitMotion();
 	void UIOutMotion();

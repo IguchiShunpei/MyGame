@@ -1682,7 +1682,6 @@ void GamePlayScene::UIDraw()
 
 	hpFrame_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	hpBar_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	score_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 }
 
 void GamePlayScene::UIMove()
