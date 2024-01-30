@@ -1,5 +1,5 @@
 /**
-* @file GamePlayScene.cpp
+* @file GamePlayScene.h
 * @brief ゲームのメイン部分
 * @author イグチ_シュンペイ
 */
@@ -28,6 +28,7 @@
 #include "Explosion.h"
 #include "Item.h"
 #include "Matrix4.h"
+#include "UI.h"
 
 #include<cassert>
 #include<vector>
@@ -67,16 +68,6 @@ public:
 	};
 
 public:
-	//向き
-	enum Direction
-	{
-		UP,
-		DOWN,
-		RIGHT,
-		LEFT
-	};
-
-public:
 	GamePlayScene();
 	~GamePlayScene();
 
@@ -92,9 +83,6 @@ public:
 
 	//解放
 	void Finalize() override;
-
-	//ゲームのリセット
-	void GameReset();
 
 	//敵リスト
 	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
@@ -150,15 +138,6 @@ public:
 	//レベルデータのロード
 	void LoadLevelData();
 
-	//UIの処理が多いので関数化(早急にクラス分けする)
-	void UIInitialize();
-	void UIInitMotion();
-	void UIOutMotion();
-	void UIUpdate();
-	void UIDraw();
-	void UIMove();
-	void UIColorChange();
-
 	//レティクル更新
 	void ReticleUpdate();
 
@@ -202,6 +181,9 @@ private://メンバ変数
 	Item* item_;
 	std::list<std::unique_ptr<Item>> items_;
 
+	//UI
+	UI* ui_;
+
 	//敵発生コマンド
 	std::stringstream enemyPopCommands;
 
@@ -244,108 +226,6 @@ private://メンバ変数
 	Explosion* explosion01_ = nullptr;
 	Explosion* explosion02_ = nullptr;
 	Explosion* explosion03_ = nullptr;
-
-	//ロゴやUI
-	Sprite* sprite_;
-	SpriteCommon spriteCommon_;
-	Sprite arrowUp_;
-	Sprite arrowDown_;
-	Sprite arrowRight_;
-	Sprite arrowLeft_;
-	//hp
-	Sprite hpBar_;
-	Sprite hpFrame_;
-	//スコア
-	Sprite score_;
-
-	//画面
-	Sprite black_;
-	Sprite red_;
-	Sprite green_;
-
-	//画面端とUIの距離
-	float UiRange_;
-	//UIの色(押されていないの下限)
-	float uiColorNormal_;
-	//UIの色uiColor_(押されているときの上限)
-	float uiColorPush_;
-	//UIの色(現在)
-	float uiColor_[4];
-	//UIのいろの変動値
-	float uiColorNum_;
-
-	//黒alpha値
-	float blackAlpha_;
-	//変動値
-	float blackAlphaNum_;
-	//最大値
-	float blackAlphaNumMax_;
-	//最小値
-	float blackAlphaNumMin_;
-	//赤alpha値
-	float redAlpha_;
-	//変動値
-	float redAlphaNum_;
-	//最大値
-	float redAlphaNumMax_;
-	//最小値
-	float redAlphaNumMin_;
-	//被ダメージフラグ
-	bool isRed_;
-	//ダメージ量
-	float hpDamage_;
-	//緑alpha値
-	float greenAlpha_;
-
-	//レティクル
-	WorldTransform worldTransform3DReticle_;
-	//2Dレティクル用スプライト
-	Sprite reticle_;
-	//自機からレティクルまでの距離
-	float distancePlayerToReticle_;
-	//レティクルalpha値
-	float reticleAlpha_;
-	//変動値
-	float reticleAlphaNum_;
-	//最大値
-	float reticleAlphaNumMax_;
-	//最小値
-	float reticleAlphaNumMin_;
-	//レティクル表示フラグ
-	bool isInvicibleReticle_;
-
-	Vector3 reticleWorldPos_;
-	Matrix4 matViewport_;
-	Matrix4 matViewprojectionViewport_;
-
-	//各方向フラグ
-	bool isUp_;
-	bool isDown_;
-	bool isRight_;
-	bool isLeft_;
-	bool isNeutral_;
-	bool isUIInit_;
-	bool isUIOut_;
-
-	//登場モーション範囲
-	float UIInitRange_;
-	//登場モーション時間
-	float UIInitTime_;
-	//登場モーション移動量
-	float UIInitPos_;
-	//退場モーション範囲
-	float UIOutRange_;
-	//退場モーション時間
-	float UIOutTime_;
-	//退場モーション移動量
-	float UIOutPos_;
-
-	//登場後モーション
-	//フラグ
-	bool isMove_;
-	float UIMoveTime_;
-	float UIMovePos_;
-	float UIMoveRange_;
 
 	//レベルデータ
 	LevelData* backGroundStardust_ = nullptr;

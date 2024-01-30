@@ -29,7 +29,7 @@ public:
 	void PlayerInitialize();
 
 	//更新
-	void Update(WorldTransform worldTransform3DReticle);
+	void Update();
 
 	//当たり判定更新
 	void ColliderUpdate();
@@ -53,7 +53,7 @@ public:
 	void Rotate();
 
 	//攻撃
-	void Attack(WorldTransform worldTransform3DReticle);
+	void Attack();
 
 	//キャラの向きに応じた方向に球を出す
 	Vector3 bVelocity(Vector3& velocity, WorldTransform& worldTransform);

@@ -82,7 +82,7 @@ void Player::PlayerInitialize()
 	isInv_ = false;
 }
 
-void Player::Update(WorldTransform worldTransform3DReticle)
+void Player::Update()
 {
 
 	if (isDead_ == false)
@@ -93,7 +93,7 @@ void Player::Update(WorldTransform worldTransform3DReticle)
 
 		BulletPowerUp();
 
-		Attack(worldTransform3DReticle);
+		Attack();
 	}
 
 	BulletUpdate();
@@ -401,7 +401,7 @@ void Player::Rotate()
 	}
 }
 
-void Player::Attack(WorldTransform worldTransform3DReticle)
+void Player::Attack()
 {
 	//Spaceキーを押したとき
 	if (input_->TriggerKey(DIK_SPACE))
@@ -416,9 +416,9 @@ void Player::Attack(WorldTransform worldTransform3DReticle)
 		velocity = bVelocity(velocity, worldTransform_);
 
 		//レティクルのワールド座標を取得
-		reticleWorldPos_.x = worldTransform3DReticle.matWorld_.m[3][0];
+		/*reticleWorldPos_.x = worldTransform3DReticle.matWorld_.m[3][0];
 		reticleWorldPos_.y = worldTransform3DReticle.matWorld_.m[3][1];
-		reticleWorldPos_.z = worldTransform3DReticle.matWorld_.m[3][2];
+		reticleWorldPos_.z = worldTransform3DReticle.matWorld_.m[3][2];*/
 
 		//自機から標準オブジェクトへのベクトル
 		velocity = reticleWorldPos_ - GetWorldPosition();
