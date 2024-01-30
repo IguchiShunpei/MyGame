@@ -88,6 +88,12 @@
     <Filter Include="ヘッダー ファイル\Effect">
       <UniqueIdentifier>{c453fefe-ef13-4169-81b9-e427b2a2ede1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\UI">
+      <UniqueIdentifier>{47e283e6-e7c8-49c2-8933-efcc81b689a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UI">
+      <UniqueIdentifier>{a9bf765a-0940-45b4-b380-6e7187770f00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp">
@@ -233,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\Scene\GamePlayScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\UI\UI.cpp">
+      <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -443,6 +452,9 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\UI\UI.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

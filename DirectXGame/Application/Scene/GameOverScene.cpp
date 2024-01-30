@@ -43,7 +43,7 @@ void GameOverScene::Initialize()
 
 	//スペースキー
 	space_.Initialize(dxCommon_->GetDevice(), 1, Vector2(0.0f, 0.0f), false, false);
-	space_.SetScale(Vector2(400, 120));
+	space_.SetScale(Vector2(400, 100));
 	space_.SetPosition({ 450,500,0 });
 	space_.SpriteTransferVertexBuffer(space_, 1);
 	space_.Update(space_, spriteCommon_);

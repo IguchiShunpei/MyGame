@@ -1,3 +1,9 @@
+/**
+* @file GamePlayScene.cpp
+* @brief ゲームのメイン部分
+* @author イグチ_シュンペイ
+*/
+
 #include "GamePlayScene.h"
 
 #include "CollisionManager.h"
@@ -104,7 +110,8 @@ void GamePlayScene::Initialize()
 	pm_Smoke->SetViewProjection(viewProjection_);
 
 	//UIの初期化
-	UIInitialize();
+	ui_ = new UI;
+	ui_->UIInitialize();
 
 	//レベルデータのロード
 	LoadLevelData();
@@ -208,10 +215,13 @@ void GamePlayScene::Update()
 
 	//天球
 	sky_->worldTransform_.UpdateMatrix();
+
+	//黒フェードアウト
+	ui_->FadeOut(ui_->Black);
+
 	//自機登場演出
 	PlayerInit();
-	//UIの登場モーション
-	UIInitMotion();
+
 	for (auto& object : stardustObjects_)
 	{
 		object->StardustUpdate();
@@ -332,11 +342,13 @@ void GamePlayScene::Update()
 
 	if (isPlayerInit_ == true)
 	{
+		//UIの登場モーション
+		ui_->UIInitMotion();
 		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
 			MoveCamera();
 
-			player->Update(worldTransform3DReticle_);
+			player->Update();
 			player->ColliderUpdate();
 		}
 		else
@@ -345,7 +357,7 @@ void GamePlayScene::Update()
 			bEnemy->BulletUpdate();
 		}
 		//UI更新
-		UIUpdate();
+		ui_->UIUpdate();
 		//パーティクル更新
 		pm_Hit->Update();
 		pm_WDmg->Update();
@@ -373,14 +385,8 @@ void GamePlayScene::Update()
 			{
 				if (hitPlayerTimer_ <= hitPlayerTimerMax_)
 				{
-					isRed_ = true;
-					//赤フェードアウト
-					if (redAlpha_ > redAlphaNumMin_)
-					{
-						redAlpha_ -= blackAlphaNum_;
-						red_.SetAlpha(red_, redAlpha_);
-					}
-					red_.Update(red_, spriteCommon_);
+					ui_->SetIsRed(true);
+					ui_->FadeOut(ui_->Red);
 					if (hitPlayerTimer_ % 2 != 1)
 					{
 						CameraShake(playerCameraShake_, playerCameraShake_);
@@ -389,22 +395,17 @@ void GamePlayScene::Update()
 					{
 						viewProjection_->SetEye(cameraShakePos_);
 					}
-					//ダメージのイージング処理
-					hpDamage_ = 0.0f + (1.0f * MathFunc::easeOutSine((float)hitPlayerTimer_ / (float)hitPlayerTimerMax_));
-					//hpのスケールに残りhpを反映
-					hpBar_.SetScale({ 24.0f,234.0f * ((((float)player->GetHp() + 1.0f) - hpDamage_) / (float)player->GetHpMax()) });
-					hpBar_.SpriteTransferVertexBuffer(hpBar_, 11);
+					ui_->Damage((float)hitPlayerTimer_, (float)hitPlayerTimerMax_, player->GetHp(), player->GetHpMax());
 					//無敵時間
 					hitPlayerTimer_++;
 				}
 				else
 				{
-					isRed_ = false;
-					red_.SetAlpha(red_, redAlphaNumMax_);
+					ui_->SetIsRed(false);
+					ui_->RedReset();
 					player->SetIsHit(false);
 					player->SetIsInv(false);
 					viewProjection_->SetEye(cameraShakePos_);
-					hpDamage_ = 0.0f;
 					hitPlayerTimer_ = 0;
 				}
 			}
@@ -466,13 +467,6 @@ void GamePlayScene::Update()
 		}
 	}
 
-	//自機が残り体力1の時の煙
-	if (player->GetHp() == 1)
-	{
-		Vector3 pPos = player->GetPosition();
-		pm_Smoke->ChasePlayer(p_Smoke, 3, pPos,{ 1.0f, 0.0f });
-	}
-
 	//敵に弾が当たった時のカメラシェイク
 	if (isDeadCameraShake_ == true)
 	{
@@ -528,11 +522,7 @@ void GamePlayScene::Draw()
 	sky_->Draw(viewProjection_);
 	if (isPlayerDead_ == false)
 	{
-		//カメラシェイク中は点滅
-		if (hitPlayerTimer_ % 2 != 1)
-		{
-			player->Draw(viewProjection_);
-		}
+		player->Draw(viewProjection_);
 		player->BulletDraw(viewProjection_);
 	}
 
@@ -615,10 +605,7 @@ void GamePlayScene::Draw()
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();
 
-	//描画前処理
-	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
-
-	UIDraw();
+	ui_->UIDraw();
 
 	// 描画後処理
 	dxCommon_->PostDraw();
@@ -656,14 +643,6 @@ void GamePlayScene::Finalize()
 	delete explosion01_;
 	delete explosion02_;
 	delete explosion03_;
-
-	//カメラ解放
-	delete viewProjection_;
-}
-
-void GamePlayScene::GameReset()
-{
-	viewProjection_->Initialize();
 }
 
 void GamePlayScene::LoadEnemyPop()
@@ -896,13 +875,6 @@ void GamePlayScene::PlayerInit()
 {
 	if (isPlayerInit_ == false)
 	{
-		//黒フェードアウト
-		if (blackAlpha_ > blackAlphaNumMin_)
-		{
-			blackAlpha_ -= blackAlphaNum_;
-			black_.SetAlpha(black_, blackAlpha_);
-		}
-		black_.Update(black_, spriteCommon_);
 		//カメラワーク
 		PlayerInitCameraWork();
 		//自機の登場モーション
@@ -964,11 +936,7 @@ void GamePlayScene::BossInit()
 {
 	if (isBossInitCamera_ == true)
 	{
-		isUp_ = false;
-		isDown_ = false;
-		isRight_ = false;
-		isLeft_ = false;
-
+		ui_->Stop();
 		BossInitCameraWork();
 	}
 }
@@ -987,31 +955,20 @@ void GamePlayScene::BossInitCameraWork()
 		}
 		else
 		{
-			isInvicibleReticle_ = false;
 			//寄ったら黒フェード
-			if (blackAlpha_ < blackAlphaNumMax_)
-			{
-				blackAlpha_ += blackAlphaNum_;
-				black_.SetAlpha(black_, blackAlpha_);
-			}
-			else
-			{
-				//黒フェードが完了したら登場カメラワークへ
-				bossInitNum_ = InitCameraWork;
-				bossAppTimer_ = 0;
-				viewProjection_->up_ = { 0.0f,1.0f,0.0f };
-			}
+			ui_->FadeIn();
+
+			//黒フェードが完了したら登場カメラワークへ
+			bossInitNum_ = InitCameraWork;
+			bossAppTimer_ = 0;
+			viewProjection_->up_ = { 0.0f,1.0f,0.0f };
 		}
 		bossAppTimer_++;
 
 		break;
 	case InitCameraWork:
 		//黒フェードアウト
-		if (blackAlpha_ > blackAlphaNumMin_)
-		{
-			blackAlpha_ -= blackAlphaNum_;
-			black_.SetAlpha(black_, blackAlpha_);
-		}
+		ui_->FadeOut(ui_->Black);
 		viewProjection_->SetTarget(bEnemy->GetPosition());
 		bEnemy->InitMotion();
 
@@ -1051,7 +1008,6 @@ void GamePlayScene::BossInitCameraWork()
 		}
 		else
 		{
-			isInvicibleReticle_ = true;
 			viewProjection_->eye_.z = afterInitCameraPos_.z;
 			isBossInitCamera_ = false;
 			bossInitNum_ = None;
@@ -1064,7 +1020,7 @@ void GamePlayScene::BossInitCameraWork()
 void GamePlayScene::BossDead()
 {
 	//UI退場
-	UIOutMotion();
+	ui_->UIOutMotion();
 	explosion01_->EnemyExplosionUpdate();
 	explosion02_->EnemyExplosionUpdate();
 	//墜落
@@ -1136,11 +1092,7 @@ void GamePlayScene::ToClearScene()
 		else
 		{
 			//黒フェードイン
-			if (blackAlpha_ < blackAlphaNumMax_)
-			{
-				blackAlpha_ += blackAlphaNum_;
-				black_.SetAlpha(black_, blackAlpha_);
-			}
+			ui_->FadeIn();
 			//自機を動かす
 			player->worldTransform_.rotation_.z++;
 			player->worldTransform_.position_.x -= clearCameraMoveZ_;
@@ -1197,7 +1149,7 @@ void GamePlayScene::ToGameOverScene()
 	if (player->GetIsDead() == true)
 	{
 		//UI退場
-		UIOutMotion();
+		ui_->UIOutMotion();
 		//カメラワーク
 		ToGameOverCameraWork();
 		//自機死亡演出
@@ -1210,11 +1162,8 @@ void GamePlayScene::ToGameOverScene()
 			if (explosion03_->GetIsFinish() == true)
 			{
 				viewProjection_->eye_ = normalEyeNum_;
-				if (blackAlpha_ < blackAlphaNumMax_)
-				{
-					blackAlpha_ += blackAlphaNum_;
-					black_.SetAlpha(black_, blackAlpha_);
-				}
+				//フェードイン
+				ui_->FadeIn();
 				gameOverNum_++;
 				//gameoverシーンへ
 				if (gameOverNum_ >= gameOvernumMax_)
@@ -1269,12 +1218,12 @@ void GamePlayScene::MoveCamera() {
 	//カメラ移動処理
 	if (input_->PushKey(DIK_UP))
 	{
-		isUp_ = true;
+		ui_->SetIsUp(true);
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, 0.1f, 0));
 	}
 	else
 	{
-		isUp_ = false;
+		ui_->SetIsUp(false);
 		if (viewProjection_->target_.y >= normalTargetNum_.y)
 		{
 			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, -0.1f, 0));
@@ -1282,13 +1231,13 @@ void GamePlayScene::MoveCamera() {
 	}
 	if (input_->PushKey(DIK_RIGHT))
 	{
-		isRight_ = true;
+		ui_->SetIsRight(true);
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0.1f, 0, 0));
 		viewProjection_->SetUp(viewProjection_->up_ + Vector3(-0.0025f, 0, 0));
 	}
 	else
 	{
-		isRight_ = false;
+		ui_->SetIsRight(false);
 		if (viewProjection_->target_.x >= normalTargetNum_.x)
 		{
 			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(-0.1f, 0, 0));
@@ -1298,16 +1247,15 @@ void GamePlayScene::MoveCamera() {
 			viewProjection_->SetUp(viewProjection_->up_ + Vector3(0.0025f, 0, 0));
 		}
 	}
-	arrowRight_.SetColor(arrowRight_, { uiColorPush_,uiColorPush_,uiColorPush_,1.0f });
 	if (input_->PushKey(DIK_LEFT))
 	{
-		isLeft_ = true;
+		ui_->SetIsLeft(true);
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(-0.1f, 0, 0));
 		viewProjection_->SetUp(viewProjection_->up_ + Vector3(0.0025f, 0, 0));
 	}
 	else
 	{
-		isLeft_ = false;
+		ui_->SetIsLeft(false);
 		if (viewProjection_->target_.x <= normalTargetNum_.x)
 		{
 			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0.1f, 0, 0));
@@ -1320,12 +1268,12 @@ void GamePlayScene::MoveCamera() {
 
 	if (input_->PushKey(DIK_DOWN))
 	{
-		isDown_ = true;
+		ui_->SetIsDown(true);
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, -0.1f, 0));
 	}
 	else
 	{
-		isDown_ = false;
+		ui_->SetIsDown(false);
 		if (viewProjection_->target_.y <= normalTargetNum_.y)
 		{
 			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, 0.1f, 0));
@@ -1434,435 +1382,4 @@ void GamePlayScene::LoadLevelData()
 		// 配列に登録
 		meteorObjects_.push_back(backMeteor);
 	}
-}
-
-void GamePlayScene::UIInitialize()
-{
-	//UI入退場の変数
-	UIInitPos_ = 0.0f;
-	UIInitRange_ = 100.0f;
-	UIInitTime_ = 0.0f;
-	UIOutPos_ = 0.0f;
-	UIOutRange_ = 100.0f;
-	UIOutTime_ = 0.0f;
-	UIMovePos_ = 0.0f;
-	UIMoveRange_ = 5.0f;
-	UIMoveTime_ = 0.0f;
-
-	//ダメージ
-	hpDamage_ = 0.0f;
-	//画面端との距離
-	UiRange_ = 30.0f;
-	//押されていないときの色
-	uiColorNormal_ = 0.5f;
-	//押されているときの色
-	uiColorPush_ = 3.0f;
-	//現在の色
-	for (int i = 0; i < 4; i++)
-	{
-		uiColor_[i] = uiColorNormal_;
-	}
-
-	//色の変動値
-	uiColorNum_ = 0.2f;
-
-	isUIInit_ = false;
-	isUIOut_ = false;
-	isNeutral_ = true;
-	isUp_ = false;
-	isDown_ = false;
-	isRight_ = false;
-	isLeft_ = false;
-
-	sprite_ = new Sprite();
-	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
-
-	//上
-	arrowUp_.Initialize(dxCommon_->GetDevice(), 0, Vector2(0.5f, 0.5f), false, false);
-	arrowUp_.SetScale({ 201,50 });
-	arrowUp_.SetPosition({ 640,-50,0 });
-	arrowUp_.SpriteTransferVertexBuffer(arrowUp_, 0);
-	arrowUp_.Update(arrowUp_, spriteCommon_);
-	arrowUp_.LoadTexture(spriteCommon_, 0, L"Resources/2d/up.png", dxCommon_->GetDevice());
-
-	//下
-	arrowDown_.Initialize(dxCommon_->GetDevice(), 1, Vector2(0.5f, 0.5f), false, false);
-	arrowDown_.SetScale({ 201,50 });
-	arrowDown_.SetPosition({ 640,770,0 });
-	arrowDown_.SpriteTransferVertexBuffer(arrowDown_, 1);
-	arrowDown_.Update(arrowDown_, spriteCommon_);
-	arrowDown_.LoadTexture(spriteCommon_, 1, L"Resources/2d/down.png", dxCommon_->GetDevice());
-
-	//右
-	arrowRight_.Initialize(dxCommon_->GetDevice(), 2, Vector2(0.5f, 0.5f), false, false);
-	arrowRight_.SetScale({ 50,201 });
-	arrowRight_.SetPosition({ 1330,360,0 });
-	arrowRight_.SpriteTransferVertexBuffer(arrowRight_, 2);
-	arrowRight_.Update(arrowRight_, spriteCommon_);
-	arrowRight_.LoadTexture(spriteCommon_, 2, L"Resources/2d/right.png", dxCommon_->GetDevice());
-
-	//左
-	arrowLeft_.Initialize(dxCommon_->GetDevice(), 3, Vector2(0.5f, 0.5f), false, false);
-	arrowLeft_.SetScale({ 50,201 });
-	arrowLeft_.SetPosition({ -50,360,0 });
-	arrowLeft_.SpriteTransferVertexBuffer(arrowLeft_, 3);
-	arrowLeft_.Update(arrowLeft_, spriteCommon_);
-	arrowLeft_.LoadTexture(spriteCommon_, 3, L"Resources/2d/left.png", dxCommon_->GetDevice());
-
-	//黒
-	blackAlpha_ = 1.0f;
-	blackAlphaNum_ = 0.02f;
-	blackAlphaNumMax_ = 1.0f;
-	blackAlphaNumMin_ = 0.0f;
-	black_.Initialize(dxCommon_->GetDevice(), 4, Vector2(0.0f, 0.0f), false, false);
-	black_.SetScale(Vector2(1280 * 1, 720 * 1));
-	black_.SetPosition({ 0,0,0 });
-	black_.SpriteTransferVertexBuffer(black_, 4);
-	black_.SetAlpha(black_, blackAlpha_);
-	black_.Update(black_, spriteCommon_);
-	black_.LoadTexture(spriteCommon_, 4, L"Resources/2d/black.png", dxCommon_->GetDevice());
-
-	//赤
-	redAlpha_ = 0.5f;
-	redAlphaNum_ = 0.02f;
-	redAlphaNumMax_ = 0.5f;
-	redAlphaNumMin_ = 0.0f;
-	isRed_ = false;
-	red_.Initialize(dxCommon_->GetDevice(), 5, Vector2(0.0f, 0.0f), false, false);
-	red_.SetScale(Vector2(1280 * 1, 720 * 1));
-	red_.SetPosition({ 0,0,0 });
-	red_.SpriteTransferVertexBuffer(red_, 5);
-	red_.SetAlpha(red_, redAlpha_);
-	red_.Update(red_, spriteCommon_);
-	red_.LoadTexture(spriteCommon_, 5, L"Resources/2d/red.png", dxCommon_->GetDevice());
-
-	//レティクル
-	reticle_.Initialize(dxCommon_->GetDevice(), 6, Vector2(0.5f, 0.5f), false, false);
-	reticle_.SetScale({ 100,100 });
-	reticle_.SetPosition({ 0,0,0 });
-	reticle_.SetColor(reticle_, { uiColorPush_,uiColorPush_ ,uiColorPush_ ,1.0f });
-	reticle_.SetAlpha(reticle_, reticleAlpha_);
-	reticle_.SpriteTransferVertexBuffer(reticle_, 6);
-	reticle_.Update(reticle_, spriteCommon_);
-	reticle_.LoadTexture(spriteCommon_, 6, L"Resources/2d/reticle.png", dxCommon_->GetDevice());
-
-	//hp関係
-	hpBar_.Initialize(dxCommon_->GetDevice(), 7, Vector2(0.5f, 1.0f), false, false);
-	hpBar_.SetScale({ 24,234 });
-	hpBar_.SpriteTransferVertexBuffer(hpBar_, 7);
-	hpBar_.Update(hpBar_, spriteCommon_);
-	hpBar_.LoadTexture(spriteCommon_, 7, L"Resources/2d/hpBar.png", dxCommon_->GetDevice());
-	//枠
-	hpFrame_.Initialize(dxCommon_->GetDevice(), 8, Vector2(0.5f, 1.0f), false, false);
-	hpFrame_.SetScale({ 30,240 });
-	hpFrame_.SpriteTransferVertexBuffer(hpFrame_, 8);
-	hpFrame_.Update(hpFrame_, spriteCommon_);
-	hpFrame_.LoadTexture(spriteCommon_, 8, L"Resources/2d/hpFrame.png", dxCommon_->GetDevice());
-
-	//緑
-	greenAlpha_ = 0.1f;
-	green_.Initialize(dxCommon_->GetDevice(), 9, Vector2(0.0f, 0.0f), false, false);
-	green_.SetScale(Vector2(1280 * 1, 720 * 1));
-	green_.SetPosition({ 0,0,0 });
-	green_.SpriteTransferVertexBuffer(green_, 9);
-	green_.SetAlpha(green_, greenAlpha_);
-	green_.Update(green_, spriteCommon_);
-	green_.LoadTexture(spriteCommon_, 9, L"Resources/2d/green.png", dxCommon_->GetDevice());
-
-	//スコア
-	score_.Initialize(dxCommon_->GetDevice(), 10, Vector2(0.0f, 0.0f), false, false);
-	score_.SetScale({ 140,60 });
-	score_.SetPosition({ 50,0 - UIInitRange_,0 });
-	score_.SetColor(score_, { uiColorPush_,uiColorPush_ ,uiColorPush_ ,1.0f });
-	score_.SpriteTransferVertexBuffer(score_, 10);
-	score_.Update(score_, spriteCommon_);
-	score_.LoadTexture(spriteCommon_, 10, L"Resources/2d/score.png", dxCommon_->GetDevice());
-
-	//レティクル関係変数初期化
-	reticleWorldPos_ = { 0.0f,0.0f,0.0f };
-	matViewport_.identity();
-	matViewprojectionViewport_.identity();
-
-	//レティクルのワールドトランスフォーム初期化
-	worldTransform3DReticle_.Initialize();
-
-	distancePlayerToReticle_ = 50.0f;
-	reticleAlpha_ = 0.0f;
-	reticleAlphaNum_ = 0.1f;
-	reticleAlphaNumMax_ = 1.0f;
-	reticleAlphaNumMin_ = 0.0f;
-	isInvicibleReticle_ = true;
-}
-
-void GamePlayScene::UIInitMotion()
-{
-	if (isUIInit_ == false && isPlayerInit_ == true)
-	{
-		isInvicibleReticle_ = true;
-		UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
-		UIInitTime_++;
-		arrowUp_.SetPosition({ 640,UiRange_ - UIInitRange_ + UIInitPos_,0 });
-		arrowDown_.SetPosition({ 640,720 - UiRange_ + UIInitRange_ - UIInitPos_,0 });
-		arrowRight_.SetPosition({ 1280 - UiRange_ + UIInitRange_ - UIInitPos_,360,0 });
-		arrowLeft_.SetPosition({ UiRange_ - UIInitRange_ + UIInitPos_,360,0 });
-		hpBar_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,697,0 });
-		hpFrame_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,700,0 });
-		score_.SetPosition({ 30, 10 - UIInitRange_ + UIInitPos_, 0 });
-	}
-	if (UIInitPos_ >= UIInitRange_)
-	{
-		isUIInit_ = true;
-	}
-}
-
-void GamePlayScene::UIOutMotion()
-{
-	isNeutral_ = false;
-	isInvicibleReticle_ = false;
-	if (isUIOut_ == false)
-	{
-		if (UIOutPos_ < UIOutRange_)
-		{
-			UIOutPos_ = UIOutRange_ * MathFunc::easeOutSine(UIOutTime_ / 30.0f);
-			UIOutTime_++;
-			arrowUp_.SetPosition({ 640.0f,UiRange_ - UIOutPos_,0.0f });
-			arrowDown_.SetPosition({ 640.0f,720.0f - UiRange_ + UIOutPos_,0.0f });
-			arrowRight_.SetPosition({ 1280 - UiRange_ + UIOutPos_,360.0f,0.0f });
-			arrowLeft_.SetPosition({ UiRange_ - UIOutPos_,360.0f,0.0f });
-			hpBar_.SetPosition({ 0 - UIOutPos_,697,0 });
-			hpFrame_.SetPosition({ 0 - UIOutPos_,700,0 });
-			score_.SetPosition({ 30.0f,10.0f - UIOutPos_,0.0f });
-		}
-		else
-		{
-			UIOutPos_ = UIOutRange_;
-			isUIOut_ = true;
-		}
-	}
-}
-
-void GamePlayScene::UIUpdate()
-{
-	//登場後モーション
-	UIMove();
-	//色変化
-	UIColorChange();
-
-	//更新
-	arrowUp_.Update(arrowUp_, spriteCommon_);
-	arrowDown_.Update(arrowDown_, spriteCommon_);
-	arrowRight_.Update(arrowRight_, spriteCommon_);
-	arrowLeft_.Update(arrowLeft_, spriteCommon_);
-	black_.Update(black_, spriteCommon_);
-	red_.Update(red_, spriteCommon_);
-	green_.Update(green_, spriteCommon_);
-	hpBar_.Update(hpBar_, spriteCommon_);
-	hpFrame_.Update(hpFrame_, spriteCommon_);
-	score_.Update(score_, spriteCommon_);
-
-	ReticleUpdate();
-}
-
-void GamePlayScene::UIDraw()
-{
-	//移動時のUI切り替え
-	arrowUp_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	arrowDown_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	arrowRight_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	arrowLeft_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-
-	//画面系
-	//green_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	black_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	if (isRed_ == true)
-	{
-		red_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	}
-	reticle_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-
-	hpFrame_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	hpBar_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-}
-
-void GamePlayScene::UIMove()
-{
-	if (isUIInit_ == true && isNeutral_ == true)
-	{
-		if (isMove_ == true)
-		{
-			UIMovePos_ = UIMoveRange_ * MathFunc::easeOutSine(UIMoveTime_ / 30.0f);
-			UIMoveTime_++;
-			if (UIMoveTime_ >= 60.0f)
-			{
-				isMove_ = false;
-				UIMoveTime_ = 0.0f;
-			}
-		}
-		else
-		{
-			UIMovePos_ = UIMoveRange_ * -MathFunc::easeOutSine(UIMoveTime_ / 30.0f);
-			UIMoveTime_++;
-			if (UIMoveTime_ >= 60.0f)
-			{
-				isMove_ = true;
-				UIMoveTime_ = 0.0f;
-			}
-		}
-		arrowUp_.SetPosition({ 640,UiRange_ - UIMovePos_,0 });
-		arrowDown_.SetPosition({ 640,720 - UiRange_ + UIMovePos_,0 });
-		arrowRight_.SetPosition({ 1280 - UiRange_ + UIMovePos_,360,0 });
-		arrowLeft_.SetPosition({ UiRange_ - UIMovePos_ ,360,0 });
-	}
-}
-
-void GamePlayScene::UIColorChange()
-{
-	//キーを押しているかで色を変化させる
-	if (isUp_ == true)
-	{
-		if (uiColor_[UP] < uiColorPush_)
-		{
-			uiColor_[UP] += uiColorNum_;
-		}
-	}
-	else
-	{
-		if (uiColor_[UP] > uiColorNormal_)
-		{
-			uiColor_[UP] -= uiColorNum_;
-		}
-	}
-	if (isDown_ == true)
-	{
-		if (uiColor_[DOWN] < uiColorPush_)
-		{
-			uiColor_[DOWN] += uiColorNum_;
-		}
-	}
-	else
-	{
-		if (uiColor_[DOWN] > uiColorNormal_)
-		{
-			uiColor_[DOWN] -= uiColorNum_;
-		}
-	}
-	if (isRight_ == true)
-	{
-		if (uiColor_[RIGHT] < uiColorPush_)
-		{
-			uiColor_[RIGHT] += uiColorNum_;
-		}
-	}
-	else
-	{
-		if (uiColor_[RIGHT] > uiColorNormal_)
-		{
-			uiColor_[RIGHT] -= uiColorNum_;
-		}
-	}
-	if (isLeft_ == true)
-	{
-		if (uiColor_[LEFT] < uiColorPush_)
-		{
-			uiColor_[LEFT] += uiColorNum_;
-		}
-	}
-	else
-	{
-		if (uiColor_[LEFT] > uiColorNormal_)
-		{
-			uiColor_[LEFT] -= uiColorNum_;
-		}
-	}
-	//色をセット
-	arrowUp_.SetColor(arrowUp_, { uiColor_[UP],uiColor_[UP] ,uiColor_[UP] ,1.0f });
-	arrowDown_.SetColor(arrowDown_, { uiColor_[DOWN],uiColor_[DOWN] ,uiColor_[DOWN] ,1.0f });
-	arrowRight_.SetColor(arrowRight_, { uiColor_[RIGHT],uiColor_[RIGHT] ,uiColor_[RIGHT] ,1.0f });
-	arrowLeft_.SetColor(arrowLeft_, { uiColor_[LEFT],uiColor_[LEFT] ,uiColor_[LEFT] ,1.0f });
-}
-
-void GamePlayScene::ReticleUpdate()
-{
-	if (isInvicibleReticle_ == true)
-	{
-		if (reticleAlpha_ < reticleAlphaNumMax_)
-		{
-			reticleAlpha_ += reticleAlphaNum_;
-			reticle_.SetAlpha(reticle_, reticleAlpha_);
-		}
-	}
-	else
-	{
-		if (reticleAlpha_ > reticleAlphaNumMin_)
-		{
-			reticleAlpha_ -= reticleAlphaNum_;
-			reticle_.SetAlpha(reticle_, reticleAlpha_);
-		}
-	}
-	//自機のワールド座標から3Dレティクルのワールド座標を計算
-	{
-		//自機から3Dレティクルへのオフセット(Z+向き)
-		Vector3 offSet = { 0,0,1.0f };
-		//自機のワールド行列の回転を反映
-		offSet = MatVector(offSet, player->worldTransform_.matWorld_);
-		//長さを整える
-		offSet = offSet.normalize() * distancePlayerToReticle_;
-		//3Dレティクルの座標を設定
-		worldTransform3DReticle_.position_ = Vector3::AddVector3(player->GetWorldPosition(), offSet);
-		worldTransform3DReticle_.UpdateMatrix();
-	}
-	//3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
-	{
-		// 3Dレティクルのワールド行列から,ワールド座標を取得
-		reticleWorldPos_.x = worldTransform3DReticle_.matWorld_.m[3][0];
-		reticleWorldPos_.y = worldTransform3DReticle_.matWorld_.m[3][1];
-		reticleWorldPos_.z = worldTransform3DReticle_.matWorld_.m[3][2];
-
-		//ビューポート行列
-		matViewport_ = SetViewport(Vector3(0, 0, 0));
-
-		//ビュー行列とプロジェクション行列,ビューポート行列を合成する
-		matViewprojectionViewport_ =
-			viewProjection_->matView_ * viewProjection_->matProjection_ * matViewport_;
-		//ワールド→スクリーン座標変換
-		reticleWorldPos_ = Transform(reticleWorldPos_, matViewprojectionViewport_);
-		//座標設定
-		reticle_.SetPosition(Vector3(reticleWorldPos_.x, reticleWorldPos_.y, 0.0f));
-	}
-	reticle_.Update(reticle_, spriteCommon_);
-}
-
-Vector3 GamePlayScene::MatVector(Vector3 v, Matrix4 mat)
-{
-	Vector3 pos;
-	pos.x = -mat.m[0][0] * v.x + -mat.m[0][1] * v.y + -mat.m[0][2] * v.z + mat.m[0][3] * 1;
-	pos.y = -mat.m[1][0] * v.x + -mat.m[1][1] * v.y + -mat.m[1][2] * v.z + mat.m[1][3] * 1;
-	pos.z = mat.m[2][0] * v.x + mat.m[2][1] * v.y + mat.m[2][2] * v.z + mat.m[2][3] * 1;
-
-	return pos;
-}
-
-Matrix4 GamePlayScene::SetViewport(const Vector3& v)
-{
-	//単位行列の設定
-	Matrix4 matViewport = Matrix4::identity();
-	matViewport.m[0][0] = 1280.0f / 2.0f;
-	matViewport.m[1][1] = -720.0f / 2.0f;
-	matViewport.m[3][0] = (1280.0f / 2.0f) + v.x;
-	matViewport.m[3][1] = (720.0f / 2.0f) + v.y;
-	return matViewport;
-}
-
-Vector3 GamePlayScene::Transform(const Vector3& v, const Matrix4& m)
-{
-	float w = v.x * m.m[0][3] + v.y * m.m[1][3] + v.z * m.m[2][3] + m.m[3][3];
-
-	Vector3 result
-	{
-		(v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + m.m[3][0]) / w,
-		(v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + m.m[3][1]) / w,
-		(v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2]) / w
-	};
-
-	return result;
 }
