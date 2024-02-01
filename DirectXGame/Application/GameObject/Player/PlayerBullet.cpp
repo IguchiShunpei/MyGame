@@ -12,36 +12,24 @@ PlayerBullet::~PlayerBullet()
 	delete playerBulletModel_;
 }
 
-void PlayerBullet::PlayerBulletInitialize(const Vector3& position, const Vector3& velocity, int bulletDir,int bulletLevel)
+void PlayerBullet::PlayerBulletInitialize(const Vector3& position, int bulletLevel,float lengthZ)
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	switch (bulletLevel)
-	{
-	case 1:
-		playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet01");
-		break;
-	case 2:
-		playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet02");
-		break;
-	}
+	playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet01");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_);
-	SetScale(Vector3(1.5f, 1.5f, 1.5f));
-	if (bulletDir == 0)
+	SetScale(Vector3(1.0f, 1.0f, lengthZ));
+	bulletColor_ = {1.0f,1.0f,1.0f};
+	if (bulletLevel == 2)
 	{
-		SetRotation(Vector3(0.0f, -180.0f, 0.0f));
-	}
-	else
-	{
-		SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+		bulletColor_ = { 1.0f,0.0f,0.0f };
 	}
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入
-	velocity_ = velocity;
 	isDelete_ = false;
 	chargeTime = 0;
 	deleteTimer_ = 120.0f;
@@ -59,21 +47,20 @@ void PlayerBullet::ColliderUpdate()
 
 void PlayerBullet::Update()
 {
-	worldTransform_.UpdateMatrix();
-
-	if (worldTransform_.scale_.x >= 0.7f)
+	if (worldTransform_.scale_.x >= 0.0f)
 	{
 		worldTransform_.scale_ -= Vector3(0.3f, 0.3f, 0.3f);
 	}
 
-	//座標を移動させる
-	worldTransform_.position_ += velocity_;
+	//回転
+	worldTransform_.rotation_.z += 10.0f;
 
 	//時間経過で弾が消える
-	if (--deleteTimer_ <= 0)
+	if (worldTransform_.scale_.x <= 0.0f)
 	{
 		isDelete_ = true;
 	}
+	worldTransform_.UpdateMatrix();
 }
 
 void PlayerBullet::OnCollision([[maybe_unused]] const CollisionInfo& info)
@@ -92,4 +79,10 @@ void PlayerBullet::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	{
 		isDelete_ = true;
 	}
+}
+
+float PlayerBullet::GetAngle(float mx, float my, float sx, float sy)
+{
+	float angle = atan2f(float(sy - my), float(sx - mx));
+	return angle;
 }

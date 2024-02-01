@@ -8,6 +8,8 @@
 #include "Object3d.h"
 #include "Model.h"
 #include "MathFunc.h"
+#include <cmath>
+#include <iostream>
 
 class PlayerBullet : public Object3d
 {
@@ -15,7 +17,7 @@ public:
 	//デストラクタ
 	~PlayerBullet();
 	//初期化
-	void PlayerBulletInitialize(const Vector3& position, const Vector3& velocity,int bulletDir,int bulletLevel);
+	void PlayerBulletInitialize(const Vector3& position,int bulletLevel,float lengthZ);
 	//当たり判定更新
 	void ColliderUpdate();
 
@@ -29,6 +31,9 @@ public:
 	bool GetIsCharge() const { return isCharge_; }
 	bool GetISHit() const { return isHit_; }
 	bool GetIsBurst() const { return isBurst_; }
+	Vector3 GetBulletColor() const { return bulletColor_; }
+	//ラジアン角
+	float GetAngle(float mx, float my, float sx, float sy);
 
 	//bulletNumのsetter
 	void SetBulletNum(int bulletNum) { this->bulletNum_ = bulletNum; }
@@ -50,6 +55,7 @@ private:
 	//倒したか
 	bool isBurst_ = false;
 
+	Vector3 bulletColor_;
 
 	//重力
 	const float G = 0.3f;

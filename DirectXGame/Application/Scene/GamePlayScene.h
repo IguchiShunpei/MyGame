@@ -137,17 +137,6 @@ public:
 
 	//レベルデータのロード
 	void LoadLevelData();
-
-	//レティクル更新
-	void ReticleUpdate();
-
-	//ベクトルと行列を掛け算
-	Vector3 MatVector(Vector3 v, Matrix4 mat);
-	//ビューポート行列をセット
-	Matrix4 SetViewport(const Vector3& v);
-	// 座標変換（ベクトルと行列の掛け算をする）
-	Vector3 Transform(const Vector3& v, const Matrix4& m);
-
 private://メンバ変数
 	//背景
 	SkyDome* sky_;
