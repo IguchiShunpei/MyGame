@@ -54,6 +54,9 @@ public:
 	//赤リセット
 	void RedReset();
 
+	//getter
+	bool GetIsBlack() const { return isBlack_; };
+
 	//setter
 	void SetIsUp(bool isUp) { isUp_ = isUp; }
 	void SetIsDown(bool isDown) { isDown_ = isDown; }
