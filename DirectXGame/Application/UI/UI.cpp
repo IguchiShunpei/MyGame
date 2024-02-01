@@ -221,7 +221,6 @@ void UI::UIDraw()
 
 	//画面系
 	//green_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
-	black_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	if (isRed_ == true)
 	{
 		red_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
@@ -229,6 +228,7 @@ void UI::UIDraw()
 
 	hpFrame_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	hpBar_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	black_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 }
 
 void UI::UIMove()
@@ -350,6 +350,7 @@ void UI::FadeIn()
 		else
 		{
 			blackAlpha_ = blackAlphaNumMax_;
+			isBlack_ = true;
 		}
 		black_.Update(black_, spriteCommon_);
 	}

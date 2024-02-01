@@ -652,7 +652,7 @@ void GamePlayScene::LoadEnemyPop()
 
 	//ファイルを開く
 	std::ifstream file;
-	file.open("Resources/csv/enemyPop.csv");
+	file.open("Resources/csv/enemyPop02.csv");
 	assert(file.is_open());
 
 	//ファイルの内容を文字列ストリームにコピー
@@ -957,11 +957,13 @@ void GamePlayScene::BossInitCameraWork()
 		{
 			//寄ったら黒フェード
 			ui_->FadeIn();
-
-			//黒フェードが完了したら登場カメラワークへ
-			bossInitNum_ = InitCameraWork;
-			bossAppTimer_ = 0;
-			viewProjection_->up_ = { 0.0f,1.0f,0.0f };
+			if (ui_->GetIsBlack() == true)
+			{
+				//黒フェードが完了したら登場カメラワークへ
+				bossInitNum_ = InitCameraWork;
+				bossAppTimer_ = 0;
+				viewProjection_->up_ = { 0.0f,1.0f,0.0f };
+			}
 		}
 		bossAppTimer_++;
 
