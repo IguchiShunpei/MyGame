@@ -52,7 +52,9 @@ const Vector3 Vector3::AddVector3(const Vector3& v1, const Vector3& v2)
 
 const Vector3 Vector3::lerp(const Vector3& start, const Vector3& end, const float t)
 {
-	return start * (1.0f - t) + end * t;
+	Vector3 lerp;
+	lerp = start * (1.0f - t) + end * t;
+	return lerp;
 }
 
 Vector3 Vector3::operator+()const

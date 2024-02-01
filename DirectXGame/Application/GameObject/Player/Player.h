@@ -106,6 +106,13 @@ public:
 	//bulletPower
 	void SetBulletPower(int bulletPower) { bulletPower_ = bulletPower; }
 
+	//ベクトルと行列を掛け算
+	Vector3 MatVector(Vector3 v, Matrix4 mat);
+	//ビューポート行列をセット
+	Matrix4 SetViewport(const Vector3& v);
+	// 座標変換（ベクトルと行列の掛け算をする）
+	Vector3 Transform(const Vector3& v, const Matrix4& m);
+
 private:
 	//入力
 	Input* input_ = nullptr;
@@ -120,7 +127,9 @@ private:
 	//弾リスト
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 
-	Vector3 reticleWorldPos_;
+	//弾の軌道先
+	Vector3 bulletWorldPos_;
+	WorldTransform bulletWorldTransform_;
 
 	//collider関係
 	Vector3 colliderPos_;
