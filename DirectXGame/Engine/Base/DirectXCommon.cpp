@@ -14,14 +14,14 @@
 
 using namespace Microsoft::WRL;
 
-DirectXCommon* DirectXCommon::GetInstance()
+SIEngine::DirectXCommon* SIEngine::DirectXCommon::GetInstance()
 {
 	static DirectXCommon instance;
 
 	return &instance;
 }
 
-void DirectXCommon::Initialize(WinApp*winApp_)
+void SIEngine::DirectXCommon::Initialize(WinApp*winApp_)
 {
 	//NULL検出
 	assert(winApp_);
@@ -52,7 +52,7 @@ void DirectXCommon::Initialize(WinApp*winApp_)
 	InitializeFence();
 }
 
-void DirectXCommon::InitializeDevice()
+void SIEngine::DirectXCommon::InitializeDevice()
 {
 	#ifdef _DEBUG
 	//デバッグレイヤーをオンに
@@ -121,7 +121,7 @@ void DirectXCommon::InitializeDevice()
 	}
 }
 
-void DirectXCommon::InitializeCommand()
+void SIEngine::DirectXCommon::InitializeCommand()
 {
 	//コマンドアロケータを生成
 	result = device_->CreateCommandAllocator(
@@ -143,7 +143,7 @@ void DirectXCommon::InitializeCommand()
 	assert(SUCCEEDED(result));
 }
 
-void DirectXCommon::InitializeSwapChain()
+void SIEngine::DirectXCommon::InitializeSwapChain()
 {
 	//スワップチェーンの設定
 	swapChainDesc_.Width = 1280;
@@ -166,7 +166,7 @@ void DirectXCommon::InitializeSwapChain()
 	assert(SUCCEEDED(result));
 }
 
-void DirectXCommon::InitializeRendeTargetView()
+void SIEngine::DirectXCommon::InitializeRendeTargetView()
 {
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;       //レンダーターゲットビュー
 	rtvHeapDesc.NumDescriptors = swapChainDesc_.BufferCount;  //裏表の2つ
@@ -196,7 +196,7 @@ void DirectXCommon::InitializeRendeTargetView()
 	}
 }
 
-void DirectXCommon::InitializeDepthBuffer()
+void SIEngine::DirectXCommon::InitializeDepthBuffer()
 {
 	//深度バッファのリソース設定
 	//リソース設定
@@ -242,13 +242,13 @@ void DirectXCommon::InitializeDepthBuffer()
 		dsvHeap_->GetCPUDescriptorHandleForHeapStart());
 }
 
-void DirectXCommon::InitializeFence()
+void SIEngine::DirectXCommon::InitializeFence()
 {
 	//フェンスの生成
 	result = device_->CreateFence(fenceVal_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
 }
 
-void DirectXCommon::PreDraw()
+void SIEngine::DirectXCommon::PreDraw()
 {
 	//バックバッファの番号を取得(2つなので0番か1番)
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
@@ -300,7 +300,7 @@ void DirectXCommon::PreDraw()
 
 }
 
-void DirectXCommon::PostDraw()
+void SIEngine::DirectXCommon::PostDraw()
 {
 	//バックバッファの番号を取得(2つなので0番か1番)
 	[[maybe_unused]]UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
@@ -341,6 +341,6 @@ void DirectXCommon::PostDraw()
 	assert(SUCCEEDED(result));
 }
 
-void DirectXCommon::fpsFixedFinalize() {
+void SIEngine::DirectXCommon::fpsFixedFinalize() {
 	safe_delete(fpsFixed);
 }

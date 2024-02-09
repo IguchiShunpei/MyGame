@@ -115,9 +115,9 @@ public:
 
 private:
 	//入力
-	Input* input_ = nullptr;
+	SIEngine::Input* input_ = nullptr;
 	//DxCommon
-	DirectXCommon* dxCommon_ = nullptr;
+	SIEngine::DirectXCommon* dxCommon_ = nullptr;
 	// モデル
 	std::unique_ptr <Model> playerModel_;
 

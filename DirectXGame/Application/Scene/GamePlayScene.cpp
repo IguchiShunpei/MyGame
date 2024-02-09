@@ -29,8 +29,8 @@ GamePlayScene::~GamePlayScene()
 
 void GamePlayScene::Initialize()
 {
-	input_ = Input::GetInstance();
-	dxCommon_ = DirectXCommon::GetInstance();
+	input_ = SIEngine::Input::GetInstance();
+	dxCommon_ = SIEngine::DirectXCommon::GetInstance();
 
 	//当たり判定
 	collisionManager_ = CollisionManager::GetInstance();

@@ -7,47 +7,49 @@
 #pragma once
 #include <windows.h>
 
-class WinApp
+namespace SIEngine
 {
-public://静的メンバ関数
-	static LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	class WinApp
+	{
+	public://静的メンバ関数
+		static LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-	//ウィンドウサイズ
-	static const int window_width = 1280; //横
-	static const int window_height = 720; //縦
+		//ウィンドウサイズ
+		static const int window_width = 1280; //横
+		static const int window_height = 720; //縦
 
-public://メンバ関数
-	//初期化
-	void Initialize();
+	public://メンバ関数
+		//初期化
+		void Initialize();
 
-	//終了
-	void Finalize();
+		//終了
+		void Finalize();
 
-	//メッセージの処理
-	bool ProcessMessage();
+		//メッセージの処理
+		bool ProcessMessage();
 
-	//getter
-	HWND GetHwnd() const { return hwnd_; }
-	HINSTANCE GetHInstance() const { return w.hInstance; }
+		//getter
+		HWND GetHwnd() const { return hwnd_; }
+		HINSTANCE GetHInstance() const { return w.hInstance; }
 
-public:
-	static WinApp* GetInstance();
+	public:
+		static WinApp* GetInstance();
 
-private:
-	//コンストラクタ
-	WinApp() = default;
-	//デストラクタ
-	~WinApp() = default;
-	//コピー封印
-	WinApp(const WinApp&) = delete;
-	//コピー封印
-	WinApp& operator=(const WinApp&) = delete;
+	private:
+		//コンストラクタ
+		WinApp() = default;
+		//デストラクタ
+		~WinApp() = default;
+		//コピー封印
+		WinApp(const WinApp&) = delete;
+		//コピー封印
+		WinApp& operator=(const WinApp&) = delete;
 
-private:
-	//ウィンドウハンドル
-	HWND hwnd_ = nullptr;
+	private:
+		//ウィンドウハンドル
+		HWND hwnd_ = nullptr;
 
-	//ウィンドウクラスの設定
-	WNDCLASSEX w{};
-};
-
+		//ウィンドウクラスの設定
+		WNDCLASSEX w{};
+	};
+}

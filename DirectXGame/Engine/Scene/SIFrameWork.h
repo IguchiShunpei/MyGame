@@ -41,11 +41,11 @@ public:
 
 protected:
 	//WindowsAPIのポインタ
-	WinApp* winApp = nullptr;
+	SIEngine::WinApp* winApp = nullptr;
 	//DirectXのポインタ
-	DirectXCommon* dxCommon = nullptr;
+	SIEngine::DirectXCommon* dxCommon = nullptr;
 	//入力のポインタ
-	Input* input = nullptr;
+	SIEngine::Input* input = nullptr;
 	// シーンマネージャ
 	GameSceneManager* sceneManager_ = nullptr;
 	// シーンファクトリー

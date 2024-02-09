@@ -6,11 +6,11 @@
 
 
 #include "Sprite.h"
-Sprite::Sprite() {
+SIEngine::Sprite::Sprite() {
 	resDesc_;
 }
 
-SpriteCommon Sprite::SpriteCommonCreate(ID3D12Device* device)
+SIEngine::SpriteCommon SIEngine::Sprite::SpriteCommonCreate(ID3D12Device* device)
 {
 	HRESULT result = S_FALSE;
 
@@ -39,7 +39,7 @@ SpriteCommon Sprite::SpriteCommonCreate(ID3D12Device* device)
 	return spriteCommon;
 }
 
-PipelineSet Sprite::SpriteCreateGraphicsPipeline(ID3D12Device* device)
+SIEngine::PipelineSet SIEngine::Sprite::SpriteCreateGraphicsPipeline(ID3D12Device* device)
 {
 	HRESULT result;
 	ComPtr<ID3DBlob> vsBlob; // 頂点シェーダオブジェクト
@@ -231,7 +231,7 @@ PipelineSet Sprite::SpriteCreateGraphicsPipeline(ID3D12Device* device)
 	return pipelineSet;
 }
 
-void Sprite::Initialize(ID3D12Device* device, UINT texNumber, Vector2 anchorPoint, bool isFlipX, bool isFlipY)
+void SIEngine::Sprite::Initialize(ID3D12Device* device, UINT texNumber, Vector2 anchorPoint, bool isFlipX, bool isFlipY)
 {
 	HRESULT result = S_FALSE;
 
@@ -330,7 +330,7 @@ void Sprite::Initialize(ID3D12Device* device, UINT texNumber, Vector2 anchorPoin
 	constMap_->mat_.m[3][1] = 1.0f;
 }
 
-void Sprite::Update(Sprite& sprite, const SpriteCommon& spriteCommon)
+void SIEngine::Sprite::Update(Sprite& sprite, const SpriteCommon& spriteCommon)
 {
 	// 行列の設定
 	Matrix4 matRot;
@@ -360,7 +360,7 @@ void Sprite::Update(Sprite& sprite, const SpriteCommon& spriteCommon)
 	sprite.constBuffMaterial_->Unmap(0, nullptr);
 }
 
-void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList, const SpriteCommon& spriteCommon)
+void SIEngine::Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList, const SpriteCommon& spriteCommon)
 {
 	// パイプラインステートとルートシグネチャの設定
 	cmdList->SetPipelineState(spriteCommon.pipelineSet.pipelinestate.Get());
@@ -374,7 +374,7 @@ void Sprite::PreDraw(ID3D12GraphicsCommandList* cmdList, const SpriteCommon& spr
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 }
 
-void Sprite::Draw(ID3D12GraphicsCommandList* cmdList, const SpriteCommon& spriteCommon, ID3D12Device* device)
+void SIEngine::Sprite::Draw(ID3D12GraphicsCommandList* cmdList, const SpriteCommon& spriteCommon, ID3D12Device* device)
 {
 	// 非表示フラグがtrueなら
 	if (isInvisible_) {
@@ -401,7 +401,7 @@ void Sprite::Draw(ID3D12GraphicsCommandList* cmdList, const SpriteCommon& sprite
 	cmdList->DrawInstanced(4, 1, 0, 0);
 }
 
-void Sprite::LoadTexture(SpriteCommon& spriteCommon, UINT texnumber, const wchar_t* filename, ID3D12Device* device)
+void SIEngine::Sprite::LoadTexture(SpriteCommon& spriteCommon, UINT texnumber, const wchar_t* filename, ID3D12Device* device)
 {
 	assert(texnumber <= SpriteCommon::kMaxSRVCount - 1);
 
@@ -472,7 +472,7 @@ void Sprite::LoadTexture(SpriteCommon& spriteCommon, UINT texnumber, const wchar
 	);
 }
 
-void Sprite::SpriteTransferVertexBuffer(const Sprite& sprite, uint32_t texIndex)
+void SIEngine::Sprite::SpriteTransferVertexBuffer(const Sprite& sprite, uint32_t texIndex)
 {
 	HRESULT result = S_FALSE;
 
@@ -538,7 +538,7 @@ void Sprite::SpriteTransferVertexBuffer(const Sprite& sprite, uint32_t texIndex)
 	sprite.vertBuff_->Unmap(0, nullptr);
 }
 
-void Sprite::SetColor(Sprite sprite, const Vector4& color)
+void SIEngine::Sprite::SetColor(Sprite sprite, const Vector4& color)
 {
 
 	// 定数バッファの転送
@@ -549,7 +549,7 @@ void Sprite::SetColor(Sprite sprite, const Vector4& color)
 	assert(SUCCEEDED(result));
 }
 
-void Sprite::SetAlpha(Sprite sprite, float alpha_)
+void SIEngine::Sprite::SetAlpha(Sprite sprite, float alpha_)
 {
 	// 定数バッファの転送
 	HRESULT result;

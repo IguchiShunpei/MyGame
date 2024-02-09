@@ -12,53 +12,56 @@
 #include"WinApp.h"
 #include<dinput.h>
 
-class Input
+namespace SIEngine
 {
-public:
-	static Input* GetInstance();
+	class Input
+	{
+	public:
+		static Input* GetInstance();
 
-private:
-	//コンストラクタ
-	Input() = default;
-	//デストラクタ
-	~Input() = default;
-	//コピー封印
-	Input(const Input&) = delete;
-	//コピー封印
-	Input& operator=(const Input&) = delete;
+	private:
+		//コンストラクタ
+		Input() = default;
+		//デストラクタ
+		~Input() = default;
+		//コピー封印
+		Input(const Input&) = delete;
+		//コピー封印
+		Input& operator=(const Input&) = delete;
 
-public:
-	//namespace省略
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	public:
+		//namespace省略
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public: //メンバ関数
-	//初期化
-	void Initialize(WinApp* winApp);
-	//更新
-	void Update();
+	public: //メンバ関数
+		//初期化
+		void Initialize(SIEngine::WinApp* winApp);
+		//更新
+		void Update();
 
-	//長押し
-	bool PushKey(BYTE keyNumber);
+		//長押し
+		bool PushKey(BYTE keyNumber);
 
-	//押した瞬間
-	bool TriggerKey(BYTE keyNumber);
+		//押した瞬間
+		bool TriggerKey(BYTE keyNumber);
 
-	//離した瞬間
-	bool ReleasedKey(BYTE keyNumber);
-private: //メンバ変数
+		//離した瞬間
+		bool ReleasedKey(BYTE keyNumber);
+	private: //メンバ変数
 
-	// DirectInputのインスタンス
-	ComPtr<IDirectInput8> directInput = nullptr;
+		// DirectInputのインスタンス
+		ComPtr<IDirectInput8> directInput = nullptr;
 
-	//キーボードのデバイス
-	ComPtr<IDirectInputDevice8> keyboard = nullptr;
+		//キーボードのデバイス
+		ComPtr<IDirectInputDevice8> keyboard = nullptr;
 
-	//全キーの状態
-	BYTE key[256] = {};
+		//全キーの状態
+		BYTE key[256] = {};
 
-	// 前回の全キーの状態
-	BYTE keyPre[256] = {};
+		// 前回の全キーの状態
+		BYTE keyPre[256] = {};
 
-	//WindowsAPI
-	WinApp* winApp = nullptr;
-};
+		//WindowsAPI
+		SIEngine::WinApp* winApp = nullptr;
+	};
+}

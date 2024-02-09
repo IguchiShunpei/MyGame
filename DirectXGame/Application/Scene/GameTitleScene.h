@@ -50,8 +50,8 @@ public: //メンバ関数
 
 private: // メンバ変数
 	// 入力
-	Input* input_;
-	DirectXCommon* dxCommon_;
+	SIEngine::Input* input_;
+	SIEngine::DirectXCommon* dxCommon_;
 	
 	//背景
 	std::unique_ptr <SkyDome> sky;
@@ -63,11 +63,11 @@ private: // メンバ変数
 	std::unique_ptr <ViewProjection> viewProjection_;
 
 	//ロゴやUI
-	std::unique_ptr <Sprite> sprite_;
-	SpriteCommon spriteCommon_;
-	Sprite titleLogo_;
-	Sprite space_;
-	Sprite black_;
+	std::unique_ptr <SIEngine::Sprite> sprite_;
+	SIEngine::SpriteCommon spriteCommon_;
+	SIEngine::Sprite titleLogo_;
+	SIEngine::Sprite space_;
+	SIEngine::Sprite black_;
 	//黒alpha値
 	float blackAlpha_;
 	//変動値

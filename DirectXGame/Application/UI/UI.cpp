@@ -9,7 +9,7 @@
 
 void UI::UIInitialize()
 {
-	dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_ = SIEngine::DirectXCommon::GetInstance();
 
 	//UI入退場の変数
 	UIInitPos_ = 0.0f;
@@ -47,7 +47,7 @@ void UI::UIInitialize()
 	isRight_ = false;
 	isLeft_ = false;
 
-	sprite_ = std::make_unique<Sprite>();
+	sprite_ = std::make_unique<SIEngine::Sprite>();
 	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
 	//上
@@ -211,7 +211,7 @@ void UI::UIUpdate()
 void UI::UIDraw()
 {
 	//描画前処理
-	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
+	SIEngine::Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
 
 	//移動時のUI切り替え
 	arrowUp_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());

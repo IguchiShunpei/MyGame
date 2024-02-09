@@ -20,8 +20,8 @@ GameTitleScene::~GameTitleScene()
 
 void GameTitleScene::Initialize()
 {
-	input_ = Input::GetInstance();
-	dxCommon_= DirectXCommon::GetInstance();
+	input_ = SIEngine::Input::GetInstance();
+	dxCommon_= SIEngine::DirectXCommon::GetInstance();
 
 	//player 
 	player = std::make_unique <Player>();
@@ -38,7 +38,7 @@ void GameTitleScene::Initialize()
 	sky = std::make_unique < SkyDome>();
 	sky->SkyDomeInitialize();
 
-	sprite_ = std::make_unique <Sprite>();
+	sprite_ = std::make_unique <SIEngine::Sprite>();
 	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
 	//タイトルロゴ
@@ -195,7 +195,7 @@ void GameTitleScene::Draw()
 
 	Object3d::PostDraw();
 
-	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
+	SIEngine::Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
 
 	titleLogo_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
