@@ -9,9 +9,7 @@
 
 Explosion::~Explosion()
 {
-	delete explosionModel01_;
-	delete explosionModel02_;
-	delete explosionModel03_;
+
 }
 
 void Explosion::ExplosionInitialize(int num)
@@ -25,7 +23,7 @@ void Explosion::ExplosionInitialize(int num)
 		// 3Dオブジェクト生成
 		Create();
 		// オブジェクトにモデルをひも付ける
-		SetModel(explosionModel01_);
+		SetModel(explosionModel01_.get());
 		scaleNum_ = Vector3(0.2f, 0.2f, 0.2f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}
@@ -36,7 +34,7 @@ void Explosion::ExplosionInitialize(int num)
 		// 3Dオブジェクト生成
 		Create();
 		// オブジェクトにモデルをひも付ける
-		SetModel(explosionModel02_);
+		SetModel(explosionModel02_.get());
 		scaleNum_ = Vector3(0.1f, 0.1f, 0.1f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}
@@ -47,7 +45,7 @@ void Explosion::ExplosionInitialize(int num)
 		// 3Dオブジェクト生成
 		Create();
 		// オブジェクトにモデルをひも付ける
-		SetModel(explosionModel03_);
+		SetModel(explosionModel03_.get());
 		scaleNum_ = Vector3(0.5f, 0.5f, 0.5f);
 		SetScale(Vector3(0.3f, 0.3f, 0.3f));
 	}

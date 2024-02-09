@@ -22,15 +22,15 @@ void GameClearScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 
 	//天球
-	sky_ = new SkyDome;
+	sky_ = std::make_unique < SkyDome>();
 	sky_->SkyDomeInitialize();
 
 	//カメラ初期化
-	viewProjection_ = new ViewProjection();
+	viewProjection_ = std::make_unique<ViewProjection>();
 	viewProjection_->Initialize();
 	viewProjection_->SetEye(Vector3(0.0f, 0.0f, 20.0f));
 
-	sprite_ = new Sprite();
+	sprite_ = std::make_unique <Sprite>();
 	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
 	//クリアーロゴ
@@ -136,7 +136,7 @@ void GameClearScene::Draw()
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
 	//天球
-	sky_->Draw(viewProjection_);
+	sky_->Draw(viewProjection_.get());
 
 	Object3d::PostDraw();
 

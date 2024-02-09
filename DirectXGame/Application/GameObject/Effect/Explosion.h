@@ -27,9 +27,9 @@ public:
 private:
 
 	// モデル
-	Model* explosionModel01_ = nullptr;
-	Model* explosionModel02_ = nullptr;
-	Model* explosionModel03_ = nullptr;
+	std::unique_ptr<Model> explosionModel01_;
+	std::unique_ptr<Model> explosionModel02_;
+	std::unique_ptr<Model> explosionModel03_;
 
 	Vector3 scaleNum_;
 

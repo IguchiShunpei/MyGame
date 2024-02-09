@@ -13,8 +13,7 @@
 //デストラクタ
 Enemy::~Enemy()
 {
-	delete enemyModel;
-	delete enemyBullet;
+
 }
 
 //初期化
@@ -26,7 +25,7 @@ void Enemy::EnemyInitialize()
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(enemyModel);
+	SetModel(enemyModel.get());
 
 	bulletColliderPos_ = {0.0f,0.0f,0.0f};
 	bulletColliderRadius_ = 0.5f;

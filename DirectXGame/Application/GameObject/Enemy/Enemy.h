@@ -77,8 +77,6 @@ public:
 	//Setter
 	//HP
 	void SetHp(int hp) { this->hp_ = hp; }
-	//gameScene
-	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
 	//isDead
@@ -92,8 +90,6 @@ public:
 	Vector3 GetPosition();
 
 private:
-	//ゲームシーン
-	GameScene* gameScene_ = nullptr;
 
 	//色
 	Vector3 enemyColor_;
@@ -122,10 +118,10 @@ private:
 	bool isAttack_ = false;
 
 	// モデル
-	Model* enemyModel = nullptr;
+	std::unique_ptr <Model> enemyModel;
 
 	//弾
-	EnemyBullet* enemyBullet;
+	std::unique_ptr <EnemyBullet> enemyBullet;
 
 	//弾リスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;

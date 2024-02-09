@@ -10,6 +10,7 @@
 #include "Vector3.h"
 #include "Model.h"
 #include "MathFunc.h"
+#include <memory>
 
 
 class Item : public Object3d
@@ -74,5 +75,5 @@ private:
 	Vector3 hitScale_;
 
 	// モデル
-	Model* itemModel_;
+	std::unique_ptr <Model> itemModel_;
 };

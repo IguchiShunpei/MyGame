@@ -6,7 +6,6 @@
 //デストラクタ
 InvincibleEnemy::~InvincibleEnemy()
 {
-	delete enemyModel;
 }
 
 //初期化
@@ -18,7 +17,7 @@ void InvincibleEnemy::InvincibleEnemyInitialize()
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(enemyModel);
+	SetModel(enemyModel.get());
 	isDelete_ = false;
 	isHit_ = false;
 	isInit_ = false;

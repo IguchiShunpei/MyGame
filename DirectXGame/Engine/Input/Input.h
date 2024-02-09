@@ -17,6 +17,16 @@ class Input
 public:
 	static Input* GetInstance();
 
+private:
+	//コンストラクタ
+	Input() = default;
+	//デストラクタ
+	~Input() = default;
+	//コピー封印
+	Input(const Input&) = delete;
+	//コピー封印
+	Input& operator=(const Input&) = delete;
+
 public:
 	//namespace省略
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;

@@ -37,6 +37,9 @@ public:
 	//更新
 	void Update();
 
+	//死亡
+	void Dead();
+
 	//弾更新
 	void BulletUpdate();
 
@@ -58,6 +61,8 @@ public:
 	int GetDeathTimer() const { return deathTimer_; }
 	//Color
 	Vector3 GetColor() const { return bossColor_; }
+	//alpha
+	float GetAlpha() const { return alpha_; }
 	
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
@@ -101,8 +106,6 @@ public:
 	//Setter
 	//HP
 	void SetHp(int hp) { this->hp_ = hp; }
-	//gameScene
-	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
 	//deathTimer
@@ -188,14 +191,11 @@ private:
 	//弾を打ち出すまでの時間
 	float dalayTimer_ = 15.0f;
 
-	//ゲームシーン
-	GameScene* gameScene_ = nullptr;
-
 	//色
 	Vector3 bossColor_ = { 1.0f,1.0f,1.0f };
 
 	// モデル
-	Model* enemyModel = nullptr;
+	std::unique_ptr <Model> enemyModel;
 
 	//死亡するまでの時間
 	int deathTimer_;
@@ -211,4 +211,32 @@ private:
 
 	//ダメージ量
 	int damage_;
+
+	//ボスのシェイク
+	bool isShake_;
+
+	//ボスalpha
+	bool isAlpha_;
+
+	//ボスの墜落時のシェイク範囲
+	float shakeRange_;
+	float shakeNum_;
+
+	//ボスの墜落スピード
+	float bossDownSpeed_;
+
+	//ボスのalpha 
+	float bossAlpha_;
+
+	//最大
+	float bossAlphaMax_;
+
+	//最小
+	float bossAlphaMin_;
+
+	//ボスalphaに代入する変数
+	float bossAlphaNum_;
+
+	//ボスscale	
+	Vector3 bossScaleNum_;
 };

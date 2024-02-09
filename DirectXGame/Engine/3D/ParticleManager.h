@@ -44,7 +44,7 @@ public: // 静的メンバ関数
 	static void PostDraw();
 
 	/// 3Dオブジェクト生成
-	static ParticleManager* Create();
+	static 	std::unique_ptr <ParticleManager> Create();
 
 private: // 静的メンバ変数
 	// デバイス

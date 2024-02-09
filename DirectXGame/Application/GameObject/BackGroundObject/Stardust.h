@@ -45,8 +45,6 @@ public:
 	Vector3 GetColor() const { return color_; }
 
 private:
-	//座標
-	Vector3 position_;
 	//速度
 	float speed_;
 	//手前

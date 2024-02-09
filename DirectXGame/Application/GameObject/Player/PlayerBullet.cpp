@@ -9,7 +9,6 @@
 
 PlayerBullet::~PlayerBullet()
 {
-	delete playerBulletModel_;
 }
 
 void PlayerBullet::PlayerBulletInitialize(const Vector3& position, int bulletLevel,float lengthZ)
@@ -20,7 +19,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, int bulletLev
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(playerBulletModel_);
+	SetModel(playerBulletModel_.get());
 	SetScale(Vector3(1.0f, 1.0f, lengthZ));
 	bulletColor_ = {1.0f,1.0f,1.0f};
 	if (bulletLevel == 2)
@@ -60,7 +59,7 @@ void PlayerBullet::Update()
 	{
 		isDelete_ = true;
 	}
-	worldTransform_.UpdateMatrix();
+ 	worldTransform_.UpdateMatrix();
 }
 
 void PlayerBullet::OnCollision([[maybe_unused]] const CollisionInfo& info)

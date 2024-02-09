@@ -7,6 +7,7 @@
 #pragma once
 #include "Object3d.h"
 #include "Model.h"
+#include <memory>
 
 class EnemyBullet : public Object3d
 {
@@ -29,7 +30,7 @@ public:
 private:
 
 	// モデル
-	Model* enemyBulletModel_ = nullptr;
+	std::unique_ptr<Model> enemyBulletModel_;
 	//削除フラグ
 	bool isDelete_;
 	//削除タイマー

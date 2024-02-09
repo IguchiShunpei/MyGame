@@ -12,7 +12,6 @@
 //デストラクタ
 WeakEnemy::~WeakEnemy()
 {
-	delete wEnemyModel;
 }
 
 //初期化
@@ -24,7 +23,7 @@ void WeakEnemy::WEnemyInitialize()
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(wEnemyModel);
+	SetModel(wEnemyModel.get());
 	isDead_ = false;
 	isInit_ = false;
 	initTime_ = 60.0f;

@@ -17,5 +17,5 @@ public:
 
 private:
 	// モデル
-	Model* skyModel = nullptr;
+	std::unique_ptr <Model> skyModel;
 };

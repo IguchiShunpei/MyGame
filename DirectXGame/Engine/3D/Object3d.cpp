@@ -95,17 +95,16 @@ void Object3d::PostDraw()
 	Object3d::cmdList = nullptr;
 }
 
-Object3d* Object3d::Create()
+std::unique_ptr<Object3d> Object3d::Create()
 {
 	// 3Dオブジェクトのインスタンスを生成
-	Object3d* object3d = new Object3d();
+	std::unique_ptr<Object3d> object3d = std::make_unique<Object3d>();
 	if (object3d == nullptr) {
 		return nullptr;
 	}
 
 	// 初期化
 	if (!object3d->Initialize()) {
-		delete object3d;
 		assert(0);
 		return nullptr;
 	}

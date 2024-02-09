@@ -16,6 +16,7 @@
 #include "ViewProjection.h"
 #include "Model.h"
 #include "CollisionInfo.h"
+#include <memory>
 
 class BaseCollider;
 
@@ -38,7 +39,7 @@ public: // 静的メンバ関数
 	static void PostDraw();
 
 	/// 3Dオブジェクト生成
-	static Object3d* Create();
+	static std::unique_ptr<Object3d> Create();
 
 private: // 静的メンバ変数
 	// デバイス

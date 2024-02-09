@@ -12,15 +12,13 @@
 //デストラクタ
 Player::~Player()
 {
-	delete playerModel_;
-	delete playerBullet_;
+
 }
 
 //初期化
 void Player::PlayerInitialize()
 {
 	input_ = Input::GetInstance();
-
 	dxCommon_ = DirectXCommon::GetInstance();
 
 	Initialize();
@@ -33,12 +31,12 @@ void Player::PlayerInitialize()
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(playerModel_);
+	SetModel(playerModel_.get());
 
 	//コライダー関係の変数
 	colliderPos_ = { 0.0f,0.0f,0.0f };
 	playerColliderRadius_ = 1.0f;
-	bulletColliderRadius_ = 3.0f;
+	bulletColliderRadius_ = 5.0f;
 
 	//半径分だけ足元から浮いた座標を球の中心にする
 	SetCollider(new SphereCollider(colliderPos_, playerColliderRadius_));
@@ -417,7 +415,7 @@ void Player::Attack()
 		//自機から3Dレティクルへのオフセット(Z+向き)
 		Vector3 offSet = { 0,0,1.0f };
 		//自機のワールド行列の回転を反映
-		offSet = MatVector(offSet, worldTransform_.matWorld_);
+		//offSet = MatVector(offSet, worldTransform_.matWorld_);
 		//長さを整える
 		offSet = offSet.normalize() * 50.0f;
 		//3Dレティクルの座標を設定
@@ -427,24 +425,26 @@ void Player::Attack()
 		//自機と弾の軌道の中心を取る
 		Vector3 position;
 		position = Vector3::lerp(worldTransform_.position_, bulletWorldTransform_.position_, 0.5f);
-		
+
 		//球の生成
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+
 		//球の初期化
 		newBullet->PlayerBulletInitialize(position, bulletLevel_, position.z);
+
 		//atan2で角度を求める
- 		newBullet->worldTransform_.rotation_.x = newBullet->GetAngle(worldTransform_.position_.z, worldTransform_.position_.y, bulletWorldTransform_.position_.z, bulletWorldTransform_.position_.y);
-		newBullet->worldTransform_.rotation_.y = newBullet->GetAngle(worldTransform_.position_.z, worldTransform_.position_.x, bulletWorldTransform_.position_.z, bulletWorldTransform_.position_.x);
+		newBullet->worldTransform_.rotation_.y = -(newBullet->GetAngle(worldTransform_.position_.z, worldTransform_.position_.x, bulletWorldTransform_.position_.z, bulletWorldTransform_.position_.x));
+		newBullet->worldTransform_.rotation_.x = -(newBullet->GetAngle(worldTransform_.position_.z, worldTransform_.position_.y, bulletWorldTransform_.position_.z, bulletWorldTransform_.position_.y));
 
 		//コライダーの追加
-		newBullet->SetCollider(new SphereCollider(colliderPos_, bulletColliderRadius_));
+		newBullet->SetCollider(new SphereCollider({colliderPos_.x,colliderPos_.y,30.0f}, bulletColliderRadius_));
 
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
 	}
 }
 
-Vector3 Player::bVelocity(Vector3& velocity, WorldTransform& worldTransform)
+Vector3 Player::bVelocity(const Vector3& velocity,const WorldTransform& worldTransform)
 {
 	Vector3 result = { 0,0,0 };
 
@@ -527,13 +527,12 @@ Vector3 Player::GetWorldPosition()
 
 	return worldPos;
 }
-
 Vector3 Player::MatVector(Vector3 v, Matrix4 mat)
 {
 	Vector3 pos;
-	pos.x = -mat.m[0][0] * v.x + -mat.m[0][1] * v.y + -mat.m[0][2] * v.z + mat.m[0][3] * 1;
-	pos.y = -mat.m[1][0] * v.x + -mat.m[1][1] * v.y + -mat.m[1][2] * v.z + mat.m[1][3] * 1;
-	pos.z = mat.m[2][0] * v.x + mat.m[2][1] * v.y + mat.m[2][2] * v.z + mat.m[2][3] * 1;
+	pos.x = mat.m[0][0] * v.x + mat.m[0][1] * v.y + mat.m[0][2] * v.z + mat.m[0][3];
+	pos.y = mat.m[1][0] * v.x + mat.m[1][1] * v.y + mat.m[1][2] * v.z + mat.m[1][3];
+	pos.z = mat.m[2][0] * v.x + mat.m[2][1] * v.y + mat.m[2][2] * v.z + mat.m[2][3];
 
 	return pos;
 }

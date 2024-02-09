@@ -14,6 +14,7 @@
 #include "GameTitleScene.h"
 #include "SkyDome.h"
 #include "Sound.h"
+#include <memory>
 
 #include <DirectXMath.h>
 
@@ -41,12 +42,12 @@ public: //メンバ関数
 private: // メンバ変数
 	Input* input_ = nullptr;
 	DirectXCommon* dxCommon_ = nullptr;
-	SkyDome* sky_;
+	std::unique_ptr<SkyDome> sky_;
 	//カメラ
-	ViewProjection* viewProjection_ = nullptr;
+	std::unique_ptr < ViewProjection> viewProjection_;
 
 	//ロゴやUI
-	Sprite* sprite_;
+	std::unique_ptr < Sprite> sprite_;
 	SpriteCommon spriteCommon_;
 	Sprite gameOverLogo_;
 	Sprite space_;

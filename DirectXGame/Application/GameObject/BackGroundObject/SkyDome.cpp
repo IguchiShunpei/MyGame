@@ -8,7 +8,7 @@
 
 SkyDome::~SkyDome()
 {
-	delete skyModel;
+	
 }
 
 void SkyDome::SkyDomeInitialize()
@@ -19,6 +19,6 @@ void SkyDome::SkyDomeInitialize()
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(skyModel);
+	SetModel(skyModel.get());
 	SetScale(Vector3(1400.0f, 1400.0f, 1400.0f));
 }
