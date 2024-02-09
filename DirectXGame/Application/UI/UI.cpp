@@ -47,7 +47,7 @@ void UI::UIInitialize()
 	isRight_ = false;
 	isLeft_ = false;
 
-	sprite_ = new Sprite();
+	sprite_ = std::make_unique<Sprite>();
 	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
 	//上
@@ -372,7 +372,6 @@ void UI::FadeOut(int color)
 			else
 			{
 				blackAlpha_ = blackAlphaNumMin_;
-				isBlack_ = false;
 			}
 			black_.Update(black_, spriteCommon_);
 		}

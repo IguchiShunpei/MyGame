@@ -34,6 +34,16 @@ public:
 	static WinApp* GetInstance();
 
 private:
+	//コンストラクタ
+	WinApp() = default;
+	//デストラクタ
+	~WinApp() = default;
+	//コピー封印
+	WinApp(const WinApp&) = delete;
+	//コピー封印
+	WinApp& operator=(const WinApp&) = delete;
+
+private:
 	//ウィンドウハンドル
 	HWND hwnd_ = nullptr;
 

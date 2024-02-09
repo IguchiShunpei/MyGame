@@ -10,7 +10,7 @@
 
 Item::~Item()
 {
-	delete itemModel_;
+
 }
 
 void Item::ItemInitialize(Vector3 initPos_)
@@ -21,7 +21,7 @@ void Item::ItemInitialize(Vector3 initPos_)
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(itemModel_);
+	SetModel(itemModel_.get());
 	SetPosition(initPos_);
 	isDelete_ = false;
 	isHit_ = false;

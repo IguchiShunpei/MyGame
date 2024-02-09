@@ -15,29 +15,30 @@ GameTitleScene::GameTitleScene()
 
 GameTitleScene::~GameTitleScene()
 {
+
 }
 
 void GameTitleScene::Initialize()
 {
 	input_ = Input::GetInstance();
-	dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_= DirectXCommon::GetInstance();
 
 	//player 
-	player = new Player;
+	player = std::make_unique <Player>();
 	player->PlayerInitialize();
 	player->SetPosition(Vector3(0.0f, -2.0f, 0.0f));
 
 	//カメラ初期化
-	viewProjection_ = new ViewProjection();
+	viewProjection_ = std::make_unique <ViewProjection>();
 	viewProjection_->Initialize();
 	viewProjection_->SetEye(Vector3(0.0f, 4.0f, 18.0f));
 	viewProjection_->SetTarget(Vector3(0.0f, -2.0f, 0.0f));
 
 	//天球
-	sky = new SkyDome;
+	sky = std::make_unique < SkyDome>();
 	sky->SkyDomeInitialize();
 
-	sprite_ = new Sprite();
+	sprite_ = std::make_unique <Sprite>();
 	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
 	//タイトルロゴ
@@ -79,7 +80,6 @@ void GameTitleScene::Initialize()
 	//フラグ
 	isBeforeCameraWork_ = false;
 	isTitleCameraWork_ = false;
-
 }
 
 void GameTitleScene::Update()
@@ -190,8 +190,8 @@ void GameTitleScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	sky->Draw(viewProjection_);
-	player->Draw(viewProjection_);
+	sky->Draw(viewProjection_.get());
+	player->Draw(viewProjection_.get());
 
 	Object3d::PostDraw();
 
@@ -208,9 +208,7 @@ void GameTitleScene::Draw()
 
 void GameTitleScene::Finalize()
 {
-	delete sky;
-	delete player;
-	delete viewProjection_;
+
 }
 
 void GameTitleScene::StartCameraWork(int num)

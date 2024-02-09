@@ -56,7 +56,7 @@ public:
 	void Attack();
 
 	//キャラの向きに応じた方向に球を出す
-	Vector3 bVelocity(Vector3& velocity, WorldTransform& worldTransform);
+	Vector3 bVelocity(const Vector3& velocity, const WorldTransform& worldTransform);
 
 	//ダメージ
 	void Damage();
@@ -119,10 +119,10 @@ private:
 	//DxCommon
 	DirectXCommon* dxCommon_ = nullptr;
 	// モデル
-	Model* playerModel_ = nullptr;
+	std::unique_ptr <Model> playerModel_;
 
 	//弾
-	PlayerBullet* playerBullet_ = nullptr;
+	std::unique_ptr <PlayerBullet> playerBullet_;
 
 	//弾リスト
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;

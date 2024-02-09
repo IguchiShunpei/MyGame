@@ -105,7 +105,7 @@ private:
 	float alphaMax_;
 
 	// モデル
-	Model* meteorModel_ = nullptr;
+	std::unique_ptr <Model> meteorModel_;
 
 	//背景フラグ
 	bool isBack_;

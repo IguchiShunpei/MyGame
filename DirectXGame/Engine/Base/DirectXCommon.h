@@ -20,6 +20,16 @@ class DirectXCommon
 public:
 	static DirectXCommon* GetInstance();
 
+private:
+	//コンストラクタ
+	DirectXCommon() = default;
+	//デストラクタ
+	~DirectXCommon() = default;
+	//コピー封印
+	DirectXCommon(const DirectXCommon&) = delete;
+	//コピー封印
+	DirectXCommon& operator=(const DirectXCommon&) = delete;
+
 public:
 	//初期化
 	void Initialize(WinApp*winApp);
@@ -101,4 +111,3 @@ private:
 	// 結果確認
 	HRESULT result;
 };
-

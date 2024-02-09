@@ -53,8 +53,6 @@ public:
 	void BackMotion();
 
 	//Setter
-	//gameScene
-	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	//beforeY
 	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
 
@@ -62,8 +60,6 @@ public:
 	Vector3 GetPosition();
 
 private:
-	//ゲームシーン
-	GameScene* gameScene_ = nullptr;
 
 	//デスフラグ
 	//デスポーンしたか
@@ -82,7 +78,7 @@ private:
 	float beforeY_;
 
 	// モデル
-	Model* enemyModel = nullptr;
+	std::unique_ptr <Model> enemyModel;
 	//待機時間
 	int waitTimer = 0;
 	//回転時間

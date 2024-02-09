@@ -12,7 +12,6 @@
 //デストラクタ
 BossEnemy::~BossEnemy()
 {
-	delete enemyModel;
 }
 
 //初期化
@@ -24,7 +23,7 @@ void BossEnemy::BossEnemyInitialize()
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(enemyModel);
+	SetModel(enemyModel.get());
 	SetCollider(new SphereCollider(Vector3(0, 0, 0), 3.0f));
 	SetScale({ 2.0f,2.0f,2.0f });
 
@@ -87,6 +86,66 @@ void BossEnemy::Update()
 	BulletUpdate();
 
 	// ワールドトランスフォームの行列更新と転送
+	worldTransform_.UpdateMatrix();
+}
+
+void BossEnemy::Dead()
+{
+	//墜落
+	if (worldTransform_.position_.x > 0.0f)
+	{
+		worldTransform_.position_.y -= bossDownSpeed_;
+	}
+
+	worldTransform_.scale_ -= bossScaleNum_;
+
+	//左右にシェイク
+	if (isShake_ == true)
+	{
+		if (worldTransform_.position_.x <= shakeRange_)
+		{
+			worldTransform_.position_.x += shakeNum_;
+		}
+		else
+		{
+			isShake_ = false;
+		}
+	}
+	else
+	{
+		if (worldTransform_.position_.x >= -shakeRange_)
+		{
+			worldTransform_.position_.x -= shakeNum_;
+		}
+		else
+		{
+			isShake_ = true;
+		}
+	}
+	//alpha値を変化
+	if (isAlpha_ == true)
+	{
+		if (alpha_ <= bossAlphaMax_)
+		{
+			alpha_ += bossAlphaNum_;
+		}
+		else
+		{
+			isAlpha_ = false;
+		}
+	}
+	else
+	{
+		if (alpha_ >= bossAlphaMin_)
+		{
+			alpha_ -= bossAlphaNum_;
+		}
+		else
+		{
+			isAlpha_ = true;
+		}
+	}
+
 	worldTransform_.UpdateMatrix();
 }
 

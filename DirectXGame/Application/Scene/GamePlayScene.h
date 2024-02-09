@@ -36,6 +36,7 @@
 #include<d3dcompiler.h>
 #include <sstream>
 #include <map>
+#include <memory>
 
 #include<DirectXTex.h>
 
@@ -43,9 +44,7 @@
 #pragma comment(lib,"dxguid.lib")
 
 struct LevelData;
-
 class CollisionManager;
-class Player;
 
 //ゲームプレイシーン
 class GamePlayScene : public GameBaseScene
@@ -130,7 +129,7 @@ public:
 	void ToGameOverCameraWork();
 
 	//カメラシェイク
-	void CameraShake(float x,float y);
+	void CameraShake(float x, float y);
 
 	//カメラ基本移動
 	void MoveCamera();
@@ -139,23 +138,23 @@ public:
 	void LoadLevelData();
 private://メンバ変数
 	//背景
-	SkyDome* sky_;
+	std::unique_ptr < SkyDome> sky_;
 	//入力
-	Input* input_ = nullptr;
+	Input* input_;
 	//DxCommon
-	DirectXCommon* dxCommon_ = nullptr;
+	DirectXCommon* dxCommon_;
 
 	//カメラ
-	ViewProjection* viewProjection_ = nullptr;
+	std::unique_ptr<ViewProjection> viewProjection_;
 
 	//プレイヤー
-	Player* player;
+	std::unique_ptr <Player> player;
 
 	//敵
-	Enemy* enemy;
-	WeakEnemy* wEnemy;
-	InvincibleEnemy* invincibleEnemy;
-	BossEnemy* bEnemy;
+	std::unique_ptr<Enemy> enemy;
+	std::unique_ptr<WeakEnemy> wEnemy;
+	std::unique_ptr<InvincibleEnemy> invincibleEnemy;
+	std::unique_ptr<BossEnemy> bEnemy;
 
 	//敵
 	std::list<std::unique_ptr<Enemy>> enemys_;
@@ -163,68 +162,61 @@ private://メンバ変数
 	std::list<std::unique_ptr<InvincibleEnemy>> invincibleEnemys_;
 
 	//背景
-	Meteor* meteor_;
+	std::unique_ptr < Meteor> meteor_;
 	std::list<std::unique_ptr<Meteor>> meteors_;
 
 	//アイテム
-	Item* item_;
+	std::unique_ptr < Item> item_;
 	std::list<std::unique_ptr<Item>> items_;
 
 	//UI
-	UI* ui_;
+	std::unique_ptr < UI> ui_;
 
 	//敵発生コマンド
-	std::stringstream enemyPopCommands;
+	std::stringstream enemyPopCommands_;
 
 	//座標
-	WorldTransform* worldTransform = nullptr;
+	std::unique_ptr < WorldTransform> worldTransform_;
 	//当たり判定
-	CollisionManager* collisionManager = nullptr;
+	CollisionManager* collisionManager_;
 
 	//パーティクル
 	//弾が当たったエフェクト
-	Particle* p_Hit = nullptr;
-	ParticleManager* pm_Hit = nullptr;
+	std::unique_ptr < Particle>p_Hit;
+	std::unique_ptr < ParticleManager> pm_Hit;
 	//雑魚敵が死亡したときのエフェクト
-	Particle* p_WDmg = nullptr;
-	ParticleManager* pm_WDmg = nullptr;
+	std::unique_ptr < Particle> p_WDmg;
+	std::unique_ptr < ParticleManager> pm_WDmg;
 	//ボスが死亡したときのエフェクト
-	Particle* p_BDmg = nullptr;
-	ParticleManager* pm_BDmg = nullptr;
+	std::unique_ptr < Particle> p_BDmg;
+	std::unique_ptr < ParticleManager> pm_BDmg;
 	//隕石を壊した時のエフェクト
-	Particle* p_Meteor = nullptr;
-	ParticleManager* pm_Meteor = nullptr;
+	std::unique_ptr < Particle>p_Meteor;
+	std::unique_ptr < ParticleManager> pm_Meteor;
 	//全般的な爆発エフェクト
-	Particle* p_Ex = nullptr;
-	ParticleManager* pm_Ex = nullptr;
+	std::unique_ptr < Particle> p_Ex;
+	std::unique_ptr < ParticleManager> pm_Ex;
 	//自機の死亡時エフェクト
-	Particle* p_PEx = nullptr;
-	ParticleManager* pm_PEx = nullptr;
+	std::unique_ptr < Particle> p_PEx;
+	std::unique_ptr < ParticleManager> pm_PEx;
 	//煙
-	Particle* p_Smoke = nullptr;
-	ParticleManager* pm_Smoke = nullptr;
+	std::unique_ptr < Particle> p_Smoke;
+	std::unique_ptr < ParticleManager> pm_Smoke;
 
-	Stardust* backObjStardust = nullptr;
-	Model* backModelStardust = nullptr;
-	Stardust* backStardust = nullptr;
-
-	Meteor* backObjMeteor = nullptr;
-	Model* backModelMeteor = nullptr;
-	Meteor* backMeteor = nullptr;
-
-	Explosion* explosion01_ = nullptr;
-	Explosion* explosion02_ = nullptr;
-	Explosion* explosion03_ = nullptr;
+	std::unique_ptr <Explosion> explosion01_;
+	std::unique_ptr <Explosion> explosion02_;
+	std::unique_ptr <Explosion> explosion03_;
 
 	//レベルデータ
-	LevelData* backGroundStardust_ = nullptr;
+	LevelData* backGroundStar_ = nullptr;
 	LevelData* backGroundMeteor_ = nullptr;
-	//モデル
-	std::map<std::string, Model*> stardustModels_;
-	std::map<std::string, Model*> meteorModels_;
-	//オブジェクト
-	std::vector<Stardust*> stardustObjects_;
-	std::vector<Meteor*> meteorObjects_;
+
+	// モデルデータコンテナ
+	std::map<std::string, std::unique_ptr<Model>> meteorModels_;
+	std::map<std::string, std::unique_ptr<Model>> stardustModels_;
+	// オブジェクト
+	std::vector<std::unique_ptr<Meteor>> meteorObjects_;
+	std::vector<std::unique_ptr<Stardust>> stardustObjects_;
 
 	//シーン番号
 	int gameNum_;
@@ -275,27 +267,12 @@ private://メンバ変数
 	float gameClearPosZ_;
 	//カメラ
 	float clearCameraMoveZ_;
-	
+
 	//墜落演出の墜落量
-	int gameOverNum_;
-	int gameOvernumMax_;
-	//ボスの墜落時のシェイク範囲
-	float shakeRange_;
-	float shakeNum_;
-	//ボスの墜落スピード
-	float bossDownSpeed_;
-	//ボスのalpha 
-	float bossAlpha_;
-	//最大
-	float bossAlphaMax_;
-	//最小
-	float bossAlphaMin_;
-	//ボスalphaに代入する変数
-	float bossAlphaNum_;
+	int gameOverTimer_;
+	int gameOverTimerMax_;
 	//カメラ移動座標
 	int cameraPos_;
-	//ボスscale	
-	Vector3 bossScaleNum_;
 
 	//カメラシェイク範囲
 	//自機
@@ -327,10 +304,6 @@ private://メンバ変数
 	bool isBossEffect_;
 	//ボス死亡フラグ
 	bool isBEnemyDeadScene_;
-	//ボスのシェイク
-	bool bossShake_;
-	//ボスalpha
-	bool isBossAlpha_;
 	//スタート演出
 	bool isStart_;
 	//ゲームオーバー演出

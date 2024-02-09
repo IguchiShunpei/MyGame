@@ -9,7 +9,6 @@
 
 EnemyBullet::~EnemyBullet()
 {
-	delete enemyBulletModel_;
 }
 
 void EnemyBullet::EnemyBulletInitialize(const Vector3& position, const Vector3& velocity)
@@ -20,7 +19,7 @@ void EnemyBullet::EnemyBulletInitialize(const Vector3& position, const Vector3& 
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(enemyBulletModel_);
+	SetModel(enemyBulletModel_.get());
 	SetScale(Vector3(0.5f, 0.5f, 1.5f));
 	SetRotation(Vector3(0.0f, 180.0f, 0.0f));
 	//引数で受け取った初期座標をセット
@@ -43,10 +42,10 @@ void EnemyBullet::ColliderUpdate()
 
 void EnemyBullet::Update()
 {
-	worldTransform_.UpdateMatrix();
-
 	//座標を移動させる
 	worldTransform_.position_ -= velocity_;
+
+	worldTransform_.UpdateMatrix();
 
 	//時間経過で弾が消える
 	if (--deleteTimer_ <= 0)

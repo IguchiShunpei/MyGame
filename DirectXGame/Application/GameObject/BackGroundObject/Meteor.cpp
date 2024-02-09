@@ -17,7 +17,7 @@ void Meteor::MeteorInitialize()
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(meteorModel_);
+	SetModel(meteorModel_.get());
 
 	speed_ = 0.3f;
 	frontZ_ = -200.0f;

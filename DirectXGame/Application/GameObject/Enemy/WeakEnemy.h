@@ -42,8 +42,6 @@ public:
 	void Damage(int damage);
 
 	//setter
-	//gameScene
-	void SetGameScene(GamePlayScene* gameScene) { gameScene_ = gameScene; }
 	//beforeY
 	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
 
@@ -80,8 +78,6 @@ public:
 	Vector3 GetPosition();
 
 private:
-	//ゲームシーン
-	GamePlayScene* gameScene_ = nullptr;
 
 	//フラグ
 	//倒されたか
@@ -99,7 +95,7 @@ private:
 	float beforeY_;
 
 	// モデル
-	Model* wEnemyModel = nullptr;
+	std::unique_ptr <Model> wEnemyModel;
 
 	//敵の移動パターン
 	Phase phase_ = Phase::None;

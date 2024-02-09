@@ -33,10 +33,10 @@ void GamePlayScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 
 	//当たり判定
-	collisionManager = CollisionManager::GetInstance();
+	collisionManager_ = CollisionManager::GetInstance();
 
 	//カメラ初期化
-	viewProjection_ = new ViewProjection();
+	viewProjection_ = std::make_unique<ViewProjection>();
 	viewProjection_->Initialize();
 	viewProjection_->SetEye({ -15.0f,0.0f,10.0f });
 	viewProjection_->SetUp({ 0.0f,1.0f,0.0f });
@@ -47,24 +47,24 @@ void GamePlayScene::Initialize()
 	normalUpNum_ = viewProjection_->up_;
 
 	//天球
-	sky_ = new SkyDome;
+	sky_ = std::make_unique < SkyDome>();
 	sky_->SkyDomeInitialize();
 	sky_->SetPosition({ 0.0f,0.0f,500.0f });
 
 	//爆発
-	explosion01_ = new Explosion;
+	explosion01_ = std::make_unique<Explosion>();
 	explosion01_->ExplosionInitialize(0);
-	explosion02_ = new Explosion;
+	explosion02_ = std::make_unique<Explosion>();
 	explosion02_->ExplosionInitialize(1);
-	explosion03_ = new Explosion;
+	explosion03_ = std::make_unique<Explosion>();
 	explosion03_->ExplosionInitialize(2);
 
 	//player 
-	player = new Player;
+	player = std::make_unique <Player>();
 	player->PlayerInitialize();
 
 	//bossEnemy
-	bEnemy = new BossEnemy;
+	bEnemy = std::make_unique < BossEnemy>();
 	bEnemy->BossEnemyInitialize();
 	bEnemy->worldTransform_.UpdateMatrix();
 	bEnemy->ColliderUpdate();
@@ -74,43 +74,43 @@ void GamePlayScene::Initialize()
 
 	//パーティクル
 	//ヒットテクスチャ
-	p_Hit = Particle::LoadParticleTexture("effect01.png");
+	p_Hit.reset(Particle::LoadParticleTexture("effect01.png"));
 	pm_Hit = ParticleManager::Create();
-	pm_Hit->SetParticleModel(p_Hit);
-	pm_Hit->SetViewProjection(viewProjection_);
+	pm_Hit->SetParticleModel(p_Hit.get());
+	pm_Hit->SetViewProjection(viewProjection_.get());
 	//wEnemyテクスチャ
-	p_WDmg = Particle::LoadParticleTexture("effect02.png");
+	p_WDmg.reset(Particle::LoadParticleTexture("effect02.png"));
 	pm_WDmg = ParticleManager::Create();
-	pm_WDmg->SetParticleModel(p_WDmg);
-	pm_WDmg->SetViewProjection(viewProjection_);
+	pm_WDmg->SetParticleModel(p_WDmg.get());
+	pm_WDmg->SetViewProjection(viewProjection_.get());
 	//bEnemyテクスチャ
-	p_BDmg = Particle::LoadParticleTexture("effect03.png");
+	p_BDmg.reset(Particle::LoadParticleTexture("effect03.png"));
 	pm_BDmg = ParticleManager::Create();
-	pm_BDmg->SetParticleModel(p_BDmg);
-	pm_BDmg->SetViewProjection(viewProjection_);
+	pm_BDmg->SetParticleModel(p_BDmg.get());
+	pm_BDmg->SetViewProjection(viewProjection_.get());
 	//meteorテクスチャ
-	p_Meteor = Particle::LoadParticleTexture("effect04.png");
+	p_Meteor.reset(Particle::LoadParticleTexture("effect04.png"));
 	pm_Meteor = ParticleManager::Create();
-	pm_Meteor->SetParticleModel(p_Meteor);
-	pm_Meteor->SetViewProjection(viewProjection_);
+	pm_Meteor->SetParticleModel(p_Meteor.get());
+	pm_Meteor->SetViewProjection(viewProjection_.get());
 	//基本爆発テクスチャ
-	p_Ex = Particle::LoadParticleTexture("effect05.png");
+	p_Ex.reset(Particle::LoadParticleTexture("effect05.png"));
 	pm_Ex = ParticleManager::Create();
-	pm_Ex->SetParticleModel(p_Ex);
-	pm_Ex->SetViewProjection(viewProjection_);
+	pm_Ex->SetParticleModel(p_Ex.get());
+	pm_Ex->SetViewProjection(viewProjection_.get());
 	//自機爆発テクスチャ
-	p_PEx = Particle::LoadParticleTexture("effect06.png");
+	p_PEx.reset(Particle::LoadParticleTexture("effect06.png"));
 	pm_PEx = ParticleManager::Create();
-	pm_PEx->SetParticleModel(p_PEx);
-	pm_PEx->SetViewProjection(viewProjection_);
+	pm_PEx->SetParticleModel(p_PEx.get());
+	pm_PEx->SetViewProjection(viewProjection_.get());
 	//自機爆発テクスチャ
-	p_Smoke = Particle::LoadParticleTexture("effect07.png");
+	p_Smoke.reset(Particle::LoadParticleTexture("effect07.png"));
 	pm_Smoke = ParticleManager::Create();
-	pm_Smoke->SetParticleModel(p_Smoke);
-	pm_Smoke->SetViewProjection(viewProjection_);
+	pm_Smoke->SetParticleModel(p_Smoke.get());
+	pm_Smoke->SetViewProjection(viewProjection_.get());
 
 	//UIの初期化
-	ui_ = new UI;
+	ui_ = std::make_unique<UI>();
 	ui_->UIInitialize();
 
 	//レベルデータのロード
@@ -138,23 +138,10 @@ void GamePlayScene::Initialize()
 	//カメラワーク番号
 	bossInitNum_ = BossInitNum::Up;
 
-	//墜落量
-	gameOverNum_ = 0;
+	//ゲームオーバーシーンに遷移する時間
+	gameOverTimer_ = 0;
 	//最大
-	gameOvernumMax_ = 60;
-	//シェイク範囲
-	shakeRange_ = 3.0f;
-	//シェイク移動量
-	shakeNum_ = 0.1f;
-	//ボスの墜落スピード
-	bossDownSpeed_ = 0.01f;
-	//ボスalpha
-	bossAlpha_ = 1.0f;
-	bossAlphaMax_ = 1.0f;
-	bossAlphaMin_ = 0.5f;
-	//ボスalphaに代入する数
-	bossAlphaNum_ = 0.05f;
-	bossScaleNum_ = { 0.01f,0.01f,0.01f };
+	gameOverTimerMax_ = 60;
 
 	clearCameraNum_ = 0;
 	gameClearmoveZ_ = 0.5f;
@@ -176,8 +163,6 @@ void GamePlayScene::Initialize()
 	isClearScene_ = false;
 	isBossEffect_ = false;
 	isBEnemyDeadScene_ = false;
-	bossShake_ = true;
-	isBossAlpha_ = true;
 	isBossInitCamera_ = false;
 	isStart_ = false;
 	isDeadCameraShake_ = false;
@@ -369,7 +354,7 @@ void GamePlayScene::Update()
 	}
 
 	//全ての衝突をチェック
-	collisionManager->CheckAllCollisions();
+	collisionManager_->CheckAllCollisions();
 
 	//もし攻撃に当たって無かったら
 	if (player->GetIsDead() == false)
@@ -420,10 +405,10 @@ void GamePlayScene::Update()
 			isDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = wEnemys->GetPosition();
-			pm_WDmg->Fire(p_WDmg, 40, deadPos, 12, false, { 1.0f, 0.0f });
-			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 4.0f, 0.0f });
-			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 18.0f, 0.0f });
-			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, { 5.0f, 0.0f });
+			pm_WDmg->Fire(p_WDmg.get(), 40, deadPos, 12, false, {1.0f, 0.0f});
+			pm_Ex->Fire(p_Ex.get(), 30, deadPos, 5, false, { 4.0f, 0.0f });
+			pm_Ex->Fire(p_Ex.get(), 20, deadPos, 1, true, { 18.0f, 0.0f });
+			pm_Smoke->Fire(p_Smoke.get(), 30, deadPos, 5, false, { 5.0f, 0.0f });
 		}
 	}
 	//無敵敵に弾が当たった時
@@ -433,7 +418,7 @@ void GamePlayScene::Update()
 		{
 			Vector3 hitPos{};
 			hitPos = invEnemys->GetPosition();
-			pm_Hit->Fire(p_Hit, 40, hitPos, 5, false, { 1.0f, 0.0f });
+			pm_Hit->Fire(p_Hit.get(), 40, hitPos, 5, false, { 1.0f, 0.0f });
 		}
 	}
 
@@ -445,10 +430,10 @@ void GamePlayScene::Update()
 			isDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = enemys->GetPosition();
-			pm_Meteor->Fire(p_Meteor, 40, deadPos, 12, false, { 1.0f, 0.0f });
-			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 4.0f, 0.0f });
-			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 18.0f, 0.0f });
-			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, { 5.0f, 0.0f });
+			pm_Meteor->Fire(p_Meteor.get(), 40, deadPos, 12, false, { 1.0f, 0.0f });
+			pm_Ex->Fire(p_Ex.get(), 30, deadPos, 5, false, { 4.0f, 0.0f });
+			pm_Ex->Fire(p_Ex.get(), 20, deadPos, 1, true, { 18.0f, 0.0f });
+			pm_Smoke->Fire(p_Smoke.get(), 30, deadPos, 5, false, { 5.0f, 0.0f });
 		}
 	}
 
@@ -460,10 +445,10 @@ void GamePlayScene::Update()
 			isDeadCameraShake_ = true;
 			Vector3 deadPos{};
 			deadPos = meteors->GetPosition();
-			pm_Meteor->Fire(p_Meteor, 40, deadPos, 12, false, { 1.0f, 0.0f });
-			pm_Ex->Fire(p_Ex, 30, deadPos, 5, false, { 4.0f, 0.0f });
-			pm_Ex->Fire(p_Ex, 20, deadPos, 1, true, { 18.0f, 0.0f });
-			pm_Smoke->Fire(p_Smoke, 30, deadPos, 5, false, { 5.0f, 0.0f });
+			pm_Meteor->Fire(p_Meteor.get(), 40, deadPos, 12, false, { 1.0f, 0.0f });
+			pm_Ex->Fire(p_Ex.get(), 30, deadPos, 5, false, { 4.0f, 0.0f });
+			pm_Ex->Fire(p_Ex.get(), 20, deadPos, 1, true, { 18.0f, 0.0f });
+			pm_Smoke->Fire(p_Smoke.get(), 30, deadPos, 5, false, { 5.0f, 0.0f });
 		}
 	}
 
@@ -502,7 +487,7 @@ void GamePlayScene::Update()
 				bossDeadPos_ = bEnemy->GetPosition();
 				explosion01_->SetPosition(Vector3(bossDeadPos_.x, bossDeadPos_.y, bossDeadPos_.z));
 				explosion02_->SetPosition(Vector3(bossDeadPos_.x, bossDeadPos_.y, bossDeadPos_.z));
-				pm_Ex->Fire(p_Ex, 20, bossDeadPos_, 4, false, { 8.0f, 0.0f });
+				pm_Ex->Fire(p_Ex.get(), 20, bossDeadPos_, 4, false, { 8.0f, 0.0f });
 			}
 		}
 	}
@@ -519,32 +504,32 @@ void GamePlayScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	sky_->Draw(viewProjection_);
+	sky_->Draw(viewProjection_.get());
 	if (isPlayerDead_ == false)
 	{
-		player->Draw(viewProjection_);
-		player->BulletDraw(viewProjection_);
+		player->Draw(viewProjection_.get());
+		player->BulletDraw(viewProjection_.get());
 	}
 
 	//星屑
 	for (auto& object : stardustObjects_) {
-		object->Draw(viewProjection_, 1.0f, object->GetColor());
+		object->Draw(viewProjection_.get(), 1.0f, object->GetColor());
 	}
 	//隕石
 	for (auto& object : meteorObjects_) {
-		object->Draw(viewProjection_, object->GetAlpha(), object->GetColor());
+		object->Draw(viewProjection_.get(), object->GetAlpha(), object->GetColor());
 	}
 
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
 		if (meteors->GetIsDelete() == false)
 		{
-			meteors->Draw(viewProjection_, meteors->GetAlpha(), meteors->GetColor());
+			meteors->Draw(viewProjection_.get(), meteors->GetAlpha(), meteors->GetColor());
 		}
 	}
 	for (std::unique_ptr<Item>& items : items_)
 	{
-		items->Draw(viewProjection_);
+		items->Draw(viewProjection_.get());
 	}
 	switch (gameNum_)
 	{
@@ -552,18 +537,18 @@ void GamePlayScene::Draw()
 		//雑魚敵
 		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 		{
-			wEnemys->Draw(viewProjection_, 1.0f, wEnemys->GetColor());
+			wEnemys->Draw(viewProjection_.get(), 1.0f, wEnemys->GetColor());
 		}
 		for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
 		{
-			invEnemys->Draw(viewProjection_);
+			invEnemys->Draw(viewProjection_.get());
 		}
 		//敵
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
-			enemys->Draw(viewProjection_, 1.0f, enemys->GetColor());
+			enemys->Draw(viewProjection_.get(), 1.0f, enemys->GetColor());
 
-			enemys->BulletDraw(viewProjection_);
+			enemys->BulletDraw(viewProjection_.get());
 		}
 		break;
 
@@ -571,21 +556,21 @@ void GamePlayScene::Draw()
 		//ボス敵
 		if (bEnemy->GetIsDead() == false)
 		{
-			bEnemy->Draw(viewProjection_, bossAlpha_, bEnemy->GetColor());
-			bEnemy->BulletDraw(viewProjection_);
+			bEnemy->Draw(viewProjection_.get(), bEnemy->GetAlpha(), bEnemy->GetColor());
+			bEnemy->BulletDraw(viewProjection_.get());
 		}
 		break;
 	}
 
 	if (isBEnemyDeadScene_ == true)
 	{
-		explosion01_->ExplosionDraw(viewProjection_);
-		explosion02_->ExplosionDraw(viewProjection_);
+		explosion01_->ExplosionDraw(viewProjection_.get());
+		explosion02_->ExplosionDraw(viewProjection_.get());
 	}
 
 	if (isPlayerDead_ == true && explosion03_->GetIsFinish() == false)
 	{
-		explosion03_->ExplosionDraw(viewProjection_);
+		explosion03_->ExplosionDraw(viewProjection_.get());
 	}
 
 	Object3d::PostDraw();
@@ -594,7 +579,6 @@ void GamePlayScene::Draw()
 	ParticleManager::PreDraw(dxCommon_->GetCommandList());
 
 	pm_Hit->Draw();
-
 	pm_WDmg->Draw();
 	pm_BDmg->Draw();
 	pm_Meteor->Draw();
@@ -613,50 +597,22 @@ void GamePlayScene::Draw()
 
 void GamePlayScene::Finalize()
 {
-	for (Stardust*& object : stardustObjects_) {
-		delete(object);
-	}
-	for (Meteor*& object : meteorObjects_) {
-		delete(object);
-	}
 
-	delete sky_;
-	delete player;
-	delete enemy;
-	delete wEnemy;
-	delete bEnemy;
-	delete invincibleEnemy;
-	delete p_Hit;
-	delete pm_Hit;
-	delete p_WDmg;
-	delete pm_WDmg;
-	delete p_BDmg;
-	delete pm_BDmg;
-	delete p_Meteor;
-	delete pm_Meteor;
-	delete p_Ex;
-	delete pm_Ex;
-	delete p_PEx;
-	delete pm_PEx;
-	delete p_Smoke;
-	delete pm_Smoke;
-	delete explosion01_;
-	delete explosion02_;
-	delete explosion03_;
 }
 
 void GamePlayScene::LoadEnemyPop()
 {
 	enemys_.clear();
 	wEnemys_.clear();
+	invincibleEnemys_.clear();
 
 	//ファイルを開く
 	std::ifstream file;
-	file.open("Resources/csv/enemyPop02.csv");
+	file.open("Resources/csv/enemyPop.csv");
 	assert(file.is_open());
 
 	//ファイルの内容を文字列ストリームにコピー
-	enemyPopCommands << file.rdbuf();
+	enemyPopCommands_ << file.rdbuf();
 
 	// ファイルと閉じる
 	file.close();
@@ -679,7 +635,7 @@ void GamePlayScene::UpdateEnemyPop()
 	// １行ずつ読み込む
 	std::string line;
 
-	while (getline(enemyPopCommands, line))
+	while (getline(enemyPopCommands_, line))
 	{
 
 		// １行分の文字列をストリームに変換して解析しやすくする
@@ -920,14 +876,14 @@ void GamePlayScene::PlayerDead()
 {
 	if (isPlayerDead_ == false)
 	{
-		pm_Smoke->PlayerExBefore(p_Smoke, 20, player->GetPosition(), 1, { 2.0f, 0.0f });
-		pm_Ex->PlayerExBefore(p_Ex, 20, player->GetPosition(), 2, { 2.0f, 0.0f });
+		pm_Smoke->PlayerExBefore(p_Smoke.get(), 20, player->GetPosition(), 1, { 2.0f, 0.0f });
+		pm_Ex->PlayerExBefore(p_Ex.get(), 20, player->GetPosition(), 2, { 2.0f, 0.0f });
 		//自機を動かす
 		player->worldTransform_.rotation_.z += 8.0f;
 		if (player->worldTransform_.rotation_.z >= 720.0f)
 		{
 			isPlayerDead_ = true;
-			pm_PEx->PlayerExAfter(p_PEx, 200, player->GetPosition(), 12, { 1.0f, 0.0f });
+			pm_PEx->PlayerExAfter(p_PEx.get(), 200, player->GetPosition(), 12, { 1.0f, 0.0f });
 		}
 	}
 }
@@ -1025,62 +981,7 @@ void GamePlayScene::BossDead()
 	ui_->UIOutMotion();
 	explosion01_->EnemyExplosionUpdate();
 	explosion02_->EnemyExplosionUpdate();
-	//墜落
-	if (bEnemy->worldTransform_.position_.x > 0.0f)
-	{
-		bEnemy->worldTransform_.position_.y -= bossDownSpeed_;
-	}
-
-	bEnemy->worldTransform_.scale_ -= bossScaleNum_;
-
-	//左右にシェイク
-	if (bossShake_ == true)
-	{
-		if (bEnemy->worldTransform_.position_.x <= shakeRange_)
-		{
-			bEnemy->worldTransform_.position_.x += shakeNum_;
-		}
-		else
-		{
-			bossShake_ = false;
-		}
-	}
-	else
-	{
-		if (bEnemy->worldTransform_.position_.x >= -shakeRange_)
-		{
-			bEnemy->worldTransform_.position_.x -= shakeNum_;
-		}
-		else
-		{
-			bossShake_ = true;
-		}
-	}
-	//alpha値を変化
-	if (isBossAlpha_ == true)
-	{
-		if (bossAlpha_ <= bossAlphaMax_)
-		{
-			bossAlpha_ += bossAlphaNum_;
-		}
-		else
-		{
-			isBossAlpha_ = false;
-		}
-	}
-	else
-	{
-		if (bossAlpha_ >= bossAlphaMin_)
-		{
-			bossAlpha_ -= bossAlphaNum_;
-		}
-		else
-		{
-			isBossAlpha_ = true;
-		}
-	}
-
-	bEnemy->worldTransform_.UpdateMatrix();
+	bEnemy->Dead();
 }
 void GamePlayScene::ToClearScene()
 {
@@ -1094,6 +995,7 @@ void GamePlayScene::ToClearScene()
 		else
 		{
 			//黒フェードイン
+			ui_->SetIsBlack(false);
 			ui_->FadeIn();
 			//自機を動かす
 			player->worldTransform_.rotation_.z++;
@@ -1165,10 +1067,11 @@ void GamePlayScene::ToGameOverScene()
 			{
 				viewProjection_->eye_ = normalEyeNum_;
 				//フェードイン
+				ui_->SetIsBlack(false);
 				ui_->FadeIn();
-				gameOverNum_++;
+				gameOverTimer_++;
 				//gameoverシーンへ
-				if (gameOverNum_ >= gameOvernumMax_)
+				if (gameOverTimer_ >= gameOverTimerMax_)
 				{
 					GameSceneManager::GetInstance()->ChangeScene("GAMEOVER");
 				}
@@ -1300,20 +1203,26 @@ void GamePlayScene::MoveCamera() {
 void GamePlayScene::LoadLevelData()
 {
 	//背景オブジェクトデータの読み込み
-	backGroundStardust_ = LevelLoader::LoadFile("stardust");
+	backGroundStar_ = LevelLoader::LoadFile("stardust");
 	backGroundMeteor_ = LevelLoader::LoadFile("meteor");
+
+	//モデル読み込み
+	std::unique_ptr<Model>backModelStardust = Model::LoadFromOBJ("stardust");
+	stardustModels_.insert(std::make_pair("stardust", move(backModelStardust)));
+	std::unique_ptr<Model>backModelMeteor = Model::LoadFromOBJ("bigMeteor");
+	meteorModels_.insert(std::make_pair("meteor", move(backModelMeteor)));
 
 	// レベルデータからオブジェクトを生成、配置
 	//星屑
-	for (auto& objectData : backGroundStardust_->objects) {
-
+	for (auto& objectData : backGroundStar_->objects) {
+		// ファイル名から登録済みモデルを検索
+		Model* model = nullptr;
+		decltype(stardustModels_)::iterator it = stardustModels_.find(objectData.fileName);
+		if (it != stardustModels_.end()) { model = it->second.get(); }
 		// モデルを指定して3Dオブジェクトを生成
-		backStardust = new Stardust;
-		backStardust->StardustInitialize();
-		//モデル読み込み
-		backModelStardust = Model::LoadFromOBJ("stardust");
-		stardustModels_.insert(std::make_pair("stardust", backModelStardust));
-		backStardust->SetModel(backModelStardust);
+		std::unique_ptr<Stardust> newObject = std::make_unique<Stardust>();
+		newObject->StardustInitialize();
+		newObject->SetModel(model);
 		// 座標
 		Vector3 pos;
 		//データの値を代入
@@ -1321,9 +1230,9 @@ void GamePlayScene::LoadLevelData()
 		pos.y = objectData.translation.m128_f32[1];
 		pos.z = objectData.translation.m128_f32[2];
 		//newObjectにセット
-		backStardust->SetPosition(pos);
+		newObject->SetPosition(pos);
 		//初期Y座標を保存しておく
-		backStardust->SetBeforeY(pos.y);
+		newObject->SetBeforeY(pos.y);
 
 		// 回転角
 		Vector3 rot;
@@ -1332,24 +1241,24 @@ void GamePlayScene::LoadLevelData()
 		rot.y = objectData.rotation.m128_f32[1];
 		rot.z = objectData.rotation.m128_f32[2];
 		//newObjectにセット
-		backStardust->SetRotation(rot);
+		newObject->SetRotation(rot);
 
-		backStardust->SetColor();
-		backStardust->SetSize();
+		newObject->SetColor();
+		newObject->SetSize();
 
 		// 配列に登録
-		stardustObjects_.push_back(backStardust);
+		stardustObjects_.push_back(move(newObject));
 	}
 	//隕石
 	for (auto& objectData : backGroundMeteor_->objects) {
-
+		// ファイル名から登録済みモデルを検索
+		Model* model = nullptr;
+		decltype(meteorModels_)::iterator it = meteorModels_.find(objectData.fileName);
+		if (it != meteorModels_.end()) { model = it->second.get(); }
 		// モデルを指定して3Dオブジェクトを生成
-		backMeteor = new Meteor;
-		backMeteor->MeteorInitialize();
-		//モデル読み込み
-		backModelMeteor = Model::LoadFromOBJ("bigMeteor");
-		meteorModels_.insert(std::make_pair("meteor", backModelMeteor));
-		backMeteor->SetModel(backModelMeteor);
+		std::unique_ptr<Meteor> newObject = std::make_unique<Meteor>();;
+		newObject->MeteorInitialize();
+		newObject->SetModel(model);
 		// 座標
 		Vector3 pos;
 		//データの値を代入
@@ -1357,7 +1266,7 @@ void GamePlayScene::LoadLevelData()
 		pos.y = objectData.translation.m128_f32[1];
 		pos.z = objectData.translation.m128_f32[2];
 		//newObjectにセット
-		backMeteor->SetPosition(pos);
+		newObject->SetPosition(pos);
 
 		// 回転角
 		Vector3 rot;
@@ -1366,7 +1275,7 @@ void GamePlayScene::LoadLevelData()
 		rot.y = objectData.rotation.m128_f32[1];
 		rot.z = objectData.rotation.m128_f32[2];
 		//newObjectにセット
-		backMeteor->SetRotation(rot);
+		newObject->SetRotation(rot);
 
 		// 大きさ
 		Vector3 scale;
@@ -1375,13 +1284,13 @@ void GamePlayScene::LoadLevelData()
 		scale.y = objectData.scaling.m128_f32[1];
 		scale.z = objectData.scaling.m128_f32[2];
 		//newObjectにセット
-		backMeteor->SetScale(scale);
+		newObject->SetScale(scale);
 
-		backMeteor->SetIsBack(true);
-		backMeteor->SetAlpha(1.0f);
-		backMeteor->SetSpeed(0.1f, 1.0f);
+		newObject->SetIsBack(true);
+		newObject->SetAlpha(1.0f);
+		newObject->SetSpeed(0.1f, 1.0f);
 
 		// 配列に登録
-		meteorObjects_.push_back(backMeteor);
+		meteorObjects_.push_back(move(newObject));
 	}
 }

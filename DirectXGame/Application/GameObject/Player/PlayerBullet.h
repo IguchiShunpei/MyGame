@@ -41,7 +41,7 @@ public:
 private:
 
 	// モデル
-	Model* playerBulletModel_ = nullptr;
+	std::unique_ptr<Model> playerBulletModel_;
 	//削除フラグ
 	bool isDelete_ = false;
 	//弾種類

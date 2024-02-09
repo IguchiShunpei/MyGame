@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Sprite.h"
+#include <memory>
 
 class UI
 {
@@ -63,13 +64,14 @@ public:
 	void SetIsRight(bool isRight) { isRight_ = isRight; }
 	void SetIsLeft(bool isLeft) { isLeft_ = isLeft; }
 	void SetIsRed(bool isRed) { isRed_ = isRed; }
+	void SetIsBlack(bool isBlack) { isBlack_ = isBlack; }
 
 private:
 	//DxCommon
 	DirectXCommon* dxCommon_ = nullptr;
 
 	//ロゴやUI
-	Sprite* sprite_;
+	std::unique_ptr <Sprite> sprite_;
 	SpriteCommon spriteCommon_;
 	Sprite arrowUp_;
 	Sprite arrowDown_;

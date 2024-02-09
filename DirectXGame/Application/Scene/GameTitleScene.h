@@ -16,6 +16,7 @@
 #include "viewProjection.h"
 #include "Sound.h"
 #include "Player.h"
+#include <memory>
 
 #include <DirectXMath.h>
 
@@ -49,20 +50,20 @@ public: //メンバ関数
 
 private: // メンバ変数
 	// 入力
-	Input* input_ = nullptr;
-	DirectXCommon* dxCommon_ = nullptr;
+	Input* input_;
+	DirectXCommon* dxCommon_;
 	
 	//背景
-	SkyDome* sky;
+	std::unique_ptr <SkyDome> sky;
 
 	//プレイヤー
-	Player* player;
+	std::unique_ptr <Player> player;
 
 	//カメラ
-	ViewProjection* viewProjection_ = nullptr;
+	std::unique_ptr <ViewProjection> viewProjection_;
 
 	//ロゴやUI
-	Sprite* sprite_;
+	std::unique_ptr <Sprite> sprite_;
 	SpriteCommon spriteCommon_;
 	Sprite titleLogo_;
 	Sprite space_;
@@ -96,6 +97,4 @@ private: // メンバ変数
 
 	//カメラ座標を保存する変数
 	Vector3 cameraWorkPos_;
-
-
 };
