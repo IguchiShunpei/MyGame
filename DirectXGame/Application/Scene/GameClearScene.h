@@ -40,18 +40,18 @@ public: //メンバ関数
 	void Finalize() override;
 
 private: // メンバ変数
-	Input* input_ = nullptr;
-	DirectXCommon* dxCommon_ = nullptr;
+	SIEngine::Input* input_ = nullptr;
+	SIEngine::DirectXCommon* dxCommon_ = nullptr;
 	std::unique_ptr<SkyDome> sky_;
 	//カメラ
 	std::unique_ptr < ViewProjection> viewProjection_;
 
 	//ロゴやUI
-	std::unique_ptr < Sprite> sprite_;
-	SpriteCommon spriteCommon_;
-	Sprite clearLogo_;
-	Sprite space_;
-	Sprite black_;
+	std::unique_ptr < SIEngine::Sprite> sprite_;
+	SIEngine::SpriteCommon spriteCommon_;
+	SIEngine::Sprite clearLogo_;
+	SIEngine::Sprite space_;
+	SIEngine::Sprite black_;
 	//黒alpha値
 	float blackAlpha_;
 	//変動値

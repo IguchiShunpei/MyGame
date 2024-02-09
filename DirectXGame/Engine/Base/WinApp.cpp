@@ -8,14 +8,14 @@
 
 #pragma comment(lib,"winmm.lib")
 
-WinApp* WinApp::GetInstance()
+SIEngine::WinApp* SIEngine::WinApp::GetInstance()
 {
 	static WinApp instance;
 
 	return &instance;
 }
 
-LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT SIEngine::WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	//メッセージで分岐
 	switch (msg)
@@ -27,7 +27,7 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	return DefWindowProc(hwnd, msg, wparam, lparam);//標準の処理を行う
 }
 
-void WinApp::Initialize()
+void SIEngine::WinApp::Initialize()
 {
 	
 	//ウィンドウクラスの設定
@@ -64,13 +64,13 @@ void WinApp::Initialize()
 	timeBeginPeriod(1);
 }
 
-void WinApp::Finalize()
+void SIEngine::WinApp::Finalize()
 {
 	//ウィンドウクラスを登録解除
 	UnregisterClass(w.lpszClassName, w.hInstance);
 }
 
-bool WinApp::ProcessMessage()
+bool SIEngine::WinApp::ProcessMessage()
 {
 
 	MSG msg{}; //メッセージ	

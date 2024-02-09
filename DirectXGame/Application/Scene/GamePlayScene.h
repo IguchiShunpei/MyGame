@@ -140,9 +140,9 @@ private://メンバ変数
 	//背景
 	std::unique_ptr < SkyDome> sky_;
 	//入力
-	Input* input_;
+	SIEngine::Input* input_;
 	//DxCommon
-	DirectXCommon* dxCommon_;
+	SIEngine::DirectXCommon* dxCommon_;
 
 	//カメラ
 	std::unique_ptr<ViewProjection> viewProjection_;

@@ -71,7 +71,7 @@ public:// パブリック変数
 	// 垂直方向視野角
 	float fovAngleY = ToRadian(45.0f);
 	// ビューポートのアスペクト比
-	float aspectRatio = (float)WinApp::window_width / WinApp::window_height;
+	float aspectRatio = (float)SIEngine::WinApp::window_width / SIEngine::WinApp::window_height;
 	// 深度限界（手前側）
 	float nearZ = 0.1f;
 	// 深度限界（奥側）

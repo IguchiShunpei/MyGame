@@ -10,14 +10,14 @@
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
-Input* Input::GetInstance()
+SIEngine::Input* SIEngine::Input::GetInstance()
 {
 	static Input instance;
 
 	return &instance;
 }
 
-void Input::Initialize(WinApp* winApp_)
+void SIEngine::Input::Initialize(SIEngine::WinApp* winApp_)
 {
 	this->winApp = winApp_;
 
@@ -42,7 +42,7 @@ void Input::Initialize(WinApp* winApp_)
 		winApp_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 }
 
-void Input::Update()
+void SIEngine::Input::Update()
 {
 
 	//前回のキー入力を保存
@@ -55,7 +55,7 @@ void Input::Update()
 	keyboard->GetDeviceState(sizeof(key), key);
 }
 
-bool Input::PushKey(BYTE keyNumber)
+bool SIEngine::Input::PushKey(BYTE keyNumber)
 {
 	//指定キーを押していればtrueを返す
 	if (key[keyNumber]) {
@@ -65,7 +65,7 @@ bool Input::PushKey(BYTE keyNumber)
 	return false;
 }
 
-bool Input::TriggerKey(BYTE keyNumber)
+bool SIEngine::Input::TriggerKey(BYTE keyNumber)
 {
 	// 指定キーを前フレームで押していなく、今のフレームで押していればtrueを返す
 	if (!keyPre[keyNumber] && key[keyNumber]) {
@@ -76,7 +76,7 @@ bool Input::TriggerKey(BYTE keyNumber)
 	return false;
 }
 
-bool Input::ReleasedKey(BYTE keyNumber)
+bool SIEngine::Input::ReleasedKey(BYTE keyNumber)
 {
 	// 指定キーを前フレームで押していて、今のフレームで押していなければtrueを返す
 	if (keyPre[keyNumber] && !key[keyNumber]) {

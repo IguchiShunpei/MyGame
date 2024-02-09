@@ -18,8 +18,8 @@ GameOverScene::~GameOverScene()
 
 void GameOverScene::Initialize()
 {
-	input_ = Input::GetInstance();
-	dxCommon_ = DirectXCommon::GetInstance();
+	input_ = SIEngine::Input::GetInstance();
+	dxCommon_ = SIEngine::DirectXCommon::GetInstance();
 
 	//天球
 	sky_ = std::make_unique<SkyDome>();
@@ -30,7 +30,7 @@ void GameOverScene::Initialize()
 	viewProjection_->Initialize();
 	viewProjection_->SetEye(Vector3(0.0f, 0.0f, 20.0f));
 
-	sprite_ = std::make_unique < Sprite>();
+	sprite_ = std::make_unique < SIEngine::Sprite>();
 	spriteCommon_ = sprite_->SpriteCommonCreate(dxCommon_->GetDevice());
 
 	//ゲームオーバーロゴ
@@ -100,7 +100,7 @@ void GameOverScene::Update()
 	gameOverLogo_.Update(gameOverLogo_, spriteCommon_);
 	space_.Update(space_, spriteCommon_);
 	black_.Update(black_, spriteCommon_);
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE) == true)
+	if (SIEngine::Input::GetInstance()->TriggerKey(DIK_SPACE) == true)
 	{
 		isToTitle_ = true;
 	}
@@ -140,7 +140,7 @@ void GameOverScene::Draw()
 
 	Object3d::PostDraw();
 
-	Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
+	SIEngine::Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);
 
 	gameOverLogo_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 

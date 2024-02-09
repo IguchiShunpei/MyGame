@@ -18,8 +18,8 @@ Player::~Player()
 //初期化
 void Player::PlayerInitialize()
 {
-	input_ = Input::GetInstance();
-	dxCommon_ = DirectXCommon::GetInstance();
+	input_ = SIEngine::Input::GetInstance();
+	dxCommon_ = SIEngine::DirectXCommon::GetInstance();
 
 	Initialize();
 

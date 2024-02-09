@@ -68,25 +68,25 @@ public:
 
 private:
 	//DxCommon
-	DirectXCommon* dxCommon_ = nullptr;
+	SIEngine::DirectXCommon* dxCommon_ = nullptr;
 
 	//ロゴやUI
-	std::unique_ptr <Sprite> sprite_;
-	SpriteCommon spriteCommon_;
-	Sprite arrowUp_;
-	Sprite arrowDown_;
-	Sprite arrowRight_;
-	Sprite arrowLeft_;
+	std::unique_ptr <SIEngine::Sprite> sprite_;
+	SIEngine::SpriteCommon spriteCommon_;
+	SIEngine::Sprite arrowUp_;
+	SIEngine::Sprite arrowDown_;
+	SIEngine::Sprite arrowRight_;
+	SIEngine::Sprite arrowLeft_;
 	//hp
-	Sprite hpBar_;
-	Sprite hpFrame_;
+	SIEngine::Sprite hpBar_;
+	SIEngine::Sprite hpFrame_;
 	//スコア
-	Sprite score_;
+	SIEngine::Sprite score_;
 
 	//画面
-	Sprite black_;
-	Sprite red_;
-	Sprite green_;
+	SIEngine::Sprite black_;
+	SIEngine::Sprite red_;
+	SIEngine::Sprite green_;
 
 	//画面端とUIの距離
 	float UiRange_;

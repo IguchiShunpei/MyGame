@@ -9,20 +9,20 @@
 void SIFrameWork::Initialize()
 {
 	//WindowsAPIの初期化
-	winApp = WinApp::GetInstance();;
+	winApp = SIEngine::WinApp::GetInstance();;
 	winApp->Initialize();
 	//DirectXの初期化
-	dxCommon = DirectXCommon::GetInstance();;
+	dxCommon = SIEngine::DirectXCommon::GetInstance();;
 	dxCommon->Initialize(winApp);
 	//FBX
 	FbxLoader::GetInstance()->Initialize(dxCommon->GetDevice());
 	//入力の初期化
-	input = Input::GetInstance();
+	input = SIEngine::Input::GetInstance();
 	input->Initialize(winApp);
 	// シーンマネージャの生成
 	sceneManager_ = GameSceneManager::GetInstance();
 	// 3Dオブジェクト静的初期化
-	Object3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_height);
+	Object3d::StaticInitialize(dxCommon->GetDevice(), SIEngine::WinApp::window_width, SIEngine::WinApp::window_height);
 	// パーティクル静的初期化
 	ParticleManager::StaticInitialize(dxCommon->GetDevice());
 	// ビュープロジェクションの初期化
