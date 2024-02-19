@@ -172,6 +172,7 @@ void UI::UIInitMotion()
 {
 	if (isUIInit_ == false)
 	{
+		isInvicibleReticle_ = true;
 		UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
 		UIInitTime_++;
 		arrowUp_.SetPosition({ 640,UiRange_ - UIInitRange_ + UIInitPos_,0 });
@@ -191,6 +192,7 @@ void UI::UIInitMotion()
 void UI::UIOutMotion()
 {
 	isNeutral_ = false;
+	isInvicibleReticle_ = false;
 	if (isUIOut_ == false)
 	{
 		if (UIOutPos_ < UIOutRange_)

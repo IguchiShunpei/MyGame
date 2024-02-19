@@ -10,11 +10,21 @@
 
 #include "UI.h"
 #include "Player.h"
+#include "BossEnemy.h"
 
 #include <memory>
 
 class Camera
 {
+public:
+	//ゲームシーンの切り替え
+	enum BossInitNum
+	{
+		None,
+		Up,     //寄る
+		InitCameraWork, //登場カメラワーク
+		Loose   //引く
+	};
 public:
 	//初期化
 	void Initialize();
@@ -23,19 +33,19 @@ public:
 	void Update();
 
 	//プレイヤー登場カメラワーク
-	void PlayerInitCameraWork();
+	void PlayerInitCameraWork(bool& isStart, Player* player);
 
 	//ボス登場カメラワーク
-	void BossInitCameraWork();
+	void BossInitCameraWork(BossEnemy* bEnemy, bool& isBossInitCamera);
 
 	//clearカメラワーク
-	void ToClearCameraWork();
+	void ToClearCameraWork(bool& isClearCameraWork);
 
 	//gameOverカメラワーク
-	void ToGameOverCameraWork();
+	void ToGameOverCameraWork(Player* player, bool& isPlayerDead, bool& isGameOver);
 
 	//カメラシェイク
-	void CameraShake(float x, float y,int time);
+	void CameraShake(float x, float y);
 
 	//カメラ基本移動
 	void MoveCamera();
@@ -64,11 +74,77 @@ private:
 	//target変動地
 	float changeTarget_;
 
+	//ボス登場番号
+	int bossInitNum_;
+
+	//カメラワーク前の座標を入れる変数
+	//スタート時
+	Vector3 startCameraPos_;
+	Vector3 startCamoreMovePos_;
+	//死亡時
+	Vector3 deadCameraPos_;
+	Vector3 deadCameraMovePos_;
+	//カメラシェイク時
+	Vector3 cameraShakePos_;
+	//ボス登場時
+	Vector3 bossInitCameraPos_;
+	//targetを変化させるときに入れる変数
+	Vector3 changeTargetNum_;
+	Vector3 changeTargetMoveNum_;
 	//基本eye
 	Vector3 normalEyeNum_;
 	//基本target
 	Vector3 normalTargetNum_;
 	//基本up
 	Vector3 normalUpNum_;
+
+	//変化前eye
+	Vector3 beforeEyeNum_;
+	//変化前target
+	Vector3 beforeTargetNum_;
+	//変化前up
+	Vector3 beforeUpNum_;
+
+	//自機が登場した後の各座標
+	Vector3 afterInitCameraPos_;
+	Vector3 afterInitCameraTarget_;
+
+	//Vector3すべて０
+	Vector3 allZero_;
+
+	//カメラシェイク範囲
+	//敵
+	float bossCameraShake_;
+
+	//ボス登場カメラワーク
+	float upZ_;
+	float looseZ_;
+
+	//Clearに移行する演出のタイマー
+	float clearTimer_;
+	//クリア演出中のカメラワークタイマー
+	float clearCameraTimer_;
+	float clearCameraTimerMax_;
+	//クリアカメラ演出番号
+	int clearCameraNum_;
+
+	//ボス演出のタイマー
+	float bossAppTimer_;
+	//最大
+	float bossAppTimerMax_;
+	//ボス登場タイマー
+	int bossInitTimer_;
+	int bossInitTimerMax_;
+	//スタート演出
+	float startTimer_;
+	float startTimerMax_;
+	//自機死亡タイマー
+	float playerDeadTimer_;
+	float playerDeadTimerMax_;
+	//カメラ移動
+	float cameraMoveTimer_;
+	float cameraMoveTimerMax_;
+	float targetMoveTimer_;
+	float targetMoveTimerMax_;
 
 };
