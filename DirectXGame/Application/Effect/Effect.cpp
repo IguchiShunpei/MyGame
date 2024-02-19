@@ -68,7 +68,7 @@ void Effect::Update()
 	pm_Smoke->Update();
 }
 
-void Effect::Draw()
+void Effect::Draw(bool&isBEnemyDeadScene,bool& isPlayerDead)
 {
 
 	//エフェクト描画前処理
@@ -85,13 +85,20 @@ void Effect::Draw()
 	//エフェクト描画後処理
 	ParticleManager::PostDraw();
 
-	//Object3d::PreDraw(dxCommon_->GetCommandList());
+	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	//explosion01_->ExplosionDraw(viewProjection_);
-	//explosion02_->ExplosionDraw(viewProjection_);
-	//explosion03_->ExplosionDraw(viewProjection_);
+	if (isBEnemyDeadScene == true)
+	{
+		explosion01_->ExplosionDraw(viewProjection_);
+		explosion02_->ExplosionDraw(viewProjection_);
+	}
 
-	//Object3d::PostDraw();
+	if (isPlayerDead == true && explosion03_->GetIsFinish() == false)
+	{
+		explosion03_->ExplosionDraw(viewProjection_);
+	}
+
+	Object3d::PostDraw();
 }
 
 void Effect::H_ParticleUpdate(InvincibleEnemy* invincibleEnemy)
@@ -102,10 +109,11 @@ void Effect::H_ParticleUpdate(InvincibleEnemy* invincibleEnemy)
 	}
 }
 
-void Effect::E_ParticleUpdate(Enemy* enemy)
+void Effect::E_ParticleUpdate(Enemy* enemy,bool& isDeadCameraShake)
 {
 	if (enemy->GetIsDead() == true)
 	{
+		isDeadCameraShake = true;
 		pm_Meteor->Fire(p_Meteor.get(), 40, enemy->GetPosition(), 12, false, { 1.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 30, enemy->GetPosition(), 5, false, { 4.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 20, enemy->GetPosition(), 1, true, { 18.0f, 0.0f });
@@ -113,10 +121,11 @@ void Effect::E_ParticleUpdate(Enemy* enemy)
 	}
 }
 
-void Effect::M_ParticleUpdate(Meteor* meteor)
+void Effect::M_ParticleUpdate(Meteor* meteor, bool& isDeadCameraShake)
 {
 	if (meteor->GetIsDead() == true)
 	{
+		isDeadCameraShake = true;
 		pm_Meteor->Fire(p_Meteor.get(), 40, meteor->GetPosition(), 12, false, { 1.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 30, meteor->GetPosition(), 5, false, { 4.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 20, meteor->GetPosition(), 1, true, { 18.0f, 0.0f });
@@ -124,10 +133,11 @@ void Effect::M_ParticleUpdate(Meteor* meteor)
 	}
 }
 
-void Effect::W_ParticleUpdate(WeakEnemy* weakEnemy)
+void Effect::W_ParticleUpdate(WeakEnemy* weakEnemy, bool& isDeadCameraShake)
 {
 	if (weakEnemy->GetIsDead() == true)
  	{
+		isDeadCameraShake = true;
    		pm_WDmg->Fire(p_WDmg.get(), 40, weakEnemy->GetPosition(), 12, false, { 1.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 30, weakEnemy->GetPosition(), 5, false, { 4.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 20, weakEnemy->GetPosition(), 1, true, { 18.0f, 0.0f });
@@ -135,10 +145,11 @@ void Effect::W_ParticleUpdate(WeakEnemy* weakEnemy)
 	}
 }
 
-void Effect::B_ParticleUpdate(BossEnemy* bossEnemy)
+void Effect::B_ParticleUpdate(BossEnemy* bossEnemy, bool& isDeadCameraShake)
 {
 	if (bossEnemy->GetIsDead() == false)
 	{
+		isDeadCameraShake = true;
 		explosion01_->SetPosition(bossEnemy->GetPosition());
 		explosion02_->SetPosition(bossEnemy->GetPosition());
 		pm_Ex->Fire(p_Ex.get(), 20, bossEnemy->GetPosition(), 4, false, { 8.0f, 0.0f });

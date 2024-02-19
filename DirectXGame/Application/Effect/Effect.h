@@ -25,14 +25,14 @@ public:
 	void Update();
 
 	//描画
-	void Draw();
+	void Draw(bool& isBEnemyDeadScene, bool& isPlayerDead);
 
 	//各オブジェクトの処理
 	void H_ParticleUpdate(InvincibleEnemy* invincibleEnemy);
-	void E_ParticleUpdate(Enemy* enemy);
-	void M_ParticleUpdate(Meteor* meteor);
-	void W_ParticleUpdate(WeakEnemy* weakEnemy);
-	void B_ParticleUpdate(BossEnemy* bossEnemy);
+	void E_ParticleUpdate(Enemy* enemy, bool& isDeadCameraShake_);
+	void M_ParticleUpdate(Meteor* meteor, bool& isDeadCameraShake_);
+	void W_ParticleUpdate(WeakEnemy* weakEnemy, bool& isDeadCameraShake_);
+	void B_ParticleUpdate(BossEnemy* bossEnemy, bool& isDeadCameraShake_);
 	void Ex_ParticleUpdate(Player* player,bool& isDead);
 
 	//getter

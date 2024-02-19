@@ -69,6 +69,20 @@ void BossEnemy::BossEnemyInitialize()
 	hitColor_ = { 3.0f,3.0f,3.0f };
 
 	hp_ = 30;
+
+	//シェイク範囲
+	shakeRange_ = 3.0f;
+	//シェイク移動量
+	shakeNum_ = 0.1f;
+	//ボスの墜落スピード
+	bossDownSpeed_ = 0.01f;
+	//ボスalpha
+	bossAlpha_ = 1.0f;
+	bossAlphaMax_ = 1.0f;
+	bossAlphaMin_ = 0.5f;
+	//ボスalphaに代入する数
+	bossAlphaNum_ = 0.05f;
+	bossScaleNum_ = { 0.01f,0.01f,0.01f };
 }
 
 void BossEnemy::Update()

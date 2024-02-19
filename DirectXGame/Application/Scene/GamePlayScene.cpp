@@ -72,36 +72,23 @@ void GamePlayScene::Initialize()
 	LoadLevelData();
 
 	//メンバ変数の初期化
-	cameraShakePos_ = { 0.0f,0.0f,0.0f };
-	deadCameraPos_ = { 0.0f,0.0f,0.0f };
-	deadCameraMovePos_ = { 20.0f ,0.0f,35.0f };
-	bossInitCameraPos_ = { 0.0f,0.0f,0.0f };
-
-	//基本target
-	changeTargetNum_ = { 0.0f,0.0f,0.0f };
-	//登場した後にtargetを戻す値
-	changeTargetMoveNum_ = { 0.0f,0.0f,50.0f };
-
-	//登場した後の各座標
-	afterInitCameraPos_ = { 0.0f, 5.0f, -20.0f };
-	afterInitCameraTarget_ = { 0.0f, -2.0f, 50.0f };
-
-	allZero_ = { 0.0f,0.0f,0.0f };
 
 	//ゲーム中のシーン番号
 	gameNum_ = GameNum::FirstScene;
-	//カメラワーク番号
-	bossInitNum_ = BossInitNum::Up;
+
+	gameClearmoveZ_ = 0.5f;
+	gameClearPosZ_ = 100.0f;
+	clearCameraMoveZ_ = 0.05f;
+
+	//シェイク
+	playerCameraShake_ = 0.2f;
+	bossCameraShake_ = 1.5f;
+	enemyCameraShake_ = 0.5f;
 
 	//ゲームオーバーシーンに遷移する時間
 	gameOverTimer_ = 0;
 	//最大
 	gameOverTimerMax_ = 60;
-
-	clearCameraNum_ = 0;
-	gameClearmoveZ_ = 0.5f;
-	gameClearPosZ_ = 100.0f;
-	clearCameraMoveZ_ = 0.05f;
 
 	//フラグ
 	isWait_ = false;
@@ -113,27 +100,9 @@ void GamePlayScene::Initialize()
 	isDeadCameraShake_ = false;
 
 	//タイマー
-	delayTimer_ = 0.0f;
-	bossAppTimer_ = 0.0f;
-	bossAppTimerMax_ = 180.0f;
 	waitTimer_ = 0;
-	clearTimer_ = 0.0f;
-	bossInitTimer_ = 0;
-	bossInitTimerMax_ = 24;
-	startTimer_ = 0.0f;
-	startTimerMax_ = 120.0f;
-	cameraMoveTimer_ = 0.0f;
-	cameraMoveTimerMax_ = 60.0f;
-	playerDeadTimer_ = 0.0f;
-	playerDeadTimerMax_ = 60.0f;
-	targetMoveTimer_ = 0.0f;
-	targetMoveTimerMax_ = cameraMoveTimerMax_ * 2.0f;
 	hitPlayerTimer_ = 0;
 	hitPlayerTimerMax_ = 32;
-	hitEnemyTimer_ = 0;
-	clearCameraTimer_ = 0.0f;
-	clearCameraTimerMax_ = 180.0f;
-	playerShakeTimer_ = 0;
 }
 
 void GamePlayScene::Update()
@@ -237,7 +206,15 @@ void GamePlayScene::Update()
 				BossDead();
 				if (isClearScene_ == false)
 				{
-
+					//deathTimerが奇数なら
+					if (bEnemy->GetDeathTimer() % 2 != 1)
+					{
+						camera_->CameraShake(enemyCameraShake_, enemyCameraShake_);
+					}
+					else
+					{
+						cameraShakePos_ = camera_->GetViewProjection()->GetEye();
+					}
 				}
 			}
 			if (isClearScene_ == false)
@@ -245,10 +222,15 @@ void GamePlayScene::Update()
 				//死亡フラグがtrueになったら
 				if (bEnemy->GetIsDead() == true)
 				{
+					camera_->GetViewProjection()->SetEye(cameraShakePos_);
+					isClearScene_ = true;
+					normalEyeNum_ = camera_->GetViewProjection()->eye_;
+					normalTargetNum_ = camera_->GetViewProjection()->target_;
+					camera_->GetViewProjection()->SetTarget(player_->GetPosition());
 				}
 				else
 				{
-
+					cameraShakePos_ = camera_->GetViewProjection()->GetEye();
 				}
 			}
 			//クリア演出の処理
@@ -286,7 +268,7 @@ void GamePlayScene::Update()
 	{
 		if (player_->GetIsHit() == false)
 		{
-		
+			cameraShakePos_ = camera_->GetViewProjection()->GetEye();
 		}
 		else
 		{
@@ -297,6 +279,14 @@ void GamePlayScene::Update()
 				{
 					ui_->SetIsRed(true);
 					ui_->FadeOut(ui_->Red);
+					if (hitPlayerTimer_ % 2 != 1)
+					{
+						camera_->CameraShake(playerCameraShake_, playerCameraShake_);
+					}
+					else
+					{
+						camera_->GetViewProjection()->SetEye(cameraShakePos_);
+					}
 					ui_->Damage((float)hitPlayerTimer_, (float)hitPlayerTimerMax_, player_->GetHp(), player_->GetHpMax());
 					//無敵時間
 					hitPlayerTimer_++;
@@ -313,8 +303,35 @@ void GamePlayScene::Update()
 		}
 	}
 
+	//敵に弾が当たった時のカメラシェイク
+	if (isDeadCameraShake_ == true)
+	{
+   		hitEnemyTimer_++;
+		if (hitEnemyTimer_ < 16)
+		{
+			if (hitEnemyTimer_ % 2 != 1)
+			{
+				camera_->CameraShake(enemyCameraShake_, enemyCameraShake_);
+			}
+			else
+			{
+				camera_->GetViewProjection()->SetEye(cameraShakePos_);
+			}
+		}
+		else
+		{
+			hitEnemyTimer_ = 0;
+			isDeadCameraShake_ = false;
+		}
+	}
+	else
+	{
+		cameraShakePos_ = camera_->GetViewProjection()->GetEye();
+	}
+
 	//エフェクト更新
-	EffectUpdate();
+	EffectUpdate(isDeadCameraShake_);
+
 
 	ToGameOverScene();
 
@@ -390,7 +407,7 @@ void GamePlayScene::Draw()
 	Object3d::PostDraw();
 
 	//エフェクト
-	effect_->Draw();
+	effect_->Draw(isBEnemyDeadScene_,isPlayerDead_);
 
 	//UI
 	ui_->UIDraw();
@@ -404,12 +421,12 @@ void GamePlayScene::Finalize()
 
 }
 
-void GamePlayScene::EffectUpdate()
+void GamePlayScene::EffectUpdate(bool& isDeadCameraShake)
 {
 	//雑魚敵死亡時のパーティクル
 	for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 	{
-		effect_->W_ParticleUpdate(wEnemys.get());
+		effect_->W_ParticleUpdate(wEnemys.get(), isDeadCameraShake);
 	}
 	//無敵敵に弾が当たった時
 	for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
@@ -420,20 +437,20 @@ void GamePlayScene::EffectUpdate()
 	//敵の被ダメージ処理
 	for (std::unique_ptr<Enemy>& enemys : enemys_)
 	{
-		effect_->E_ParticleUpdate(enemys.get());
+		effect_->E_ParticleUpdate(enemys.get(), isDeadCameraShake);
 	}
 
 	//隕石のパーティクル
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
-		effect_->M_ParticleUpdate(meteors.get());
+		effect_->M_ParticleUpdate(meteors.get(), isDeadCameraShake);
 	}
 	//ボス敵の被ダメージ処理
 	if (bEnemy->GetIsInit() == true)
 	{
 		if (isBEnemyDeadScene_ == true)
 		{
-			effect_->B_ParticleUpdate(bEnemy.get());
+			effect_->B_ParticleUpdate(bEnemy.get(), isDeadCameraShake);
 		}
 	}
 
@@ -672,11 +689,14 @@ void GamePlayScene::PlayerInit()
 	if (isPlayerInit_ == false)
 	{
 		//カメラワーク
-
+		camera_->PlayerInitCameraWork(isStart_, player_.get());
 		//自機の登場モーション
 		player_->InitMotion();
 		//カメラワークが終わったらフラグtrue
+		if (isStart_ == true)
+		{
 			isPlayerInit_ = true;
+		}
 	}
 }
 
@@ -690,6 +710,7 @@ void GamePlayScene::BossInit()
 	if (isBossInitCamera_ == true)
 	{
 		ui_->Stop();
+		camera_->BossInitCameraWork(bEnemy.get(), isBossInitCamera_);
 	}
 }
 
@@ -707,7 +728,8 @@ void GamePlayScene::ToClearScene()
 	{
 		if (isClearCameraWork_ == false)
 		{
-
+			//カメラワーク
+			camera_->ToClearCameraWork(isClearCameraWork_);
 		}
 		else
 		{
@@ -718,6 +740,7 @@ void GamePlayScene::ToClearScene()
 			player_->worldTransform_.rotation_.z++;
 			player_->worldTransform_.position_.x -= clearCameraMoveZ_;
 			player_->worldTransform_.position_.z++;
+			camera_->GetViewProjection()->eye_.z -= gameClearmoveZ_;
 			// ワールドトランスフォームの行列更新と転送
 			player_->worldTransform_.UpdateMatrix();
 			//自機が移動しきったらシーン遷移
@@ -737,7 +760,7 @@ void GamePlayScene::ToGameOverScene()
 		//UI退場
 		ui_->UIOutMotion();
 		//カメラワーク
-
+		camera_->ToGameOverCameraWork(player_.get(),isPlayerDead_,isGameOver_ );
 		//自機死亡演出
 		PlayerDead();
 		player_->worldTransform_.UpdateMatrix();
@@ -760,7 +783,7 @@ void GamePlayScene::ToGameOverScene()
 	}
 	else
 	{
-
+		deadCameraPos_ = camera_->GetViewProjection()->GetEye();
 	}
 }
 

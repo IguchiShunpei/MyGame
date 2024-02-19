@@ -78,6 +78,7 @@ public:
 	void SetIsLeft(bool isLeft) { isLeft_ = isLeft; }
 	void SetIsRed(bool isRed) { isRed_ = isRed; }
 	void SetIsBlack(bool isBlack) { isBlack_ = isBlack; }
+	void SetIsInvicibleReticle(bool isInvicibleReticle) { isInvicibleReticle_ = isInvicibleReticle; }
 
 private:
 	//DxCommon

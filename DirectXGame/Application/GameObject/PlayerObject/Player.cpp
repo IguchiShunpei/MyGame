@@ -37,7 +37,7 @@ void Player::PlayerInitialize()
 
 	//半径分だけ足元から浮いた座標を球の中心にする
 	SetCollider(new SphereCollider(colliderPos_, playerColliderRadius_));
-	SetPosition(Vector3(0, -2, 0));
+	SetPosition(Vector3(0, -2, -20));
 	SetScale(Vector3(0.5f, 0.5f, 0.5f));
 
 	//変数の初期化
