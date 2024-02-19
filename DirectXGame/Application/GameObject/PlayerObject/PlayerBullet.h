@@ -46,8 +46,6 @@ private:
 	bool isDelete_ = false;
 	//弾種類
 	int bulletNum_;
-	//削除タイマー
-	float deleteTimer_;
 	//速度
 	Vector3 velocity_;
 	//当たったか

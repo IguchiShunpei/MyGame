@@ -265,7 +265,7 @@ void GamePlayScene::Update()
 		{
 			camera_->MoveCamera();
 
-			player_->Update();
+			player_->Update(ui_->GetWorldReticle());
 			player_->ColliderUpdate();
 		}
 		else
@@ -275,6 +275,7 @@ void GamePlayScene::Update()
 		}
 		//UI更新
 		ui_->UIUpdate();
+		ui_->ReticleUpdate(camera_->GetViewProjection(),player_.get());
 	}
 
 	//全ての衝突をチェック
