@@ -15,7 +15,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position,Vector3 veloci
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet01");
+	playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet_02");
 	// 3Dオブジェクト生成
 	Create();
 
@@ -23,7 +23,7 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position,Vector3 veloci
 
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_.get());
-	SetScale(Vector3(0.8f, 0.8f,10.0f));
+	SetScale(Vector3(0.5f, 0.5f, 0.5f));
 	bulletColor_ = {1.0f,1.0f,1.0f};
 	if (bulletLevel == 2)
 	{
@@ -31,11 +31,10 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position,Vector3 veloci
 	}
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
-	worldTransform_.position_.z = 10.0f;
+	/*worldTransform_.position_.z = 10.0f;*/
 	//引数で受け取った速度をメンバ変数に代入
 	isDelete_ = false;
 	chargeTime = 0;
-	deleteTimer_ = 120.0f;
 	scaleNum = { 0.01f,0.01f,0.01f };
 }
 

@@ -94,6 +94,36 @@
     <Filter Include="ソース ファイル\UI">
       <UniqueIdentifier>{a9bf765a-0940-45b4-b380-6e7187770f00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameObject\EnemyObject">
+      <UniqueIdentifier>{1a221117-9856-456f-b77c-d5f2a9f1051e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\BackGroundObject">
+      <UniqueIdentifier>{5d88b8db-c253-4053-85b2-69e8f9a522c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene\Application">
+      <UniqueIdentifier>{6c8da44e-1bb8-4ff4-8b5a-6d774df6f058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene\Engine">
+      <UniqueIdentifier>{f6bbfb1c-47f8-42c6-b1bd-6cceb6426051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Scene\Application">
+      <UniqueIdentifier>{2b0572d0-f256-4471-bce4-28597da755e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Scene\Engine">
+      <UniqueIdentifier>{68d33ae4-37dd-4541-b923-2ae0551ada04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\EnemyObject">
+      <UniqueIdentifier>{ab45940d-7cec-46d6-9815-f307cc71b03d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\BackGroundObject">
+      <UniqueIdentifier>{4d589692-4d8c-44ec-96ab-9040935bdac9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\PlayerObject">
+      <UniqueIdentifier>{72914093-3a5c-461f-aa9e-08e4188cb4c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\PlayerObject">
+      <UniqueIdentifier>{20a5b9d1-ce6e-4b56-87bb-837c22948d1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp">
@@ -162,30 +192,6 @@
     <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp">
       <Filter>ソース ファイル\Math</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Scene\Game.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Scene\GameBaseScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Scene\GameSceneManager.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Scene\SceneFactory.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Scene\SIFrameWork.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\Scene\GameClearScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\Scene\GameOverScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\Scene\GameTitleScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Sound\Sound.cpp">
       <Filter>ソース ファイル\Sound</Filter>
     </ClCompile>
@@ -194,42 +200,6 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Math\Spline.cpp">
       <Filter>ソース ファイル\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Player\PlayerBullet.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\BossEnemy.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyBullet.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\InvincibleEnemy.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\WeakEnemy.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Item.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\Scene\GamePlayScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\UI\UI.cpp">
       <Filter>ソース ファイル\UI</Filter>
@@ -248,6 +218,66 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\Effect\Effect.cpp">
       <Filter>ソース ファイル\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.cpp">
+      <Filter>ソース ファイル\GameObject\BackGroundObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.cpp">
+      <Filter>ソース ファイル\GameObject\BackGroundObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.cpp">
+      <Filter>ソース ファイル\GameObject\BackGroundObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Scene\SIFrameWork.cpp">
+      <Filter>ソース ファイル\Scene\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Scene\SceneFactory.cpp">
+      <Filter>ソース ファイル\Scene\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Scene\GameSceneManager.cpp">
+      <Filter>ソース ファイル\Scene\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Scene\GameBaseScene.cpp">
+      <Filter>ソース ファイル\Scene\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Scene\Game.cpp">
+      <Filter>ソース ファイル\Scene\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\Scene\GameClearScene.cpp">
+      <Filter>ソース ファイル\Scene\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\Scene\GameTitleScene.cpp">
+      <Filter>ソース ファイル\Scene\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\Scene\GamePlayScene.cpp">
+      <Filter>ソース ファイル\Scene\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\Scene\GameOverScene.cpp">
+      <Filter>ソース ファイル\Scene\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\BossEnemy.cpp">
+      <Filter>ソース ファイル\GameObject\EnemyObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\Enemy.cpp">
+      <Filter>ソース ファイル\GameObject\EnemyObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\EnemyBullet.cpp">
+      <Filter>ソース ファイル\GameObject\EnemyObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\InvincibleEnemy.cpp">
+      <Filter>ソース ファイル\GameObject\EnemyObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\WeakEnemy.cpp">
+      <Filter>ソース ファイル\GameObject\EnemyObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\PlayerObject\Player.cpp">
+      <Filter>ソース ファイル\GameObject\PlayerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\PlayerObject\PlayerBullet.cpp">
+      <Filter>ソース ファイル\GameObject\PlayerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\Item.cpp">
+      <Filter>ソース ファイル\GameObject\EnemyObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -381,74 +411,11 @@
     <ClInclude Include="DirectXGame\Engine\Math\Vector4.h">
       <Filter>ヘッダー ファイル\Math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Scene\Game.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Scene\GameBaseScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Scene\GameSceneManager.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Scene\SceneFactory.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Scene\SIFrameWork.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\Scene\GameClearScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\Scene\GameOverScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\Scene\GamePlayScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\Scene\GameTitleScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Sound\Sound.h">
       <Filter>ヘッダー ファイル\Sound</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Math\Spline.h">
       <Filter>ヘッダー ファイル\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\BossEnemy.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyBullet.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\InvincibleEnemy.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\WeakEnemy.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Player\PlayerBullet.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Item.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\UI\UI.h">
       <Filter>ヘッダー ファイル\UI</Filter>
@@ -467,6 +434,69 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\Effect\Effect.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h">
+      <Filter>ヘッダー ファイル\Scene\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Scene\Game.h">
+      <Filter>ヘッダー ファイル\Scene\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Scene\GameBaseScene.h">
+      <Filter>ヘッダー ファイル\Scene\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Scene\GameSceneManager.h">
+      <Filter>ヘッダー ファイル\Scene\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Scene\SceneFactory.h">
+      <Filter>ヘッダー ファイル\Scene\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Scene\SIFrameWork.h">
+      <Filter>ヘッダー ファイル\Scene\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Scene\GameClearScene.h">
+      <Filter>ヘッダー ファイル\Scene\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Scene\GameOverScene.h">
+      <Filter>ヘッダー ファイル\Scene\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Scene\GamePlayScene.h">
+      <Filter>ヘッダー ファイル\Scene\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Scene\GameTitleScene.h">
+      <Filter>ヘッダー ファイル\Scene\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.h">
+      <Filter>ヘッダー ファイル\GameObject\BackGroundObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.h">
+      <Filter>ヘッダー ファイル\GameObject\BackGroundObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.h">
+      <Filter>ヘッダー ファイル\GameObject\BackGroundObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\PlayerObject\Player.h">
+      <Filter>ヘッダー ファイル\GameObject\PlayerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\PlayerObject\PlayerBullet.h">
+      <Filter>ヘッダー ファイル\GameObject\PlayerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\BossEnemy.h">
+      <Filter>ヘッダー ファイル\GameObject\EnemyObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\Enemy.h">
+      <Filter>ヘッダー ファイル\GameObject\EnemyObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\EnemyBullet.h">
+      <Filter>ヘッダー ファイル\GameObject\EnemyObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\InvincibleEnemy.h">
+      <Filter>ヘッダー ファイル\GameObject\EnemyObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\WeakEnemy.h">
+      <Filter>ヘッダー ファイル\GameObject\EnemyObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\Item.h">
+      <Filter>ヘッダー ファイル\GameObject\EnemyObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

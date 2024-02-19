@@ -7,6 +7,8 @@
 #pragma once
 
 #include "Sprite.h"
+#include "ViewProjection.h"
+#include "Player.h"
 #include <memory>
 
 class UI
@@ -55,8 +57,19 @@ public:
 	//赤リセット
 	void RedReset();
 
+
+	//レティクル更新
+	void ReticleUpdate(ViewProjection* view,Player* player);
+	//ベクトルと行列を掛け算
+	Vector3 MatVector(Vector3 v, Matrix4 mat);
+	//ビューポート行列をセット
+	Matrix4 SetViewport(const Vector3& v);
+	// 座標変換（ベクトルと行列の掛け算をする）
+	Vector3 Transform(const Vector3& v, const Matrix4& m);
+
 	//getter
 	bool GetIsBlack() const { return isBlack_; };
+	WorldTransform GetWorldReticle() const { return worldTransform3DReticle_;}
 
 	//setter
 	void SetIsUp(bool isUp) { isUp_ = isUp; }
@@ -88,6 +101,27 @@ private:
 	SIEngine::Sprite red_;
 	SIEngine::Sprite green_;
 
+	//レティクル
+	WorldTransform worldTransform3DReticle_;
+	//2Dレティクル用スプライト
+	SIEngine::Sprite reticle_;
+	//自機からレティクルまでの距離
+	float distancePlayerToReticle_;
+	//レティクルalpha値
+	float reticleAlpha_;
+	//変動値
+	float reticleAlphaNum_;
+	//最大値
+	float reticleAlphaNumMax_;
+	//最小値
+	float reticleAlphaNumMin_;
+	//レティクル表示フラグ
+	bool isInvicibleReticle_;
+
+	Vector3 reticleWorldPos_;
+	Matrix4 matViewport_;
+	Matrix4 matViewprojectionViewport_;
+
 	//画面端とUIの距離
 	float UiRange_;
 	//UIの色(押されていないの下限)
@@ -96,7 +130,7 @@ private:
 	float uiColorPush_;
 	//UIの色(現在)
 	float uiColor_[4];
-	//UIのいろの変動値
+	//UIの色の変動値
 	float uiColorNum_;
 
 	//タイトル

@@ -1,6 +1,6 @@
 # Blender v3.1.2 OBJ File: 'bullet.blend'
 # www.blender.org
-mtllib PlayerBullet01.mtl
+mtllib PlayerBullet.mtl
 o 立方体
 v 0.592493 0.174041 -0.662019
 v 1.003349 0.584897 -0.662019

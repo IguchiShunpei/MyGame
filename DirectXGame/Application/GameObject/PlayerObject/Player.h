@@ -29,7 +29,7 @@ public:
 	void PlayerInitialize();
 
 	//更新
-	void Update();
+	void Update(WorldTransform worldTransform3DReticle);
 
 	//当たり判定更新
 	void ColliderUpdate();
@@ -53,7 +53,7 @@ public:
 	void Rotate();
 
 	//攻撃
-	void Attack();
+	void Attack(WorldTransform worldTransform3DReticle);
 
 	//キャラの向きに応じた方向に球を出す
 	Vector3 bVelocity(const Vector3& velocity, const WorldTransform& worldTransform);
@@ -106,13 +106,6 @@ public:
 	//bulletPower
 	void SetBulletPower(int bulletPower) { bulletPower_ = bulletPower; }
 
-	//ベクトルと行列を掛け算
-	Vector3 MatVector(Vector3 v, Matrix4 mat);
-	//ビューポート行列をセット
-	Matrix4 SetViewport(const Vector3& v);
-	// 座標変換（ベクトルと行列の掛け算をする）
-	Vector3 Transform(const Vector3& v, const Matrix4& m);
-
 private:
 	//入力
 	SIEngine::Input* input_ = nullptr;
@@ -129,7 +122,6 @@ private:
 
 	//弾の軌道先
 	Vector3 bulletWorldPos_;
-	WorldTransform bulletWorldTransform_;
 
 	//collider関係
 	Vector3 colliderPos_;

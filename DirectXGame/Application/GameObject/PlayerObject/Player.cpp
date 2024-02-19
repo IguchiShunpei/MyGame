@@ -23,9 +23,6 @@ void Player::PlayerInitialize()
 
 	Initialize();
 
-	//bulletworldTransform初期化
-	bulletWorldTransform_.Initialize();
-
 	// OBJからモデルデータを読み込む
 	playerModel_ = Model::LoadFromOBJ("fighter");
 	// 3Dオブジェクト生成
@@ -36,7 +33,7 @@ void Player::PlayerInitialize()
 	//コライダー関係の変数
 	colliderPos_ = { 0.0f,0.0f,0.0f };
 	playerColliderRadius_ = 1.0f;
-	bulletColliderRadius_ = 2.0f;
+	bulletColliderRadius_ = 4.0f;
 
 	//半径分だけ足元から浮いた座標を球の中心にする
 	SetCollider(new SphereCollider(colliderPos_, playerColliderRadius_));
@@ -63,7 +60,7 @@ void Player::PlayerInitialize()
 	initMotionTimeMax_ = 40.0f;
 
 	bulletPower_ = 5;
-	kBulletSpeed_ = 5.0f;
+	kBulletSpeed_ = 10.0f;
 
 	initPos_ = { 0.0f,-2.0f,0.0f };
 	initRota_ = { 0.0f,0.0f,0.0f };
@@ -83,7 +80,7 @@ void Player::PlayerInitialize()
 	isInv_ = false;
 }
 
-void Player::Update()
+void Player::Update(WorldTransform worldTransform3DReticle)
 {
 
 	if (isDead_ == false)
@@ -94,12 +91,10 @@ void Player::Update()
 
 		BulletPowerUp();
 
-		Attack();
+		Attack(worldTransform3DReticle);
 	}
 
 	BulletUpdate();
-
-	bulletWorldTransform_.UpdateMatrix();
 
 	// ワールドトランスフォームの行列更新と転送
 	worldTransform_.UpdateMatrix();
@@ -404,24 +399,30 @@ void Player::Rotate()
 	}
 }
 
-void Player::Attack()
+void Player::Attack(WorldTransform worldTransform3DReticle)
 {
 	//Spaceキーを押したとき
 	if (input_->TriggerKey(DIK_SPACE))
 	{
+		//自キャラの座標をコピー
+		Vector3 position = GetWorldPosition();
+
 		//弾の速度
 		Vector3 velocity(0, 0, kBulletSpeed_);
 
-		//自機から3Dレティクルへのオフセット(Z+向き)
-		Vector3 offSet = { 0,0,1.0f };
-		//自機のワールド行列の回転を反映
-		//offSet = MatVector(offSet, worldTransform_.matWorld_);
-		//長さを整える
-		offSet = offSet.normalize() * 50.0f;
-		//3Dレティクルの座標を設定
-		bulletWorldTransform_.position_ = Vector3::AddVector3(GetWorldPosition(), offSet);
-		bulletWorldTransform_.UpdateMatrix();
+		//自機の向いてる方向に弾を撃つ
+		velocity = bVelocity(velocity, worldTransform_);
 
+		//レティクルのワールド座標を取得
+		bulletWorldPos_.x = worldTransform3DReticle.matWorld_.m[3][0];
+		bulletWorldPos_.y = worldTransform3DReticle.matWorld_.m[3][1];
+		bulletWorldPos_.z = worldTransform3DReticle.matWorld_.m[3][2];
+
+		//自機から標準オブジェクトへのベクトル
+		velocity = bulletWorldPos_ - GetWorldPosition();
+
+		//速度と向きを合成
+		velocity = velocity.normalize() * kBulletSpeed_;
 		//球の生成
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 
@@ -429,8 +430,13 @@ void Player::Attack()
 		newBullet->PlayerBulletInitialize(GetPosition(), velocity, bulletLevel_);
 
 		//atan2で角度を求める
-		newBullet->worldTransform_.rotation_.y = -(newBullet->GetAngle(worldTransform_.position_.z, worldTransform_.position_.x, bulletWorldTransform_.position_.z, bulletWorldTransform_.position_.x));
-		newBullet->worldTransform_.rotation_.x = -(newBullet->GetAngle(worldTransform_.position_.z, worldTransform_.position_.y, bulletWorldTransform_.position_.z, bulletWorldTransform_.position_.y));
+		newBullet->worldTransform_.rotation_.y = 
+			-atan2(worldTransform3DReticle.position_.z-worldTransform_.position_.z,
+				worldTransform3DReticle.position_.y - worldTransform_.position_.y);
+
+		newBullet->worldTransform_.rotation_.x = 
+			-atan2(worldTransform3DReticle.position_.z - worldTransform_.position_.z ,
+				worldTransform3DReticle.position_.x - worldTransform_.position_.x);
 
 		//コライダーの追加
 		newBullet->SetCollider(new SphereCollider(colliderPos_, bulletColliderRadius_));
@@ -522,13 +528,4 @@ Vector3 Player::GetWorldPosition()
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
-}
-Vector3 Player::MatVector(Vector3 v, Matrix4 mat)
-{
-	Vector3 pos;
-	pos.x = mat.m[0][0] * v.x + mat.m[0][1] * v.y + mat.m[0][2] * v.z + mat.m[0][3];
-	pos.y = mat.m[1][0] * v.x + mat.m[1][1] * v.y + mat.m[1][2] * v.z + mat.m[1][3];
-	pos.z = mat.m[2][0] * v.x + mat.m[2][1] * v.y + mat.m[2][2] * v.z + mat.m[2][3];
-
-	return pos;
 }
