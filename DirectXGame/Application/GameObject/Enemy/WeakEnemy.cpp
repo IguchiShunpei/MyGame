@@ -32,6 +32,7 @@ void WeakEnemy::WEnemyInitialize()
 void WeakEnemy::Update()
 {
 	enemyColor_ = { 1.0f,1.0f,1.0f };
+	hitColor_ = { 3.0f,3.0f,3.0f };
 
 	//登場モーション
 	InitMotion();
@@ -56,7 +57,7 @@ void WeakEnemy::ColliderUpdate()
 
 void WeakEnemy::Damage(int damage)
 {
-  	enemyColor_ = { 3.0f,3.0f,3.0f };
+  	enemyColor_ = hitColor_;
 	hp_-= damage;
 	if (hp_ <= 0)
 	{

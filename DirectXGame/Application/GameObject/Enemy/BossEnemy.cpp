@@ -65,6 +65,9 @@ void BossEnemy::BossEnemyInitialize()
 
 	phase_ = Phase::Wait;
 
+	bossColor_ = { 1.0f,1.0f,1.0f };
+	hitColor_ = { 3.0f,3.0f,3.0f };
+
 	hp_ = 30;
 }
 
@@ -364,7 +367,7 @@ void BossEnemy::InitMotion()
 
 void BossEnemy::Damage(int damage)
 {
-	bossColor_ = { 3.0f,3.0f,3.0f };
+	bossColor_ = hitColor_;
 	hp_ -= damage;
 	if (hp_ <= 0)
 	{

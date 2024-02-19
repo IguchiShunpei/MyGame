@@ -62,7 +62,7 @@
       <ConformanceMode>true</ConformanceMode>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Engine\Sound\;$(ProjectDir)DirectXGame\Engine\Level\;$(ProjectDir)DirectXGame\Engine\Scene\;$(ProjectDir)DirectXGame\Application\Scene\;$(ProjectDir)DirectXGame\Engine\Input\;$(ProjectDir)DirectXGame\Engine\Math\;$(ProjectDir)DirectXGame\Application\UI\;$(ProjectDir)DirectXGame\Application\GameObject\Enemy\;$(ProjectDir)DirectXGame\Application\GameObject\Player\;$(ProjectDir)DirectXGame\Application\GameObject\Effect\;$(ProjectDir)DirectXGame\Application\GameObject\BackGroundObject\;$(ProjectDir)DirectXGame\Application\GameObject\;$(ProjectDir)DirectXGame\Engine\Collision\;$(ProjectDir)DirectXGame\Engine\Camera\;$(ProjectDir)DirectXGame\Engine\Base\;$(ProjectDir)DirectXGame\Engine\3D\;$(ProjectDir)DirectXGame\Engine\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Engine\Sound\;$(ProjectDir)DirectXGame\Engine\Effect\;$(ProjectDir)DirectXGame\Engine\Level\;$(ProjectDir)DirectXGame\Engine\Scene\;$(ProjectDir)DirectXGame\Application\Camera\;$(ProjectDir)DirectXGame\Application\Scene\;$(ProjectDir)DirectXGame\Engine\Input\;$(ProjectDir)DirectXGame\Engine\Math\;$(ProjectDir)DirectXGame\Application\UI\;$(ProjectDir)DirectXGame\Application\Effect\;$(ProjectDir)DirectXGame\Application\GameObject\Enemy\;$(ProjectDir)DirectXGame\Application\GameObject\Player\;$(ProjectDir)DirectXGame\Application\GameObject\Effect\;$(ProjectDir)DirectXGame\Application\GameObject\BackGroundObject\;$(ProjectDir)DirectXGame\Application\GameObject\;$(ProjectDir)DirectXGame\Engine\Collision\;$(ProjectDir)DirectXGame\Engine\Camera\;$(ProjectDir)DirectXGame\Engine\Base\;$(ProjectDir)DirectXGame\Engine\3D\;$(ProjectDir)DirectXGame\Engine\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -89,7 +89,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Engine\Sound\;$(ProjectDir)DirectXGame\Engine\Level\;$(ProjectDir)DirectXGame\Engine\Scene\;$(ProjectDir)DirectXGame\Application\Scene\;$(ProjectDir)DirectXGame\Engine\Input\;$(ProjectDir)DirectXGame\Engine\Math\;$(ProjectDir)DirectXGame\Application\UI\;$(ProjectDir)DirectXGame\Application\GameObject\Enemy\;$(ProjectDir)DirectXGame\Application\GameObject\Player\;$(ProjectDir)DirectXGame\Application\GameObject\Effect\;$(ProjectDir)DirectXGame\Application\GameObject\BackGroundObject\;$(ProjectDir)DirectXGame\Application\GameObject\;$(ProjectDir)DirectXGame\Engine\Collision\;$(ProjectDir)DirectXGame\Engine\Camera\;$(ProjectDir)DirectXGame\Engine\Base\;$(ProjectDir)DirectXGame\Engine\3D\;$(ProjectDir)DirectXGame\Engine\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Engine\Sound\;$(ProjectDir)DirectXGame\Engine\Effect\;$(ProjectDir)DirectXGame\Engine\Level\;$(ProjectDir)DirectXGame\Engine\Scene\;$(ProjectDir)DirectXGame\Application\Camera\;$(ProjectDir)DirectXGame\Application\Scene\;$(ProjectDir)DirectXGame\Engine\Input\;$(ProjectDir)DirectXGame\Engine\Math\;$(ProjectDir)DirectXGame\Application\UI\;$(ProjectDir)DirectXGame\Application\Effect\;$(ProjectDir)DirectXGame\Application\GameObject\Enemy\;$(ProjectDir)DirectXGame\Application\GameObject\Player\;$(ProjectDir)DirectXGame\Application\GameObject\Effect\;$(ProjectDir)DirectXGame\Application\GameObject\BackGroundObject\;$(ProjectDir)DirectXGame\Application\GameObject\;$(ProjectDir)DirectXGame\Engine\Collision\;$(ProjectDir)DirectXGame\Engine\Camera\;$(ProjectDir)DirectXGame\Engine\Base\;$(ProjectDir)DirectXGame\Engine\3D\;$(ProjectDir)DirectXGame\Engine\2D\;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -104,11 +104,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXGame\Application\Camera\Camera.cpp" />
+    <ClCompile Include="DirectXGame\Application\Effect\Effect.cpp" />
+    <ClCompile Include="DirectXGame\Application\Effect\Explosion.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Item.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Effect\Explosion.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\BossEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyBullet.cpp" />
@@ -127,8 +129,6 @@
     <ClCompile Include="DirectXGame\Engine\3D\FbxObject3d.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Model.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Object3d.cpp" />
-    <ClCompile Include="DirectXGame\Engine\3D\Particle.cpp" />
-    <ClCompile Include="DirectXGame\Engine\3D\ParticleManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\WorldTransform.cpp" />
     <ClCompile Include="DirectXGame\Engine\Base\DirectXCommon.cpp" />
     <ClCompile Include="DirectXGame\Engine\Base\FPSFixed.cpp" />
@@ -138,6 +138,8 @@
     <ClCompile Include="DirectXGame\Engine\Collision\CollisionManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Collision\CollisionPrimitive.cpp" />
     <ClCompile Include="DirectXGame\Engine\Collision\SphereCollider.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Effect\Particle.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Effect\ParticleManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Input\Input.cpp" />
     <ClCompile Include="DirectXGame\Engine\Level\LevelLoader.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\MathFunc.cpp" />
@@ -230,11 +232,13 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXGame\Application\Camera\Camera.h" />
+    <ClInclude Include="DirectXGame\Application\Effect\Effect.h" />
+    <ClInclude Include="DirectXGame\Application\Effect\Explosion.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Item.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Effect\Explosion.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\BossEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyBullet.h" />
@@ -253,8 +257,6 @@
     <ClInclude Include="DirectXGame\Engine\3D\FbxObject3d.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Model.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Object3d.h" />
-    <ClInclude Include="DirectXGame\Engine\3D\Particle.h" />
-    <ClInclude Include="DirectXGame\Engine\3D\ParticleManager.h" />
     <ClInclude Include="DirectXGame\Engine\3D\WorldTransform.h" />
     <ClInclude Include="DirectXGame\Engine\Base\DirectXCommon.h" />
     <ClInclude Include="DirectXGame\Engine\Base\FPSFixed.h" />
@@ -268,6 +270,8 @@
     <ClInclude Include="DirectXGame\Engine\Collision\CollisionTypes.h" />
     <ClInclude Include="DirectXGame\Engine\Collision\RaycastHit.h" />
     <ClInclude Include="DirectXGame\Engine\Collision\SphereCollider.h" />
+    <ClInclude Include="DirectXGame\Engine\Effect\Particle.h" />
+    <ClInclude Include="DirectXGame\Engine\Effect\ParticleManager.h" />
     <ClInclude Include="DirectXGame\Engine\Input\Input.h" />
     <ClInclude Include="DirectXGame\Engine\Level\LevelLoader.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathFunc.h" />

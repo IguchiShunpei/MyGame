@@ -36,11 +36,11 @@ void Player::PlayerInitialize()
 	//コライダー関係の変数
 	colliderPos_ = { 0.0f,0.0f,0.0f };
 	playerColliderRadius_ = 1.0f;
-	bulletColliderRadius_ = 5.0f;
+	bulletColliderRadius_ = 2.0f;
 
 	//半径分だけ足元から浮いた座標を球の中心にする
 	SetCollider(new SphereCollider(colliderPos_, playerColliderRadius_));
-	SetPosition(Vector3(0, -2, -20));
+	SetPosition(Vector3(0, -2, 0));
 	SetScale(Vector3(0.5f, 0.5f, 0.5f));
 
 	//変数の初期化
@@ -63,7 +63,7 @@ void Player::PlayerInitialize()
 	initMotionTimeMax_ = 40.0f;
 
 	bulletPower_ = 5;
-	kBulletSpeed_ = 1.0f;
+	kBulletSpeed_ = 5.0f;
 
 	initPos_ = { 0.0f,-2.0f,0.0f };
 	initRota_ = { 0.0f,0.0f,0.0f };
@@ -422,22 +422,18 @@ void Player::Attack()
 		bulletWorldTransform_.position_ = Vector3::AddVector3(GetWorldPosition(), offSet);
 		bulletWorldTransform_.UpdateMatrix();
 
-		//自機と弾の軌道の中心を取る
-		Vector3 position;
-		position = Vector3::lerp(worldTransform_.position_, bulletWorldTransform_.position_, 0.5f);
-
 		//球の生成
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 
 		//球の初期化
-		newBullet->PlayerBulletInitialize(position, bulletLevel_, position.z);
+		newBullet->PlayerBulletInitialize(GetPosition(), velocity, bulletLevel_);
 
 		//atan2で角度を求める
 		newBullet->worldTransform_.rotation_.y = -(newBullet->GetAngle(worldTransform_.position_.z, worldTransform_.position_.x, bulletWorldTransform_.position_.z, bulletWorldTransform_.position_.x));
 		newBullet->worldTransform_.rotation_.x = -(newBullet->GetAngle(worldTransform_.position_.z, worldTransform_.position_.y, bulletWorldTransform_.position_.z, bulletWorldTransform_.position_.y));
 
 		//コライダーの追加
-		newBullet->SetCollider(new SphereCollider({colliderPos_.x,colliderPos_.y,30.0f}, bulletColliderRadius_));
+		newBullet->SetCollider(new SphereCollider(colliderPos_, bulletColliderRadius_));
 
 		//球の登録
 		bullets_.push_back(std::move(newBullet));

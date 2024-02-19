@@ -17,7 +17,7 @@ public:
 	//デストラクタ
 	~PlayerBullet();
 	//初期化
-	void PlayerBulletInitialize(const Vector3& position,int bulletLevel,float lengthZ);
+	void PlayerBulletInitialize(const Vector3& position,Vector3 velocity,int bulletLevel);
 	//当たり判定更新
 	void ColliderUpdate();
 
