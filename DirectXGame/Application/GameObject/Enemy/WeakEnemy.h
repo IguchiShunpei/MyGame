@@ -112,4 +112,5 @@ private:
 	int damage_;
 
 	Vector3 enemyColor_;
+	Vector3 hitColor_;
 };

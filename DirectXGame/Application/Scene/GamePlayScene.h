@@ -8,13 +8,10 @@
 
 #include "GameBaseScene.h"
 #include "GameSceneManager.h"
-#include "GameClearScene.h"
 #include "SIFrameWork.h"
 #include "Input.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
-#include "Sprite.h"
-#include "ParticleManager.h"
 #include "SkyDome.h"
 #include "LevelLoader.h"
 #include "Stardust.h"
@@ -25,10 +22,11 @@
 #include "WeakEnemy.h"
 #include "BossEnemy.h"
 #include "Sound.h"
-#include "Explosion.h"
 #include "Item.h"
-#include "Matrix4.h"
 #include "UI.h"
+#include "Camera.h"
+#include "MathFunc.h"
+#include "Effect.h"
 
 #include<cassert>
 #include<vector>
@@ -91,6 +89,9 @@ public:
 	//アイテムリスト
 	const std::list<std::unique_ptr<Item>>& GetItems() { return items_; }
 
+	//エフェクト処理
+	void EffectUpdate();
+
 	//敵データ読み込み
 	void LoadEnemyPop();
 	void UpdateEnemyPop();
@@ -101,17 +102,11 @@ public:
 	//プレイヤー登場演出
 	void PlayerInit();
 
-	//プレイヤー登場カメラワーク
-	void PlayerInitCameraWork();
-
 	//プレイヤー死亡演
 	void PlayerDead();
 
 	//BOSS戦前の演出
 	void BossInit();
-
-	//プレイヤー登場カメラワーク
-	void BossInitCameraWork();
 
 	//ボス敵の死亡演出
 	void BossDead();
@@ -119,20 +114,8 @@ public:
 	//Clear画面への演出
 	void ToClearScene();
 
-	//clearカメラワーク
-	void ToClearCameraWork();
-
 	//GameOver画面への演出
 	void ToGameOverScene();
-
-	//gameOverカメラワーク
-	void ToGameOverCameraWork();
-
-	//カメラシェイク
-	void CameraShake(float x, float y);
-
-	//カメラ基本移動
-	void MoveCamera();
 
 	//レベルデータのロード
 	void LoadLevelData();
@@ -144,11 +127,8 @@ private://メンバ変数
 	//DxCommon
 	SIEngine::DirectXCommon* dxCommon_;
 
-	//カメラ
-	std::unique_ptr<ViewProjection> viewProjection_;
-
 	//プレイヤー
-	std::unique_ptr <Player> player;
+	std::unique_ptr <Player> player_;
 
 	//敵
 	std::unique_ptr<Enemy> enemy;
@@ -172,6 +152,12 @@ private://メンバ変数
 	//UI
 	std::unique_ptr < UI> ui_;
 
+	//カメラ
+	std::unique_ptr < Camera> camera_;
+
+	//エフェクト
+	std::unique_ptr < Effect> effect_;
+
 	//敵発生コマンド
 	std::stringstream enemyPopCommands_;
 
@@ -179,33 +165,6 @@ private://メンバ変数
 	std::unique_ptr < WorldTransform> worldTransform_;
 	//当たり判定
 	CollisionManager* collisionManager_;
-
-	//パーティクル
-	//弾が当たったエフェクト
-	std::unique_ptr < Particle>p_Hit;
-	std::unique_ptr < ParticleManager> pm_Hit;
-	//雑魚敵が死亡したときのエフェクト
-	std::unique_ptr < Particle> p_WDmg;
-	std::unique_ptr < ParticleManager> pm_WDmg;
-	//ボスが死亡したときのエフェクト
-	std::unique_ptr < Particle> p_BDmg;
-	std::unique_ptr < ParticleManager> pm_BDmg;
-	//隕石を壊した時のエフェクト
-	std::unique_ptr < Particle>p_Meteor;
-	std::unique_ptr < ParticleManager> pm_Meteor;
-	//全般的な爆発エフェクト
-	std::unique_ptr < Particle> p_Ex;
-	std::unique_ptr < ParticleManager> pm_Ex;
-	//自機の死亡時エフェクト
-	std::unique_ptr < Particle> p_PEx;
-	std::unique_ptr < ParticleManager> pm_PEx;
-	//煙
-	std::unique_ptr < Particle> p_Smoke;
-	std::unique_ptr < ParticleManager> pm_Smoke;
-
-	std::unique_ptr <Explosion> explosion01_;
-	std::unique_ptr <Explosion> explosion02_;
-	std::unique_ptr <Explosion> explosion03_;
 
 	//レベルデータ
 	LevelData* backGroundStar_ = nullptr;
@@ -234,12 +193,6 @@ private://メンバ変数
 	Vector3 cameraShakePos_;
 	//ボス登場時
 	Vector3 bossInitCameraPos_;
-	//基本eye
-	Vector3 normalEyeNum_;
-	//基本target
-	Vector3 normalTargetNum_;
-	//基本up
-	Vector3 normalUpNum_;
 	//変化前eye
 	Vector3 beforeEyeNum_;
 	//変化前target
@@ -271,21 +224,6 @@ private://メンバ変数
 	//墜落演出の墜落量
 	int gameOverTimer_;
 	int gameOverTimerMax_;
-	//カメラ移動座標
-	int cameraPos_;
-
-	//カメラシェイク範囲
-	//自機
-	float playerCameraShake_;
-	//敵
-	float bossCameraShake_;
-	float enemyCameraShake_;
-
-	//ボス登場カメラワーク
-	float upZ_;
-	float looseZ_;
-	//黒alpha
-	float blackAlphaMax_;
 
 	//フラグ
 	//自機が登場したか

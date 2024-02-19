@@ -11,16 +11,19 @@ PlayerBullet::~PlayerBullet()
 {
 }
 
-void PlayerBullet::PlayerBulletInitialize(const Vector3& position, int bulletLevel,float lengthZ)
+void PlayerBullet::PlayerBulletInitialize(const Vector3& position,Vector3 velocity, int bulletLevel)
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
 	playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet01");
 	// 3Dオブジェクト生成
 	Create();
+
+	velocity_ = velocity;
+
 	// オブジェクトにモデルをひも付ける
 	SetModel(playerBulletModel_.get());
-	SetScale(Vector3(1.0f, 1.0f, lengthZ));
+	SetScale(Vector3(0.8f, 0.8f,10.0f));
 	bulletColor_ = {1.0f,1.0f,1.0f};
 	if (bulletLevel == 2)
 	{
@@ -28,10 +31,12 @@ void PlayerBullet::PlayerBulletInitialize(const Vector3& position, int bulletLev
 	}
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
+	worldTransform_.position_.z = 10.0f;
 	//引数で受け取った速度をメンバ変数に代入
 	isDelete_ = false;
 	chargeTime = 0;
 	deleteTimer_ = 120.0f;
+	scaleNum = { 0.01f,0.01f,0.01f };
 }
 
 void PlayerBullet::ColliderUpdate()
@@ -46,18 +51,17 @@ void PlayerBullet::ColliderUpdate()
 
 void PlayerBullet::Update()
 {
-	if (worldTransform_.scale_.x >= 0.0f)
-	{
-		worldTransform_.scale_ -= Vector3(0.3f, 0.3f, 0.3f);
-	}
-
 	//回転
-	worldTransform_.rotation_.z += 10.0f;
-
+	worldTransform_.rotation_.z += 20.0f;
+	worldTransform_.position_ += velocity_;
 	//時間経過で弾が消える
-	if (worldTransform_.scale_.x <= 0.0f)
+	if (worldTransform_.position_.z >= 150.0f)
 	{
 		isDelete_ = true;
+	}
+	if (worldTransform_.scale_.x >= 0.0f)
+	{
+		worldTransform_.scale_ -= scaleNum;
 	}
  	worldTransform_.UpdateMatrix();
 }

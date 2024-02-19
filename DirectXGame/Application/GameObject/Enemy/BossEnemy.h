@@ -18,6 +18,7 @@ class GameScene;
 
 class BossEnemy : public Object3d
 {
+public:
 	//移動パターン
 	enum class Phase
 	{
@@ -27,6 +28,7 @@ class BossEnemy : public Object3d
 		Bullet,
 		Leave,   //離脱
 	};
+
 
 public:
 	//デストラクタ
@@ -192,7 +194,8 @@ private:
 	float dalayTimer_ = 15.0f;
 
 	//色
-	Vector3 bossColor_ = { 1.0f,1.0f,1.0f };
+	Vector3 bossColor_;
+	Vector3 hitColor_;
 
 	// モデル
 	std::unique_ptr <Model> enemyModel;
