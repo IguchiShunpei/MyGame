@@ -19,6 +19,14 @@ class GameScene;
 
 class Enemy : public Object3d
 {
+	//部位
+	enum class Part
+	{
+		Head,
+		Leg
+	};
+
+public:
 	//移動パターン
 	enum class Phase
 	{
@@ -118,16 +126,16 @@ private:
 	bool isAttack_ = false;
 
 	// モデル
-	std::unique_ptr <Model> enemyModel;
-
+	std::unique_ptr <Model> enemyModel_01;
+	std::unique_ptr <Model> enemyModel_02;
 	//弾
-	std::unique_ptr <EnemyBullet> enemyBullet;
+	std::unique_ptr <EnemyBullet> enemyBullet_;
 
 	//弾リスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
 	//弾の速度
-	float kBulletSpeed;
+	float kBulletSpeed_;
 	//移動量
 	Vector3 velocity_;
 
@@ -151,13 +159,6 @@ private:
 
 	//体力
 	int hp_;
-
-	//曲がる大きさ
-	const float C = 0.5f;
-	//初速
-	Vector3 startSpeed = { -0.5f,0.0f,-0.5f };
-	//落下時間
-	float flame = 0.0f;
 
 	//初期Y座標
 	float beforeY_;

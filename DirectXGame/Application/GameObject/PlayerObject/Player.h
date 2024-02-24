@@ -29,7 +29,7 @@ public:
 	void PlayerInitialize();
 
 	//更新
-	void Update(WorldTransform worldTransform3DReticle);
+	void Update();
 
 	//当たり判定更新
 	void ColliderUpdate();
@@ -53,7 +53,7 @@ public:
 	void Rotate();
 
 	//攻撃
-	void Attack(WorldTransform worldTransform3DReticle);
+	void Attack();
 
 	//キャラの向きに応じた方向に球を出す
 	Vector3 bVelocity(const Vector3& velocity, const WorldTransform& worldTransform);
@@ -64,8 +64,15 @@ public:
 	//弾の威力の変更
 	void BulletPowerUp();
 
+	//弾初期化
+	void LaserInitialize();
+
 	//弾更新
 	void BulletUpdate();
+	void LaserUpdate();
+
+	//レーザー消去
+	void LaserOut();
 
 	//弾描画
 	void BulletDraw(ViewProjection* viewProjection_);
@@ -116,6 +123,7 @@ private:
 
 	//弾
 	std::unique_ptr <PlayerBullet> playerBullet_;
+	std::unique_ptr <PlayerBullet> laser_;
 
 	//弾リスト
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;

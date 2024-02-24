@@ -80,7 +80,7 @@ void Player::PlayerInitialize()
 	isInv_ = false;
 }
 
-void Player::Update(WorldTransform worldTransform3DReticle)
+void Player::Update()
 {
 
 	if (isDead_ == false)
@@ -91,7 +91,7 @@ void Player::Update(WorldTransform worldTransform3DReticle)
 
 		BulletPowerUp();
 
-		Attack(worldTransform3DReticle);
+		Attack();
 	}
 
 	BulletUpdate();
@@ -399,7 +399,7 @@ void Player::Rotate()
 	}
 }
 
-void Player::Attack(WorldTransform worldTransform3DReticle)
+void Player::Attack()
 {
 	//Spaceキーを押したとき
 	if (input_->TriggerKey(DIK_SPACE))
@@ -413,30 +413,16 @@ void Player::Attack(WorldTransform worldTransform3DReticle)
 		//自機の向いてる方向に弾を撃つ
 		velocity = bVelocity(velocity, worldTransform_);
 
-		//レティクルのワールド座標を取得
-		bulletWorldPos_.x = worldTransform3DReticle.matWorld_.m[3][0];
-		bulletWorldPos_.y = worldTransform3DReticle.matWorld_.m[3][1];
-		bulletWorldPos_.z = worldTransform3DReticle.matWorld_.m[3][2];
-
-		//自機から標準オブジェクトへのベクトル
-		velocity = bulletWorldPos_ - GetWorldPosition();
-
 		//速度と向きを合成
 		velocity = velocity.normalize() * kBulletSpeed_;
 		//球の生成
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 
 		//球の初期化
-		newBullet->PlayerBulletInitialize(GetPosition(), velocity, bulletLevel_);
+		newBullet->BulletInitialize(GetPosition(), velocity, bulletLevel_);
 
 		//atan2で角度を求める
-		newBullet->worldTransform_.rotation_.y = 
-			-atan2(worldTransform3DReticle.position_.z-worldTransform_.position_.z,
-				worldTransform3DReticle.position_.y - worldTransform_.position_.y);
-
-		newBullet->worldTransform_.rotation_.x = 
-			-atan2(worldTransform3DReticle.position_.z - worldTransform_.position_.z ,
-				worldTransform3DReticle.position_.x - worldTransform_.position_.x);
+		newBullet->SetRotation(worldTransform_.rotation_);
 
 		//コライダーの追加
 		newBullet->SetCollider(new SphereCollider(colliderPos_, bulletColliderRadius_));
@@ -488,9 +474,15 @@ void Player::BulletPowerUp()
 		bulletPower_ = 1;
 		break;
 	case 2:
-		bulletPower_ = 3;
+		bulletPower_ = 2;
 		break;
 	}
+}
+
+void Player::LaserInitialize()
+{
+	laser_ = std::make_unique<PlayerBullet>();
+	laser_->LaserInitialize();
 }
 
 
@@ -505,18 +497,28 @@ void Player::BulletUpdate()
 	//弾更新
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
-		bullet->Update();
+		bullet->BulletUpdate();
 		bullet->ColliderUpdate();
 	}
+}
 
+void Player::LaserUpdate()
+{
+	laser_->LaserUpdate(worldTransform_.position_, worldTransform_.rotation_);
+}
+
+void Player::LaserOut()
+{
+	laser_->LaserOut();
 }
 
 void Player::BulletDraw(ViewProjection* viewProjection_)
 {
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
-		bullet->Draw(viewProjection_,1.0f,bullet->GetBulletColor());
+		bullet->Draw(viewProjection_,1.0f, bullet->GetBulletColor());
 	}
+	laser_->Draw(viewProjection_, laser_->GetAlpha(), laser_->GetBulletColor());
 }
 
 Vector3 Player::GetWorldPosition()

@@ -26,8 +26,6 @@ void Meteor::MeteorInitialize()
 	rotaSpeed_ = 1.0f;
 	worldTransform_.scale_ = Vector3(2.0f, 2.0f,2.0f);
 
-	hp_ = 3;
-
 	hitColor_ = {3.0f,3.0f,3.0f};
 
 	//乱数生成装置
