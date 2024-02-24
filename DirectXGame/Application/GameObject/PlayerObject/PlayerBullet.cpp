@@ -11,31 +11,57 @@ PlayerBullet::~PlayerBullet()
 {
 }
 
-void PlayerBullet::PlayerBulletInitialize(const Vector3& position,Vector3 velocity, int bulletLevel)
+void PlayerBullet::BulletInitialize(const Vector3& position, Vector3 velocity, int bulletLevel)
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet_02");
+	playerBulletModel_ = Model::LoadFromOBJ("PlayerBullet");
+	// オブジェクトにモデルをひも付ける
+	SetModel(playerBulletModel_.get());
+	alpha_ = 1.0f;
+
 	// 3Dオブジェクト生成
 	Create();
 
 	velocity_ = velocity;
 
-	// オブジェクトにモデルをひも付ける
-	SetModel(playerBulletModel_.get());
-	SetScale(Vector3(0.5f, 0.5f, 0.5f));
-	bulletColor_ = {1.0f,1.0f,1.0f};
+	SetScale(Vector3(1.0f, 1.0f, 10.0f));
+	bulletColor_ = { 1.0f,1.0f,1.0f };
 	if (bulletLevel == 2)
 	{
 		bulletColor_ = { 1.0f,0.0f,0.0f };
 	}
 	//引数で受け取った初期座標をセット
 	worldTransform_.position_ = position;
-	/*worldTransform_.position_.z = 10.0f;*/
 	//引数で受け取った速度をメンバ変数に代入
 	isDelete_ = false;
-	chargeTime = 0;
-	scaleNum = { 0.01f,0.01f,0.01f };
+	scaleNum_ = { 0.05f,0.05f,0.05f };
+	rotaNum_ = 20.0f;
+	deleteZ_ = 150.0f;
+}
+
+void PlayerBullet::LaserInitialize()
+{
+	Initialize();
+	// OBJからモデルデータを読み込む
+	playerBulletModel_ = Model::LoadFromOBJ("laser");
+	// オブジェクトにモデルをひも付ける
+	SetModel(playerBulletModel_.get());
+
+	// 3Dオブジェクト生成
+	Create();
+	bulletColor_ = { 1.0f,1.0f,1.0f };
+	alpha_ = 0.0f;
+	alphaMax_ = 0.2f;
+	alphaMin_ = 0.0f;
+	alphaNum_ = 0.005f;
+	laserScale_ = 0.0f;
+	laserScaleMin_ = 0.2f;
+	laserScaleMax_ = 0.2f;
+	isInit_ = false;
+	initTime_ = 0;
+	initTimeMax_ = 30;
+	laseRotaMax_ = 90.0f;
 }
 
 void PlayerBullet::ColliderUpdate()
@@ -47,22 +73,74 @@ void PlayerBullet::ColliderUpdate()
 	}
 }
 
-
-void PlayerBullet::Update()
+void PlayerBullet::BulletUpdate()
 {
 	//回転
-	worldTransform_.rotation_.z += 20.0f;
+	worldTransform_.rotation_.z += rotaNum_;
 	worldTransform_.position_ += velocity_;
 	//時間経過で弾が消える
-	if (worldTransform_.position_.z >= 150.0f)
+	if (worldTransform_.position_.z >= deleteZ_)
 	{
 		isDelete_ = true;
 	}
 	if (worldTransform_.scale_.x >= 0.0f)
 	{
-		worldTransform_.scale_ -= scaleNum;
+		worldTransform_.scale_ -= scaleNum_;
+
 	}
- 	worldTransform_.UpdateMatrix();
+	worldTransform_.UpdateMatrix();
+}
+
+void PlayerBullet::LaserUpdate(Vector3& position, Vector3& rotation)
+{
+	if (isInit_ == false)
+	{
+		LaserInit(position,rotation);
+	}
+	else
+	{
+		worldTransform_.position_ = position;
+		worldTransform_.rotation_ = rotation;
+		worldTransform_.UpdateMatrix();
+	}
+}
+
+void PlayerBullet::LaserInit(Vector3& position, Vector3& rotation)
+{
+	if (initTime_ <= initTimeMax_)
+	{
+		//alpha値
+		alpha_ = alphaMax_ * MathFunc::easeOutSine((float)initTime_ / (float)initTimeMax_);
+		//スケール
+		laserScale_ = laserScaleMin_ * MathFunc::easeOutSine((float)initTime_ / (float)initTimeMax_);
+
+		worldTransform_.position_ = position;
+		worldTransform_.rotation_ = rotation;
+		worldTransform_.scale_ = { laserScale_,laserScale_ ,laserScale_ };
+		worldTransform_.UpdateMatrix();
+		initTime_++;
+	}
+	else
+	{
+		isInit_ = true;
+		initTime_ = 0;
+	}
+}
+
+void PlayerBullet::LaserOut()
+{
+	if (initTime_ <= initTimeMax_)
+	{
+		//alpha値
+		alpha_ = alphaMax_ - (alphaMax_ * MathFunc::easeOutSine((float)initTime_ / (float)initTimeMax_));
+		//スケール
+		laserScale_ = laserScaleMax_
+			- (laserScaleMin_* MathFunc::easeOutSine((float)initTime_ / (float)initTimeMax_));
+
+		worldTransform_.scale_ = { laserScale_,laserScale_ ,laserScale_ };
+		worldTransform_.UpdateMatrix();
+		initTime_++;
+	}
 }
 
 void PlayerBullet::OnCollision([[maybe_unused]] const CollisionInfo& info)
@@ -81,10 +159,4 @@ void PlayerBullet::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	{
 		isDelete_ = true;
 	}
-}
-
-float PlayerBullet::GetAngle(float mx, float my, float sx, float sy)
-{
-	float angle = atan2f(float(sy - my), float(sx - mx));
-	return angle;
 }

@@ -42,6 +42,7 @@ void GamePlayScene::Initialize()
 	//player 
 	player_ = std::make_unique <Player>();
 	player_->PlayerInitialize();
+	player_->LaserInitialize();
 
 	//bossEnemy
 	bEnemy = std::make_unique < BossEnemy>();
@@ -243,11 +244,12 @@ void GamePlayScene::Update()
 	{
 		//UIの登場モーション
 		ui_->UIInitMotion();
+		player_->LaserUpdate();
 		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
 			camera_->MoveCamera();
 
-			player_->Update(ui_->GetWorldReticle());
+			player_->Update();
 			player_->ColliderUpdate();
 		}
 		else
@@ -257,7 +259,6 @@ void GamePlayScene::Update()
 		}
 		//UI更新
 		ui_->UIUpdate();
-		ui_->ReticleUpdate(camera_->GetViewProjection(),player_.get());
 	}
 
 	//全ての衝突をチェック

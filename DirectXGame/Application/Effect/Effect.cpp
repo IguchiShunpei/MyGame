@@ -158,6 +158,7 @@ void Effect::B_ParticleUpdate(BossEnemy* bossEnemy, bool& isDeadCameraShake)
 
 void Effect::Ex_ParticleUpdate(Player* player, bool& isDead)
 {
+	player->LaserOut();
 	if (isDead == false)
 	{
 		pm_Ex->PlayerExBefore(p_Ex.get(), 20, player->GetPosition(), 2, { 2.0f, 0.0f });

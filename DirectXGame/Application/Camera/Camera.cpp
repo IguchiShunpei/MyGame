@@ -124,7 +124,6 @@ void Camera::BossInitCameraWork(BossEnemy*bEnemy,bool& isBossInitCamera)
 		}
 		else
 		{
-			ui_->SetIsInvicibleReticle(false);
 			//寄ったら黒フェード
 			ui_->SetIsBlack(false);
 			ui_->FadeIn();
@@ -181,7 +180,6 @@ void Camera::BossInitCameraWork(BossEnemy*bEnemy,bool& isBossInitCamera)
 		}
 		else
 		{
-			ui_->SetIsInvicibleReticle(true);
 			viewProjection_->eye_.z = afterInitCameraPos_.z;
 			isBossInitCamera = false;
 			bossInitNum_ = None;

@@ -21,16 +21,17 @@ void Enemy::EnemyInitialize()
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	enemyModel = Model::LoadFromOBJ("enemy01");
+	enemyModel_01 = Model::LoadFromOBJ("enemy_01");
+	enemyModel_02 = Model::LoadFromOBJ("enemy_02");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
-	SetModel(enemyModel.get());
+	SetModel(enemyModel_01.get());
 
 	bulletColliderPos_ = {0.0f,0.0f,0.0f};
 	bulletColliderRadius_ = 0.5f;
 
-	kBulletSpeed = 2.0f;
+	kBulletSpeed_ = 2.0f;
 
 	dalayTimer_ = 5.0f;
 	delayTImerMax_ = 15.0f;
@@ -107,8 +108,8 @@ void Enemy::Damage(int damage)
 {
 	//攻撃を受けたときに変色
 	enemyColor_ = changeColor_;
-	//ダメージ処理
-	hp_ -= damage;
+ 	//ダメージ処理
+  	hp_ -= damage;
 	if (hp_ <= 0)
 	{
 		isDead_ = true;
@@ -116,14 +117,14 @@ void Enemy::Damage(int damage)
 }
 
 void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
-{
+  {
 	const char* str1 = "class PlayerBullet";
 
 	//相手がplayerBullet
 	if (strcmp(toCollisionName, str1) == 0)
-	{
+ 	{
 		isHit_ = true;
-		Damage(damage_);
+ 		Damage(damage_);
 	}
 }
 
@@ -145,7 +146,7 @@ void Enemy::Attack(Vector3 playerPos_)
 	//正規化
 	velocity_.normalize();
 	//ベクトルの長さを,速さに合わせる
-	velocity_ *= kBulletSpeed;//これが速度になる
+	velocity_ *= kBulletSpeed_;//これが速度になる
 
 	//クールタイムが０になったとき
 	if (dalayTimer_ <= 0)
