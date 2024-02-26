@@ -107,6 +107,7 @@
     <ClCompile Include="DirectXGame\Application\Camera\Camera.cpp" />
     <ClCompile Include="DirectXGame\Application\Effect\Effect.cpp" />
     <ClCompile Include="DirectXGame\Application\Effect\Explosion.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\BackGround.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="DirectXGame\Application\Camera\Camera.h" />
     <ClInclude Include="DirectXGame\Application\Effect\Effect.h" />
     <ClInclude Include="DirectXGame\Application\Effect\Explosion.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\BackGround.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Meteor.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\Stardust.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\SkyDome.h" />

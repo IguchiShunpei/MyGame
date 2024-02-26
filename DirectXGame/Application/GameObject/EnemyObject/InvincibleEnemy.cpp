@@ -13,7 +13,7 @@ void InvincibleEnemy::InvincibleEnemyInitialize()
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	enemyModel = Model::LoadFromOBJ("enemy03");
+	enemyModel = Model::LoadFromOBJ("InvincibleEnemy");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
@@ -96,7 +96,7 @@ void InvincibleEnemy::Turn(Vector3 playerPos_)
 			isStart_ = true;
 
 			//敵の速度
-			const float kEnemySpeed = 3.0f;
+			const float kEnemySpeed = 5.0f;
 
 			//プレイヤーのワールド座標の取得
 			Vector3 playerPosition;

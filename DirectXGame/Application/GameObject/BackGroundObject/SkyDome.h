@@ -1,5 +1,5 @@
 /**
-* @file SkyDome.cpp
+* @file SkyDome.h
 * @brief 背景の天球の処理クラス
 * @author イグチ_シュンペイ
 */
