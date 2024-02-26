@@ -1,5 +1,5 @@
 /**
-* @file Stardust.cpp
+* @file Stardust.h
 * @brief 背景の星屑の処理クラス
 * @author イグチ_シュンペイ
 */

@@ -79,6 +79,7 @@ private: // 定数
 public: // 静的メンバ関数
 
 	// OBJファイルから3Dモデルを読み込む
+	static Model* LoadOBJ(const std::string& modelname);
 	static std::unique_ptr <Model> LoadFromOBJ(const std::string& modelname);
 
 	// マテリアル読み込み

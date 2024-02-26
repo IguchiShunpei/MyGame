@@ -12,10 +12,6 @@
 #include "Input.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
-#include "SkyDome.h"
-#include "LevelLoader.h"
-#include "Stardust.h"
-#include "Meteor.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "InvincibleEnemy.h"
@@ -27,6 +23,8 @@
 #include "Camera.h"
 #include "MathFunc.h"
 #include "Effect.h"
+#include "BackGround.h"
+#include "SkyDome.h"
 
 #include<cassert>
 #include<vector>
@@ -41,7 +39,6 @@
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib,"dxguid.lib")
 
-struct LevelData;
 class CollisionManager;
 
 //ゲームプレイシーン
@@ -108,15 +105,14 @@ public:
 	//GameOver画面への演出
 	void ToGameOverScene();
 
-	//レベルデータのロード
-	void LoadLevelData();
 private://メンバ変数
-	//背景
-	std::unique_ptr < SkyDome> sky_;
 	//入力
 	SIEngine::Input* input_;
 	//DxCommon
 	SIEngine::DirectXCommon* dxCommon_;
+
+	//背景
+	std::unique_ptr < SkyDome> sky_;
 
 	//プレイヤー
 	std::unique_ptr <Player> player_;
@@ -132,9 +128,12 @@ private://メンバ変数
 	std::list<std::unique_ptr<WeakEnemy>> wEnemys_;
 	std::list<std::unique_ptr<InvincibleEnemy>> invincibleEnemys_;
 
-	//背景
+	//アイテムを持っている敵
 	std::unique_ptr < Meteor> meteor_;
 	std::list<std::unique_ptr<Meteor>> meteors_;
+
+	//背景
+	std::unique_ptr < BackGround> backGround_;
 
 	//アイテム
 	std::unique_ptr < Item> item_;
@@ -156,17 +155,6 @@ private://メンバ変数
 	std::unique_ptr < WorldTransform> worldTransform_;
 	//当たり判定
 	CollisionManager* collisionManager_;
-
-	//レベルデータ
-	LevelData* backGroundStar_ = nullptr;
-	LevelData* backGroundMeteor_ = nullptr;
-
-	// モデルデータコンテナ
-	std::map<std::string, std::unique_ptr<Model>> meteorModels_;
-	std::map<std::string, std::unique_ptr<Model>> stardustModels_;
-	// オブジェクト
-	std::vector<std::unique_ptr<Meteor>> meteorObjects_;
-	std::vector<std::unique_ptr<Stardust>> stardustObjects_;
 
 	//シーン番号
 	int gameNum_;

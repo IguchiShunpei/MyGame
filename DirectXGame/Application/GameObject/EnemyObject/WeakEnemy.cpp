@@ -27,6 +27,7 @@ void WeakEnemy::WEnemyInitialize()
 	isDead_ = false;
 	isInit_ = false;
 	initTime_ = 60.0f;
+	rota_ = 5.0f;
 }
 
 void WeakEnemy::Update()
@@ -86,9 +87,11 @@ void WeakEnemy::Move()
 	case Phase::None:
 		break;
 	case Phase::R:   //カーブフェーズ
+		worldTransform_.rotation_.y -= rota_;
 		RCurve();
 		break;
 	case Phase::L:   //カーブフェーズ
+		worldTransform_.rotation_.y += rota_;
 		LCurve();
 		break;
 	}

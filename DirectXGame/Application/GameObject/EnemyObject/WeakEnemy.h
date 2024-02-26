@@ -111,6 +111,8 @@ private:
 	//ダメージ
 	int damage_;
 
+	float rota_;
+
 	Vector3 enemyColor_;
 	Vector3 hitColor_;
 };

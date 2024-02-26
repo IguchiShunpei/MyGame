@@ -35,7 +35,7 @@ void PlayerBullet::BulletInitialize(const Vector3& position, Vector3 velocity, i
 	worldTransform_.position_ = position;
 	//引数で受け取った速度をメンバ変数に代入
 	isDelete_ = false;
-	scaleNum_ = { 0.05f,0.05f,0.05f };
+	scaleNum_ = { 0.02f,0.02f,0.02f };
 	rotaNum_ = 20.0f;
 	deleteZ_ = 150.0f;
 }

@@ -1,5 +1,5 @@
 /**
-* @file Meteor.cpp
+* @file Meteor.h
 * @brief 隕石の処理クラス
 * @author イグチ_シュンペイ
 */

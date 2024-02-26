@@ -38,6 +38,10 @@ void GamePlayScene::Initialize()
 	//天球
 	sky_ = std::make_unique < SkyDome>();
 	sky_->SkyDomeInitialize();
+	
+	//背景オブジェクト
+	backGround_ = std::make_unique <BackGround>();
+	backGround_->Initialize();
 
 	//player 
 	player_ = std::make_unique <Player>();
@@ -68,9 +72,6 @@ void GamePlayScene::Initialize()
 	effect_->SetView(camera_->GetViewProjection());
 	effect_->Initialize();
 	effect_->SetPlayer(player_.get());
-
-	//レベルデータのロード
-	LoadLevelData();
 
 	//メンバ変数の初期化
 
@@ -116,20 +117,14 @@ void GamePlayScene::Update()
 	//天球
 	sky_->worldTransform_.UpdateMatrix();
 
+	//背景オブジェクト
+	backGround_->Update();
+
 	//黒フェードアウト
 	ui_->FadeOut(ui_->Black);
 
 	//自機登場演出
 	PlayerInit();
-
-	for (auto& object : stardustObjects_)
-	{
-		object->StardustUpdate();
-	}
-	for (auto& object : meteorObjects_)
-	{
-		object->MeteorUpdate();
-	}
 
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
@@ -163,19 +158,20 @@ void GamePlayScene::Update()
 	switch (gameNum_)
 	{
 	case FirstScene://雑魚敵戦専用の処理
-
+		//移動するだけの敵
 		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 		{
 			wEnemys->Update();
 			wEnemys->SetDamage(player_->GetBulletPower());
 			wEnemys->ColliderUpdate();
 		}
+		//倒せない敵
 		for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
 		{
 			invEnemys->Update(player_->GetPosition());
 			invEnemys->ColliderUpdate();
 		}
-		//敵
+		//弾を撃つ敵
 		for (std::unique_ptr<Enemy>& enemys : enemys_)
 		{
 			enemys->Update(player_->GetPosition());
@@ -333,7 +329,7 @@ void GamePlayScene::Update()
 	//エフェクト更新
 	EffectUpdate(isDeadCameraShake_);
 
-
+	//ゲームオーバー演出
 	ToGameOverScene();
 
 	//カメラ
@@ -347,22 +343,20 @@ void GamePlayScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
+	//天球
 	sky_->Draw(camera_->GetViewProjection());
+
+	//背景オブジェクト
+	backGround_->Draw(camera_->GetViewProjection());
+
+	//プレイヤー
 	if (isPlayerDead_ == false)
 	{
 		player_->Draw(camera_->GetViewProjection());
 		player_->BulletDraw(camera_->GetViewProjection());
 	}
 
-	//星屑
-	for (auto& object : stardustObjects_) {
-		object->Draw(camera_->GetViewProjection(), 1.0f, object->GetColor());
-	}
-	//隕石
-	for (auto& object : meteorObjects_) {
-		object->Draw(camera_->GetViewProjection(), object->GetAlpha(), object->GetColor());
-	}
-
+	//隕石(敵)
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
 		if (meteors->GetIsDelete() == false)
@@ -370,6 +364,7 @@ void GamePlayScene::Draw()
 			meteors->Draw(camera_->GetViewProjection(), meteors->GetAlpha(), meteors->GetColor());
 		}
 	}
+	//アイテム
 	for (std::unique_ptr<Item>& items : items_)
 	{
 		items->Draw(camera_->GetViewProjection());
@@ -535,7 +530,7 @@ void GamePlayScene::UpdateEnemyPop()
 			// 座標データに追加
 			newWEnemy->SetPosition(position);
 
-			newWEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
+			newWEnemy->SetScale(Vector3(2.0f, 2.0f, 2.0f));
 			newWEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			wEnemys_.push_back(std::move(newWEnemy));
@@ -567,7 +562,7 @@ void GamePlayScene::UpdateEnemyPop()
 			position.y += 20.0f;
 			// 座標データに追加
 			newEnemy->SetPosition(position);
-			newEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
+			newEnemy->SetScale(Vector3(3.0f, 3.0f, 3.0f));
 			newEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			enemys_.push_back(std::move(newEnemy));
@@ -589,7 +584,7 @@ void GamePlayScene::UpdateEnemyPop()
 			position.y += 20.0f;
 			// 座標データに追加
 			newInvincibleEnemy->SetPosition(position);
-			newInvincibleEnemy->SetScale(Vector3(0.8f, 0.8f, 0.8f));
+			newInvincibleEnemy->SetScale(Vector3(2.5f, 2.5f, 2.5f));
 			newInvincibleEnemy->worldTransform_.UpdateMatrix();
 			//登録
 			invincibleEnemys_.push_back(std::move(newInvincibleEnemy));
@@ -785,92 +780,5 @@ void GamePlayScene::ToGameOverScene()
 	else
 	{
 		deadCameraPos_ = camera_->GetViewProjection()->GetEye();
-	}
-}
-
-
-void GamePlayScene::LoadLevelData()
-{
-	//背景オブジェクトデータの読み込み
-	backGroundStar_ = LevelLoader::LoadFile("stardust");
-	backGroundMeteor_ = LevelLoader::LoadFile("meteor");
-
-	// レベルデータからオブジェクトを生成、配置
-	//星屑
-	for (auto& objectData : backGroundStar_->objects) {
-		//モデル読み込み
-		std::unique_ptr<Model>backModelStardust = Model::LoadFromOBJ("stardust");
-		stardustModels_.insert(std::make_pair("stardust", move(backModelStardust)));
-		// モデルを指定して3Dオブジェクトを生成
-		std::unique_ptr<Stardust> newObject = std::make_unique<Stardust>();
-		newObject->StardustInitialize();
-		newObject->SetModel(backModelStardust.get());
-		// 座標
-		Vector3 pos;
-		//データの値を代入
-		pos.x = objectData.translation.m128_f32[0];
-		pos.y = objectData.translation.m128_f32[1];
-		pos.z = objectData.translation.m128_f32[2];
-		//newObjectにセット
-		newObject->SetPosition(pos);
-		//初期Y座標を保存しておく
-		newObject->SetBeforeY(pos.y);
-
-		// 回転角
-		Vector3 rot;
-		//データの値を代入
-		rot.x = objectData.rotation.m128_f32[0];
-		rot.y = objectData.rotation.m128_f32[1];
-		rot.z = objectData.rotation.m128_f32[2];
-		//newObjectにセット
-		newObject->SetRotation(rot);
-
-		newObject->SetColor();
-		newObject->SetSize();
-
-		// 配列に登録
-		stardustObjects_.push_back(move(newObject));
-	}
-	//隕石
-	for (auto& objectData : backGroundMeteor_->objects) {
-		std::unique_ptr<Model>backModelMeteor = Model::LoadFromOBJ("bigMeteor");
-		meteorModels_.insert(std::make_pair("meteor",move(backModelMeteor)));
-		// モデルを指定して3Dオブジェクトを生成
-		std::unique_ptr<Meteor> newObject = std::make_unique<Meteor>();;
-		newObject->MeteorInitialize();
-		newObject->SetModel(backModelMeteor.get());
-		// 座標
-		Vector3 pos;
-		//データの値を代入
-		pos.x = objectData.translation.m128_f32[0];
-		pos.y = objectData.translation.m128_f32[1];
-		pos.z = objectData.translation.m128_f32[2];
-		//newObjectにセット
-		newObject->SetPosition(pos);
-
-		// 回転角
-		Vector3 rot;
-		//データの値を代入
-		rot.x = objectData.rotation.m128_f32[0];
-		rot.y = objectData.rotation.m128_f32[1];
-		rot.z = objectData.rotation.m128_f32[2];
-		//newObjectにセット
-		newObject->SetRotation(rot);
-
-		// 大きさ
-		Vector3 scale;
-		//データの値を代入
-		scale.x = objectData.scaling.m128_f32[0];
-		scale.y = objectData.scaling.m128_f32[1];
-		scale.z = objectData.scaling.m128_f32[2];
-		//newObjectにセット
-		newObject->SetScale(scale);
-
-		newObject->SetIsBack(true);
-		newObject->SetAlpha(1.0f);
-		newObject->SetSpeed(0.1f, 1.0f);
-
-		// 配列に登録
-		meteorObjects_.push_back(move(newObject));
 	}
 }

@@ -279,6 +279,9 @@
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\Item.cpp">
       <Filter>ソース ファイル\GameObject\EnemyObject</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\BackGroundObject\BackGround.cpp">
+      <Filter>ソース ファイル\GameObject\BackGroundObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli">
@@ -497,6 +500,9 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\Item.h">
       <Filter>ヘッダー ファイル\GameObject\EnemyObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\BackGroundObject\BackGround.h">
+      <Filter>ヘッダー ファイル\GameObject\BackGroundObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
