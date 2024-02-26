@@ -714,6 +714,7 @@ void GamePlayScene::BossDead()
 {
 	//UI退場
 	ui_->UIOutMotion();
+	player_->LaserOut();
 	effect_->GetExplosion01()->EnemyExplosionUpdate();
 	effect_->GetExplosion02()->EnemyExplosionUpdate();
 	bEnemy->Dead();
