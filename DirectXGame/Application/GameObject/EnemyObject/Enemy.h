@@ -19,13 +19,6 @@ class GameScene;
 
 class Enemy : public Object3d
 {
-	//部位
-	enum class Part
-	{
-		Head,
-		Leg
-	};
-
 public:
 	//移動パターン
 	enum class Phase
@@ -44,7 +37,7 @@ public:
 	void EnemyInitialize();
 
 	//更新
-	void Update(Vector3 playerPos_);
+	void Update(Vector3 playerPos);
 
 	//当たり判定更新
 	void ColliderUpdate();
@@ -62,7 +55,7 @@ public:
 	//HP
 	int GetHP() const { return hp_; };
 	//color
-	Vector3 GetColor() const { return originalColor_; }
+	Vector3 GetColor() const { return enemyColor_; }
 	
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
@@ -127,7 +120,6 @@ private:
 
 	// モデル
 	std::unique_ptr <Model> enemyModel_01;
-	std::unique_ptr <Model> enemyModel_02;
 	//弾
 	std::unique_ptr <EnemyBullet> enemyBullet_;
 

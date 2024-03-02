@@ -23,7 +23,9 @@ public:
 	{
 		None,
 		R,   //右カーブ
-		L,   //左カーブ
+		L,   //左カーブ 
+		U,   //上カーブ
+		D,   //下カーブ
 	};
 
 public:
@@ -73,6 +75,8 @@ public:
 	//カーブ
 	void RCurve();
 	void LCurve();
+	void UCurve();
+	void DCurve();
 
 	//ワールド座標を取得
 	Vector3 GetPosition();
@@ -89,10 +93,16 @@ private:
 	//退場したか
 	bool isBack_ = false;
 	//登場時間
-	float initTime_ = 0.0f;
+	float initTime_;
+	//登場時間
+	float initTimeMax_;
 
 	//初期Y座標
 	float beforeY_;
+
+	//登場時の移動量
+	float moveY_;
+	float afterMoveY_;
 
 	// モデル
 	std::unique_ptr <Model> wEnemyModel;
@@ -103,7 +113,8 @@ private:
 	//曲がる大きさ
 	const float C = 0.5f;
 	//初速
-	Vector3 startSpeed = { -0.5f,0.0f,-0.5f };
+	Vector3 startSpeedBeside = { -0.5f,0.0f,-0.5f };
+	Vector3 startSpeedVertical = { 0.0f,0.5f,-0.5f };
 	//落下時間
 	float flame = 0.0f;
 	//体力

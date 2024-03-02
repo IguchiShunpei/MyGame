@@ -20,9 +20,11 @@ void InvincibleEnemy::InvincibleEnemyInitialize()
 	SetModel(enemyModel.get());
 	isDelete_ = false;
 	isHit_ = false;
-	isInit_ = false;
-	initTime_ = 60.0f;
+	initTime_ = 0.0f;
+	initTimeMax_ = 180.0f;
 	velocity_ = { 0.0f,0.0f,0.0f };
+	moveY_ = 60.0f;
+	afterMoveY_ = 60.0f;
 }
 
 void InvincibleEnemy::Update(Vector3 playerPos_)
@@ -123,9 +125,9 @@ void InvincibleEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ + 60.0f * MathFunc::easeInSine(initTime_ / 60.0f);
-		initTime_--;
-		if (initTime_ <= 0.0f)
+		worldTransform_.position_.y = beforeY_ + (afterMoveY_ - (moveY_ * MathFunc::easeInOutBack(initTime_ / initTimeMax_)));
+		initTime_++;
+		if (initTime_ > initTimeMax_)
 		{
 			isInit_ = true;
 			initTime_ = 0.0f;
@@ -137,9 +139,9 @@ void InvincibleEnemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
-		worldTransform_.position_.y = beforeY_ + 120.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInOutBack(initTime_ / initTimeMax_);
 		initTime_++;
-		if (initTime_ >= 60.0f)
+		if (initTime_ > initTimeMax_)
 		{
 			isBack_ = true;
 			isDelete_ = true;

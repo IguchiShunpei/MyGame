@@ -3,44 +3,46 @@ wait 150
 
 //WAVE01
 
-wEnemy L 0 0 100 //雑魚敵 曲がる方向 生成座標
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 
 wait 20
 
-wEnemy L 0 0 100 
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 
 wait 20
 
-wEnemy L 0 0 100 
-
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 wait 20
 
-wEnemy L 0 0 100 
-
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 wait 20
 
-wEnemy L 0 0 100 
-
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 wait 20
 
-wEnemy L 0 0 100 
-
+wEnemy D 15 0 100
+wEnemy D -15 0 100  
 wait 20
 
-wEnemy L 0 0 100 
-
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 wait 20
 
-wEnemy L 0 0 100 
-
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 wait 20
 
-wEnemy L 0 0 100 
-
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 wait 20
 
-wEnemy L 0 0 100 
-
+wEnemy D 15 0 100
+wEnemy D -15 0 100 
 wait 20
 
 meteor HP 3 10 5 80
@@ -49,7 +51,7 @@ wait 200
 
 //WAVE02
 
-invEnemy 10 0 100 //無敵敵 生成座標
+invEnemy 40 20 100 //無敵敵 生成座標
 
 wEnemy R 10 5 100 
 
@@ -63,17 +65,17 @@ wEnemy R 10 5 100
 
 wait 20
 
-invEnemy 0 -2 100
+invEnemy 40 -20 100
 
 wEnemy R 10 5 100 
 
-enemy HP 10 -8 10 100
+enemy HP 10 -8 10 60
 
 meteor HP 3 -10 -5 80
 
 wait 20
 
-enemy HP 10 8 -10 100
+enemy HP 10 8 -10 60
 
 wait 200
 
@@ -96,7 +98,7 @@ wEnemy R 10 5 100
 wait 20
 
 wEnemy R 10 5 100 
-enemy HP 10 -8 -10 100
+enemy HP 10 -8 -10 60
 
 wait 20
 
@@ -107,7 +109,7 @@ wait 200
 //WAVE04
 
 wEnemy L -10 -5 100 
-invEnemy -10 10 100
+invEnemy -40 20 100
 
 wait 20
 
@@ -116,7 +118,7 @@ wEnemy L -10 -5 100
 wait 20
 
 wEnemy L -10 -5 100 
-invEnemy 10 10 100
+invEnemy 40 20 100
 
 wait 20
 
@@ -125,7 +127,7 @@ wEnemy L -10 -5 100
 wait 20
 
 wEnemy L -10 -5 100 
-invEnemy -10 -15 100
+invEnemy -40 -20 100
 
 wait 20
 
@@ -135,16 +137,16 @@ meteor HP 3 10 -5 80
 wait 20
 
 wEnemy L -10 -5 100 
-invEnemy 10 -15 100
+invEnemy 40 -20 100
 
 wait 20
 
 wEnemy L -10 -5 100 
-enemy HP 10 8 8 100
+enemy HP 10 8 8 60
 
 wait 20
 
-wEnemy L -10 -5 100 
+wEnemy L -20 -5 100 
 meteor HP 3 -10 5 80
 
 wait 20
@@ -152,6 +154,64 @@ wait 20
 wEnemy L -10 -5 100 
 
 wait 350
+
+//WAVE05
+
+wEnemy U 10 -20 120
+wEnemy U 5 -20 120
+wEnemy U 0 -20 120
+wEnemy U -5 -20 120
+wEnemy U -10 -20 120
+
+wait 20
+
+wEnemy U 10 -20 120
+wEnemy U 5 -20 120
+wEnemy U 0 -20 120
+wEnemy U -5 -20 120
+wEnemy U -10 -20 120  
+
+wait 20
+
+wEnemy U 10 -20 120
+wEnemy U 5 -20 120
+wEnemy U 0 -20 120
+wEnemy U -5 -20 120
+wEnemy U -10 -20 120
+
+wait 20
+
+wEnemy U 10 -20 120
+wEnemy U 5 -20 120
+wEnemy U 0 -20 120
+wEnemy U -5 -20 120
+wEnemy U -10 -20 120
+
+wait 20
+
+wEnemy U 10 -20 120
+wEnemy U 5 -20 120
+wEnemy U 0 -20 120
+wEnemy U -5 -20 120
+wEnemy U -10 -20 120
+
+wait 20
+
+wEnemy U 10 -20 120
+wEnemy U 5 -20 120
+wEnemy U 0 -20 120
+wEnemy U -5 -20 120
+wEnemy U -10 -20 120 
+
+wait 20
+
+wEnemy U 10 -20 120
+wEnemy U 5 -20 120
+wEnemy U 0 -20 120
+wEnemy U -5 -20 120
+wEnemy U -10 -20 120
+
+wait 300
 
 //ボス戦
 BOSS

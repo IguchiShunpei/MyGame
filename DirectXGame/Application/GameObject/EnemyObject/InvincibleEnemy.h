@@ -69,13 +69,19 @@ private:
 	bool isInit_ = false;
 
 	//登場時間
-	float initTime_ = 0.0f;
+	float initTime_;
+	//登場時間
+	float initTimeMax_;
 
 	//退場したか
 	bool isBack_ = false;
 
 	//初期Y座標
 	float beforeY_;
+
+	//登場時の移動量
+	float moveY_;
+	float afterMoveY_;
 
 	// モデル
 	std::unique_ptr <Model> enemyModel;

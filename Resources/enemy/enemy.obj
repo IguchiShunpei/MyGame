@@ -1,6 +1,6 @@
 # Blender v3.1.2 OBJ File: 'enemy_01.blend'
 # www.blender.org
-mtllib enemy_01.mtl
+mtllib enemy.mtl
 o ICO球
 v 0.000000 -0.687702 0.000000
 v 0.723607 -0.134921 0.525725

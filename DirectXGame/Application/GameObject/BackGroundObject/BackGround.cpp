@@ -38,10 +38,10 @@ void BackGround::LoadLevel()
 	//星屑
 	for (auto& objectData : backGroundStar_->objects) {
 
-		// モデルを指定して3Dオブジェクトを生成
-		backStardust_ = new Stardust;
-		backStardust_->StardustInitialize();
 		//モデル読み込み
+		// モデルを指定して3Dオブジェクトを生成
+		backStardust_ = new Stardust();
+		backStardust_->StardustInitialize();
 		backModelStardust_ = Model::LoadOBJ("stardust");
 		stardustModels_.insert(std::make_pair("stardust", backModelStardust_));
 		backStardust_->SetModel(backModelStardust_);
@@ -65,6 +65,7 @@ void BackGround::LoadLevel()
 		//newObjectにセット
 		backStardust_->SetRotation(rot);
 
+		//色と大きさをセット
 		backStardust_->SetColor();
 		backStardust_->SetSize();
 
@@ -73,12 +74,11 @@ void BackGround::LoadLevel()
 	}
 	//隕石
 	for (auto& objectData : backGroundMeteor_->objects) {
-
 		// モデルを指定して3Dオブジェクトを生成
-		backMeteor_ = new Meteor;
+		backMeteor_ = new Meteor();
 		backMeteor_->MeteorInitialize();
 		//モデル読み込み
-		backModelMeteor_ = Model::LoadOBJ("bigMeteor");
+		backModelMeteor_ = Model::LoadOBJ("backMeteor");
 		meteorModels_.insert(std::make_pair("meteor", backModelMeteor_));
 		backMeteor_->SetModel(backModelMeteor_);
 		// 座標

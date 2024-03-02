@@ -507,7 +507,12 @@ void Player::LaserUpdate()
 	laser_->LaserUpdate(worldTransform_.position_, worldTransform_.rotation_);
 }
 
-void Player::LaserOut()
+void Player::LaserOn()
+{
+	laser_->LaserInit(worldTransform_.position_, worldTransform_.rotation_);
+}
+
+void Player::LaserOff()
 {
 	laser_->LaserOut();
 }

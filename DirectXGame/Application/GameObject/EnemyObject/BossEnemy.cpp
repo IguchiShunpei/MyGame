@@ -365,7 +365,7 @@ void BossEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = -2.0f + beforeY_ * MathFunc::easeInSine(initTime_ / 240.0f);
+		worldTransform_.position_.y = -2.0f + beforeY_ * MathFunc::easeInOutBack(initTime_ / 240.0f);
 		worldTransform_.UpdateMatrix();
 		initTime_--;
 		if (initTime_ <= 0.0f)
