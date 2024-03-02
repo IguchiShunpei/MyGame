@@ -1,6 +1,6 @@
 # Blender v3.1.2 OBJ File: ''
 # www.blender.org
-mtllib bigMeteor.mtl
+mtllib backMeteor.mtl
 o Meteor_メッシュ
 v -0.555227 1.277598 -0.034230
 v 0.666545 0.558356 -0.261947

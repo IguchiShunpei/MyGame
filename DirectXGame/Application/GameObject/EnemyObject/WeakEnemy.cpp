@@ -26,8 +26,11 @@ void WeakEnemy::WEnemyInitialize()
 	SetModel(wEnemyModel.get());
 	isDead_ = false;
 	isInit_ = false;
-	initTime_ = 60.0f;
+	initTime_ = 0.0f;
+	initTimeMax_ = 90.0f;
 	rota_ = 5.0f;
+	moveY_ = 60.0f;
+	afterMoveY_ = -60.0f;
 }
 
 void WeakEnemy::Update()
@@ -94,6 +97,14 @@ void WeakEnemy::Move()
 		worldTransform_.rotation_.y += rota_;
 		LCurve();
 		break;
+	case Phase::U:   //カーブフェーズ
+		worldTransform_.rotation_.x += rota_;
+		UCurve();
+		break;
+	case Phase::D:   //カーブフェーズ
+		worldTransform_.rotation_.x -= rota_;
+		DCurve();
+		break;
 	}
 }
 
@@ -101,11 +112,12 @@ void WeakEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ + 60.0f * -MathFunc::easeInSine(initTime_ / 60.0f);
-		initTime_--;
-		if (initTime_ <= 0.0f)
+		worldTransform_.position_.y = beforeY_ + (afterMoveY_ + (moveY_ * MathFunc::easeOutSine(initTime_ / initTimeMax_)));
+		initTime_++;
+		if (initTime_ > initTimeMax_)
 		{
 			isInit_ = true;
+			initTime_ = 0.0f;
 		}
 	}
 }
@@ -114,9 +126,9 @@ void WeakEnemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
-		worldTransform_.position_.y = beforeY_ + 120.0f * MathFunc::easeInSine(initTime_ / 60.0f);
+		worldTransform_.position_.y = beforeY_ - moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_);
 		initTime_++;
-		if (initTime_ >= 60.0f)
+		if (initTime_ > initTimeMax_)
 		{
 			isBack_ = true;
 			isDelete_ = true;
@@ -126,12 +138,22 @@ void WeakEnemy::BackMotion()
 
 void WeakEnemy::RCurve()
 {
-	MathFunc::CurveProjection(worldTransform_, startSpeed, C, flame);
+	MathFunc::CurveProjection(worldTransform_, startSpeedBeside, C, flame);
 }
 
 void WeakEnemy::LCurve()
 {
-	MathFunc::CurveProjection(worldTransform_, { -startSpeed.x,startSpeed.y,startSpeed.z }, -C, flame);
+	MathFunc::CurveProjection(worldTransform_, { -startSpeedBeside.x,startSpeedBeside.y,startSpeedBeside.z }, -C, flame);
+}
+
+void WeakEnemy::UCurve()
+{
+	MathFunc::HorizontalProjection(worldTransform_, { startSpeedVertical.x,-startSpeedVertical.y,startSpeedVertical.z }, -C, flame);
+}
+
+void WeakEnemy::DCurve()
+{
+	MathFunc::HorizontalProjection(worldTransform_, startSpeedVertical, C, flame);
 }
 
 Vector3 WeakEnemy::GetPosition()

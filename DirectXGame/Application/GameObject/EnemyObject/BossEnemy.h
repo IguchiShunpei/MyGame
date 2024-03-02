@@ -136,6 +136,8 @@ private:
 
 	//登場時間
 	float initTime_;
+	//登場時間
+	float initTimeMax_;
 
 	//待機モーションの変数
 	//待機時間

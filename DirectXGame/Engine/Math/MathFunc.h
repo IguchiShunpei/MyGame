@@ -31,6 +31,7 @@ public:
 
 	static float easeInOutSine(float a);
 
+	static float easeInOutBack(float a);
 
 	//水平投射
 	static void HorizontalProjection(WorldTransform& worldTransform, const Vector3& startSpeed, float G, float& flame);

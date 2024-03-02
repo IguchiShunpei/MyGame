@@ -71,8 +71,11 @@ public:
 	void BulletUpdate();
 	void LaserUpdate();
 
+	//レーザー登場
+	void LaserOn();
+
 	//レーザー消去
-	void LaserOut();
+	void LaserOff();
 
 	//弾描画
 	void BulletDraw(ViewProjection* viewProjection_);

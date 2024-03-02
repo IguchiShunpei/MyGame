@@ -38,7 +38,7 @@ void GamePlayScene::Initialize()
 	//天球
 	sky_ = std::make_unique < SkyDome>();
 	sky_->SkyDomeInitialize();
-	
+
 	//背景オブジェクト
 	backGround_ = std::make_unique <BackGround>();
 	backGround_->Initialize();
@@ -181,10 +181,13 @@ void GamePlayScene::Update()
 		break;
 
 	case BossScene://ボス戦専用の処理
-		//ボスの登場演出
-		BossInit();
+		if (isBossInitCamera_ == true)
+		{
+			//ボスの登場演出
+			BossInit();
+		}
 		//ボス登場演出フラグがfalseになったらボス戦開始
-		if (isBossInitCamera_ == false)
+		else
 		{
 			//更新
 			if (bEnemy->GetIsDeathTimer() == false)
@@ -303,7 +306,7 @@ void GamePlayScene::Update()
 	//敵に弾が当たった時のカメラシェイク
 	if (isDeadCameraShake_ == true)
 	{
-   		hitEnemyTimer_++;
+		hitEnemyTimer_++;
 		if (hitEnemyTimer_ < 16)
 		{
 			if (hitEnemyTimer_ % 2 != 1)
@@ -403,7 +406,7 @@ void GamePlayScene::Draw()
 	Object3d::PostDraw();
 
 	//エフェクト
-	effect_->Draw(isBEnemyDeadScene_,isPlayerDead_);
+	effect_->Draw(isBEnemyDeadScene_, isPlayerDead_);
 
 	//UI
 	ui_->UIDraw();
@@ -519,6 +522,16 @@ void GamePlayScene::UpdateEnemyPop()
 			{
 				newWEnemy->SetPhase(newWEnemy->R);
 			}
+			else if (word.find("U") == 0)
+			{
+				newWEnemy->SetPhase(newWEnemy->U);
+				newWEnemy->SetRotation({ 0.0f,0.0f,90.0f });
+			}
+			else if (word.find("D") == 0)
+			{
+				newWEnemy->SetPhase(newWEnemy->D);
+				newWEnemy->SetRotation({ 0.0f,0.0f,90.0f });
+			}
 
 			// X,Y,Z座標読み込み
 			Vector3 position{};
@@ -544,7 +557,7 @@ void GamePlayScene::UpdateEnemyPop()
 			//敵の初期化
 			newEnemy->EnemyInitialize();
 			//コライダーの追加
-			newEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+			newEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 3.0f));
 			if (word.find("HP") == 0)
 			{
 				std::string num;
@@ -698,15 +711,20 @@ void GamePlayScene::PlayerInit()
 
 void GamePlayScene::PlayerDead()
 {
-	effect_->Ex_ParticleUpdate(player_.get(),isPlayerDead_);
+	effect_->Ex_ParticleUpdate(player_.get(), isPlayerDead_);
 }
 
 void GamePlayScene::BossInit()
 {
 	if (isBossInitCamera_ == true)
 	{
+		player_->LaserOff();
 		ui_->Stop();
 		camera_->BossInitCameraWork(bEnemy.get(), isBossInitCamera_);
+	}
+	else
+	{
+		player_->LaserOn();
 	}
 }
 
@@ -714,7 +732,7 @@ void GamePlayScene::BossDead()
 {
 	//UI退場
 	ui_->UIOutMotion();
-	player_->LaserOut();
+	player_->LaserOff();
 	effect_->GetExplosion01()->EnemyExplosionUpdate();
 	effect_->GetExplosion02()->EnemyExplosionUpdate();
 	bEnemy->Dead();
@@ -757,7 +775,7 @@ void GamePlayScene::ToGameOverScene()
 		//UI退場
 		ui_->UIOutMotion();
 		//カメラワーク
-		camera_->ToGameOverCameraWork(player_.get(),isPlayerDead_,isGameOver_ );
+		camera_->ToGameOverCameraWork(player_.get(), isPlayerDead_, isGameOver_);
 		//自機死亡演出
 		PlayerDead();
 		player_->worldTransform_.UpdateMatrix();

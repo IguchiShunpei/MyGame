@@ -21,8 +21,7 @@ void Enemy::EnemyInitialize()
 {
 	Initialize();
 	// OBJからモデルデータを読み込む
-	enemyModel_01 = Model::LoadFromOBJ("enemy_01");
-	enemyModel_02 = Model::LoadFromOBJ("enemy_02");
+	enemyModel_01 = Model::LoadFromOBJ("enemy");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
@@ -33,7 +32,7 @@ void Enemy::EnemyInitialize()
 
 	kBulletSpeed_ = 2.0f;
 
-	dalayTimer_ = 5.0f;
+	dalayTimer_ = 100.0f;
 	delayTImerMax_ = 15.0f;
 	deleteTimer_ = 200.0f;
 	isDead_ = false;
@@ -41,7 +40,7 @@ void Enemy::EnemyInitialize()
 	isHit_ = false;
 	isInit_ = false;
 	initTime_ = 0.0f;
-	initTimeMax_ = 60.0f;
+	initTimeMax_ = 180.0f;
 	moveY_ = 60.0f;
 	afterMoveY_ = 60.0f;
 	bulletNum_ = 0;
@@ -51,10 +50,11 @@ void Enemy::EnemyInitialize()
 	changeColor_ = { 3.0f,3.0f,3.0f };
 }
 
-void Enemy::Update(Vector3 playerPos_)
+void Enemy::Update(Vector3 playerPos)
 {
 	isHit_ = false;
 	enemyColor_ = originalColor_;
+	changeColor_ = { 3.0f,3.0f,3.0f };
 
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
@@ -69,7 +69,7 @@ void Enemy::Update(Vector3 playerPos_)
 		//攻撃したら退場
 		if (isAttack_ == false)
 		{
-			Attack(playerPos_);
+			Attack(playerPos);
 		}
 		else
 		{
@@ -176,7 +176,7 @@ void Enemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
- 		worldTransform_.position_.y = beforeY_ + (afterMoveY_ - (moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_)));
+ 		worldTransform_.position_.y = beforeY_ + (afterMoveY_ - (moveY_ * MathFunc::easeInOutBack(initTime_ / initTimeMax_)));
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
@@ -190,7 +190,7 @@ void Enemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
-		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_);
+		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInOutBack(initTime_ / initTimeMax_);
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
