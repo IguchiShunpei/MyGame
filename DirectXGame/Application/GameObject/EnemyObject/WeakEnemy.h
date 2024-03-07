@@ -72,12 +72,6 @@ public:
 	//退場モーション
 	void BackMotion();
 
-	//カーブ
-	void RCurve();
-	void LCurve();
-	void UCurve();
-	void DCurve();
-
 	//ワールド座標を取得
 	Vector3 GetPosition();
 

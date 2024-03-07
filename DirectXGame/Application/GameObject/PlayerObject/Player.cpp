@@ -502,20 +502,7 @@ void Player::BulletUpdate()
 	}
 }
 
-void Player::LaserUpdate()
-{
-	laser_->LaserUpdate(worldTransform_.position_, worldTransform_.rotation_);
-}
 
-void Player::LaserOn()
-{
-	laser_->LaserInit(worldTransform_.position_, worldTransform_.rotation_);
-}
-
-void Player::LaserOff()
-{
-	laser_->LaserOut();
-}
 
 void Player::BulletDraw(ViewProjection* viewProjection_)
 {
@@ -523,7 +510,6 @@ void Player::BulletDraw(ViewProjection* viewProjection_)
 	{
 		bullet->Draw(viewProjection_,1.0f, bullet->GetBulletColor());
 	}
-	laser_->Draw(viewProjection_, laser_->GetAlpha(), laser_->GetBulletColor());
 }
 
 Vector3 Player::GetWorldPosition()

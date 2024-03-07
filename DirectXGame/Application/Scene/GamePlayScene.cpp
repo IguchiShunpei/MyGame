@@ -243,13 +243,14 @@ void GamePlayScene::Update()
 	{
 		//UIの登場モーション
 		ui_->UIInitMotion();
-		player_->LaserUpdate();
+		player_->GetLaser()->LaserUpdate(player_->GetPosition(),player_->GetRotation());
 		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
 			camera_->MoveCamera();
 
 			player_->Update();
 			player_->ColliderUpdate();
+			player_->GetLaser()->LaserUpdate(player_->GetPosition(),player_->GetRotation());
 		}
 		else
 		{
@@ -352,12 +353,6 @@ void GamePlayScene::Draw()
 	//背景オブジェクト
 	backGround_->Draw(camera_->GetViewProjection());
 
-	//プレイヤー
-	if (isPlayerDead_ == false)
-	{
-		player_->Draw(camera_->GetViewProjection());
-		player_->BulletDraw(camera_->GetViewProjection());
-	}
 
 	//隕石(敵)
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
@@ -403,6 +398,13 @@ void GamePlayScene::Draw()
 		break;
 	}
 
+	//プレイヤー
+	if (isPlayerDead_ == false)
+	{
+		player_->Draw(camera_->GetViewProjection());
+		player_->BulletDraw(camera_->GetViewProjection());
+		player_->GetLaser()->Draw(camera_->GetViewProjection(),player_->GetLaser()->GetAlpha(),player_->GetLaser()->GetBulletColor());
+	}
 	Object3d::PostDraw();
 
 	//エフェクト
@@ -551,6 +553,7 @@ void GamePlayScene::UpdateEnemyPop()
 		// enemy
 		else if (key == "enemy") {
 			std::string word;
+			std::string direction;
 			getline(line_stream, word, ' ');
 			//敵の生成
 			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
@@ -566,6 +569,24 @@ void GamePlayScene::UpdateEnemyPop()
 				int32_t hpNum = atoi(num.c_str());
 				newEnemy->SetHp(hpNum);
 			}
+			getline(line_stream, direction, ' ');
+			//移動向きを読み取ってセットする
+			if (direction.find("U") == 0)
+			{
+				newEnemy->SetMove(newEnemy->Up);
+			}
+			else if (direction.find("D") == 0)
+			{
+				newEnemy->SetMove(newEnemy->Down);
+			}
+			else if (direction.find("R") == 0)
+			{
+				newEnemy->SetMove(newEnemy->Right);
+			}
+			else if (direction.find("L") == 0)
+			{
+				newEnemy->SetMove(newEnemy->Left);
+ 			}
 			// X,Y,Z座標読み込み
 			Vector3 position{};
 			line_stream >> position.x;
@@ -718,13 +739,8 @@ void GamePlayScene::BossInit()
 {
 	if (isBossInitCamera_ == true)
 	{
-		player_->LaserOff();
 		ui_->Stop();
 		camera_->BossInitCameraWork(bEnemy.get(), isBossInitCamera_);
-	}
-	else
-	{
-		player_->LaserOn();
 	}
 }
 
@@ -732,7 +748,7 @@ void GamePlayScene::BossDead()
 {
 	//UI退場
 	ui_->UIOutMotion();
-	player_->LaserOff();
+	player_->GetLaser()->SetIsLaserBack(false);
 	effect_->GetExplosion01()->EnemyExplosionUpdate();
 	effect_->GetExplosion02()->EnemyExplosionUpdate();
 	bEnemy->Dead();

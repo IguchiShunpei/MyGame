@@ -31,7 +31,10 @@ void BossEnemy::BossEnemyInitialize()
 	beforeY_ = 120.0f;
 	SetPosition({ 0.0f,beforeY_,100.0f });
 	isInit_ = false;
-	initTime_ = 240.0f;
+	initY_ = beforeY_;
+	afterInitY_ = initY_;
+	initTime_ = 0.0f;
+	initTimeMax_ = 240.0f;
 
 	//死亡
 	isDead_ = false;
@@ -363,12 +366,14 @@ void BossEnemy::TurnAttack(Vector3 pos)
 
 void BossEnemy::InitMotion()
 {
+
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = -2.0f + beforeY_ * MathFunc::easeInOutBack(initTime_ / 240.0f);
+		beforeY_ = 0.0f;
+		worldTransform_.position_.y = beforeY_ + (afterInitY_ - (initY_ * MathFunc::easeOutBack(initTime_ / initTimeMax_)));
 		worldTransform_.UpdateMatrix();
-		initTime_--;
-		if (initTime_ <= 0.0f)
+		initTime_++;
+		if (initTime_ >=initTimeMax_)
 		{
 			isInit_ = true;
 			//初期位置をセット

@@ -28,6 +28,8 @@ void EnemyBullet::EnemyBulletInitialize(const Vector3& position, const Vector3& 
 	velocity_ = velocity;
 	isDelete_ = false;
 	deleteTimer_ = 300.0f;
+	color_ = { 3.0f,1.0f,1.0f };
+	rota_ = 5.0f;
 }
 
 void EnemyBullet::ColliderUpdate()
@@ -44,7 +46,7 @@ void EnemyBullet::Update()
 {
 	//座標を移動させる
 	worldTransform_.position_ -= velocity_;
-
+	worldTransform_.rotation_.z += rota_;
 	worldTransform_.UpdateMatrix();
 
 	//時間経過で弾が消える

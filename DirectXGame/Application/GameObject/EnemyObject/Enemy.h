@@ -14,20 +14,16 @@
 #include <memory>
 #include <list>
 
-//GameSceneの前方宣言
-class GameScene;
-
 class Enemy : public Object3d
 {
 public:
 	//移動パターン
-	enum class Phase
+	enum MoveNum
 	{
-		None,
-		Approach,//接近
-		Leave,   //離脱
-		Curve,   //カーブ
-		ReCurve, //逆方向カーブ
+		Up,
+		Down,
+		Right,
+		Left,
 	};
 
 public:
@@ -60,6 +56,8 @@ public:
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
 
+	void Move();
+
 	//攻撃
 	void Attack(Vector3 playerPos_);
 
@@ -79,7 +77,7 @@ public:
 	//HP
 	void SetHp(int hp) { this->hp_ = hp; }
 	//phase
-	void SetPhase(Phase phase) { phase_ = phase; }
+	void SetMove(MoveNum moveNum) { moveNum_ = moveNum; }
 	//isDead
 	void SetIsDead(bool isDead) { this->isDead_ = isDead; }
 	//beforeY
@@ -113,8 +111,6 @@ private:
 	float initTime_;
 	//登場時間
 	float initTimeMax_;
-	//退場までの時間
-	float deleteTimer_;
 	//攻撃したか
 	bool isAttack_ = false;
 
@@ -139,15 +135,12 @@ private:
 	//弾のcollider
 	Vector3 bulletColliderPos_;
 	float bulletColliderRadius_;
-
-	//接近速度
-	Vector3 approach_ = { 0.0f,0.0f,-0.3f };
-
-	//離脱速度
-	Vector3 leave_ = { 0.0f,0.0f,1.0f };
 	
 	//敵の移動パターン
-	Phase phase_ = Phase::None;
+	MoveNum moveNum_;
+
+	//移動量
+	float moveLen_;
 
 	//体力
 	int hp_;
@@ -156,8 +149,8 @@ private:
 	float beforeY_;
 
 	//登場時の移動量
-	float moveY_;
-	float afterMoveY_;
+	float initY_;
+	float afterInitY_;
 
 	//弾の数
 	int bulletNum_;
@@ -167,4 +160,11 @@ private:
 
 	//ダメージ
 	int damage_;
+
+	//登場後の座標
+	Vector3 beforeMovePos_;
+
+	//移動時間
+	float moveTime_;
+	float moveTimeMax_;
 };
