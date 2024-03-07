@@ -69,13 +69,13 @@ invEnemy 40 -20 100
 
 wEnemy R 10 5 100 
 
-enemy HP 10 -8 10 60
+enemy HP 10 D -8 10 60
 
 meteor HP 3 -10 -5 80
 
 wait 20
 
-enemy HP 10 8 -10 60
+enemy HP 10 U 8 -10 60
 
 wait 200
 
@@ -98,8 +98,7 @@ wEnemy R 10 5 100
 wait 20
 
 wEnemy R 10 5 100 
-enemy HP 10 -8 -10 60
-
+enemy HP 10 R -16 -10 60
 wait 20
 
 wEnemy R 10 5 100 
@@ -142,11 +141,11 @@ invEnemy 40 -20 100
 wait 20
 
 wEnemy L -10 -5 100 
-enemy HP 10 8 8 60
+enemy HP 10 L 8 8 60
 
 wait 20
 
-wEnemy L -20 -5 100 
+wEnemy L -10 -5 100 
 meteor HP 3 -10 5 80
 
 wait 20

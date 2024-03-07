@@ -125,7 +125,7 @@ void InvincibleEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ + (afterMoveY_ - (moveY_ * MathFunc::easeInOutBack(initTime_ / initTimeMax_)));
+		worldTransform_.position_.y = beforeY_ + (afterMoveY_ - (moveY_ * MathFunc::easeOutBack(initTime_ / initTimeMax_)));
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
@@ -139,7 +139,7 @@ void InvincibleEnemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
-		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInOutBack(initTime_ / initTimeMax_);
+		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInBack(initTime_ / initTimeMax_);
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{

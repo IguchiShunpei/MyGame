@@ -26,6 +26,8 @@ public:
 
 	//isDeadのgetter
 	bool GetIsDelete() const { return isDelete_; }
+	//色
+	Vector3 GetColor() const { return color_; }
 
 private:
 
@@ -37,4 +39,8 @@ private:
 	float deleteTimer_;
 	//速度
 	Vector3 velocity_;
+	//色
+	Vector3 color_;
+	//回転量
+	float rota_;
 };

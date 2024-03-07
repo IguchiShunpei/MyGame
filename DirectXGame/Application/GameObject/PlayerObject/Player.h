@@ -64,21 +64,16 @@ public:
 	//弾の威力の変更
 	void BulletPowerUp();
 
+	//弾更新
+	void BulletUpdate();
 	//弾初期化
 	void LaserInitialize();
 
-	//弾更新
-	void BulletUpdate();
-	void LaserUpdate();
-
-	//レーザー登場
-	void LaserOn();
-
-	//レーザー消去
-	void LaserOff();
-
 	//弾描画
 	void BulletDraw(ViewProjection* viewProjection_);
+
+	//レーザー描画
+	void LaserDraw(ViewProjection* viewProjection_);
 
 	//弾リスト
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
@@ -103,6 +98,7 @@ public:
 	int GetHp()const { return hp_; }
 	//hpMax
 	int GetHpMax()const { return hpMax_; }
+	PlayerBullet*GetLaser() const { return laser_.get(); }
 
 	//setter
 	//IsHit

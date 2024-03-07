@@ -27,27 +27,29 @@ void Enemy::EnemyInitialize()
 	// オブジェクトにモデルをひも付ける
 	SetModel(enemyModel_01.get());
 
-	bulletColliderPos_ = {0.0f,0.0f,0.0f};
+	bulletColliderPos_ = { 0.0f,0.0f,0.0f };
 	bulletColliderRadius_ = 0.5f;
 
-	kBulletSpeed_ = 2.0f;
+	kBulletSpeed_ = 1.0f;
 
 	dalayTimer_ = 100.0f;
 	delayTImerMax_ = 15.0f;
-	deleteTimer_ = 200.0f;
 	isDead_ = false;
 	isDelete_ = false;
 	isHit_ = false;
 	isInit_ = false;
 	initTime_ = 0.0f;
 	initTimeMax_ = 180.0f;
-	moveY_ = 60.0f;
-	afterMoveY_ = 60.0f;
+	initY_ = 60.0f;
+	afterInitY_ = 60.0f;
 	bulletNum_ = 0;
 	bulletMax_ = 3;
 	enemyColor_ = { 0.0f,0.0f,0.0f };
 	originalColor_ = { 1.0f,1.0f,1.0f };
 	changeColor_ = { 3.0f,3.0f,3.0f };
+	moveLen_ = 30.0f;
+	moveTime_ = 0.0f;
+	moveTimeMax_ = 345.0f;
 }
 
 void Enemy::Update(Vector3 playerPos)
@@ -66,18 +68,11 @@ void Enemy::Update(Vector3 playerPos)
 	InitMotion();
 	if (isInit_ == true)
 	{
+		Move();
 		//攻撃したら退場
 		if (isAttack_ == false)
 		{
 			Attack(playerPos);
-		}
-		else
-		{
-			deleteTimer_--;
-			if (deleteTimer_ <= 0.0f)
-			{
-				isBack_ = true;
-			}
 		}
 	}
 
@@ -108,8 +103,8 @@ void Enemy::Damage(int damage)
 {
 	//攻撃を受けたときに変色
 	enemyColor_ = changeColor_;
- 	//ダメージ処理
-  	hp_ -= damage;
+	//ダメージ処理
+	hp_ -= damage;
 	if (hp_ <= 0)
 	{
 		isDead_ = true;
@@ -117,14 +112,47 @@ void Enemy::Damage(int damage)
 }
 
 void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
-  {
+{
 	const char* str1 = "class PlayerBullet";
 
 	//相手がplayerBullet
 	if (strcmp(toCollisionName, str1) == 0)
- 	{
+	{
 		isHit_ = true;
- 		Damage(damage_);
+		Damage(damage_);
+	}
+}
+
+void Enemy::Move()
+{
+	if (isBack_ == false)
+	{
+		if (moveTime_ <= moveTimeMax_)
+		{
+			//csvファイルから読み取った方向に移動
+			switch (moveNum_)
+			{
+			case MoveNum::Up:   //カーブフェーズ
+				worldTransform_.position_.y = beforeMovePos_.y + (moveLen_ * MathFunc::easeOutSine(moveTime_ / moveTimeMax_));
+				break;
+			case MoveNum::Down:   //カーブフェーズ
+				worldTransform_.position_.y = beforeMovePos_.y - (moveLen_ * MathFunc::easeOutSine(moveTime_ / moveTimeMax_));
+				break;
+			case MoveNum::Right:   //カーブフェーズ
+				worldTransform_.position_.x = beforeMovePos_.x + (moveLen_ * MathFunc::easeOutSine(moveTime_ / moveTimeMax_));
+				break;
+			case MoveNum::Left:   //カーブフェーズ
+				worldTransform_.position_.x = beforeMovePos_.x - (moveLen_ * MathFunc::easeOutSine(moveTime_ / moveTimeMax_));
+				break;
+			}
+			moveTime_++;
+		}
+		else
+		{
+			//移動しきったら退場モーションに使うy座標を更新
+			beforeY_ = worldTransform_.position_.y;
+			isBack_ = true;
+		}
 	}
 }
 
@@ -157,7 +185,7 @@ void Enemy::Attack(Vector3 playerPos_)
 		newBullet->EnemyBulletInitialize(enemyPosition, velocity_);
 
 		//コライダーの追加
-		newBullet->SetCollider(new SphereCollider(bulletColliderPos_,bulletColliderRadius_));
+		newBullet->SetCollider(new SphereCollider(bulletColliderPos_, bulletColliderRadius_));
 
 		//球の登録
 		bullets_.push_back(std::move(newBullet));
@@ -176,12 +204,13 @@ void Enemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
- 		worldTransform_.position_.y = beforeY_ + (afterMoveY_ - (moveY_ * MathFunc::easeInOutBack(initTime_ / initTimeMax_)));
+		worldTransform_.position_.y = beforeY_ + (afterInitY_ - (initY_ * MathFunc::easeOutBack(initTime_ / initTimeMax_)));
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
 			isInit_ = true;
 			initTime_ = 0.0f;
+			beforeMovePos_ = worldTransform_.position_;
 		}
 	}
 }
@@ -190,7 +219,7 @@ void Enemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
-		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInOutBack(initTime_ / initTimeMax_);
+		worldTransform_.position_.y = beforeY_ + initY_ * MathFunc::easeInBack(initTime_ / initTimeMax_);
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
@@ -204,7 +233,7 @@ void Enemy::BulletDraw(ViewProjection* viewProjection_)
 {
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
 	{
-		bullet->Draw(viewProjection_);
+		bullet->Draw(viewProjection_, 1.0f, bullet->GetColor());
 	}
 }
 

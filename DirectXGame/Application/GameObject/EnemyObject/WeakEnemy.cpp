@@ -89,21 +89,18 @@ void WeakEnemy::Move()
 	{
 	case Phase::None:
 		break;
-	case Phase::R:   //カーブフェーズ
+	case Phase::R:  
 		worldTransform_.rotation_.y -= rota_;
-		RCurve();
+		MathFunc::CurveProjection(worldTransform_, startSpeedBeside, C, flame);
 		break;
 	case Phase::L:   //カーブフェーズ
-		worldTransform_.rotation_.y += rota_;
-		LCurve();
+		MathFunc::CurveProjection(worldTransform_, { -startSpeedBeside.x,startSpeedBeside.y,startSpeedBeside.z }, -C, flame);
 		break;
 	case Phase::U:   //カーブフェーズ
-		worldTransform_.rotation_.x += rota_;
-		UCurve();
+		MathFunc::HorizontalProjection(worldTransform_, { startSpeedVertical.x,-startSpeedVertical.y,startSpeedVertical.z }, -C, flame);
 		break;
 	case Phase::D:   //カーブフェーズ
-		worldTransform_.rotation_.x -= rota_;
-		DCurve();
+		MathFunc::HorizontalProjection(worldTransform_, startSpeedVertical, C, flame);
 		break;
 	}
 }
@@ -134,26 +131,6 @@ void WeakEnemy::BackMotion()
 			isDelete_ = true;
 		}
 	}
-}
-
-void WeakEnemy::RCurve()
-{
-	MathFunc::CurveProjection(worldTransform_, startSpeedBeside, C, flame);
-}
-
-void WeakEnemy::LCurve()
-{
-	MathFunc::CurveProjection(worldTransform_, { -startSpeedBeside.x,startSpeedBeside.y,startSpeedBeside.z }, -C, flame);
-}
-
-void WeakEnemy::UCurve()
-{
-	MathFunc::HorizontalProjection(worldTransform_, { startSpeedVertical.x,-startSpeedVertical.y,startSpeedVertical.z }, -C, flame);
-}
-
-void WeakEnemy::DCurve()
-{
-	MathFunc::HorizontalProjection(worldTransform_, startSpeedVertical, C, flame);
 }
 
 Vector3 WeakEnemy::GetPosition()

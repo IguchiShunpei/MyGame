@@ -59,9 +59,13 @@ void PlayerBullet::LaserInitialize()
 	laserScaleMin_ = 0.2f;
 	laserScaleMax_ = 0.2f;
 	isInit_ = false;
+	isBack_ = true;
 	initTime_ = 0;
 	initTimeMax_ = 30;
 	laseRotaMax_ = 90.0f;
+	isBlink_ = true;
+	blinkTime_ = 0.0f;
+	blinkTimeMax_ = 180.0f;
 }
 
 void PlayerBullet::ColliderUpdate()
@@ -91,56 +95,112 @@ void PlayerBullet::BulletUpdate()
 	worldTransform_.UpdateMatrix();
 }
 
-void PlayerBullet::LaserUpdate(Vector3& position, Vector3& rotation)
+void PlayerBullet::LaserUpdate(Vector3 position, Vector3 rotation)
 {
 	if (isInit_ == false)
 	{
-		LaserInit(position,rotation);
+		LaserInit(position, rotation);
 	}
 	else
 	{
+		//点滅
+		Blining();
+		//回転と座標の更新
 		worldTransform_.position_ = position;
 		worldTransform_.rotation_ = rotation;
+		//消去
+		LaserOut();
 		worldTransform_.UpdateMatrix();
 	}
 }
 
-void PlayerBullet::LaserInit(Vector3& position, Vector3& rotation)
+void PlayerBullet::LaserInit(Vector3 position, Vector3 rotation)
 {
-	if (initTime_ <= initTimeMax_)
+	if (isInit_ == false)
 	{
-		//alpha値
-		alpha_ = alphaMax_ * MathFunc::easeOutSine((float)initTime_ / (float)initTimeMax_);
-		//スケール
-		laserScale_ = laserScaleMin_ * MathFunc::easeOutSine((float)initTime_ / (float)initTimeMax_);
+		if (initTime_ <= initTimeMax_)
+		{
+			if (alpha_ <= alphaMax_)
+			{
+				//alpha値
+				alpha_ = alphaMax_ * MathFunc::easeOutSine(initTime_ / initTimeMax_);
+			}
+			//スケール
+			laserScale_ = laserScaleMin_ * MathFunc::easeOutSine(initTime_ / initTimeMax_);
 
-		worldTransform_.position_ = position;
-		worldTransform_.rotation_ = rotation;
-		worldTransform_.scale_ = { laserScale_,laserScale_ ,laserScale_ };
-		worldTransform_.UpdateMatrix();
-		initTime_++;
-	}
-	else
-	{
-		isInit_ = true;
-		initTime_ = 0;
+			worldTransform_.position_ = position;
+			worldTransform_.rotation_ = rotation;
+			worldTransform_.scale_ = { laserScale_,laserScale_ ,laserScale_ };
+			worldTransform_.UpdateMatrix();
+			initTime_++;
+		}
+		else
+		{
+			isInit_ = true;
+			isBlink_ = true;
+		}
 	}
 }
 
 void PlayerBullet::LaserOut()
 {
-	if (initTime_ <= initTimeMax_)
+	if (isBack_ == false)
 	{
-		//alpha値
-		alpha_ = alphaMax_ - (alphaMax_ * MathFunc::easeOutSine((float)initTime_ / (float)initTimeMax_));
-		//スケール
-		laserScale_ = laserScaleMax_
-			- (laserScaleMin_* MathFunc::easeOutSine((float)initTime_ / (float)initTimeMax_));
+		if (initTime_ <= initTimeMax_)
+		{
+			if (alpha_ >= 0.0f)
+			{
+				//alpha値
+				alpha_ = alphaMax_ - (alphaMax_ * MathFunc::easeOutSine(initTime_ / initTimeMax_));
+			}
+			//スケール
+			laserScale_ = laserScaleMax_
+				- (laserScaleMin_ * MathFunc::easeOutSine(initTime_ / initTimeMax_));
 
-		worldTransform_.scale_ = { laserScale_,laserScale_ ,laserScale_ };
-		worldTransform_.UpdateMatrix();
-		initTime_++;
+			worldTransform_.scale_ = { laserScale_,laserScale_ ,laserScale_ };
+			worldTransform_.UpdateMatrix();
+			initTime_++;
+		}
+		else
+		{
+			isBack_ = true;
+			isBlink_ = false;
+		}
 	}
+}
+
+void PlayerBullet::Blining()
+{
+	if (isBlink_ == true)
+	{
+		if (isOn_ == true)
+		{
+			//濃くなる
+			if (blinkTime_ <= blinkTimeMax_)
+			{
+				alpha_ = alphaMax_ * MathFunc::easeInSine(blinkTime_ / blinkTimeMax_);
+			}
+			else
+			{
+				blinkTime_ = 0.0f;
+				isOn_ = false;
+			}
+		}
+		else
+		{
+			//薄くなる
+			if (blinkTime_ <= blinkTimeMax_)
+			{
+				alpha_ = alphaMax_ - (alphaMax_ * MathFunc::easeOutSine(blinkTime_ / blinkTimeMax_));
+			}
+			else
+			{
+				blinkTime_ = 0.0f;
+				isOn_ = true;
+			}
+		}
+	}
+	blinkTime_++;
 }
 
 void PlayerBullet::OnCollision([[maybe_unused]] const CollisionInfo& info)

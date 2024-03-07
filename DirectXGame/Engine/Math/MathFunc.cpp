@@ -24,14 +24,20 @@ float MathFunc::easeInOutSine(float a)
 	return cos((PI * a) - 1.0f) / 2.0f;
 }
 
-float MathFunc::easeInOutBack(float a)
+float MathFunc::easeInBack(float a)
 {
 	const float c1 = 1.70158f;
-	const float c2 = c1 * 1.525f;
+	const float  c3 = c1 + 1.0f;
 
-	return static_cast<float>(a < 0.5
-		? (pow(2 * a, 2) * ((c2 + 1) * 2 * a - c2)) / 2
-		: (pow(2 * a - 2, 2) * ((c2 + 1) * (a * 2 - 2) + c2) + 2) / 2);
+	return c3 * a * a * a - c1 * a * a;
+}
+
+float MathFunc::easeOutBack(float a)
+{
+	const float c1 = 1.70158f;
+	const float  c3 = c1 + 1.0f;
+
+	return 1 + c3 * (float)pow(a - 1, 3) + c1 * (float)pow(a - 1, 2);
 }
 
 void MathFunc::HorizontalProjection(WorldTransform& worldTransform, const Vector3& startSpeed, float G, float& flame)

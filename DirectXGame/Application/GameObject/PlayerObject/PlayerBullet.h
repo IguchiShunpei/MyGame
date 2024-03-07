@@ -24,12 +24,14 @@ public:
 
 	//更新
 	void BulletUpdate();
-	void LaserUpdate(Vector3& position, Vector3& rotation);
+	void LaserUpdate(Vector3 position, Vector3 rotation);
 
 	//レーザー登場
-	void LaserInit(Vector3& position, Vector3& rotation);
+	void LaserInit(Vector3 position, Vector3 rotation);
 	//消去
 	void LaserOut();
+	//点滅
+	void Blining();
 
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
@@ -42,6 +44,9 @@ public:
 	
 	//bulletNumのsetter
 	void SetBulletNum(int bulletNum) { this->bulletNum_ = bulletNum; }
+	void SetIsLaserInit(bool isInit) { this->isInit_ = isInit; }
+	void SetIsLaserBack(bool isBack) { this->isBack_ = isBack; }
+	void SetIsBlink(bool isBlink) { this->isBlink_ = isBlink; }
 
 private:
 
@@ -72,12 +77,20 @@ private:
 	float laserScaleMax_;
 	//登場フラグ
 	bool isInit_;
+	//退場フラグ
+	bool isBack_;
 	//登場
-	int initTime_;
-	int initTimeMax_;
+	float initTime_;
+	float initTimeMax_;
 	//回転
 	float laserRota_;
 	float laseRotaMax_;
+	//点滅フラグ
+	bool isBlink_;
+	bool isOn_;
+	//点滅時間
+	float blinkTime_;
+	float blinkTimeMax_;
 
 	//alpha
 	float alpha_;
