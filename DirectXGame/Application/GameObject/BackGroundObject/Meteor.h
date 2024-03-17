@@ -19,6 +19,14 @@ class GamePlayScene;
 class Meteor : public Object3d
 {
 public:
+	//死亡時効果
+	enum DeadEffect
+	{
+		None,
+		Item,
+		SmallMeteor
+	};
+public:
 	//初期化
 	void MeteorInitialize();
 
@@ -49,6 +57,9 @@ public:
 	//Color
 	Vector3 GetColor() const { return color_; }
 
+	//死亡効果
+	int GetDeadEffect() const { return deadEffect_; }
+
 	//HP
 	void SetHp(int hp) { this->hp_ = hp; }
 
@@ -60,6 +71,9 @@ public:
 
 	//speed
 	void SetSpeed(float min ,float max);
+
+	//deadEffect
+	void SetDeadEffect(DeadEffect deadEffect) { this->deadEffect_ = deadEffect; }
 
 private:
 	//座標
@@ -109,4 +123,7 @@ private:
 
 	//背景フラグ
 	bool isBack_;
+
+	//死亡時効果
+	DeadEffect deadEffect_;
 };

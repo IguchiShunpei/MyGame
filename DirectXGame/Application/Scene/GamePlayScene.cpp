@@ -131,14 +131,37 @@ void GamePlayScene::Update()
 		meteors->MeteorUpdate();
 		if (meteors->GetIsDead() == true)
 		{
-			//敵の生成
-			std::unique_ptr<Item> newItem = std::make_unique<Item>();
-			//敵の初期化
-			newItem->ItemInitialize(meteors->GetPosition());
-			//コライダーの追加
-			newItem->SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.5f));
-			//登録
-			items_.push_back(std::move(newItem));
+			if (meteors->GetDeadEffect() == meteors->Item)
+			{
+				//敵の生成
+				std::unique_ptr<Item> newItem = std::make_unique<Item>();
+				//敵の初期化
+				newItem->ItemInitialize(meteors->GetPosition());
+				//コライダーの追加
+				newItem->SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.5f));
+				//登録
+				items_.push_back(std::move(newItem));
+			}
+			else if (meteors->GetDeadEffect() == meteors->SmallMeteor)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					//敵の生成
+					std::unique_ptr<Meteor> newMeteor = std::make_unique<Meteor>();
+					//敵の初期化
+					newMeteor->MeteorInitialize();
+					//コライダーの追加
+					newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+					// 座標データに追加
+					newMeteor->SetPosition(meteors->GetPosition());
+					newMeteor->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+					newMeteor->SetDeadEffect(newMeteor->None);
+					newMeteor->worldTransform_.UpdateMatrix();
+
+					//登録
+					meteors_.push_back(std::move(newMeteor));
+				}
+			}
 		}
 	}
 
@@ -243,14 +266,14 @@ void GamePlayScene::Update()
 	{
 		//UIの登場モーション
 		ui_->UIInitMotion();
-		player_->GetLaser()->LaserUpdate(player_->GetPosition(),player_->GetRotation());
+		player_->GetLaser()->LaserUpdate(player_->GetPosition(), player_->GetRotation());
 		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
 			camera_->MoveCamera();
 
 			player_->Update();
 			player_->ColliderUpdate();
-			player_->GetLaser()->LaserUpdate(player_->GetPosition(),player_->GetRotation());
+			player_->GetLaser()->LaserUpdate(player_->GetPosition(), player_->GetRotation());
 		}
 		else
 		{
@@ -403,7 +426,7 @@ void GamePlayScene::Draw()
 	{
 		player_->Draw(camera_->GetViewProjection());
 		player_->BulletDraw(camera_->GetViewProjection());
-		player_->GetLaser()->Draw(camera_->GetViewProjection(),player_->GetLaser()->GetAlpha(),player_->GetLaser()->GetBulletColor());
+		player_->GetLaser()->Draw(camera_->GetViewProjection(), player_->GetLaser()->GetAlpha(), player_->GetLaser()->GetBulletColor());
 	}
 	Object3d::PostDraw();
 
@@ -586,7 +609,7 @@ void GamePlayScene::UpdateEnemyPop()
 			else if (direction.find("L") == 0)
 			{
 				newEnemy->SetMove(newEnemy->Left);
- 			}
+			}
 			// X,Y,Z座標読み込み
 			Vector3 position{};
 			line_stream >> position.x;
@@ -625,22 +648,27 @@ void GamePlayScene::UpdateEnemyPop()
 		}
 		//meteor
 		else if (key == "meteor") {
-			std::string word;
-			getline(line_stream, word, ' ');
+
 			//敵の生成
 			std::unique_ptr<Meteor> newMeteor = std::make_unique<Meteor>();
 			//敵の初期化
 			newMeteor->MeteorInitialize();
 			//コライダーの追加
 			newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
-			if (word.find("HP") == 0)
+			std::string deadEffect;
+
+			getline(line_stream, deadEffect, ' ');
+
+			//移動向きを読み取ってセットする
+			if (deadEffect.find("I") == 0)
 			{
-				std::string num;
-				getline(line_stream, num, ' ');
-				//hpを保存
-				int32_t hpNum = atoi(num.c_str());
-				newMeteor->SetHp(hpNum);
+				newMeteor->SetDeadEffect(newMeteor->Item);
 			}
+			else if (deadEffect.find("M") == 0)
+			{
+				newMeteor->SetDeadEffect(newMeteor->SmallMeteor);
+			}
+
 			// X,Y,Z座標読み込み
 			Vector3 position{};
 			line_stream >> position.x;
@@ -649,6 +677,7 @@ void GamePlayScene::UpdateEnemyPop()
 			// 座標データに追加
 			newMeteor->SetPosition(position);
 			newMeteor->worldTransform_.UpdateMatrix();
+
 			//登録
 			meteors_.push_back(std::move(newMeteor));
 		}

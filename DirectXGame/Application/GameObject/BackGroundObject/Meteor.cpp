@@ -35,6 +35,8 @@ void Meteor::MeteorInitialize()
 	std::uniform_int_distribution<> rotaDirection(0, 5);
 	rotaDirection_ = rotaDirection(engine);
 
+	hp_ = 1;
+
 	isHit_ = false;
 	isHitEnd_ = true;
 	isInit_ = false;
