@@ -19,7 +19,8 @@ ShotEnemy::~ShotEnemy()
 //初期化
 void ShotEnemy::ShotEnemyInitialize()
 {
-	Initialize();
+	//汎用的初期化
+	EnemyInitialize();
 	// OBJからモデルデータを読み込む
 	enemyModel_01 = Model::LoadFromOBJ("enemy");
 	// 3Dオブジェクト生成
@@ -44,9 +45,6 @@ void ShotEnemy::ShotEnemyInitialize()
 	afterInitY_ = 60.0f;
 	bulletNum_ = 0;
 	bulletMax_ = 3;
-	enemyColor_ = { 0.0f,0.0f,0.0f };
-	originalColor_ = { 1.0f,1.0f,1.0f };
-	changeColor_ = { 3.0f,3.0f,3.0f };
 	moveLen_ = 30.0f;
 	moveTime_ = 0.0f;
 	moveTimeMax_ = 345.0f;
@@ -54,9 +52,6 @@ void ShotEnemy::ShotEnemyInitialize()
 
 void ShotEnemy::ShotEnemyUpdate(Vector3 playerPos)
 {
-	isHit_ = false;
-	enemyColor_ = originalColor_;
-	changeColor_ = { 3.0f,3.0f,3.0f };
 
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
@@ -86,41 +81,8 @@ void ShotEnemy::ShotEnemyUpdate(Vector3 playerPos)
 		bullet->ColliderUpdate();
 	}
 
-	// ワールドトランスフォームの行列更新と転送
-	worldTransform_.UpdateMatrix();
-}
-
-void ShotEnemy::ColliderUpdate()
-{
-	//当たり判定更新
-	if (collider)
-	{
-		collider->Update();
-	}
-}
-
-void ShotEnemy::Damage(int damage)
-{
-	//攻撃を受けたときに変色
-	enemyColor_ = changeColor_;
-	//ダメージ処理
-	hp_ -= damage;
-	if (hp_ <= 0)
-	{
-		isDead_ = true;
-	}
-}
-
-void ShotEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
-{
-	const char* str1 = "class PlayerBullet";
-
-	//相手がplayerBullet
-	if (strcmp(toCollisionName, str1) == 0)
-	{
-		isHit_ = true;
-		Damage(damage_);
-	}
+	//敵汎用更新
+	EnemyUpdate();
 }
 
 void ShotEnemy::Move()
@@ -235,15 +197,4 @@ void ShotEnemy::BulletDraw(ViewProjection* viewProjection_)
 	{
 		bullet->Draw(viewProjection_, 1.0f, bullet->GetColor());
 	}
-}
-
-Vector3 ShotEnemy::GetPosition()
-{
-	Vector3 worldPos;
-
-	worldPos.x = worldTransform_.position_.x;
-	worldPos.y = worldTransform_.position_.y;
-	worldPos.z = worldTransform_.position_.z;
-
-	return worldPos;
 }

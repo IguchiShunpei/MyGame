@@ -17,70 +17,39 @@ WeakEnemy::~WeakEnemy()
 //初期化
 void WeakEnemy::WEnemyInitialize()
 {
-	Initialize();
+	//汎用初期化
+	EnemyInitialize();
 	// OBJからモデルデータを読み込む
 	wEnemyModel = Model::LoadFromOBJ("WeakEnemy");
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
 	SetModel(wEnemyModel.get());
-	isDead_ = false;
-	isInit_ = false;
-	initTime_ = 0.0f;
-	initTimeMax_ = 90.0f;
+
+	//体力
+	SetHp(2);
+	//登場移動量
+	initY_ = 60.0f;
+	afterInitY_ = -60.0f;
+	//回転につかう変数の初期化
 	rota_ = 5.0f;
-	moveY_ = 60.0f;
-	afterMoveY_ = -60.0f;
 }
 
-void WeakEnemy::Update()
+void WeakEnemy::WEnemyUpdate()
 {
-	enemyColor_ = { 1.0f,1.0f,1.0f };
-	hitColor_ = { 3.0f,3.0f,3.0f };
-
-	//登場モーション
-	InitMotion();
-	//登場したら移動
+	//登場したら
 	if (isInit_ == true)
 	{
+		//移動
 		Move();
 	}
+	//登場
+	InitMotion();
+	//退場
+	BackMotion();
 
-	// ワールドトランスフォームの行列更新と転送
-	worldTransform_.UpdateMatrix();
-}
-
-void WeakEnemy::ColliderUpdate()
-{
-	//当たり判定更新
-	if (collider)
-	{
-		collider->Update();
-	}
-}
-
-void WeakEnemy::Damage(int damage)
-{
-  	enemyColor_ = hitColor_;
-	hp_-= damage;
-	if (hp_ <= 0)
-	{
-		isDead_ = true;
-	}
-}
-
-void WeakEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
-{
-	const char* str1 = "class PlayerBullet";
-
-	if (isInit_ == true)
-	{
-		//相手がplayerBullet
-		if (strcmp(toCollisionName, str1) == 0)
-		{
-			Damage(damage_);
-		}
-	}
+	//敵汎用更新
+	EnemyUpdate();
 }
 
 void WeakEnemy::Move()
@@ -112,7 +81,7 @@ void WeakEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ + (afterMoveY_ + (moveY_ * MathFunc::easeOutSine(initTime_ / initTimeMax_)));
+		worldTransform_.position_.y = beforeY_ + (afterInitY_ + (initY_ * MathFunc::easeOutSine(initTime_ / initTimeMax_)));
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
@@ -126,7 +95,7 @@ void WeakEnemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
-		worldTransform_.position_.y = beforeY_ - moveY_ * MathFunc::easeInSine(initTime_ / initTimeMax_);
+		worldTransform_.position_.y = beforeY_ - initY_ * MathFunc::easeInSine(initTime_ / initTimeMax_);
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
@@ -134,15 +103,4 @@ void WeakEnemy::BackMotion()
 			isDelete_ = true;
 		}
 	}
-}
-
-Vector3 WeakEnemy::GetPosition()
-{
-	Vector3 worldPos;
-
-	worldPos.x = worldTransform_.position_.x;
-	worldPos.y = worldTransform_.position_.y;
-	worldPos.z = worldTransform_.position_.z;
-
-	return worldPos;
 }

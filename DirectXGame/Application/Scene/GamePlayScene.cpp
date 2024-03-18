@@ -186,22 +186,19 @@ void GamePlayScene::Update()
 		//移動するだけの敵
 		for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 		{
-			wEnemys->Update();
+			wEnemys->WEnemyUpdate();
 			wEnemys->SetDamage(player_->GetBulletPower());
-			wEnemys->ColliderUpdate();
 		}
 		//倒せない敵
 		for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
 		{
-			invEnemys->Update(player_->GetPosition());
-			invEnemys->ColliderUpdate();
+			invEnemys->InvincibleEnemyUpdate(player_->GetPosition());
 		}
 		//弾を撃つ敵
 		for (std::unique_ptr<ShotEnemy>& enemys : enemys_)
 		{
 			enemys->ShotEnemyUpdate(player_->GetPosition());
 			enemys->SetDamage(player_->GetBulletPower());
-			enemys->ColliderUpdate();
 		}
 		break;
 
@@ -217,7 +214,7 @@ void GamePlayScene::Update()
 			//更新
 			if (bEnemy->GetIsDeathTimer() == false)
 			{
-				bEnemy->Update();
+				bEnemy->BossUpdate();
 				bEnemy->SetDamage(player_->GetBulletPower());
 				bEnemy->PhaseChange(player_->GetPosition());
 				bEnemy->ColliderUpdate();

@@ -5,17 +5,10 @@
 */
 
 #pragma once
-#include "Object3d.h"
-#include "WinApp.h"
-#include "Vector3.h"
-#include "Model.h"
-#include <memory>
+#include "Enemy.h"
 #include <list>
 
-//GameSceneの前方宣言
-class GamePlayScene;
-
-class WeakEnemy : public Object3d
+class WeakEnemy : public Enemy
 {
 public:
 	//移動パターン
@@ -35,69 +28,23 @@ public:
 	void WEnemyInitialize();
 
 	//更新
-	void Update();
+	void WEnemyUpdate();
 
-	//当たり判定更新
-	void ColliderUpdate();
+	//登場
+	void InitMotion();
 
-	//ダメージ
-	void Damage(int damage);
+	//退場
+	void BackMotion();
 
 	//setter
-	//beforeY
-	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
 
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
 
-	//damage
-	void SetDamage(int damage) { damage_ = damage; }
-
-	bool GetIsDead() const { return isDead_; }
-
-	bool GetIsDelete() const { return isDelete_; }
-
-	//当たり判定コールバック
-	void OnCollision(const CollisionInfo& info) override;
-
-	//color
-	Vector3 GetColor() const { return enemyColor_; }
-
 	//移動
 	void Move();
 
-	//登場モーション
-	void InitMotion();
-
-	//退場モーション
-	void BackMotion();
-
-	//ワールド座標を取得
-	Vector3 GetPosition();
-
 private:
-
-	//フラグ
-	//倒されたか
-	bool isDead_ = false;
-	//デスポーンしたか
-	bool isDelete_ = false;
-	//登場したか
-	bool isInit_ = false;
-	//退場したか
-	bool isBack_ = false;
-	//登場時間
-	float initTime_;
-	//登場時間
-	float initTimeMax_;
-
-	//初期Y座標
-	float beforeY_;
-
-	//登場時の移動量
-	float moveY_;
-	float afterMoveY_;
-
 	// モデル
 	std::unique_ptr <Model> wEnemyModel;
 
@@ -111,13 +58,6 @@ private:
 	Vector3 startSpeedVertical = { 0.0f,0.5f,-0.5f };
 	//落下時間
 	float flame = 0.0f;
-	//体力
-	int hp_ = 2;
-	//ダメージ
-	int damage_;
 
 	float rota_;
-
-	Vector3 enemyColor_;
-	Vector3 hitColor_;
 };

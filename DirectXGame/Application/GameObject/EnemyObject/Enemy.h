@@ -37,16 +37,14 @@ public:
 	//HP
 	int GetHP() const { return hp_; };
 	//color
-	Vector3 GetColor() const { return enemyColor_; }
+	Vector3 GetColor() const { return color_; }
+	//alpha
+	float GetAlpha() const { return alpha_; }
+	//isInit
+	bool GetIsInit() const { return isInit_; }
 
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
-
-	//登場モーション
-	void InitMotion();
-
-	//退場モーション
-	void BackMotion();
 
 	//Setter
 	//HP
@@ -54,19 +52,21 @@ public:
 	//isDead
 	void SetIsDead(bool isDead) { this->isDead_ = isDead; }
 	//beforeY
-	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
+	void SetBeforeY(float beforeY) { this->beforeY_ = beforeY; }
 	//damage
-	void SetDamage(int damage) { damage_ = damage; }
+	void SetDamage(int damage) { this->damage_ = damage; }
+	//alpha
+	void SetAlpha(float alpha) { this->alpha_ = alpha; }
 
-	//ワールド座標を取得
-	Vector3 GetPosition();
-
-private:
+public:
 
 	//色
-	Vector3 enemyColor_;
+	Vector3 color_;
 	Vector3 originalColor_;
 	Vector3 changeColor_;
+
+	//alpha値
+	float alpha_;
 
 	//デスフラグ
 	//倒されたか

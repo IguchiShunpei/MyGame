@@ -19,18 +19,20 @@ Enemy::~Enemy()
 //初期化
 void Enemy::EnemyInitialize()
 {
+	//Object3d初期化
 	Initialize();
 
+	//変数初期化
 	isDead_ = false;
 	isDelete_ = false;
 	isHit_ = false;
 	isInit_ = false;
 	initTime_ = 0.0f;
-	initTimeMax_ = 180.0f;
+	initTimeMax_ = 90.0f;
 	initY_ = 60.0f;
 	afterInitY_ = 60.0f;
 
-	enemyColor_ = { 0.0f,0.0f,0.0f };
+	color_ = { 0.0f,0.0f,0.0f };
 	originalColor_ = { 1.0f,1.0f,1.0f };
 	changeColor_ = { 3.0f,3.0f,3.0f };
 }
@@ -38,14 +40,7 @@ void Enemy::EnemyInitialize()
 void Enemy::EnemyUpdate()
 {
 	isHit_ = false;
-	enemyColor_ = originalColor_;
-	changeColor_ = { 3.0f,3.0f,3.0f };
-
-	//登場モーション
-	InitMotion();
-
-	//退場モーション
-	BackMotion();
+	color_ = originalColor_;
 
 	//基底クラスのUpdate
 	Update();
@@ -54,7 +49,7 @@ void Enemy::EnemyUpdate()
 void Enemy::Damage(int damage)
 {
 	//攻撃を受けたときに変色
-	enemyColor_ = changeColor_;
+	color_ = changeColor_;
 	//ダメージ処理
 	hp_ -= damage;
 	if (hp_ <= 0)
@@ -72,34 +67,5 @@ void Enemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
 	{
 		isHit_ = true;
 		Damage(damage_);
-	}
-}
-
-void Enemy::InitMotion()
-{
-	if (isInit_ == false)
-	{
-		worldTransform_.position_.y = beforeY_ + (afterInitY_ - (initY_ * MathFunc::easeOutBack(initTime_ / initTimeMax_)));
-		initTime_++;
-		if (initTime_ > initTimeMax_)
-		{
-			isInit_ = true;
-			initTime_ = 0.0f;
-			beforeMovePos_ = worldTransform_.position_;
-		}
-	}
-}
-
-void Enemy::BackMotion()
-{
-	if (isBack_ == true)
-	{
-		worldTransform_.position_.y = beforeY_ + initY_ * MathFunc::easeInBack(initTime_ / initTimeMax_);
-		initTime_++;
-		if (initTime_ > initTimeMax_)
-		{
-			isBack_ = true;
-			isDelete_ = true;
-		}
 	}
 }
