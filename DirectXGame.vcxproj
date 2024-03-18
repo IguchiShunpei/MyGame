@@ -116,6 +116,7 @@
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\EnemyBullet.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\InvincibleEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\Item.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\ShotEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\WeakEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\PlayerObject\Player.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\PlayerObject\PlayerBullet.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\EnemyBullet.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\InvincibleEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\Item.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\ShotEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\WeakEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\PlayerObject\Player.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\PlayerObject\PlayerBullet.h" />
