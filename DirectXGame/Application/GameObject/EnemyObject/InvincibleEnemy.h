@@ -5,19 +5,13 @@
 */
 
 #pragma once
-#include "Object3d.h"
-#include "WinApp.h"
-#include "Vector3.h"
-#include "Model.h"
-#include "EnemyBullet.h"
-#include <memory>
+#include "Enemy.h"
 #include <list>
-#include "MathFunc.h"
 
 //GameSceneの前方宣言
 class GameScene;
 
-class InvincibleEnemy : public Object3d
+class InvincibleEnemy : public Enemy
 {
 public:
 	//デストラクタ
@@ -26,19 +20,7 @@ public:
 	void InvincibleEnemyInitialize();
 
 	//更新
-	void Update(Vector3 playerPos_);
-
-	//当たり判定更新
-	void ColliderUpdate();
-
-	//getter
-	//IsDelete
-	bool GetIsDelete() const { return isDelete_; }
-	//isHit
-	bool GetIsHit() const { return isHit_; }
-	
-	//当たり判定コールバック
-	void OnCollision(const CollisionInfo& info) override;
+	void InvincibleEnemyUpdate(Vector3 playerPos_);
 	
 	//移動
 	void Move();
@@ -52,36 +34,7 @@ public:
 	//退場モーション
 	void BackMotion();
 
-	//Setter
-	//beforeY
-	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
-
-	//ワールド座標を取得
-	Vector3 GetPosition();
-
 private:
-
-	//デスフラグ
-	//デスポーンしたか
-	bool isDelete_ = false;
-
-	//登場したか
-	bool isInit_ = false;
-
-	//登場時間
-	float initTime_;
-	//登場時間
-	float initTimeMax_;
-
-	//退場したか
-	bool isBack_ = false;
-
-	//初期Y座標
-	float beforeY_;
-
-	//登場時の移動量
-	float moveY_;
-	float afterMoveY_;
 
 	// モデル
 	std::unique_ptr <Model> enemyModel;
@@ -95,6 +48,6 @@ private:
 	bool isStart_ = false;
 	//予備動作をしたか
 	bool isTurn_ = false;
-
+	//移動量
 	Vector3 velocity_;
 };

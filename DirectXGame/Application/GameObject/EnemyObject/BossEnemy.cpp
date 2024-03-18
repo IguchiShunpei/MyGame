@@ -17,7 +17,7 @@ BossEnemy::~BossEnemy()
 //初期化
 void BossEnemy::BossEnemyInitialize()
 {
-	Initialize();
+	EnemyInitialize();
 	// OBJからモデルデータを読み込む
 	enemyModel = Model::LoadFromOBJ("enemy04");
 	// 3Dオブジェクト生成
@@ -27,17 +27,13 @@ void BossEnemy::BossEnemyInitialize()
 	SetCollider(new SphereCollider(Vector3(0, 0, 0), 3.0f));
 	SetScale({ 2.0f,2.0f,2.0f });
 
+	initTimeMax_ = 180.0f;
+
 	//登場
 	beforeY_ = 120.0f;
 	SetPosition({ 0.0f,beforeY_,100.0f });
-	isInit_ = false;
-	initY_ = beforeY_;
-	afterInitY_ = initY_;
-	initTime_ = 0.0f;
-	initTimeMax_ = 240.0f;
 
 	//死亡
-	isDead_ = false;
 	isDeathTimer_ = false;
 	deathTimer_ = 180;
 
@@ -68,8 +64,8 @@ void BossEnemy::BossEnemyInitialize()
 
 	phase_ = Phase::Wait;
 
-	bossColor_ = { 1.0f,1.0f,1.0f };
-	hitColor_ = { 3.0f,3.0f,3.0f };
+	color_ = { 1.0f,1.0f,1.0f };
+	changeColor_ = { 3.0f,3.0f,3.0f };
 
 	hp_ = 30;
 
@@ -80,7 +76,7 @@ void BossEnemy::BossEnemyInitialize()
 	//ボスの墜落スピード
 	bossDownSpeed_ = 0.01f;
 	//ボスalpha
-	bossAlpha_ = 1.0f;
+	alpha_ = 1.0f;
 	bossAlphaMax_ = 1.0f;
 	bossAlphaMin_ = 0.5f;
 	//ボスalphaに代入する数
@@ -88,16 +84,19 @@ void BossEnemy::BossEnemyInitialize()
 	bossScaleNum_ = { 0.01f,0.01f,0.01f };
 }
 
-void BossEnemy::Update()
+void BossEnemy::BossUpdate()
 {
-	isHit_ = false;
-	bossColor_ = { 1.0f,1.0f,1.0f };
-
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr < EnemyBullet>& bullet)
 		{
 			return bullet->GetIsDelete();
 		});
+
+	//体力が0になったら
+	if (hp_ <= 0)
+	{
+		isDeathTimer_ = true;
+	}
 
 	//死亡タイマーの処理
 	ActiveDeathTimer();
@@ -105,8 +104,8 @@ void BossEnemy::Update()
 	//弾更新
 	BulletUpdate();
 
-	// ワールドトランスフォームの行列更新と転送
-	worldTransform_.UpdateMatrix();
+	//敵の汎用処理
+	EnemyUpdate();
 }
 
 void BossEnemy::Dead()
@@ -188,21 +187,6 @@ void BossEnemy::ColliderUpdate()
 	}
 }
 
-void BossEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
-{
-	const char* str1 = "class PlayerBullet";
-
-	//相手がplayerBullet
-	if (strcmp(toCollisionName, str1) == 0)
-	{
-		if (isInit_ == true && isTurn_ == false)
-		{
-			isHit_ = true;
-			Damage(damage_);
-		}
-	}
-}
-
 void BossEnemy::Wait()
 {
 	WaitMotion();
@@ -214,6 +198,25 @@ void BossEnemy::Wait()
 	{
 		waitTimer_ = 0.0f;
 		phase_ = Phase::Turn;
+	}
+}
+
+void BossEnemy::InitMotion()
+{
+	if (isInit_ == false)
+	{
+		beforeY_ = 0.0f;
+		worldTransform_.position_.y = beforeY_ + (afterInitY_ - (initY_ * MathFunc::easeOutBack(initTime_ / initTimeMax_)));
+		worldTransform_.UpdateMatrix();
+		initTime_++;
+		if (initTime_ >= initTimeMax_)
+		{
+			isInit_ = true;
+			//初期位置をセット
+			normalPos_ = worldTransform_.position_;
+			turnAttackPos_ = GetPosition();
+			beforeY_ = worldTransform_.position_.y;
+		}
 	}
 }
 
@@ -364,41 +367,12 @@ void BossEnemy::TurnAttack(Vector3 pos)
 	}
 }
 
-void BossEnemy::InitMotion()
-{
-
-	if (isInit_ == false)
-	{
-		beforeY_ = 0.0f;
-		worldTransform_.position_.y = beforeY_ + (afterInitY_ - (initY_ * MathFunc::easeOutBack(initTime_ / initTimeMax_)));
-		worldTransform_.UpdateMatrix();
-		initTime_++;
-		if (initTime_ >=initTimeMax_)
-		{
-			isInit_ = true;
-			//初期位置をセット
-			normalPos_ = worldTransform_.position_;
-			turnAttackPos_ = GetPosition();
-			beforeY_ = worldTransform_.position_.y;
-		}
-	}
-}
-
-void BossEnemy::Damage(int damage)
-{
-	bossColor_ = hitColor_;
-	hp_ -= damage;
-	if (hp_ <= 0)
-	{
-		isDeathTimer_ = true;
-	}
-}
-
 void BossEnemy::ActiveDeathTimer()
 {
 	isHit_ = false;
 	if (isDeathTimer_ == true)
 	{
+		isDead_ = false;
 		if (deathTimer_ <= 0)
 		{
 			isDead_ = true;
@@ -436,16 +410,4 @@ void BossEnemy::BulletDraw(ViewProjection* viewProjection_)
 	{
 		bullet->Draw(viewProjection_);
 	}
-}
-
-
-Vector3 BossEnemy::GetPosition()
-{
-	Vector3 worldPos;
-
-	worldPos.x = worldTransform_.position_.x;
-	worldPos.y = worldTransform_.position_.y;
-	worldPos.z = worldTransform_.position_.z;
-
-	return worldPos;
 }

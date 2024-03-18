@@ -11,7 +11,8 @@ InvincibleEnemy::~InvincibleEnemy()
 //初期化
 void InvincibleEnemy::InvincibleEnemyInitialize()
 {
-	Initialize();
+	//敵汎用初期化
+	EnemyInitialize();
 	// OBJからモデルデータを読み込む
 	enemyModel = Model::LoadFromOBJ("InvincibleEnemy");
 	// 3Dオブジェクト生成
@@ -23,12 +24,11 @@ void InvincibleEnemy::InvincibleEnemyInitialize()
 	initTime_ = 0.0f;
 	initTimeMax_ = 180.0f;
 	velocity_ = { 0.0f,0.0f,0.0f };
-	moveY_ = 60.0f;
-	afterMoveY_ = 60.0f;
 }
 
-void InvincibleEnemy::Update(Vector3 playerPos_)
+void InvincibleEnemy::InvincibleEnemyUpdate(Vector3 playerPos_)
 {
+	//登場
 	InitMotion();
 	if (isInit_ == true)
 	{
@@ -41,36 +41,15 @@ void InvincibleEnemy::Update(Vector3 playerPos_)
 				isTurn_ = true;
 			}
 		}
+		//予備動作
 		Turn(playerPos_);
+		//移動
 		Move();
 	}
+	//退場
 	BackMotion();
 
-	// ワールドトランスフォームの行列更新と転送
-	worldTransform_.UpdateMatrix();
-}
-
-void InvincibleEnemy::ColliderUpdate()
-{
-	//当たり判定更新
-	if (collider)
-	{
-		collider->Update();
-	}
-}
-
-void InvincibleEnemy::OnCollision([[maybe_unused]] const CollisionInfo& info)
-{
-	const char* str1 = "class PlayerBullet";
-
-	if (isInit_ == true)
-	{
-		//相手がplayerBullet
-		if (strcmp(toCollisionName, str1) == 0)
-		{
-			isHit_ = true;
-		}
-	}
+	EnemyUpdate();
 }
 
 void InvincibleEnemy::Move()
@@ -125,7 +104,7 @@ void InvincibleEnemy::InitMotion()
 {
 	if (isInit_ == false)
 	{
-		worldTransform_.position_.y = beforeY_ + (afterMoveY_ - (moveY_ * MathFunc::easeOutBack(initTime_ / initTimeMax_)));
+		worldTransform_.position_.y = beforeY_ + (afterInitY_ - (initY_ * MathFunc::easeOutBack(initTime_ / initTimeMax_)));
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
@@ -139,7 +118,7 @@ void InvincibleEnemy::BackMotion()
 {
 	if (isBack_ == true)
 	{
-		worldTransform_.position_.y = beforeY_ + moveY_ * MathFunc::easeInBack(initTime_ / initTimeMax_);
+		worldTransform_.position_.y = beforeY_ + initY_ * MathFunc::easeInBack(initTime_ / initTimeMax_);
 		initTime_++;
 		if (initTime_ > initTimeMax_)
 		{
@@ -147,16 +126,4 @@ void InvincibleEnemy::BackMotion()
 			isDelete_ = true;
 		}
 	}
-}
-
-
-Vector3 InvincibleEnemy::GetPosition()
-{
-	Vector3 worldPos;
-
-	worldPos.x = worldTransform_.position_.x;
-	worldPos.y = worldTransform_.position_.y;
-	worldPos.z = worldTransform_.position_.z;
-
-	return worldPos;
 }

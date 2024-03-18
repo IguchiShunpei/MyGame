@@ -5,18 +5,11 @@
 */
 
 #pragma once
-#include "Object3d.h"
-#include "WinApp.h"
-#include "Vector3.h"
-#include "Model.h"
+#include "Enemy.h"
 #include "EnemyBullet.h"
-#include <memory>
 #include <list>
 
-//GameSceneの前方宣言
-class GameScene;
-
-class BossEnemy : public Object3d
+class BossEnemy : public Enemy
 {
 public:
 	//移動パターン
@@ -37,7 +30,7 @@ public:
 	void BossEnemyInitialize();
 
 	//更新
-	void Update();
+	void BossUpdate();
 
 	//死亡
 	void Dead();
@@ -51,29 +44,17 @@ public:
 	//getter
 	//IsDeathTimer
 	bool GetIsDeathTimer() const { return isDeathTimer_; }
-	//IsDead
-	bool GetIsDead() const { return isDead_; }
-	//IsHit
-	bool GetIsHit() const { return isHit_; }
-	//IsInit
-	bool GetIsInit() const { return isInit_; }
-	//HP
-	int GetHP() const { return hp_; }
 	//DeathTimer
 	int GetDeathTimer() const { return deathTimer_; }
-	//Color
-	Vector3 GetColor() const { return bossColor_; }
-	//alpha
-	float GetAlpha() const { return alpha_; }
-	
-	//当たり判定コールバック
-	void OnCollision(const CollisionInfo& info) override;
 
 	//行動パターン遷移
 	void PhaseChange(Vector3 playerPos);
 
 	//待機
 	void Wait();
+
+	//登場モーション
+	void InitMotion();
 
 	//待機モーション
 	void WaitMotion();
@@ -90,12 +71,6 @@ public:
 	//回転攻撃(無敵)
 	void TurnAttack(Vector3 pos);
 
-	//登場モーション
-	void InitMotion();
-
-	//ダメージ処理
-	void Damage(int damage);
-
 	//死亡するまでのタイマー処理
 	void ActiveDeathTimer();
 
@@ -106,41 +81,15 @@ public:
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
 	//Setter
-	//HP
-	void SetHp(int hp) { this->hp_ = hp; }
 	//phase
 	void SetPhase(Phase phase) { phase_ = phase; }
 	//deathTimer
 	void SetDeathTimer(int deathTimer) { deathTimer_ = deathTimer; }
-	//alpha
-	void SetAlpha(float alpha) { alpha_ = alpha; }
-	//beforeY
-	void SetBeforeY(float beforeY) { beforeY_ = beforeY; }
-	//damage
-	void SetDamage(int damage) { damage_ = damage; }
-
-
-	//ワールド座標を取得
-	Vector3 GetPosition();
 
 private:
 	//フラグ
 	//死亡時間が動いたか
 	bool isDeathTimer_ = false;
-	//倒されたか
-	bool isDead_ = false;
-	//弾が当たったか
-	bool isHit_ = false;
-	//登場したか
-	bool isInit_ = false;
-
-	//登場時間
-	float initTime_;
-	//登場時間
-	float initTimeMax_;
-	//登場時の移動量
-	float initY_;
-	float afterInitY_;
 
 	//待機モーションの変数
 	//待機時間
@@ -151,8 +100,6 @@ private:
 	float waitMotionTimer_;
 	//待機モーション最高時間
 	float waitMotionTimerMax_;
-	//前のy座標
-	float beforeY_;
 	//範囲
 	float waitMotionRange_;
 	//上昇しているか
@@ -198,10 +145,6 @@ private:
 	//弾を打ち出すまでの時間
 	float dalayTimer_ = 15.0f;
 
-	//色
-	Vector3 bossColor_;
-	Vector3 hitColor_;
-
 	// モデル
 	std::unique_ptr <Model> enemyModel;
 
@@ -210,15 +153,6 @@ private:
 	
 	//敵の移動パターン
 	Phase phase_;
-
-	//体力
-	int hp_;
-
-	//alpha
-	float alpha_ = 1.0f;
-
-	//ダメージ量
-	int damage_;
 
 	//ボスのシェイク
 	bool isShake_;
@@ -232,9 +166,6 @@ private:
 
 	//ボスの墜落スピード
 	float bossDownSpeed_;
-
-	//ボスのalpha 
-	float bossAlpha_;
 
 	//最大
 	float bossAlphaMax_;
