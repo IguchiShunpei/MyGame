@@ -144,6 +144,7 @@ void GamePlayScene::Update()
 			}
 			else if (meteors->GetDeadEffect() == meteors->SmallMeteor)
 			{
+				//3つ出す
 				for (int i = 0; i < 3; i++)
 				{
 					//敵の生成
@@ -151,9 +152,10 @@ void GamePlayScene::Update()
 					//敵の初期化
 					newMeteor->MeteorInitialize();
 					//コライダーの追加
-					newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 1.5f));
+					newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
 					// 座標データに追加
-					newMeteor->SetPosition(meteors->GetPosition());
+					newMeteor->SetPosition(meteors->GetPosition() + meteors->GetSmallMeteorPos(i));
+					newMeteor->SetVelocity(meteors->GetVelocity(i));
 					newMeteor->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 					newMeteor->SetDeadEffect(newMeteor->None);
 					newMeteor->worldTransform_.UpdateMatrix();
