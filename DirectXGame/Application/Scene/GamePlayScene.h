@@ -13,7 +13,7 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "Player.h"
-#include "Enemy.h"
+#include "ShotEnemy.h"
 #include "InvincibleEnemy.h"
 #include "WeakEnemy.h"
 #include "BossEnemy.h"
@@ -70,7 +70,7 @@ public:
 	void Finalize() override;
 
 	//敵リスト
-	const std::list<std::unique_ptr<Enemy>>& GetEnemys() { return enemys_; }
+	const std::list<std::unique_ptr<ShotEnemy>>& GetEnemys() { return enemys_; }
 	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
 	const std::list<std::unique_ptr<InvincibleEnemy>>& GetInvEnemys() { return invincibleEnemys_; }
 
@@ -118,13 +118,13 @@ private://メンバ変数
 	std::unique_ptr <Player> player_;
 
 	//敵
-	std::unique_ptr<Enemy> enemy;
+	std::unique_ptr<ShotEnemy> enemy;
 	std::unique_ptr<WeakEnemy> wEnemy;
 	std::unique_ptr<InvincibleEnemy> invincibleEnemy;
 	std::unique_ptr<BossEnemy> bEnemy;
 
 	//敵
-	std::list<std::unique_ptr<Enemy>> enemys_;
+	std::list<std::unique_ptr<ShotEnemy>> enemys_;
 	std::list<std::unique_ptr<WeakEnemy>> wEnemys_;
 	std::list<std::unique_ptr<InvincibleEnemy>> invincibleEnemys_;
 

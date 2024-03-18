@@ -109,7 +109,7 @@ void Effect::H_ParticleUpdate(InvincibleEnemy* invincibleEnemy)
 	}
 }
 
-void Effect::E_ParticleUpdate(Enemy* enemy,bool& isDeadCameraShake)
+void Effect::E_ParticleUpdate(ShotEnemy* enemy,bool& isDeadCameraShake)
 {
 	if (enemy->GetIsDead() == true)
 	{

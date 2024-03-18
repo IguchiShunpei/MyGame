@@ -197,9 +197,9 @@ void GamePlayScene::Update()
 			invEnemys->ColliderUpdate();
 		}
 		//弾を撃つ敵
-		for (std::unique_ptr<Enemy>& enemys : enemys_)
+		for (std::unique_ptr<ShotEnemy>& enemys : enemys_)
 		{
-			enemys->Update(player_->GetPosition());
+			enemys->ShotEnemyUpdate(player_->GetPosition());
 			enemys->SetDamage(player_->GetBulletPower());
 			enemys->ColliderUpdate();
 		}
@@ -405,7 +405,7 @@ void GamePlayScene::Draw()
 			invEnemys->Draw(camera_->GetViewProjection());
 		}
 		//敵
-		for (std::unique_ptr<Enemy>& enemys : enemys_)
+		for (std::unique_ptr<ShotEnemy>& enemys : enemys_)
 		{
 			enemys->Draw(camera_->GetViewProjection(), 1.0f, enemys->GetColor());
 
@@ -461,7 +461,7 @@ void GamePlayScene::EffectUpdate(bool& isDeadCameraShake)
 	}
 
 	//敵の被ダメージ処理
-	for (std::unique_ptr<Enemy>& enemys : enemys_)
+	for (std::unique_ptr<ShotEnemy>& enemys : enemys_)
 	{
 		effect_->E_ParticleUpdate(enemys.get(), isDeadCameraShake);
 	}
@@ -581,9 +581,9 @@ void GamePlayScene::UpdateEnemyPop()
 			std::string direction;
 			getline(line_stream, word, ' ');
 			//敵の生成
-			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+			std::unique_ptr<ShotEnemy> newEnemy = std::make_unique<ShotEnemy>();
 			//敵の初期化
-			newEnemy->EnemyInitialize();
+			newEnemy->ShotEnemyInitialize();
 			//コライダーの追加
 			newEnemy->SetCollider(new SphereCollider(Vector3(0, 0, 0), 3.0f));
 			if (word.find("HP") == 0)
@@ -719,11 +719,11 @@ void GamePlayScene::DeleteObject()
 		{
 			return wEnemy->GetIsDelete();
 		});
-	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+	enemys_.remove_if([](std::unique_ptr <ShotEnemy>& enemy)
 		{
 			return enemy->GetIsDead();
 		});
-	enemys_.remove_if([](std::unique_ptr <Enemy>& enemy)
+	enemys_.remove_if([](std::unique_ptr <ShotEnemy>& enemy)
 		{
 			return enemy->GetIsDelete();
 		});

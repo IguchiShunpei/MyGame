@@ -10,7 +10,7 @@
 #include "DirectXCommon.h"
 #include "Player.h"
 #include "Meteor.h"
-#include "Enemy.h"
+#include "ShotEnemy.h"
 #include "InvincibleEnemy.h"
 #include "WeakEnemy.h"
 #include "BossEnemy.h"
@@ -29,7 +29,7 @@ public:
 
 	//各オブジェクトの処理
 	void H_ParticleUpdate(InvincibleEnemy* invincibleEnemy);
-	void E_ParticleUpdate(Enemy* enemy, bool& isDeadCameraShake_);
+	void E_ParticleUpdate(ShotEnemy* enemy, bool& isDeadCameraShake_);
 	void M_ParticleUpdate(Meteor* meteor, bool& isDeadCameraShake_);
 	void W_ParticleUpdate(WeakEnemy* weakEnemy, bool& isDeadCameraShake_);
 	void B_ParticleUpdate(BossEnemy* bossEnemy, bool& isDeadCameraShake_);
