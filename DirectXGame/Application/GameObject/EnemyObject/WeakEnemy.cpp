@@ -94,12 +94,15 @@ void WeakEnemy::Move()
 		MathFunc::CurveProjection(worldTransform_, startSpeedBeside, C, flame);
 		break;
 	case Phase::L:   //カーブフェーズ
+		worldTransform_.rotation_.y += rota_;
 		MathFunc::CurveProjection(worldTransform_, { -startSpeedBeside.x,startSpeedBeside.y,startSpeedBeside.z }, -C, flame);
 		break;
 	case Phase::U:   //カーブフェーズ
+		worldTransform_.rotation_.x += rota_;
 		MathFunc::HorizontalProjection(worldTransform_, { startSpeedVertical.x,-startSpeedVertical.y,startSpeedVertical.z }, -C, flame);
 		break;
 	case Phase::D:   //カーブフェーズ
+		worldTransform_.rotation_.x -= rota_;
 		MathFunc::HorizontalProjection(worldTransform_, startSpeedVertical, C, flame);
 		break;
 	}

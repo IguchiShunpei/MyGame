@@ -19,7 +19,7 @@ void Meteor::MeteorInitialize()
 	// オブジェクトにモデルをひも付ける
 	SetModel(meteorModel_.get());
 
-	speed_ = 0.3f;
+	velocity_ = { 0.0f,0.0f,0.3f };
 	frontZ_ = -200.0f;
 	backZ_ = 600.0f;
 
@@ -80,7 +80,7 @@ void Meteor::MeteorUpdate()
 void Meteor::Move()
 {
 	//移動
-	worldTransform_.position_.z -= speed_;
+	worldTransform_.position_ -= velocity_;
 	//カメラよりも奥に進んだら削除
 	if (worldTransform_.position_.z <= frontZ_)
 	{
@@ -166,6 +166,6 @@ void Meteor::SetSpeed(float min,float max)
 	std::mt19937_64 engine(seed_gen());
 	std::uniform_real_distribution<float>speed(min, max);
 
-	speed_ = speed(engine);
+	velocity_.z = speed(engine);
 }
 
