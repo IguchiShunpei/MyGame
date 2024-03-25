@@ -107,6 +107,108 @@ wait 200
 
 //WAVE04
 
+meteor M -10 5 80 
+
+wait 20
+
+meteor M 10 5 80 
+
+wait 20
+
+meteor M 0 -5 80 
+
+wait 20
+
+meteor M 10 -5 80 
+
+wait 20
+meteor M -10 -15 80 
+
+wait 20
+meteor M 0 10 80 
+
+wait 20
+
+meteor M 10 5 80 
+
+wait 20
+
+meteor M 10 5 80 
+
+wait 20
+
+meteor M 0 -5 80 
+
+wait 20
+
+meteor M 10 -5 80 
+
+wait 20
+
+meteor M -10 -15 80 
+
+wait 20
+
+meteor M 0 10 80 
+
+wait 20
+
+meteor M 10 5 80 
+meteor M -10 5 80 
+
+wait 20
+
+meteor M 10 5 80 
+
+wait 20
+
+meteor M 0 -5 80 
+
+wait 20
+
+meteor M 10 -5 80 
+
+wait 20
+
+meteor M -10 -15 80 
+
+wait 20
+
+meteor M 0 10 80 
+
+wait 20
+
+meteor M 10 5 80 
+
+wait 20
+
+meteor M 10 5 80 
+
+wait 20
+
+meteor M 0 -5 80 
+
+wait 20
+
+meteor M 10 -5 80 
+
+wait 20
+
+meteor M -10 -15 80 
+
+wait 20
+
+meteor M 0 10 80 
+
+wait 20
+
+meteor M 10 5 80 
+
+
+wait 200
+
+//WAVE05
+
 wEnemy L -10 -5 100 
 invEnemy -40 20 100
 
@@ -152,9 +254,10 @@ wait 20
 
 wEnemy L -10 -5 100 
 
-wait 350
+wait 300
 
-//WAVE05
+
+//WAVE06
 
 wEnemy U 10 -20 120
 wEnemy U 5 -20 120
