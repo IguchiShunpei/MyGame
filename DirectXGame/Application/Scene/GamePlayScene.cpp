@@ -156,7 +156,8 @@ void GamePlayScene::Update()
 					// 座標データに追加
 					newMeteor->SetPosition(meteors->GetPosition() + meteors->GetSmallMeteorPos(i));
 					newMeteor->SetVelocity(meteors->GetVelocity(i));
-					newMeteor->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+					newMeteor->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+					newMeteor->SetAlpha(1.0f);
 					newMeteor->SetDeadEffect(newMeteor->None);
 					newMeteor->worldTransform_.UpdateMatrix();
 
