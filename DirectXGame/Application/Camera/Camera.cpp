@@ -51,6 +51,9 @@ void Camera::Initialize()
 	//シェイク
 	bossCameraShake_ = 1.5f;
 
+	//シェイクフラグ
+	isShake_ = false;
+
 	//ボス登場
 	upZ_ = 10.0f;
 	looseZ_ = 1.0f;
@@ -80,7 +83,7 @@ void Camera::Update()
 	viewProjection_->UpdateMatrix();
 }
 
-void Camera::PlayerInitCameraWork(bool& isStart,Player*player)
+void Camera::PlayerInitCameraWork(bool& isStart, Player* player)
 {
 	if (isStart == false)
 	{
@@ -109,7 +112,7 @@ void Camera::PlayerInitCameraWork(bool& isStart,Player*player)
 	}
 }
 
-void Camera::BossInitCameraWork(BossEnemy*bEnemy,bool& isBossInitCamera)
+void Camera::BossInitCameraWork(BossEnemy* bEnemy, bool& isBossInitCamera)
 {
 	switch (bossInitNum_)
 	{
@@ -150,15 +153,7 @@ void Camera::BossInitCameraWork(BossEnemy*bEnemy,bool& isBossInitCamera)
 			bossInitTimer_++;
 			if (bossInitTimer_ < bossInitTimerMax_)
 			{
-				//bossInitTimerが奇数ならカメラシェイク
-				if (bossInitTimer_ % 2 != 1)
-				{
-					CameraShake(bossCameraShake_, bossCameraShake_);
-				}
-				else
-				{
-					viewProjection_->SetEye(bossInitCameraPos_);
-				}
+				CameraShake(bossInitTimer_, bossCameraShake_, bossCameraShake_);
 			}
 			else
 			{
@@ -222,7 +217,7 @@ void Camera::ToClearCameraWork(bool& isClearCameraWork)
 	}
 }
 
-void Camera::ToGameOverCameraWork(Player*player,bool& isPlayerDead,bool& isGameOver)
+void Camera::ToGameOverCameraWork(Player* player, bool& isPlayerDead, bool& isGameOver)
 {
 	viewProjection_->SetTarget(player->GetPosition());
 	if (isPlayerDead == false)
@@ -245,16 +240,32 @@ void Camera::ToGameOverCameraWork(Player*player,bool& isPlayerDead,bool& isGameO
 	}
 }
 
-void Camera::CameraShake(float x, float y)
+void Camera::CameraShake(int time, float x, float y)
 {
-	//乱数生成装置
-	std::random_device seed_gen;
-	std::mt19937_64 engine(seed_gen());
-	std::uniform_real_distribution<float>dist(-x, x);
-	std::uniform_real_distribution<float>dist2(-y, y);
+ 	if (isShake_ == false)
+	{
+		//シェイク前の座標を保存
+		beforeEyeNum_ = viewProjection_->eye_;
+		isShake_ = true;
+	}
+	else
+	{
+		if (time % 2 != 1)
+		{
+			//乱数生成装置
+			std::random_device seed_gen;
+			std::mt19937_64 engine(seed_gen());
+			std::uniform_real_distribution<float>dist(-x, x);
+			std::uniform_real_distribution<float>dist2(-y, y);
 
-	viewProjection_->eye_ = viewProjection_->eye_ + Vector3(dist(engine), dist2(engine), dist2(engine));
-	viewProjection_->UpdateMatrix();
+			viewProjection_->eye_ = viewProjection_->eye_ + Vector3(dist(engine), dist2(engine), 0.0f);
+			viewProjection_->UpdateMatrix();
+		}
+		else
+		{
+			viewProjection_->eye_ = beforeEyeNum_;
+		}
+	}
 }
 
 void Camera::MoveCamera()

@@ -11,6 +11,7 @@
 
 void Meteor::MeteorInitialize()
 {
+	//オブジェクト初期化
 	Initialize();
 	// OBJからモデルデータを読み込む
 	meteorModel_ = Model::LoadFromOBJ("meteor");
@@ -61,6 +62,7 @@ void Meteor::MeteorUpdate()
 	if (isDead_ == false)
 	{
 		color_ = { 1.0f,1.0f,1.0f };
+
 		//移動
 		Move();
 		//回転

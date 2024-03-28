@@ -40,8 +40,7 @@ public:
 	//登場モーション
 	void InitMotion();
 
-	//振動
-	void Shake(float x,float y);
+
 
 	//移動
 	void Move();
@@ -164,7 +163,7 @@ private:
 	int bulletPower_;
 
 	//登場モーションに使う変数
-	float initSpeedZ_;
+	float initMotionPos_;
 	float initMotionTimeMax_;
 	float initRotaZ_;
 	//登場座標

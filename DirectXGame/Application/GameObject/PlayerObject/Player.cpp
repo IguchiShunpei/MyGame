@@ -55,9 +55,9 @@ void Player::PlayerInitialize()
 	dalayTimer_ = 0.0f;
 	hp_ = 5;
 	hpMax_ = hp_;
-	initSpeedZ_ = 0.5f;
-	initRotaZ_ = 400.0f;
-	initMotionTimeMax_ = 40.0f;
+	initMotionPos_ = 20.0f;
+	initRotaZ_ = 360.0f;
+	initMotionTimeMax_ = 60.0f;
 
 	bulletPower_ = 5;
 	kBulletSpeed_ = 10.0f;
@@ -131,45 +131,25 @@ void Player::OnCollision([[maybe_unused]] const CollisionInfo& info)
 
 void Player::InitMotion()
 {
-	if (isInit_ == false && isInitAfter_ == false)
+	if (isInit_ == false)
 	{
-		//前進
-		worldTransform_.position_.z += initSpeedZ_;
-		//イージングを使った回転
-		worldTransform_.rotation_.z = initRotaZ_ * -MathFunc::easeOutSine(initMotionTime_ / initMotionTimeMax_);
-		initMotionTime_++;
-		//初期座標に来たら固定
-		if (worldTransform_.position_.z >= 0.0f)
+		if (initMotionTime_ <= initMotionTimeMax_)
+		{
+			//前進
+			worldTransform_.position_.z = -initMotionPos_ + initMotionPos_ * MathFunc::easeOutSine(initMotionTime_ / initMotionTimeMax_);;
+			//イージングを使った回転
+			worldTransform_.rotation_.z = initRotaZ_ * -MathFunc::easeOutBack(initMotionTime_ / initMotionTimeMax_);
+			initMotionTime_++;
+		}
+		else
 		{
 			SetPosition(initPos_);
-			isInitAfter_ = true;
-		}
-	}
-	//余分に回転した分を戻す処理
-	if (isInitAfter_ == true)
-	{
-		worldTransform_.rotation_.z += backRota_;
-		//戻り切ったらフラグを切り替え
-		if (worldTransform_.rotation_.z >= -initRotaMax_)
-		{
 			SetRotation(initRota_);
-			isInitAfter_ = false;
+
 			isInit_ = true;
 		}
 	}
 	// ワールドトランスフォームの行列更新と転送
-	worldTransform_.UpdateMatrix();
-}
-
-void Player::Shake(float x, float y)
-{
-	//乱数生成装置
-	std::random_device seed_gen;
-	std::mt19937_64 engine(seed_gen());
-	std::uniform_real_distribution<float>dist(-x, x);
-	std::uniform_real_distribution<float>dist2(-y, y);
-
-	worldTransform_.position_ = worldTransform_.position_ + Vector3(dist(engine), dist2(engine), dist2(engine));
 	worldTransform_.UpdateMatrix();
 }
 
@@ -432,7 +412,7 @@ void Player::Attack()
 	}
 }
 
-Vector3 Player::bVelocity(const Vector3& velocity,const WorldTransform& worldTransform)
+Vector3 Player::bVelocity(const Vector3& velocity, const WorldTransform& worldTransform)
 {
 	Vector3 result = { 0,0,0 };
 
@@ -508,7 +488,7 @@ void Player::BulletDraw(ViewProjection* viewProjection_)
 {
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
-		bullet->Draw(viewProjection_,1.0f, bullet->GetBulletColor());
+		bullet->Draw(viewProjection_, 1.0f, bullet->GetBulletColor());
 	}
 }
 

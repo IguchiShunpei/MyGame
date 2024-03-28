@@ -48,12 +48,6 @@ void GamePlayScene::Initialize()
 	player_->PlayerInitialize();
 	player_->LaserInitialize();
 
-	//bossEnemy
-	bEnemy = std::make_unique < BossEnemy>();
-	bEnemy->BossEnemyInitialize();
-	bEnemy->worldTransform_.UpdateMatrix();
-	bEnemy->ColliderUpdate();
-
 	//敵ファイル読み込み
 	LoadEnemyPop();
 
@@ -83,7 +77,7 @@ void GamePlayScene::Initialize()
 	clearCameraMoveZ_ = 0.05f;
 
 	//シェイク
-	playerCameraShake_ = 0.2f;
+	playerCameraShake_ = 0.5f;
 	bossCameraShake_ = 1.5f;
 	enemyCameraShake_ = 0.5f;
 
@@ -218,7 +212,6 @@ void GamePlayScene::Update()
 				bEnemy->BossUpdate();
 				bEnemy->SetDamage(player_->GetBulletPower());
 				bEnemy->PhaseChange(player_->GetPosition());
-				bEnemy->ColliderUpdate();
 			}
 			else
 			{
@@ -229,15 +222,8 @@ void GamePlayScene::Update()
 				BossDead();
 				if (isClearScene_ == false)
 				{
-					//deathTimerが奇数なら
-					if (bEnemy->GetDeathTimer() % 2 != 1)
-					{
-						camera_->CameraShake(enemyCameraShake_, enemyCameraShake_);
-					}
-					else
-					{
-						cameraShakePos_ = camera_->GetViewProjection()->GetEye();
-					}
+					//カメラシェイク
+ 					camera_->CameraShake(bEnemy->GetDeathTimer(),enemyCameraShake_, enemyCameraShake_);
 				}
 			}
 			if (isClearScene_ == false)
@@ -245,15 +231,11 @@ void GamePlayScene::Update()
 				//死亡フラグがtrueになったら
 				if (bEnemy->GetIsDead() == true)
 				{
-					camera_->GetViewProjection()->SetEye(cameraShakePos_);
 					isClearScene_ = true;
+					camera_->SetIsShake(false);
 					normalEyeNum_ = camera_->GetViewProjection()->eye_;
 					normalTargetNum_ = camera_->GetViewProjection()->target_;
 					camera_->GetViewProjection()->SetTarget(player_->GetPosition());
-				}
-				else
-				{
-					cameraShakePos_ = camera_->GetViewProjection()->GetEye();
 				}
 			}
 			//クリア演出の処理
@@ -290,11 +272,7 @@ void GamePlayScene::Update()
 	//もし攻撃に当たって無かったら
 	if (player_->GetIsDead() == false)
 	{
-		if (player_->GetIsHit() == false)
-		{
-			cameraShakePos_ = camera_->GetViewProjection()->GetEye();
-		}
-		else
+		if (player_->GetIsHit() == true)
 		{
 			//攻撃を受けた時の無敵フラグがtrueになったら
 			if (player_->GetIsInv() == true)
@@ -303,14 +281,7 @@ void GamePlayScene::Update()
 				{
 					ui_->SetIsRed(true);
 					ui_->FadeOut(ui_->Red);
-					if (hitPlayerTimer_ % 2 != 1)
-					{
-						camera_->CameraShake(playerCameraShake_, playerCameraShake_);
-					}
-					else
-					{
-						camera_->GetViewProjection()->SetEye(cameraShakePos_);
-					}
+					camera_->CameraShake(hitPlayerTimer_,playerCameraShake_, playerCameraShake_);
 					ui_->Damage((float)hitPlayerTimer_, (float)hitPlayerTimerMax_, player_->GetHp(), player_->GetHpMax());
 					//無敵時間
 					hitPlayerTimer_++;
@@ -321,6 +292,7 @@ void GamePlayScene::Update()
 					ui_->RedReset();
 					player_->SetIsHit(false);
 					player_->SetIsInv(false);
+					camera_->SetIsShake(false);
 					hitPlayerTimer_ = 0;
 				}
 			}
@@ -333,24 +305,14 @@ void GamePlayScene::Update()
 		hitEnemyTimer_++;
 		if (hitEnemyTimer_ < 16)
 		{
-			if (hitEnemyTimer_ % 2 != 1)
-			{
-				camera_->CameraShake(enemyCameraShake_, enemyCameraShake_);
-			}
-			else
-			{
-				camera_->GetViewProjection()->SetEye(cameraShakePos_);
-			}
+			camera_->CameraShake(hitEnemyTimer_,enemyCameraShake_, enemyCameraShake_);
 		}
 		else
 		{
 			hitEnemyTimer_ = 0;
+			camera_->SetIsShake(false);
 			isDeadCameraShake_ = false;
 		}
-	}
-	else
-	{
-		cameraShakePos_ = camera_->GetViewProjection()->GetEye();
 	}
 
 	//エフェクト更新
@@ -469,10 +431,11 @@ void GamePlayScene::EffectUpdate(bool& isDeadCameraShake)
 	{
 		effect_->M_ParticleUpdate(meteors.get(), isDeadCameraShake);
 	}
+
 	//ボス敵の被ダメージ処理
-	if (bEnemy->GetIsInit() == true)
+	if (gameNum_ == GameNum::BossScene)
 	{
-		if (isBEnemyDeadScene_ == true)
+		if (bEnemy->GetIsInit() == true && isBEnemyDeadScene_ == true)
 		{
 			effect_->B_ParticleUpdate(bEnemy.get(), isDeadCameraShake);
 		}
@@ -701,6 +664,10 @@ void GamePlayScene::UpdateEnemyPop()
 		else if (key == "BOSS")
 		{
 			isBossInitCamera_ = true;
+			//bossEnemy
+			bEnemy = std::make_unique < BossEnemy>();
+			bEnemy->BossEnemyInitialize();
+			bEnemy->BossUpdate();
 			gameNum_ = GameNum::BossScene;
 		}
 	}
@@ -777,7 +744,7 @@ void GamePlayScene::BossDead()
 {
 	//UI退場
 	ui_->UIOutMotion();
-	player_->GetLaser()->SetIsLaserBack(false);
+	//ボスの爆発
 	effect_->GetExplosion01()->EnemyExplosionUpdate();
 	effect_->GetExplosion02()->EnemyExplosionUpdate();
 	bEnemy->Dead();

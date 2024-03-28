@@ -81,4 +81,7 @@ private:
 	std::unique_ptr <Explosion> explosion01_;
 	std::unique_ptr <Explosion> explosion02_;
 	std::unique_ptr <Explosion> explosion03_;
+
+	//汎用的なパーティクルが消えるまでの時間
+	int deleteTime_;
 };
