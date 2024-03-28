@@ -178,15 +178,6 @@ void BossEnemy::BulletUpdate()
 	}
 }
 
-void BossEnemy::ColliderUpdate()
-{
-	//当たり判定更新
-	if (collider)
-	{
-		collider->Update();
-	}
-}
-
 void BossEnemy::Wait()
 {
 	WaitMotion();

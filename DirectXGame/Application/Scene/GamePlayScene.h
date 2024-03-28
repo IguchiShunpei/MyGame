@@ -161,11 +161,6 @@ private://メンバ変数
 	//ボス登場番号
 	int bossInitNum_;
 
-	//カメラワーク前の座標を入れる変数
-
-	//カメラシェイク時
-	Vector3 cameraShakePos_;
-
 	//カメラシェイク範囲
 	//自機
 	float playerCameraShake_;

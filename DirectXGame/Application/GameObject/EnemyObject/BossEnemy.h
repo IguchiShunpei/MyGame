@@ -38,9 +38,6 @@ public:
 	//弾更新
 	void BulletUpdate();
 
-	//当たり判定更新
-	void ColliderUpdate();
-
 	//getter
 	//IsDeathTimer
 	bool GetIsDeathTimer() const { return isDeathTimer_; }

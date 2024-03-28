@@ -54,6 +54,8 @@ void Effect::Initialize()
 	explosion02_->ExplosionInitialize(1);
 	explosion03_ = std::make_unique<Explosion>();
 	explosion03_->ExplosionInitialize(2);
+
+	deleteTime_ = 90;
 }
 
 void Effect::Update()
@@ -105,7 +107,7 @@ void Effect::H_ParticleUpdate(InvincibleEnemy* invincibleEnemy)
 {
 	if (invincibleEnemy->GetIsHit() == true)
 	{
-		pm_Hit->Fire(p_Hit.get(), 40, invincibleEnemy->GetPosition(), 5, false, { 1.0f, 0.0f });
+		pm_Hit->Fire(p_Hit.get(), deleteTime_, invincibleEnemy->GetPosition(), 5, false, { 1.0f, 0.0f });
 	}
 }
 
@@ -114,7 +116,7 @@ void Effect::E_ParticleUpdate(ShotEnemy* enemy,bool& isDeadCameraShake)
 	if (enemy->GetIsDead() == true)
 	{
 		isDeadCameraShake = true;
-		pm_Meteor->Fire(p_Meteor.get(), 40, enemy->GetPosition(), 12, false, { 1.0f, 0.0f });
+		pm_Meteor->Fire(p_Meteor.get(), deleteTime_, enemy->GetPosition(), 12, false, { 1.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 30, enemy->GetPosition(), 5, false, { 4.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 20, enemy->GetPosition(), 1, true, { 18.0f, 0.0f });
 		pm_Smoke->Fire(p_Smoke.get(), 30, enemy->GetPosition(), 5, false, { 5.0f, 0.0f });
@@ -126,7 +128,7 @@ void Effect::M_ParticleUpdate(Meteor* meteor, bool& isDeadCameraShake)
 	if (meteor->GetIsDead() == true)
 	{
 		isDeadCameraShake = true;
-		pm_Meteor->Fire(p_Meteor.get(), 40, meteor->GetPosition(), 12, false, { 1.0f, 0.0f });
+		pm_Meteor->Fire(p_Meteor.get(), deleteTime_, meteor->GetPosition(), 12, false, { 1.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 30, meteor->GetPosition(), 5, false, { 4.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 20, meteor->GetPosition(), 1, true, { 18.0f, 0.0f });
 		pm_Smoke->Fire(p_Smoke.get(), 30, meteor->GetPosition(), 5, false, { 5.0f, 0.0f });
@@ -138,7 +140,7 @@ void Effect::W_ParticleUpdate(WeakEnemy* weakEnemy, bool& isDeadCameraShake)
 	if (weakEnemy->GetIsDead() == true)
  	{
 		isDeadCameraShake = true;
-   		pm_WDmg->Fire(p_WDmg.get(), 40, weakEnemy->GetPosition(), 12, false, { 1.0f, 0.0f });
+   		pm_WDmg->Fire(p_WDmg.get(), deleteTime_, weakEnemy->GetPosition(), 12, false, { 1.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 30, weakEnemy->GetPosition(), 5, false, { 4.0f, 0.0f });
 		pm_Ex->Fire(p_Ex.get(), 20, weakEnemy->GetPosition(), 1, true, { 18.0f, 0.0f });
 		pm_Smoke->Fire(p_Smoke.get(), 30, weakEnemy->GetPosition(), 5, false, { 5.0f, 0.0f });

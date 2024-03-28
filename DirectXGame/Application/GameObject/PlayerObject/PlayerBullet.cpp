@@ -138,6 +138,7 @@ void PlayerBullet::LaserInit(Vector3 position, Vector3 rotation)
 		{
 			isInit_ = true;
 			isBlink_ = true;
+			initTime_ = 0.0f;
 		}
 	}
 }
@@ -165,6 +166,7 @@ void PlayerBullet::LaserOut()
 		{
 			isBack_ = true;
 			isBlink_ = false;
+			initTime_ = 0.0f;
 		}
 	}
 }

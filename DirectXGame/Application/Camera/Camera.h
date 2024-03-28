@@ -45,7 +45,7 @@ public:
 	void ToGameOverCameraWork(Player* player, bool& isPlayerDead, bool& isGameOver);
 
 	//カメラシェイク
-	void CameraShake(float x, float y);
+	void CameraShake(int time,float x, float y);
 
 	//カメラ基本移動
 	void MoveCamera();
@@ -56,7 +56,7 @@ public:
 	//Setter
 	static void SetUI(UI* ui) { ui_ = ui; }
 	static void SetPlayer(Player* player) { player_ = player; }
-
+	void SetIsShake(bool isShake) { isShake_ = isShake; }
 
 private:
 	//カメラ
@@ -115,6 +115,9 @@ private:
 	//カメラシェイク範囲
 	//敵
 	float bossCameraShake_;
+
+	//カメラシェイクフラグ
+	bool isShake_;
 
 	//ボス登場カメラワーク
 	float upZ_;
