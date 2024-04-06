@@ -158,7 +158,6 @@ void Camera::BossInitCameraWork(BossEnemy* bEnemy, bool& isBossInitCamera)
 			else
 			{
 				bossInitTimer_ = 0;
-				viewProjection_->SetEye(bossInitCameraPos_);
 				bossInitNum_ = Loose;
 			}
 		}
@@ -176,6 +175,7 @@ void Camera::BossInitCameraWork(BossEnemy* bEnemy, bool& isBossInitCamera)
 		else
 		{
 			viewProjection_->eye_.z = afterInitCameraPos_.z;
+			beforeEyeNum_ = viewProjection_->eye_;
 			isBossInitCamera = false;
 		}
 		break;

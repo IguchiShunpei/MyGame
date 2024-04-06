@@ -223,7 +223,7 @@ void GamePlayScene::Update()
 				if (isClearScene_ == false)
 				{
 					//カメラシェイク
- 					camera_->CameraShake(bEnemy->GetDeathTimer(),enemyCameraShake_, enemyCameraShake_);
+					camera_->CameraShake(bEnemy->GetDeathTimer(),enemyCameraShake_, enemyCameraShake_);
 				}
 			}
 			if (isClearScene_ == false)
@@ -282,7 +282,7 @@ void GamePlayScene::Update()
 					ui_->SetIsRed(true);
 					ui_->FadeOut(ui_->Red);
 					camera_->CameraShake(hitPlayerTimer_,playerCameraShake_, playerCameraShake_);
-  					ui_->Damage((float)hitPlayerTimer_, (float)hitPlayerTimerMax_, player_->GetHp(), player_->GetHpMax());
+					ui_->Damage((float)hitPlayerTimer_, (float)hitPlayerTimerMax_, player_->GetHp(), player_->GetHpMax());
 					//無敵時間
 					hitPlayerTimer_++;
 				}
@@ -453,7 +453,7 @@ void GamePlayScene::LoadEnemyPop()
 
 	//ファイルを開く
 	std::ifstream file;
-	file.open("Resources/csv/EnemyPop.csv");
+	file.open("Resources/csv/enemyPop.csv");
 	assert(file.is_open());
 
 	//ファイルの内容を文字列ストリームにコピー
@@ -744,7 +744,7 @@ void GamePlayScene::BossDead()
 {
 	//UI退場
 	ui_->UIOutMotion();
-	//ボスの爆発
+	player_->GetLaser()->SetIsLaserBack(false);
 	effect_->GetExplosion01()->EnemyExplosionUpdate();
 	effect_->GetExplosion02()->EnemyExplosionUpdate();
 	bEnemy->Dead();

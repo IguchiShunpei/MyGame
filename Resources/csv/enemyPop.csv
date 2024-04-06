@@ -1,6 +1,76 @@
 //雑魚敵戦(道中)
 wait 150
 
+//Tutorial
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 20
+
+wEnemy R 0 0 100 
+
+wait 200
+
 //WAVE01
 
 wEnemy D 15 0 100
