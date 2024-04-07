@@ -2,13 +2,7 @@
 
 BackGround::~BackGround()
 {
-	for (Stardust*& object : stardustObjects_)
-	{
-		delete(object);
-	}
-	for (Meteor*& object : meteorObjects_) {
-		delete(object);
-	}
+
 }
 
 void BackGround::Initialize()
@@ -40,11 +34,8 @@ void BackGround::LoadLevel()
 
 		//モデル読み込み
 		// モデルを指定して3Dオブジェクトを生成
-		backStardust_ = new Stardust();
+		std::unique_ptr<Stardust> backStardust_ = std::make_unique<Stardust>();
 		backStardust_->StardustInitialize();
-		backModelStardust_ = Model::LoadOBJ("stardust");
-		stardustModels_.insert(std::make_pair("stardust", backModelStardust_));
-		backStardust_->SetModel(backModelStardust_);
 		// 座標
 		Vector3 pos;
 		//データの値を代入
@@ -70,17 +61,14 @@ void BackGround::LoadLevel()
 		backStardust_->SetSize();
 
 		// 配列に登録
-		stardustObjects_.push_back(backStardust_);
+		stardustObjects_.push_back(move(backStardust_));
 	}
 	//隕石
 	for (auto& objectData : backGroundMeteor_->objects) {
 		// モデルを指定して3Dオブジェクトを生成
-		backMeteor_ = new Meteor();
+		std::unique_ptr<Meteor> backMeteor_ = std::make_unique<Meteor>();
+		backMeteor_->SetIsBack(true);
 		backMeteor_->MeteorInitialize();
-		//モデル読み込み
-		backModelMeteor_ = Model::LoadOBJ("backMeteor");
-		meteorModels_.insert(std::make_pair("meteor", backModelMeteor_));
-		backMeteor_->SetModel(backModelMeteor_);
 		// 座標
 		Vector3 pos;
 		//データの値を代入
@@ -113,7 +101,7 @@ void BackGround::LoadLevel()
 		backMeteor_->SetSpeed(0.1f, 1.0f);
 
 		// 配列に登録
-		meteorObjects_.push_back(backMeteor_);
+		meteorObjects_.push_back(move(backMeteor_));
 	}
 }
 

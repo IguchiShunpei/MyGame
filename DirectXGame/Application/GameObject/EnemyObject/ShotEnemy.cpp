@@ -59,28 +59,27 @@ void ShotEnemy::ShotEnemyUpdate(Vector3 playerPos)
 			return bullet->GetIsDelete();
 		});
 
-	//登場モーション
-	InitMotion();
-	if (isInit_ == true)
-	{
-		Move();
-		//攻撃したら退場
-		if (isAttack_ == false)
+		//登場モーション
+		InitMotion();
+		if (isInit_ == true)
 		{
-			Attack(playerPos);
+			Move();
+			//攻撃したら退場
+			if (isAttack_ == false)
+			{
+				Attack(playerPos);
+			}
 		}
-	}
 
-	//退場モーション
-	BackMotion();
+		//退場モーション
+		BackMotion();
 
-	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
-	{
-		bullet->Update();
-		bullet->ColliderUpdate();
-	}
-
+		//弾更新
+		for (std::unique_ptr<EnemyBullet>& bullet : bullets_)
+		{
+			bullet->Update();
+			bullet->ColliderUpdate();
+		}
 	//敵汎用更新
 	EnemyUpdate();
 }

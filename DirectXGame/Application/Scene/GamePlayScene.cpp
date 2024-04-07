@@ -122,6 +122,7 @@ void GamePlayScene::Update()
 
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
+		meteors->SetDamage(player_->GetBulletPower());
 		meteors->MeteorUpdate();
 		if (meteors->GetIsDead() == true)
 		{
@@ -183,6 +184,17 @@ void GamePlayScene::Update()
 		{
 			wEnemys->WEnemyUpdate();
 			wEnemys->SetDamage(player_->GetBulletPower());
+			if (wEnemys->GetIsDead() == true)
+			{
+				//敵の生成
+				std::unique_ptr<Score> scoreWeakEnemy = std::make_unique<Score>();
+				//スコアオブジェクトを隕石にする
+				scoreWeakEnemy->SetEnemyObject(scoreWeakEnemy->WEAKENEMY);
+				//敵の初期化
+				scoreWeakEnemy->ScoreInitialize();
+				//登録
+				scoreObjects_.push_back(std::move(scoreWeakEnemy));
+			}
 		}
 		//倒せない敵
 		for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
@@ -194,6 +206,17 @@ void GamePlayScene::Update()
 		{
 			enemys->ShotEnemyUpdate(player_->GetPosition());
 			enemys->SetDamage(player_->GetBulletPower());
+			if (enemys->GetIsDead() == true)
+			{
+				//敵の生成
+				std::unique_ptr<Score> scoreShotEnemy = std::make_unique<Score>();
+				//スコアオブジェクトを隕石にする
+				scoreShotEnemy->SetEnemyObject(scoreShotEnemy->SHOTENEMY);
+				//敵の初期化
+				scoreShotEnemy->ScoreInitialize();
+				//登録
+				scoreObjects_.push_back(std::move(scoreShotEnemy));
+			}
 		}
 		break;
 
@@ -323,6 +346,12 @@ void GamePlayScene::Update()
 
 	//カメラ
 	camera_->Update();
+
+	//スコア
+	for (std::unique_ptr<Score>& scoreObjects : scoreObjects_)
+	{
+		scoreObjects->ScoreUpdate();
+	}
 }
 
 void GamePlayScene::Draw()
@@ -338,6 +367,11 @@ void GamePlayScene::Draw()
 	//背景オブジェクト
 	backGround_->Draw(camera_->GetViewProjection());
 
+	//スコア
+	for (std::unique_ptr<Score>& scoreObjects : scoreObjects_)
+	{
+		scoreObjects->Draw(camera_->GetViewProjection(), scoreObjects->GetAlpha(), scoreObjects->GetColor());
+	}
 
 	//隕石(敵)
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
@@ -390,6 +424,7 @@ void GamePlayScene::Draw()
 		player_->BulletDraw(camera_->GetViewProjection());
 		player_->GetLaser()->Draw(camera_->GetViewProjection(), player_->GetLaser()->GetAlpha(), player_->GetLaser()->GetBulletColor());
 	}
+
 	Object3d::PostDraw();
 
 	//エフェクト
@@ -397,6 +432,7 @@ void GamePlayScene::Draw()
 
 	//UI
 	ui_->UIDraw();
+
 
 	// 描画後処理
 	dxCommon_->PostDraw();
@@ -707,6 +743,10 @@ void GamePlayScene::DeleteObject()
 	meteors_.remove_if([](std::unique_ptr <Meteor>& meteor)
 		{
 			return meteor->GetIsDead();
+		});
+	scoreObjects_.remove_if([](std::unique_ptr <Score>& scoreObject)
+		{
+			return scoreObject->GetIsDelete();
 		});
 }
 

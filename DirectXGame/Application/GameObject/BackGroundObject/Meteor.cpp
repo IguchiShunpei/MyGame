@@ -12,9 +12,16 @@
 void Meteor::MeteorInitialize()
 {
 	//オブジェクト初期化
-	Initialize();
-	// OBJからモデルデータを読み込む
-	meteorModel_ = Model::LoadFromOBJ("meteor");
+	EnemyInitialize();
+	if (isBack_ == false)
+	{
+		// OBJからモデルデータを読み込む
+		meteorModel_ = Model::LoadFromOBJ("meteor");
+	}
+	else
+	{
+		meteorModel_ = Model::LoadFromOBJ("backMeteor");
+	}
 	// 3Dオブジェクト生成
 	Create();
 	// オブジェクトにモデルをひも付ける
@@ -25,9 +32,7 @@ void Meteor::MeteorInitialize()
 	backZ_ = 600.0f;
 
 	rotaSpeed_ = 1.0f;
-	worldTransform_.scale_ = Vector3(2.0f, 2.0f,2.0f);
-
-	hitColor_ = {3.0f,3.0f,3.0f};
+	worldTransform_.scale_ = Vector3(2.0f, 2.0f, 2.0f);
 
 	//乱数生成装置
 	std::random_device seed_gen;
@@ -43,7 +48,6 @@ void Meteor::MeteorInitialize()
 	isInit_ = false;
 
 	alpha_ = 0.0;
-	alphaMax_ = 1.0f;
 };
 
 void Meteor::MeteorUpdate()
@@ -67,16 +71,10 @@ void Meteor::MeteorUpdate()
 		Move();
 		//回転
 		Rotate();
-		//当たり判定更新
-		ColliderUpdate();
-		if (isBack_ == false)
-		{
-			//ダメージ処理
-			Damage();
-		}
 	}
+
 	//更新
-	Update();
+	EnemyUpdate();
 }
 
 void Meteor::Move()
@@ -127,41 +125,7 @@ void Meteor::Rotate()
 	}
 }
 
-void Meteor::Damage()
-{
-	if (isHit_ == true)
-	{
-		hp_--;
-		color_ = hitColor_;
-		if (hp_ <= 0)
-		{
-			isDead_ = true;
-		}
-	}
-	isHit_ = false;
-}
-
-void Meteor::ColliderUpdate()
-{
-	//当たり判定更新
-	if (collider)
-	{
-		collider->Update();
-	}
-}
-
-void Meteor::OnCollision([[maybe_unused]] const CollisionInfo& info)
-{
-	const char* str1 = "class PlayerBullet";
-
-	//相手がplayerBullet
-	if (strcmp(toCollisionName, str1) == 0)
-	{
-		isHit_ = true;
-	}
-}
-
-void Meteor::SetSpeed(float min,float max)
+void Meteor::SetSpeed(float min, float max)
 {
 	//乱数生成装置
 	std::random_device seed_gen;

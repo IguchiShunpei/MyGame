@@ -52,7 +52,8 @@ void Player::PlayerInitialize()
 	moveRotaMax_ = 30.0f;
 	bulletLevel_ = 1;
 	initMotionTime_ = 0.0f;
-	dalayTimer_ = 0.0f;
+	dalayTimer_ = 0;
+	dalayTimerMax_ = 10;
 	hp_ = 5;
 	hpMax_ = hp_;
 	initMotionPos_ = 20.0f;
@@ -382,33 +383,42 @@ void Player::Rotate()
 void Player::Attack()
 {
 	//Spaceキーを押したとき
-	if (input_->TriggerKey(DIK_SPACE))
+	if (input_->PushKey(DIK_SPACE))
 	{
-		//自キャラの座標をコピー
-		Vector3 position = GetWorldPosition();
+		if (dalayTimer_ <= dalayTimerMax_)
+		{
+			dalayTimer_++;
+		}
+		else
+		{
+			//自キャラの座標をコピー
+			Vector3 position = GetWorldPosition();
 
-		//弾の速度
-		Vector3 velocity(0, 0, kBulletSpeed_);
+			//弾の速度
+			Vector3 velocity(0, 0, kBulletSpeed_);
 
-		//自機の向いてる方向に弾を撃つ
-		velocity = bVelocity(velocity, worldTransform_);
+			//自機の向いてる方向に弾を撃つ
+			velocity = bVelocity(velocity, worldTransform_);
 
-		//速度と向きを合成
-		velocity = velocity.normalize() * kBulletSpeed_;
-		//球の生成
-		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+			//速度と向きを合成
+			velocity = velocity.normalize() * kBulletSpeed_;
+			//球の生成
+			std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 
-		//球の初期化
-		newBullet->BulletInitialize(GetPosition(), velocity, bulletLevel_);
+			//球の初期化
+			newBullet->BulletInitialize(GetPosition(), velocity, bulletLevel_);
 
-		//atan2で角度を求める
-		newBullet->SetRotation(worldTransform_.rotation_);
+			//atan2で角度を求める
+			newBullet->SetRotation(worldTransform_.rotation_);
 
-		//コライダーの追加
-		newBullet->SetCollider(new SphereCollider(colliderPos_, bulletColliderRadius_));
+			//コライダーの追加
+			newBullet->SetCollider(new SphereCollider(colliderPos_, bulletColliderRadius_));
 
-		//球の登録
-		bullets_.push_back(std::move(newBullet));
+			//球の登録
+			bullets_.push_back(std::move(newBullet));
+
+			dalayTimer_ = 0;
+		}
 	}
 }
 

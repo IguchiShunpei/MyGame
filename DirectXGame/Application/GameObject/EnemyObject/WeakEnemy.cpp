@@ -58,7 +58,7 @@ void WeakEnemy::Move()
 	{
 	case Phase::None:
 		break;
-	case Phase::R:  
+	case Phase::R:
 		worldTransform_.rotation_.y -= rota_;
 		MathFunc::CurveProjection(worldTransform_, startSpeedBeside, C, flame);
 		break;

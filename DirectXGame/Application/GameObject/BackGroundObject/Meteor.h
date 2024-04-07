@@ -5,18 +5,10 @@
 */
 
 #pragma once
-
-#include "Object3d.h"
-#include "WinApp.h"
-#include "Vector3.h"
-#include "Model.h"
-#include <memory>
+#include "Enemy.h"
 #include <list>
 
-//GameSceneの前方宣言
-class GamePlayScene;
-
-class Meteor : public Object3d
+class Meteor : public Enemy
 {
 public:
 	//死亡時効果
@@ -39,23 +31,8 @@ public:
 	//回転
 	void Rotate();
 
-	//ダメージ
-	void Damage();
-
-	//当たり判定更新
-	void ColliderUpdate();
-
-	//当たり判定コールバック
-	void OnCollision(const CollisionInfo& info) override;
-
 	//削除フラグgetter
 	bool GetIsDelete() const { return isDelete_; };
-	bool GetIsDead() const { return isDead_; }
-
-	float GetAlpha() const { return alpha_; }
-
-	//Color
-	Vector3 GetColor() const { return color_; }
 
 	//死亡効果
 	int GetDeadEffect() const { return deadEffect_; }
@@ -63,12 +40,6 @@ public:
 	//隕石座標
 	Vector3 GetSmallMeteorPos(int n) const { return smallMeteorPos_[n]; }
 	Vector3 GetVelocity(int n) const { return smallMeteorVel[n]; }
-
-	//HP
-	void SetHp(int hp) { this->hp_ = hp; }
-
-	//Alpha
-	void SetAlpha(float alpha) { this->alpha_ = alpha; }
 
 	//isBack
 	void SetIsBack(bool isBack) { this->isBack_ = isBack; }
@@ -101,29 +72,8 @@ private:
 	//奥
 	float backZ_;
 
-	//消去フラグ
-	bool isDelete_;
-
 	//当たったか
-	bool isHit_;
 	bool isHitEnd_;
-
-	//登場
-	bool isInit_;
-
-	//死亡フラグ
-	bool isDead_;
-
-	//Hp
-	int hp_;
-
-	//色
-	Vector3 color_;
-	Vector3 hitColor_;
-
-	//alpha
-	float alpha_;
-	float alphaMax_;
 
 	// モデル
 	std::unique_ptr <Model> meteorModel_;
