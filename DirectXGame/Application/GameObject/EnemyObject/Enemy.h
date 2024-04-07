@@ -67,6 +67,7 @@ public:
 
 	//alpha値
 	float alpha_;
+	float alphaMax_;
 
 	//デスフラグ
 	//倒されたか
@@ -102,4 +103,5 @@ public:
 
 	//登場後の座標
 	Vector3 beforeMovePos_;
+
 };

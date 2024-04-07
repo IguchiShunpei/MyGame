@@ -285,6 +285,9 @@
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\Enemy.cpp">
       <Filter>ソース ファイル\GameObject\EnemyObject</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXGame\Application\Effect\Score.cpp">
+      <Filter>ソース ファイル\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli">
@@ -417,9 +420,6 @@
     <ClInclude Include="DirectXGame\Engine\Math\Vector4.h">
       <Filter>ヘッダー ファイル\Math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Sound\Sound.h">
-      <Filter>ヘッダー ファイル\Sound</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Math\Spline.h">
       <Filter>ヘッダー ファイル\Math</Filter>
     </ClInclude>
@@ -509,6 +509,12 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\Enemy.h">
       <Filter>ヘッダー ファイル\GameObject\EnemyObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Sound\Sound.h">
+      <Filter>ヘッダー ファイル\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Effect\Score.h">
+      <Filter>ヘッダー ファイル\Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

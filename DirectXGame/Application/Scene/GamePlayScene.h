@@ -25,6 +25,7 @@
 #include "Effect.h"
 #include "BackGround.h"
 #include "SkyDome.h"
+#include "Score.h"
 
 #include<cassert>
 #include<vector>
@@ -136,7 +137,6 @@ private://メンバ変数
 	std::unique_ptr < BackGround> backGround_;
 
 	//アイテム
-	std::unique_ptr < Item> item_;
 	std::list<std::unique_ptr<Item>> items_;
 
 	//UI
@@ -147,6 +147,9 @@ private://メンバ変数
 
 	//エフェクト
 	std::unique_ptr < Effect> effect_;
+
+	//スコア　
+	std::list<std::unique_ptr<Score>> scoreObjects_;
 
 	//敵発生コマンド
 	std::stringstream enemyPopCommands_;
@@ -225,5 +228,4 @@ private://メンバ変数
 	//自機が攻撃に当たった時の演出時間
 	int hitPlayerTimer_;
 	int hitPlayerTimerMax_;
-
 };

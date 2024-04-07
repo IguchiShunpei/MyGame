@@ -73,4 +73,6 @@ private:
 	Vector3 color_;
 	//色をランダムで割り当てる変数
 	int colorNum_;
+	// モデル
+	std::unique_ptr <Model> stardustModel_;
 };

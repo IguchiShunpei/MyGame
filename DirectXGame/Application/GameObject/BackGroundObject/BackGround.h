@@ -37,25 +37,7 @@ private:
 	LevelData* backGroundStar_ = nullptr;
 	LevelData* backGroundMeteor_ = nullptr;
 
-	//// モデルデータコンテナ
-	//std::map<std::string, std::unique_ptr <Model>> meteorModels_;
-	//std::map<std::string, std::unique_ptr <Model>> stardustModels_;
-	//// オブジェクト
-	//std::vector<std::unique_ptr <Meteor>> meteorObjects_;
-	//std::vector<std::unique_ptr <Stardust>> stardustObjects_;
-	//std::unique_ptr <Stardust>backStardust_;
-	//std::unique_ptr <Model>backModelStardust_;
-	//std::unique_ptr <Meteor>backMeteor_;
-	//std::unique_ptr <Model>backModelMeteor_;
-
-	// モデルデータコンテナ
-	std::map<std::string, Model*> meteorModels_;
-	std::map<std::string, Model*> stardustModels_;
 	// オブジェクト
-	std::vector<Meteor*> meteorObjects_;
-	std::vector<Stardust*> stardustObjects_;
-	Stardust* backStardust_;
-	Model* backModelStardust_;
-	Meteor* backMeteor_;
-	Model* backModelMeteor_;
+	std::vector<std::unique_ptr <Meteor>> meteorObjects_;
+	std::vector<std::unique_ptr <Stardust>> stardustObjects_;
 };

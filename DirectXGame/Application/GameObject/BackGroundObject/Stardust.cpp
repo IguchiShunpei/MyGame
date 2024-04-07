@@ -11,8 +11,12 @@ void Stardust::StardustInitialize()
 {
 	//初期化
 	Initialize();
+	// OBJからモデルデータを読み込む
+	stardustModel_ = Model::LoadFromOBJ("stardust");
 	// 3Dオブジェクト生成
 	Create();
+	// オブジェクトにモデルをひも付ける
+	SetModel(stardustModel_.get());
 
 	speed_ = 0.3f;
 	frontZ_ = -100.0f;

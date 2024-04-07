@@ -177,7 +177,8 @@ private:
 
 	//タイマー
 	//打ち出すまでの時間
-	float dalayTimer_;
+	int dalayTimer_;
+	int dalayTimerMax_;
 	//登場モーションの時間
 	float initMotionTime_;
 

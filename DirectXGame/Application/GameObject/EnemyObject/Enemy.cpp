@@ -35,6 +35,9 @@ void Enemy::EnemyInitialize()
 	color_ = { 0.0f,0.0f,0.0f };
 	originalColor_ = { 1.0f,1.0f,1.0f };
 	changeColor_ = { 3.0f,3.0f,3.0f };
+
+	alpha_ = 1.0f;
+	alphaMax_ = 1.0f;
 }
 
 void Enemy::EnemyUpdate()
