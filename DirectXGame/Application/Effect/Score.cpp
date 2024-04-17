@@ -49,11 +49,14 @@ void Score::ScoreUpdate()
 	{
 		worldTransform_.rotation_.y += 1.0f;
 		alpha_ = 1.0f - (1.0f * MathFunc::easeInSine(scoreTime_ / scoreTimeMax_));
+		worldTransform_.rotation_.y = 360 * MathFunc::easeInSine(scoreTime_ / scoreTimeMax_);
 		scoreTime_++;
 	}
 	else
 	{
 		alpha_ = 0.0f;
+		scoreTime_ = 0.0f;
 		isDelete_ = true;
 	}
+	worldTransform_.UpdateMatrix();
 }

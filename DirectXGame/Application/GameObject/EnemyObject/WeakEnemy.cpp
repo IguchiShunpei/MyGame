@@ -12,6 +12,7 @@
 //デストラクタ
 WeakEnemy::~WeakEnemy()
 {
+
 }
 
 //初期化

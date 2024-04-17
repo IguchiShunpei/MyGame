@@ -127,44 +127,6 @@ void GamePlayScene::Update()
 	{
 		meteors->SetDamage(player_->GetBulletPower());
 		meteors->MeteorUpdate();
-		if (meteors->GetIsDead() == true)
-		{
-			score_ += meteors->GetScore();
-			if (meteors->GetDeadEffect() == meteors->Item)
-			{
-				//敵の生成
-				std::unique_ptr<Item> newItem = std::make_unique<Item>();
-				//敵の初期化
-				newItem->ItemInitialize(meteors->GetPosition());
-				//コライダーの追加
-				newItem->SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.5f));
-				//登録
-				items_.push_back(std::move(newItem));
-			}
-			else if (meteors->GetDeadEffect() == meteors->SmallMeteor)
-			{
-				//3つ出す
-				for (int i = 0; i < 3; i++)
-				{
-					//敵の生成
-					std::unique_ptr<Meteor> newMeteor = std::make_unique<Meteor>();
-					//敵の初期化
-					newMeteor->MeteorInitialize();
-					//コライダーの追加
-					newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
-					// 座標データに追加
-					newMeteor->SetPosition(meteors->GetPosition() + meteors->GetSmallMeteorPos(i));
-					newMeteor->SetVelocity(meteors->GetVelocity(i));
-					newMeteor->SetScale(Vector3(1.0f, 1.0f, 1.0f));
-					newMeteor->SetAlpha(1.0f);
-					newMeteor->SetDeadEffect(newMeteor->None);
-					newMeteor->worldTransform_.UpdateMatrix();
-
-					//登録
-					meteors_.push_back(std::move(newMeteor));
-				}
-			}
-		}
 	}
 
 	for (std::unique_ptr<Item>& items : items_)
@@ -188,18 +150,6 @@ void GamePlayScene::Update()
 		{
 			wEnemys->WEnemyUpdate();
 			wEnemys->SetDamage(player_->GetBulletPower());
-			if (wEnemys->GetIsDead() == true)
-			{
-				score_ += wEnemys->GetScore();
-				//敵の生成
-				std::unique_ptr<Score> scoreWeakEnemy = std::make_unique<Score>();
-				//スコアオブジェクトを隕石にする
-				scoreWeakEnemy->SetEnemyObject(scoreWeakEnemy->WEAKENEMY);
-				//敵の初期化
-				scoreWeakEnemy->ScoreInitialize();
-				//登録
-				scoreObjects_.push_back(std::move(scoreWeakEnemy));
-			}
 		}
 		//倒せない敵
 		for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
@@ -207,22 +157,10 @@ void GamePlayScene::Update()
 			invEnemys->InvincibleEnemyUpdate(player_->GetPosition());
 		}
 		//弾を撃つ敵
-		for (std::unique_ptr<ShotEnemy>& enemys : enemys_)
+		for (std::unique_ptr<ShotEnemy>& enemys : sEnemys_)
 		{
 			enemys->ShotEnemyUpdate(player_->GetPosition());
 			enemys->SetDamage(player_->GetBulletPower());
-			if (enemys->GetIsDead() == true)
-			{
-				score_ += enemys->GetScore();
-				//敵の生成
-				std::unique_ptr<Score> scoreShotEnemy = std::make_unique<Score>();
-				//スコアオブジェクトを隕石にする
-				scoreShotEnemy->SetEnemyObject(scoreShotEnemy->SHOTENEMY);
-				//敵の初期化
-				scoreShotEnemy->ScoreInitialize();
-				//登録
-				scoreObjects_.push_back(std::move(scoreShotEnemy));
-			}
 		}
 		break;
 
@@ -236,31 +174,31 @@ void GamePlayScene::Update()
 		else
 		{
 			//更新
-			if (bEnemy->GetIsDeathTimer() == false)
+			if (bEnemy_->GetIsDeathTimer() == false)
 			{
-				bEnemy->BossUpdate();
-				bEnemy->SetDamage(player_->GetBulletPower());
-				bEnemy->PhaseChange(player_->GetPosition());
+				bEnemy_->BossUpdate();
+				bEnemy_->SetDamage(player_->GetBulletPower());
+				bEnemy_->PhaseChange(player_->GetPosition());
 			}
 			else
 			{
 				isBEnemyDeadScene_ = true;
 				//タイマーを動かす処理
-				bEnemy->ActiveDeathTimer();
+				bEnemy_->ActiveDeathTimer();
 				//死亡演出
 				BossDead();
 				if (isClearScene_ == false)
 				{
 					//カメラシェイク
- 					camera_->CameraShake(bEnemy->GetDeathTimer(),enemyCameraShake_, enemyCameraShake_);
+					camera_->CameraShake(bEnemy_->GetDeathTimer(), enemyCameraShake_, enemyCameraShake_);
 				}
 			}
 			if (isClearScene_ == false)
 			{
 				//死亡フラグがtrueになったら
-				if (bEnemy->GetIsDead() == true)
+				if (bEnemy_->GetIsDead() == true)
 				{
-					score_ += bEnemy->GetScore();
+					score_ += bEnemy_->GetScore();
 					isClearScene_ = true;
 					camera_->SetIsShake(false);
 					normalEyeNum_ = camera_->GetViewProjection()->eye_;
@@ -290,7 +228,7 @@ void GamePlayScene::Update()
 		else
 		{
 			player_->BulletUpdate();
-			bEnemy->BulletUpdate();
+			bEnemy_->BulletUpdate();
 		}
 		//UI更新
 		ui_->ScoreCalc(score_);
@@ -312,8 +250,8 @@ void GamePlayScene::Update()
 				{
 					ui_->SetIsRed(true);
 					ui_->FadeOut(ui_->Red);
-					camera_->CameraShake(hitPlayerTimer_,playerCameraShake_, playerCameraShake_);
-  					ui_->Damage((float)hitPlayerTimer_, (float)hitPlayerTimerMax_, player_->GetHp(), player_->GetHpMax());
+					camera_->CameraShake(hitPlayerTimer_, playerCameraShake_, playerCameraShake_);
+					ui_->Damage((float)hitPlayerTimer_, (float)hitPlayerTimerMax_, player_->GetHp(), player_->GetHpMax());
 					//無敵時間
 					hitPlayerTimer_++;
 				}
@@ -336,7 +274,7 @@ void GamePlayScene::Update()
 		hitEnemyTimer_++;
 		if (hitEnemyTimer_ < 16)
 		{
-			camera_->CameraShake(hitEnemyTimer_,enemyCameraShake_, enemyCameraShake_);
+			camera_->CameraShake(hitEnemyTimer_, enemyCameraShake_, enemyCameraShake_);
 		}
 		else
 		{
@@ -407,7 +345,7 @@ void GamePlayScene::Draw()
 			invEnemys->Draw(camera_->GetViewProjection());
 		}
 		//敵
-		for (std::unique_ptr<ShotEnemy>& enemys : enemys_)
+		for (std::unique_ptr<ShotEnemy>& enemys : sEnemys_)
 		{
 			enemys->Draw(camera_->GetViewProjection(), 1.0f, enemys->GetColor());
 
@@ -417,10 +355,10 @@ void GamePlayScene::Draw()
 
 	case BossScene:
 		//ボス敵
-		if (bEnemy->GetIsDead() == false)
+		if (bEnemy_->GetIsDead() == false)
 		{
-			bEnemy->Draw(camera_->GetViewProjection(), bEnemy->GetAlpha(), bEnemy->GetColor());
-			bEnemy->BulletDraw(camera_->GetViewProjection());
+			bEnemy_->Draw(camera_->GetViewProjection(), bEnemy_->GetAlpha(), bEnemy_->GetColor());
+			bEnemy_->BulletDraw(camera_->GetViewProjection());
 		}
 		break;
 	}
@@ -457,6 +395,7 @@ void GamePlayScene::EffectUpdate(bool& isDeadCameraShake)
 	for (std::unique_ptr<WeakEnemy>& wEnemys : wEnemys_)
 	{
 		effect_->W_ParticleUpdate(wEnemys.get(), isDeadCameraShake);
+		WEnemyDead(wEnemys.get());
 	}
 	//無敵敵に弾が当たった時
 	for (std::unique_ptr<InvincibleEnemy>& invEnemys : invincibleEnemys_)
@@ -464,24 +403,26 @@ void GamePlayScene::EffectUpdate(bool& isDeadCameraShake)
 		effect_->H_ParticleUpdate(invEnemys.get());
 	}
 
-	//敵の被ダメージ処理
-	for (std::unique_ptr<ShotEnemy>& enemys : enemys_)
+	//弾を撃つ敵の死亡処理
+	for (std::unique_ptr<ShotEnemy>& sEnemys : sEnemys_)
 	{
-		effect_->E_ParticleUpdate(enemys.get(), isDeadCameraShake);
+		effect_->E_ParticleUpdate(sEnemys.get(), isDeadCameraShake);
+		SEnemyDead(sEnemys.get());
 	}
 
 	//隕石のパーティクル
 	for (std::unique_ptr<Meteor>& meteors : meteors_)
 	{
 		effect_->M_ParticleUpdate(meteors.get(), isDeadCameraShake);
+		MeteorDead(meteors.get());
 	}
 
 	//ボス敵の被ダメージ処理
 	if (gameNum_ == GameNum::BossScene)
 	{
-		if (bEnemy->GetIsInit() == true && isBEnemyDeadScene_ == true)
+		if (bEnemy_->GetIsInit() == true && isBEnemyDeadScene_ == true)
 		{
-			effect_->B_ParticleUpdate(bEnemy.get(), isDeadCameraShake);
+			effect_->B_ParticleUpdate(bEnemy_.get(), isDeadCameraShake);
 		}
 	}
 
@@ -491,7 +432,7 @@ void GamePlayScene::EffectUpdate(bool& isDeadCameraShake)
 
 void GamePlayScene::LoadEnemyPop()
 {
-	enemys_.clear();
+	sEnemys_.clear();
 	wEnemys_.clear();
 	invincibleEnemys_.clear();
 
@@ -629,7 +570,7 @@ void GamePlayScene::UpdateEnemyPop()
 			newEnemy->SetScale(Vector3(3.0f, 3.0f, 3.0f));
 			newEnemy->worldTransform_.UpdateMatrix();
 			//登録
-			enemys_.push_back(std::move(newEnemy));
+			sEnemys_.push_back(std::move(newEnemy));
 		}
 		// invEnemy
 		else if (key == "invEnemy") {
@@ -709,9 +650,9 @@ void GamePlayScene::UpdateEnemyPop()
 		{
 			isBossInitCamera_ = true;
 			//bossEnemy
-			bEnemy = std::make_unique < BossEnemy>();
-			bEnemy->BossEnemyInitialize();
-			bEnemy->BossUpdate();
+			bEnemy_ = std::make_unique < BossEnemy>();
+			bEnemy_->BossEnemyInitialize();
+			bEnemy_->BossUpdate();
 			gameNum_ = GameNum::BossScene;
 		}
 	}
@@ -728,11 +669,11 @@ void GamePlayScene::DeleteObject()
 		{
 			return wEnemy->GetIsDelete();
 		});
-	enemys_.remove_if([](std::unique_ptr <ShotEnemy>& enemy)
+	sEnemys_.remove_if([](std::unique_ptr <ShotEnemy>& enemy)
 		{
 			return enemy->GetIsDead();
 		});
-	enemys_.remove_if([](std::unique_ptr <ShotEnemy>& enemy)
+	sEnemys_.remove_if([](std::unique_ptr <ShotEnemy>& enemy)
 		{
 			return enemy->GetIsDelete();
 		});
@@ -784,7 +725,7 @@ void GamePlayScene::BossInit()
 	if (isBossInitCamera_ == true)
 	{
 		ui_->Stop();
-		camera_->BossInitCameraWork(bEnemy.get(), isBossInitCamera_);
+		camera_->BossInitCameraWork(bEnemy_.get(), isBossInitCamera_);
 	}
 }
 
@@ -795,7 +736,7 @@ void GamePlayScene::BossDead()
 	//ボスの爆発
 	effect_->GetExplosion01()->EnemyExplosionUpdate();
 	effect_->GetExplosion02()->EnemyExplosionUpdate();
-	bEnemy->Dead();
+	bEnemy_->Dead();
 }
 void GamePlayScene::ToClearScene()
 {
@@ -841,7 +782,7 @@ void GamePlayScene::ToGameOverScene()
 		player_->worldTransform_.UpdateMatrix();
 		if (isGameOver_ == true)
 		{
-			
+
 			effect_->GetExplosion03()->PlayerExplosionUpdate(player_->GetPosition());
 			if (effect_->GetExplosion03()->GetIsFinish() == true)
 			{
@@ -865,5 +806,88 @@ void GamePlayScene::ToGameOverScene()
 	else
 	{
 		deadCameraPos_ = camera_->GetViewProjection()->GetEye();
+	}
+}
+
+void GamePlayScene::WEnemyDead(WeakEnemy* wEnemy)
+{
+	if (wEnemy->GetIsDead() == true)
+	{
+		score_ += wEnemy->GetScore();
+		//敵の生成
+		std::unique_ptr<Score> scoreWeakEnemy = std::make_unique<Score>();
+		//スコアオブジェクトを隕石にする
+		scoreWeakEnemy->SetEnemyObject(scoreWeakEnemy->WEAKENEMY);
+		//敵の初期化
+		scoreWeakEnemy->ScoreInitialize();
+		//登録
+		scoreObjects_.push_back(std::move(scoreWeakEnemy));
+	}
+}
+
+void GamePlayScene::SEnemyDead(ShotEnemy* sEnemy)
+{
+	if (sEnemy->GetIsDead() == true)
+	{
+		score_ += sEnemy->GetScore();
+		//敵の生成
+		std::unique_ptr<Score> scoreShotEnemy = std::make_unique<Score>();
+		//スコアオブジェクトを隕石にする
+		scoreShotEnemy->SetEnemyObject(scoreShotEnemy->SHOTENEMY);
+		//敵の初期化
+		scoreShotEnemy->ScoreInitialize();
+		//登録
+		scoreObjects_.push_back(std::move(scoreShotEnemy));
+	}
+}
+
+void GamePlayScene::MeteorDead(Meteor* meteor)
+{
+	if (meteor->GetIsDead() == true)
+	{
+		score_ += meteor->GetScore();
+		//敵の生成
+		std::unique_ptr<Score> scoreMeteor = std::make_unique<Score>();
+		//スコアオブジェクトを隕石にする
+		scoreMeteor->SetEnemyObject(scoreMeteor->METEOR);
+		//敵の初期化
+		scoreMeteor->ScoreInitialize();
+		//登録
+		scoreObjects_.push_back(std::move(scoreMeteor));
+
+		if (meteor->GetDeadEffect() == meteor->Item)
+		{
+			//敵の生成
+			std::unique_ptr<Item> newItem = std::make_unique<Item>();
+			//敵の初期化
+			newItem->ItemInitialize(meteor->GetPosition());
+			//コライダーの追加
+			newItem->SetCollider(new SphereCollider(Vector3(0, 0, 0), 2.5f));
+			//登録
+			items_.push_back(std::move(newItem));
+		}
+		else if (meteor->GetDeadEffect() == meteor->SmallMeteor)
+		{
+			//3つ出す
+			for (int i = 0; i < 3; i++)
+			{
+				//敵の生成
+				std::unique_ptr<Meteor> newMeteor = std::make_unique<Meteor>();
+				//敵の初期化
+				newMeteor->MeteorInitialize();
+				//コライダーの追加
+				newMeteor->SetCollider(new SphereCollider(Vector3(0, 0, 0), 0.5f));
+				// 座標データに追加
+				newMeteor->SetPosition(meteor->GetPosition() + meteor->GetSmallMeteorPos(i));
+				newMeteor->SetVelocity(meteor->GetVelocity(i));
+				newMeteor->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+				newMeteor->SetAlpha(1.0f);
+				newMeteor->SetDeadEffect(newMeteor->None);
+				newMeteor->worldTransform_.UpdateMatrix();
+
+				//登録
+				meteors_.push_back(std::move(newMeteor));
+			}
+		}
 	}
 }

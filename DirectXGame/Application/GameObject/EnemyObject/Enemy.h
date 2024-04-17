@@ -106,6 +106,8 @@ public:
 	//ダメージ
 	int damage_;
 
+	//
+
 	//登場後の座標
 	Vector3 beforeMovePos_;
 
