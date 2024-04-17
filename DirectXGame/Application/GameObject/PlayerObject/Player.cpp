@@ -46,7 +46,7 @@ void Player::PlayerInitialize()
 	speedD_ = 0.0f;
 	speedR_ = 0.0f;
 	speedL_ = 0.0f;
-	speedMax_ = 0.2f;
+	speedMax_ = 0.3f;
 	speedChange_ = 0.01f;
 	moveRota_ = 0.5f;
 	moveRotaMax_ = 30.0f;
@@ -54,7 +54,7 @@ void Player::PlayerInitialize()
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0;
 	dalayTimerMax_ = 10;
-	hp_ = 1;
+	hp_ = 5;
 	hpMax_ = hp_;
 	initMotionPos_ = 20.0f;
 	initRotaZ_ = 360.0f;

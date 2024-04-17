@@ -71,7 +71,7 @@ public:
 	void Finalize() override;
 
 	//敵リスト
-	const std::list<std::unique_ptr<ShotEnemy>>& GetEnemys() { return enemys_; }
+	const std::list<std::unique_ptr<ShotEnemy>>& GetEnemys() { return sEnemys_; }
 	const std::list<std::unique_ptr<WeakEnemy>>& GetWeakEnemys() { return wEnemys_; }
 	const std::list<std::unique_ptr<InvincibleEnemy>>& GetInvEnemys() { return invincibleEnemys_; }
 
@@ -106,6 +106,11 @@ public:
 	//GameOver画面への演出
 	void ToGameOverScene();
 
+	//各敵の死亡処理
+	void WEnemyDead(WeakEnemy* wEnemy);
+	void SEnemyDead(ShotEnemy* sEnemy);
+	void MeteorDead(Meteor* meteor);
+
 private://メンバ変数
 	//入力
 	SIEngine::Input* input_;
@@ -119,13 +124,13 @@ private://メンバ変数
 	std::unique_ptr <Player> player_;
 
 	//敵
-	std::unique_ptr<ShotEnemy> enemy;
-	std::unique_ptr<WeakEnemy> wEnemy;
-	std::unique_ptr<InvincibleEnemy> invincibleEnemy;
-	std::unique_ptr<BossEnemy> bEnemy;
+	std::unique_ptr<ShotEnemy> enemy_;
+	std::unique_ptr<WeakEnemy> wEnemy_;
+	std::unique_ptr<InvincibleEnemy> invincibleEnemy_;
+	std::unique_ptr<BossEnemy> bEnemy_;
 
 	//敵
-	std::list<std::unique_ptr<ShotEnemy>> enemys_;
+	std::list<std::unique_ptr<ShotEnemy>> sEnemys_;
 	std::list<std::unique_ptr<WeakEnemy>> wEnemys_;
 	std::list<std::unique_ptr<InvincibleEnemy>> invincibleEnemys_;
 
