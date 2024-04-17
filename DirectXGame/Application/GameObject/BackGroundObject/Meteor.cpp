@@ -43,6 +43,8 @@ void Meteor::MeteorInitialize()
 
 	hp_ = 1;
 
+	score_ = 100;
+
 	isHit_ = false;
 	isHitEnd_ = true;
 	isInit_ = false;

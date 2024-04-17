@@ -54,7 +54,7 @@ void Player::PlayerInitialize()
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0;
 	dalayTimerMax_ = 10;
-	hp_ = 5;
+	hp_ = 1;
 	hpMax_ = hp_;
 	initMotionPos_ = 20.0f;
 	initRotaZ_ = 360.0f;

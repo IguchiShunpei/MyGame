@@ -91,7 +91,7 @@ public:
 	//プレイヤー登場演出
 	void PlayerInit();
 
-	//プレイヤー死亡演
+	//プレイヤー死亡演出
 	void PlayerDead();
 
 	//BOSS戦前の演出
@@ -228,4 +228,6 @@ private://メンバ変数
 	//自機が攻撃に当たった時の演出時間
 	int hitPlayerTimer_;
 	int hitPlayerTimerMax_;
+
+	int score_;
 };

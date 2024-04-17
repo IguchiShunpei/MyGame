@@ -42,6 +42,8 @@ public:
 	float GetAlpha() const { return alpha_; }
 	//isInit
 	bool GetIsInit() const { return isInit_; }
+	//score
+	int GetScore()const { return score_; };
 
 	//当たり判定コールバック
 	void OnCollision(const CollisionInfo& info) override;
@@ -90,6 +92,9 @@ public:
 
 	//体力
 	int hp_;
+
+	//スコア
+	int score_;
 
 	//初期Y座標
 	float beforeY_;

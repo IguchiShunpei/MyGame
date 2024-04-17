@@ -11,6 +11,10 @@
 #include "Player.h"
 #include <memory>
 
+#include <fstream>
+#include <string.h>
+#include <math.h>
+
 class UI
 {
 public:
@@ -57,6 +61,9 @@ public:
 	//赤リセット
 	void RedReset();
 
+	//スコア
+	void ScoreCalc(int score);
+
 	//getter
 	bool GetIsBlack() const { return isBlack_; };
 
@@ -84,6 +91,13 @@ private:
 	SIEngine::Sprite hpFrame_;
 	//スコア
 	SIEngine::Sprite score_;
+	//スコア数値
+	SIEngine::Sprite onesPlace[10];
+	SIEngine::Sprite tensPlace[10];
+	SIEngine::Sprite hundredPlace[10];
+	SIEngine::Sprite thousandPlace[10];
+	SIEngine::Sprite tenthousandPlace[10];
+	SIEngine::Sprite hundredthousandPlace[10];
 
 	//画面
 	SIEngine::Sprite black_;
@@ -158,4 +172,7 @@ private:
 	float UIMoveTime_;
 	float UIMovePos_;
 	float UIMoveRange_;
+
+	//スコア
+	int scores[6];
 };
