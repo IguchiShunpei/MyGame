@@ -115,6 +115,7 @@
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\BossEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\Enemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\EnemyBullet.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\EnemyManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\InvincibleEnemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\Item.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\EnemyObject\ShotEnemy.cpp" />
@@ -124,6 +125,7 @@
     <ClCompile Include="DirectXGame\Application\Scene\GameClearScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GameOverScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GamePlayScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\GameScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GameTitleScene.cpp" />
     <ClCompile Include="DirectXGame\Application\UI\UI.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
@@ -246,6 +248,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\BossEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\EnemyBullet.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\EnemyManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\InvincibleEnemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\Item.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\EnemyObject\ShotEnemy.h" />
@@ -255,6 +258,7 @@
     <ClInclude Include="DirectXGame\Application\Scene\GameClearScene.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GameOverScene.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GamePlayScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\GameScene.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GameTitleScene.h" />
     <ClInclude Include="DirectXGame\Application\UI\UI.h" />
     <ClInclude Include="DirectXGame\Engine\2D\Sprite.h" />

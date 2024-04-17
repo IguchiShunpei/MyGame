@@ -33,7 +33,6 @@ void Camera::Initialize()
 	bossInitNum_ = BossInitNum::Up;
 
 	cameraShakePos_ = { 0.0f,0.0f,0.0f };
-	deadCameraPos_ = { 0.0f,0.0f,0.0f };
 	deadCameraMovePos_ = { 20.0f ,0.0f,35.0f };
 	bossInitCameraPos_ = { 0.0f,0.0f,0.0f };
 
@@ -224,9 +223,9 @@ void Camera::ToGameOverCameraWork(Player* player, bool& isPlayerDead, bool& isGa
 	{
 		if (playerDeadTimer_ <= playerDeadTimerMax_)
 		{
-			viewProjection_->eye_.x = deadCameraPos_.x + deadCameraMovePos_.x * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
-			viewProjection_->eye_.y = deadCameraPos_.y + deadCameraMovePos_.y * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
-			viewProjection_->eye_.z = deadCameraPos_.z + deadCameraMovePos_.z * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
+			viewProjection_->eye_.x = normalEyeNum_.x + deadCameraMovePos_.x * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
+			viewProjection_->eye_.y = normalEyeNum_.y + deadCameraMovePos_.y * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
+			viewProjection_->eye_.z = normalEyeNum_.z + deadCameraMovePos_.z * MathFunc::easeOutSine(playerDeadTimer_ / playerDeadTimerMax_);
 			playerDeadTimer_++;
 		}
 		else

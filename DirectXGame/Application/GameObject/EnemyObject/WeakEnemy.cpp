@@ -27,7 +27,11 @@ void WeakEnemy::WEnemyInitialize()
 	SetModel(wEnemyModel.get());
 
 	//体力
-	SetHp(2);
+	hp_ = 2;
+
+	//スコア
+	score_ = 200;
+
 	//登場移動量
 	initY_ = 60.0f;
 	afterInitY_ = -60.0f;

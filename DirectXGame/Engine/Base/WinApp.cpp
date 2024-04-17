@@ -33,7 +33,7 @@ void SIEngine::WinApp::Initialize()
 	//ウィンドウクラスの設定
 	w.cbSize = sizeof(WNDCLASSEX);
 	w.lpfnWndProc = (WNDPROC)WindowProc;     //ウィンドウプロシージャを設定
-	w.lpszClassName = L"DirectXGame";		 //ウィンドウクラス名
+	w.lpszClassName = L"SPACEASSAULT";		 //ウィンドウクラス名
 	w.hInstance = GetModuleHandle(nullptr);	 //ウィンドウハンドル
 	w.hCursor = LoadCursor(NULL, IDC_ARROW); //カーソル指定
 
@@ -46,7 +46,7 @@ void SIEngine::WinApp::Initialize()
 
 	//ウィンドウオブジェクトの生成
 	hwnd_ = CreateWindow(w.lpszClassName,//クラス名)
-		L"DirectXGame",         //タイトルバーの表示
+		L"SPACEASSAULT",         //タイトルバーの表示
 		WS_OVERLAPPEDWINDOW,    //標準的なウィンドウスタイル
 		CW_USEDEFAULT,          //表示X座標(OSに任せる)
 		CW_USEDEFAULT,          //表示Y座標(OSに任せる)

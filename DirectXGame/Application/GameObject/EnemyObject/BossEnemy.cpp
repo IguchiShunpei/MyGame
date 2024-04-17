@@ -69,6 +69,8 @@ void BossEnemy::BossEnemyInitialize()
 
 	hp_ = 30;
 
+	score_ = 10000;
+
 	//シェイク範囲
 	shakeRange_ = 3.0f;
 	//シェイク移動量

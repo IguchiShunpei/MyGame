@@ -99,6 +99,9 @@ void GamePlayScene::Initialize()
 	waitTimer_ = 0;
 	hitPlayerTimer_ = 0;
 	hitPlayerTimerMax_ = 32;
+
+	//スコア
+	score_ = 0;
 }
 
 void GamePlayScene::Update()
@@ -126,6 +129,7 @@ void GamePlayScene::Update()
 		meteors->MeteorUpdate();
 		if (meteors->GetIsDead() == true)
 		{
+			score_ += meteors->GetScore();
 			if (meteors->GetDeadEffect() == meteors->Item)
 			{
 				//敵の生成
@@ -186,6 +190,7 @@ void GamePlayScene::Update()
 			wEnemys->SetDamage(player_->GetBulletPower());
 			if (wEnemys->GetIsDead() == true)
 			{
+				score_ += wEnemys->GetScore();
 				//敵の生成
 				std::unique_ptr<Score> scoreWeakEnemy = std::make_unique<Score>();
 				//スコアオブジェクトを隕石にする
@@ -208,6 +213,7 @@ void GamePlayScene::Update()
 			enemys->SetDamage(player_->GetBulletPower());
 			if (enemys->GetIsDead() == true)
 			{
+				score_ += enemys->GetScore();
 				//敵の生成
 				std::unique_ptr<Score> scoreShotEnemy = std::make_unique<Score>();
 				//スコアオブジェクトを隕石にする
@@ -254,6 +260,7 @@ void GamePlayScene::Update()
 				//死亡フラグがtrueになったら
 				if (bEnemy->GetIsDead() == true)
 				{
+					score_ += bEnemy->GetScore();
 					isClearScene_ = true;
 					camera_->SetIsShake(false);
 					normalEyeNum_ = camera_->GetViewProjection()->eye_;
@@ -286,6 +293,7 @@ void GamePlayScene::Update()
 			bEnemy->BulletUpdate();
 		}
 		//UI更新
+		ui_->ScoreCalc(score_);
 		ui_->UIUpdate();
 	}
 
@@ -833,6 +841,7 @@ void GamePlayScene::ToGameOverScene()
 		player_->worldTransform_.UpdateMatrix();
 		if (isGameOver_ == true)
 		{
+			
 			effect_->GetExplosion03()->PlayerExplosionUpdate(player_->GetPosition());
 			if (effect_->GetExplosion03()->GetIsFinish() == true)
 			{
@@ -845,6 +854,11 @@ void GamePlayScene::ToGameOverScene()
 				{
 					GameSceneManager::GetInstance()->ChangeScene("GAMEOVER");
 				}
+			}
+			else
+			{
+				//カメラシェイク
+				camera_->CameraShake(180, enemyCameraShake_, enemyCameraShake_);//カメラシェイク
 			}
 		}
 	}

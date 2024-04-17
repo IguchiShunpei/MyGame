@@ -48,6 +48,9 @@ void ShotEnemy::ShotEnemyInitialize()
 	moveLen_ = 30.0f;
 	moveTime_ = 0.0f;
 	moveTimeMax_ = 345.0f;
+
+	score_ = 500;
+
 }
 
 void ShotEnemy::ShotEnemyUpdate(Vector3 playerPos)

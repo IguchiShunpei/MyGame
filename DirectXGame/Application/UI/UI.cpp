@@ -136,30 +136,105 @@ void UI::UIInitialize()
 	//スコア
 	score_.Initialize(dxCommon_->GetDevice(), 9, Vector2(0.0f, 0.0f), false, false);
 	score_.SetScale({ 140,60 });
-	score_.SetPosition({ 50,0 - UIInitRange_,0 });
-	score_.SetColor(score_, { uiColorPush_,uiColorPush_ ,uiColorPush_ ,1.0f });
+	score_.SetPosition({ 1100,0 - UIInitRange_,0 });
 	score_.SpriteTransferVertexBuffer(score_, 9);
 	score_.Update(score_, spriteCommon_);
 	score_.LoadTexture(spriteCommon_, 9, L"Resources/2d/score.png", dxCommon_->GetDevice());
+
+	//number
+	const wchar_t* pathname = L"Resources/2d/numbers/";
+	const wchar_t* extantion = L".png";
+	wchar_t filename[16] = L"";
+
+	for (int i = 0; i < 10; i++)
+	{
+		//1
+		onesPlace[i].Initialize(dxCommon_->GetDevice(), 10 + i, Vector2(0.0f, 0.0f), false, false);
+		int num = i;
+		_itow_s(num, filename, 10);
+		wchar_t path[128] = L"";
+		wcscat_s(path, pathname);
+		wcscat_s(path, filename);
+		wcscat_s(path, extantion);
+
+		onesPlace[i].SetScale({ 36.0f,72.0f });
+		onesPlace[i].SetPosition({ 1180,0 - UIInitRange_,0 });
+		onesPlace[i].SpriteTransferVertexBuffer(onesPlace[i], 10 + i);
+		onesPlace[i].Update(onesPlace[i], spriteCommon_);
+		onesPlace[i].LoadTexture(spriteCommon_, 10 + i, path, dxCommon_->GetDevice());
+		//10
+		tensPlace[i].Initialize(dxCommon_->GetDevice(), 20 + i, Vector2(0.0f, 0.0f), false, false);
+		tensPlace[i].SetScale({ 36.0f,72.0f });
+		tensPlace[i].SetPosition({ 1140,0 - UIInitRange_,0 });
+		tensPlace[i].SpriteTransferVertexBuffer(tensPlace[i], 20 + i);
+		tensPlace[i].Update(tensPlace[i], spriteCommon_);
+		tensPlace[i].LoadTexture(spriteCommon_, 20 + i, path, dxCommon_->GetDevice());
+		//100
+		hundredPlace[i].Initialize(dxCommon_->GetDevice(), 30 + i, Vector2(0.0f, 0.0f), false, false);
+		hundredPlace[i].SetScale({ 36.0f,72.0f });
+		hundredPlace[i].SetPosition({ 1100,0 - UIInitRange_,0 });
+		hundredPlace[i].SpriteTransferVertexBuffer(hundredPlace[i], 30 + i);
+		hundredPlace[i].Update(hundredPlace[i], spriteCommon_);
+		hundredPlace[i].LoadTexture(spriteCommon_, 30 + i, path, dxCommon_->GetDevice());
+		//1000
+		thousandPlace[i].Initialize(dxCommon_->GetDevice(), 40 + i, Vector2(0.0f, 0.0f), false, false);
+		thousandPlace[i].SetScale({ 36.0f,72.0f });
+		thousandPlace[i].SetPosition({ 1060,0 - UIInitRange_,0 });
+		thousandPlace[i].SpriteTransferVertexBuffer(thousandPlace[i], 40 + i);
+		thousandPlace[i].Update(thousandPlace[i], spriteCommon_);
+		thousandPlace[i].LoadTexture(spriteCommon_, 40 + i, path, dxCommon_->GetDevice());
+		//10000
+		tenthousandPlace[i].Initialize(dxCommon_->GetDevice(), 50 + i, Vector2(0.0f, 0.0f), false, false);
+		tenthousandPlace[i].SetScale({ 36.0f,72.0f });
+		tenthousandPlace[i].SetPosition({ 1020,0 - UIInitRange_,0 });
+		tenthousandPlace[i].SpriteTransferVertexBuffer(tenthousandPlace[i], 50 + i);
+		tenthousandPlace[i].Update(tenthousandPlace[i], spriteCommon_);
+		tenthousandPlace[i].LoadTexture(spriteCommon_, 50 + i, path, dxCommon_->GetDevice());
+		//100000
+		hundredthousandPlace[i].Initialize(dxCommon_->GetDevice(), 60 + i, Vector2(0.0f, 0.0f), false, false);
+		hundredthousandPlace[i].SetScale({ 36.0f,72.0f });
+		hundredthousandPlace[i].SetPosition({ 980,0 - UIInitRange_,0 });
+		hundredthousandPlace[i].SpriteTransferVertexBuffer(hundredthousandPlace[i], 60 + i);
+		hundredthousandPlace[i].Update(hundredthousandPlace[i], spriteCommon_);
+		hundredthousandPlace[i].LoadTexture(spriteCommon_, 60 + i, path, dxCommon_->GetDevice());
+	}
+
+	//各変数の初期化
+	for (int i = 0; i < 6; i++) {
+		scores[i] = 0;
+	}
 }
 
 void UI::UIInitMotion()
 {
 	if (isUIInit_ == false)
 	{
-		UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
-		UIInitTime_++;
-		arrowUp_.SetPosition({ 640,UiRange_ - UIInitRange_ + UIInitPos_,0 });
-		arrowDown_.SetPosition({ 640,720 - UiRange_ + UIInitRange_ - UIInitPos_,0 });
-		arrowRight_.SetPosition({ 1280 - UiRange_ + UIInitRange_ - UIInitPos_,360,0 });
-		arrowLeft_.SetPosition({ UiRange_ - UIInitRange_ + UIInitPos_,360,0 });
-		hpBar_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,697,0 });
-		hpFrame_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,700,0 });
-		score_.SetPosition({ 30, 10 - UIInitRange_ + UIInitPos_, 0 });
-	}
-	if (UIInitPos_ >= UIInitRange_)
-	{
-		isUIInit_ = true;
+		if (UIInitPos_ < UIInitRange_)
+		{
+			UIInitPos_ = UIInitRange_ * MathFunc::easeOutSine(UIInitTime_ / 30.0f);
+			UIInitTime_++;
+			arrowUp_.SetPosition({ 640,UiRange_ - UIInitRange_ + UIInitPos_,0 });
+			arrowDown_.SetPosition({ 640,720 - UiRange_ + UIInitRange_ - UIInitPos_,0 });
+			arrowRight_.SetPosition({ 1280 - UiRange_ + UIInitRange_ - UIInitPos_,360,0 });
+			arrowLeft_.SetPosition({ UiRange_ - UIInitRange_ + UIInitPos_,360,0 });
+			hpBar_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,697,0 });
+			hpFrame_.SetPosition({ 50 - UIInitRange_ + UIInitPos_,700,0 });
+			score_.SetPosition({ 820.0f, 680.0f - UiRange_ + UIInitRange_ - UIInitPos_, 0 });
+			for (int i = 0; i < 10; i++)
+			{
+				onesPlace[i].SetPosition({ 1180,670 - UiRange_ + UIInitRange_ - UIInitPos_, 0 });
+				tensPlace[i].SetPosition({ 1140,670 - UiRange_ + UIInitRange_ - UIInitPos_, 0 });
+				hundredPlace[i].SetPosition({ 1100,670 - UiRange_ + UIInitRange_ - UIInitPos_, 0 });
+				thousandPlace[i].SetPosition({ 1060,670 - UiRange_ + UIInitRange_ - UIInitPos_, 0 });
+				tenthousandPlace[i].SetPosition({ 1020,670 - UiRange_ + UIInitRange_ - UIInitPos_, 0 });
+				hundredthousandPlace[i].SetPosition({ 980,670 - UiRange_ + UIInitRange_ - UIInitPos_, 0 });
+
+			}
+		}
+		else
+		{
+			isUIInit_ = true;
+		}
 	}
 }
 
@@ -178,12 +253,23 @@ void UI::UIOutMotion()
 			arrowLeft_.SetPosition({ UiRange_ - UIOutPos_,360.0f,0.0f });
 			hpBar_.SetPosition({ 0 - UIOutPos_,697,0 });
 			hpFrame_.SetPosition({ 0 - UIOutPos_,700,0 });
-			score_.SetPosition({ 30.0f,10.0f - UIOutPos_,0.0f });
+			score_.SetPosition({ 820.0f,680.0f + UIOutPos_,0.0f });
+			for (int i = 0; i < 10; i++)
+			{
+				onesPlace[i].SetPosition({ 1180,640 + UIOutPos_, 0 });
+				tensPlace[i].SetPosition({ 1140,640 + UIOutPos_, 0 });
+				hundredPlace[i].SetPosition({ 1100,640 + UIOutPos_, 0 });
+				thousandPlace[i].SetPosition({ 1060,640 + UIOutPos_, 0 });
+				tenthousandPlace[i].SetPosition({ 1020,640 + UIOutPos_, 0 });
+				hundredthousandPlace[i].SetPosition({ 980,640 + UIOutPos_, 0 });
+
+			}
 		}
 		else
 		{
 			UIOutPos_ = UIOutRange_;
 			isUIOut_ = true;
+			isUIInit_ = false;
 		}
 	}
 }
@@ -206,6 +292,14 @@ void UI::UIUpdate()
 	hpBar_.Update(hpBar_, spriteCommon_);
 	hpFrame_.Update(hpFrame_, spriteCommon_);
 	score_.Update(score_, spriteCommon_);
+
+	//スコア更新
+	onesPlace[scores[0]].Update(onesPlace[scores[0]], spriteCommon_);
+	tensPlace[scores[1]].Update(tensPlace[scores[1]], spriteCommon_);
+	hundredPlace[scores[2]].Update(hundredPlace[scores[2]], spriteCommon_);
+	thousandPlace[scores[3]].Update(thousandPlace[scores[3]], spriteCommon_);
+	tenthousandPlace[scores[4]].Update(tenthousandPlace[scores[4]], spriteCommon_);
+	hundredthousandPlace[scores[5]].Update(hundredthousandPlace[scores[5]], spriteCommon_);
 }
 
 void UI::UIDraw()
@@ -220,7 +314,6 @@ void UI::UIDraw()
 	arrowLeft_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 
 	//画面系
-	//green_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	if (isRed_ == true)
 	{
 		red_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
@@ -229,6 +322,16 @@ void UI::UIDraw()
 	hpFrame_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	hpBar_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	black_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+
+	score_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+
+	//スコア
+	onesPlace[scores[0]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	tensPlace[scores[1]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	hundredPlace[scores[2]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	thousandPlace[scores[3]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	tenthousandPlace[scores[4]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	hundredthousandPlace[scores[5]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 }
 
 void UI::UIMove()
@@ -401,5 +504,72 @@ void UI::Stop()
 
 void UI::RedReset()
 {
-	red_.SetAlpha(red_,redAlphaNumMax_);
+	red_.SetAlpha(red_, redAlphaNumMax_);
+}
+
+void UI::ScoreCalc(int score)
+{
+	if (score >= 100000) {
+		scores[5] = score / 100000;
+		score -= scores[5] * 100000;
+		scores[4] = score / 10000;
+		score -= scores[4] * 10000;
+		scores[3] = score / 1000;
+		score -= scores[3] * 1000;
+		scores[2] = score / 100;
+		score -= scores[2] * 100;
+		scores[1] = score / 10;
+		score -= scores[1] * 10;
+		scores[0] = score;
+	}
+	else if (score >= 10000) {
+		scores[5] = 0;
+		scores[4] = score / 10000;
+		score -= scores[4] * 10000;
+		scores[3] = score / 1000;
+		score -= scores[3] * 1000;
+		scores[2] = score / 100;
+		score -= scores[2] * 100;
+		scores[1] = score / 10;
+		score -= scores[1] * 10;
+		scores[0] = score;
+	}
+	else if (score >= 1000) {
+		scores[5] = 0;
+		scores[4] = 0;
+		scores[3] = score / 1000;
+		score -= scores[3] * 1000;
+		scores[2] = score / 100;
+		score -= scores[2] * 100;
+		scores[1] = score / 10;
+		score -= scores[1] * 10;
+		scores[0] = score;
+	}
+	else if (score >= 100) {
+		scores[5] = 0;
+		scores[4] = 0;
+		scores[3] = 0;
+		scores[2] = score / 100;
+		score -= scores[2] * 100;
+		scores[1] = score / 10;
+		score -= scores[1] * 10;
+		scores[0] = score;
+	}
+	else if (score >= 10) {
+		scores[1] = score / 10;
+		score -= scores[1] * 10;
+		scores[0] = score;
+		scores[2] = 0;
+		scores[3] = 0;
+		scores[4] = 0;
+		scores[5] = 0;
+	}
+	else {
+		scores[5] = 0;
+		scores[4] = 0;
+		scores[3] = 0;
+		scores[2] = 0;
+		scores[1] = 0;
+		scores[0] = score;
+	}
 }

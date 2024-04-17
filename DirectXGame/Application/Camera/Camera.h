@@ -82,7 +82,6 @@ private:
 	Vector3 startCameraPos_;
 	Vector3 startCamoreMovePos_;
 	//死亡時
-	Vector3 deadCameraPos_;
 	Vector3 deadCameraMovePos_;
 	//カメラシェイク時
 	Vector3 cameraShakePos_;
