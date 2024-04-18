@@ -28,7 +28,7 @@ void WeakEnemy::WEnemyInitialize()
 	SetModel(wEnemyModel.get());
 
 	//体力
-	hp_ = 2;
+	hp_ = 1;
 
 	//スコア
 	score_ = 200;

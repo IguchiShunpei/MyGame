@@ -106,6 +106,9 @@ public:
 	//GameOver画面への演出
 	void ToGameOverScene();
 
+	//チュートリアル
+	void Tutorial();
+
 	//各敵の死亡処理
 	void WEnemyDead(WeakEnemy* wEnemy);
 	void SEnemyDead(ShotEnemy* sEnemy);
@@ -234,5 +237,10 @@ private://メンバ変数
 	int hitPlayerTimer_;
 	int hitPlayerTimerMax_;
 
+	//スコア
 	int score_;
+
+	//チュートリアルフラグ
+	bool isTutorial_;
+	bool isEndTutorial_;
 };

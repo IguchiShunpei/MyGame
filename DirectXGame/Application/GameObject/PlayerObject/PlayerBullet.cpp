@@ -65,7 +65,7 @@ void PlayerBullet::LaserInitialize()
 	laseRotaMax_ = 90.0f;
 	isBlink_ = true;
 	blinkTime_ = 0.0f;
-	blinkTimeMax_ = 180.0f;
+	blinkTimeMax_ = 90.0f;
 }
 
 void PlayerBullet::ColliderUpdate()
