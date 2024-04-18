@@ -199,6 +199,34 @@ void UI::UIInitialize()
 		hundredthousandPlace[i].LoadTexture(spriteCommon_, 60 + i, path, dxCommon_->GetDevice());
 	}
 
+	tutorialTime_ = 0.0f;
+	tutorialTimeMax_ = 30.0f;
+	tutorialScale_ = { 0.0f,0.0f };
+	tutorialScaleMax_ = { 256.0f,128.0f };
+	isStart_ = false;
+
+	//スコア
+	move_.Initialize(dxCommon_->GetDevice(), 70, Vector2(0.5f, 0.5f), false, false);
+	move_.SetScale(tutorialScale_);
+	move_.SetPosition({ 250,150 ,0 });
+	move_.SpriteTransferVertexBuffer(move_, 70);
+	move_.Update(move_, spriteCommon_);
+	move_.LoadTexture(spriteCommon_, 70, L"Resources/2d/MOVE.png", dxCommon_->GetDevice());
+
+	shot_.Initialize(dxCommon_->GetDevice(), 71, Vector2(0.5f, 0.5f), false, false);
+	shot_.SetScale(tutorialScale_);
+	shot_.SetPosition({ 1030,150 ,0 });
+	shot_.SpriteTransferVertexBuffer(shot_, 71);
+	shot_.Update(shot_, spriteCommon_);
+	shot_.LoadTexture(spriteCommon_, 71, L"Resources/2d/SHOT.png", dxCommon_->GetDevice());
+
+	finish_.Initialize(dxCommon_->GetDevice(), 72, Vector2(0.5f, 0.5f), false, false);
+	finish_.SetScale(tutorialScale_);
+	finish_.SetPosition({ 250,360 ,0 });
+	finish_.SpriteTransferVertexBuffer(finish_, 72);
+	finish_.Update(finish_, spriteCommon_);
+	finish_.LoadTexture(spriteCommon_, 72, L"Resources/2d/FINISH.png", dxCommon_->GetDevice());
+
 	//各変数の初期化
 	for (int i = 0; i < 6; i++) {
 		scores[i] = 0;
@@ -300,6 +328,11 @@ void UI::UIUpdate()
 	thousandPlace[scores[3]].Update(thousandPlace[scores[3]], spriteCommon_);
 	tenthousandPlace[scores[4]].Update(tenthousandPlace[scores[4]], spriteCommon_);
 	hundredthousandPlace[scores[5]].Update(hundredthousandPlace[scores[5]], spriteCommon_);
+
+	//チュートリアル
+	move_.Update(move_, spriteCommon_);
+	shot_.Update(shot_, spriteCommon_);
+	finish_.Update(finish_, spriteCommon_);
 }
 
 void UI::UIDraw()
@@ -332,12 +365,18 @@ void UI::UIDraw()
 	thousandPlace[scores[3]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	tenthousandPlace[scores[4]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 	hundredthousandPlace[scores[5]].Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+
+	//チュートリアル
+	move_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	shot_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
+	finish_.Draw(dxCommon_->GetCommandList(), spriteCommon_, dxCommon_->GetDevice());
 }
 
 void UI::UIMove()
 {
 	if (isUIInit_ == true && isNeutral_ == true)
 	{
+		StartTutorial();
 		if (isMove_ == true)
 		{
 			UIMovePos_ = UIMoveRange_ * MathFunc::easeOutSine(UIMoveTime_ / 30.0f);
@@ -505,6 +544,59 @@ void UI::Stop()
 void UI::RedReset()
 {
 	red_.SetAlpha(red_, redAlphaNumMax_);
+}
+
+void UI::StartTutorial()
+{
+	if (isStart_ == false)
+	{
+		if (tutorialTime_ <= tutorialTimeMax_)
+		{
+			tutorialScale_.x = (tutorialScaleMax_.x * MathFunc::easeOutBack(tutorialTime_ / tutorialTimeMax_));
+			tutorialScale_.y = (tutorialScaleMax_.y * MathFunc::easeOutBack(tutorialTime_ / tutorialTimeMax_));
+			tutorialTime_++;
+		}
+		else
+		{
+			tutorialTime_ = 0.0f;
+			isStart_ = true;
+		}
+		move_.SetScale(tutorialScale_);
+		shot_.SetScale(tutorialScale_);
+		finish_.SetScale(tutorialScale_);
+		move_.SpriteTransferVertexBuffer(move_, 70);
+		shot_.SpriteTransferVertexBuffer(shot_, 71);
+		finish_.SpriteTransferVertexBuffer(finish_, 72);
+	}
+}
+
+void UI::EndTutorial(bool& isTutorial)
+{
+	if (isTutorial == true && isStart_ == true)
+	{
+		if (tutorialTime_ <= tutorialTimeMax_)
+		{
+			tutorialScale_.x = tutorialScaleMax_.x - (tutorialScaleMax_.x * MathFunc::easeInBack(tutorialTime_ / tutorialTimeMax_));
+			tutorialScale_.y = tutorialScaleMax_.y - (tutorialScaleMax_.y * MathFunc::easeInBack(tutorialTime_ / tutorialTimeMax_));
+			tutorialTime_++;
+		}
+		else
+		{
+			isTutorial = false;
+			tutorialTime_ = 0.0f;
+		}
+		move_.SetScale(tutorialScale_);
+		shot_.SetScale(tutorialScale_);
+		finish_.SetScale(tutorialScale_);
+		move_.SpriteTransferVertexBuffer(move_, 70);
+		shot_.SpriteTransferVertexBuffer(shot_, 71);
+		finish_.SpriteTransferVertexBuffer(finish_, 72);
+	}
+}
+
+void UI::PowerUp()
+{
+
 }
 
 void UI::ScoreCalc(int score)

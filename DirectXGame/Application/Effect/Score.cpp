@@ -35,11 +35,11 @@ void Score::ScoreInitialize()
 	SetScale(Vector3(1.0f, 1.0f, 1.0f));
 	worldTransform_.UpdateMatrix();
 
-	color_ = {1.0f,1.0f,1.0f};
+	color_ = { 1.0f,1.0f,1.0f };
 	alpha_ = 1.0f;
 
 	scoreTime_ = 0.0f;
-	scoreTimeMax_ = 120.0f;
+	scoreTimeMax_ = 60.0f;
 
 }
 
@@ -48,8 +48,13 @@ void Score::ScoreUpdate()
 	if (scoreTime_ <= scoreTimeMax_)
 	{
 		worldTransform_.rotation_.y += 1.0f;
+		worldTransform_.position_.y = -2.0f - (2.0f * MathFunc::easeInSine(scoreTime_ / scoreTimeMax_));
+		worldTransform_.scale_.x = 1.0f - (1.0f * MathFunc::easeInSine(scoreTime_ / scoreTimeMax_));
+		worldTransform_.scale_.y = 1.0f - (1.0f * MathFunc::easeInSine(scoreTime_ / scoreTimeMax_));
+		worldTransform_.scale_.z = 1.0f - (1.0f * MathFunc::easeInSine(scoreTime_ / scoreTimeMax_));
 		alpha_ = 1.0f - (1.0f * MathFunc::easeInSine(scoreTime_ / scoreTimeMax_));
 		worldTransform_.rotation_.y = 360 * MathFunc::easeInSine(scoreTime_ / scoreTimeMax_);
+
 		scoreTime_++;
 	}
 	else

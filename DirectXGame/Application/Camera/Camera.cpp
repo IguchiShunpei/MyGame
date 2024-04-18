@@ -18,6 +18,9 @@ void Camera::Initialize()
 
 	changeTarget_ = 0.3f;
 
+	changeEyeZB_ = 0.1f;
+	changeEyeZA_ = 0.2f;
+
 	//カメラ初期化
 	viewProjection_ = std::make_unique<ViewProjection>();
 	viewProjection_->Initialize();
@@ -75,6 +78,11 @@ void Camera::Initialize()
 	targetMoveTimerMax_ = cameraMoveTimerMax_ * 2.0f;
 	clearCameraTimer_ = 0.0f;
 	clearCameraTimerMax_ = 180.0f;
+
+	isMoveU_ = false;
+	isMoveD_ = false;
+	isMoveR_ = false;
+	isMoveL_ = false;
 }
 
 void Camera::Update()
@@ -241,7 +249,7 @@ void Camera::ToGameOverCameraWork(Player* player, bool& isPlayerDead, bool& isGa
 
 void Camera::CameraShake(int time, float x, float y)
 {
- 	if (isShake_ == false)
+	if (isShake_ == false)
 	{
 		//シェイク前の座標を保存
 		beforeEyeNum_ = viewProjection_->eye_;
@@ -272,25 +280,32 @@ void Camera::MoveCamera()
 	//カメラ移動処理
 	if (input_->PushKey(DIK_UP))
 	{
+		isMoveU_ = true;
 		ui_->SetIsUp(true);
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, changeTarget_, 0));
+		viewProjection_->eye_.z -= changeEyeZB_;
 	}
 	else
 	{
+		isMoveU_ = false;
 		ui_->SetIsUp(false);
 		if (viewProjection_->target_.y >= normalTargetNum_.y)
 		{
 			viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, -changeTarget_, 0));
 		}
 	}
+
 	if (input_->PushKey(DIK_RIGHT))
 	{
+		isMoveR_ = true;
 		ui_->SetIsRight(true);
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(changeTarget_, 0, 0));
 		viewProjection_->SetUp(viewProjection_->up_ + Vector3(-0.0025f, 0, 0));
+		viewProjection_->eye_.z -= changeEyeZB_;
 	}
 	else
 	{
+		isMoveR_ = false;
 		ui_->SetIsRight(false);
 		if (viewProjection_->target_.x >= normalTargetNum_.x)
 		{
@@ -301,14 +316,18 @@ void Camera::MoveCamera()
 			viewProjection_->SetUp(viewProjection_->up_ + Vector3(0.0025f, 0, 0));
 		}
 	}
+
 	if (input_->PushKey(DIK_LEFT))
 	{
+		isMoveL_ = true;
 		ui_->SetIsLeft(true);
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(-changeTarget_, 0, 0));
 		viewProjection_->SetUp(viewProjection_->up_ + Vector3(0.0025f, 0, 0));
+		viewProjection_->eye_.z -= changeEyeZB_;
 	}
 	else
 	{
+		isMoveL_ = false;
 		ui_->SetIsLeft(false);
 		if (viewProjection_->target_.x <= normalTargetNum_.x)
 		{
@@ -322,11 +341,14 @@ void Camera::MoveCamera()
 
 	if (input_->PushKey(DIK_DOWN))
 	{
+		isMoveD_ = true;
 		ui_->SetIsDown(true);
 		viewProjection_->SetTarget(viewProjection_->target_ + Vector3(0, -changeTarget_, 0));
+		viewProjection_->eye_.z -= changeEyeZB_;
 	}
 	else
 	{
+		isMoveD_ = false;
 		ui_->SetIsDown(false);
 		if (viewProjection_->target_.y <= normalTargetNum_.y)
 		{
@@ -334,11 +356,21 @@ void Camera::MoveCamera()
 		}
 	}
 
+	if (isMoveU_ == false && isMoveD_ == false && isMoveR_ == false && isMoveL_ == false )
+	{
+		viewProjection_->eye_.z += changeEyeZA_;
+	}
+
 	//移動限界座標
 	const float kTargetLimitX = 9.0f;
 	const float kTargetLimitY = 7.0f;
 
+	const float kEyeLimitZMin = 25.0f;
+	const float kEyeLimitZMax = 20.0f;
+
 	//範囲を超えない処理
+	viewProjection_->eye_.z = max(viewProjection_->eye_.z, -kEyeLimitZMin);
+	viewProjection_->eye_.z = min(viewProjection_->eye_.z, -kEyeLimitZMax);
 	viewProjection_->target_.x = max(viewProjection_->target_.x, -kTargetLimitX);
 	viewProjection_->target_.x = min(viewProjection_->target_.x, +kTargetLimitX);
 	viewProjection_->target_.y = max(viewProjection_->target_.y, -kTargetLimitY);

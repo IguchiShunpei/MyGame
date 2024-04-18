@@ -94,6 +94,8 @@ void GamePlayScene::Initialize()
 	isBossInitCamera_ = false;
 	isStart_ = false;
 	isDeadCameraShake_ = false;
+	isTutorial_ = true;
+	isEndTutorial_ = false;
 
 	//タイマー
 	waitTimer_ = 0;
@@ -108,8 +110,11 @@ void GamePlayScene::Update()
 {
 	DeleteObject();
 
-	//更新コマンド
-	UpdateEnemyPop();
+	if (isTutorial_ == false)
+	{
+		//更新コマンド
+		UpdateEnemyPop();
+	}
 
 	//天球
 	sky_->worldTransform_.UpdateMatrix();
@@ -229,6 +234,11 @@ void GamePlayScene::Update()
 		{
 			player_->BulletUpdate();
 			bEnemy_->BulletUpdate();
+		}
+		Tutorial();
+		if (isEndTutorial_ == true)
+		{
+			ui_->EndTutorial(isTutorial_);
 		}
 		//UI更新
 		ui_->ScoreCalc(score_);
@@ -807,6 +817,15 @@ void GamePlayScene::ToGameOverScene()
 	{
 		deadCameraPos_ = camera_->GetViewProjection()->GetEye();
 	}
+}
+
+void GamePlayScene::Tutorial()
+{
+		//Bキーを押したとき
+		if (input_->TriggerKey(DIK_B))
+		{
+			isEndTutorial_ = true;
+		}
 }
 
 void GamePlayScene::WEnemyDead(WeakEnemy* wEnemy)

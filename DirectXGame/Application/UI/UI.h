@@ -61,6 +61,13 @@ public:
 	//赤リセット
 	void RedReset();
 
+	//チュートリアル
+	void StartTutorial();
+	void EndTutorial(bool& isTutorial);
+
+	//パワーアップ
+	void PowerUp();
+
 	//スコア
 	void ScoreCalc(int score);
 
@@ -98,6 +105,14 @@ private:
 	SIEngine::Sprite thousandPlace[10];
 	SIEngine::Sprite tenthousandPlace[10];
 	SIEngine::Sprite hundredthousandPlace[10];
+
+	//チュートリアル
+	SIEngine::Sprite move_;
+	SIEngine::Sprite shot_;
+	SIEngine::Sprite finish_;
+
+	//パワーアップ
+	SIEngine::Sprite powerUp_;
 
 	//画面
 	SIEngine::Sprite black_;
@@ -175,4 +190,13 @@ private:
 
 	//スコア
 	int scores[6];
+
+	//チュートリアル
+	float tutorialTime_;
+	float tutorialTimeMax_;
+
+	bool isStart_;
+
+	Vector2 tutorialScale_;
+	Vector2 tutorialScaleMax_;
 };

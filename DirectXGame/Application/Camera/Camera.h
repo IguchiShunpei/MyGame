@@ -74,6 +74,10 @@ private:
 	//target変動地
 	float changeTarget_;
 
+	//eyeZ変化値
+	float changeEyeZB_;
+	float changeEyeZA_;
+
 	//ボス登場番号
 	int bossInitNum_;
 
@@ -149,4 +153,9 @@ private:
 	float targetMoveTimer_;
 	float targetMoveTimerMax_;
 
+	//移動しているか
+	bool isMoveU_;
+	bool isMoveD_;
+	bool isMoveR_;
+	bool isMoveL_;
 };
