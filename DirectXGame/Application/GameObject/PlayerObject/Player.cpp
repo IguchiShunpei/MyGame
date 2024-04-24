@@ -54,7 +54,7 @@ void Player::PlayerInitialize()
 	initMotionTime_ = 0.0f;
 	dalayTimer_ = 0;
 	dalayTimerMax_ = 10;
-	hp_ = 5;
+	hp_ = 7;
 	hpMax_ = hp_;
 	initMotionPos_ = 20.0f;
 	initRotaZ_ = 360.0f;
@@ -137,7 +137,7 @@ void Player::InitMotion()
 		if (initMotionTime_ <= initMotionTimeMax_)
 		{
 			//前進
-			worldTransform_.position_.z = -initMotionPos_ + initMotionPos_ * MathFunc::easeOutSine(initMotionTime_ / initMotionTimeMax_);;
+			worldTransform_.position_.z = -initMotionPos_ + initMotionPos_ * MathFunc::easeOutSine(initMotionTime_ / initMotionTimeMax_);
 			//イージングを使った回転
 			worldTransform_.rotation_.z = initRotaZ_ * -MathFunc::easeOutBack(initMotionTime_ / initMotionTimeMax_);
 			initMotionTime_++;
