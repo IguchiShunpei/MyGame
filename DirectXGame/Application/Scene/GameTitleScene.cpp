@@ -21,7 +21,7 @@ GameTitleScene::~GameTitleScene()
 void GameTitleScene::Initialize()
 {
 	input_ = SIEngine::Input::GetInstance();
-	dxCommon_= SIEngine::DirectXCommon::GetInstance();
+	dxCommon_ = SIEngine::DirectXCommon::GetInstance();
 
 	//player 
 	player = std::make_unique <Player>();
@@ -51,7 +51,7 @@ void GameTitleScene::Initialize()
 
 	//スペースキー
 	space_.Initialize(dxCommon_->GetDevice(), 1, Vector2(0.0f, 0.0f), false, false);
-	space_.SetScale(Vector2(400 , 100));
+	space_.SetScale(Vector2(400, 100));
 	space_.SetPosition({ 450,500,0 });
 	space_.SpriteTransferVertexBuffer(space_, 1);
 	space_.Update(space_, spriteCommon_);
@@ -80,6 +80,7 @@ void GameTitleScene::Initialize()
 	//フラグ
 	isBeforeCameraWork_ = false;
 	isTitleCameraWork_ = false;
+	isToEditor_ = false;
 }
 
 void GameTitleScene::Update()
@@ -112,11 +113,18 @@ void GameTitleScene::Update()
 		{
 			sky->worldTransform_.rotation_.y = 0.0f;
 		}
+		player->worldTransform_.UpdateMatrix();
+		//ゲームシーンへ
 		if (input_->TriggerKey(DIK_SPACE))
 		{
 			isBeforeCameraWork_ = true;
 		}
-		player->worldTransform_.UpdateMatrix();
+		ToCameraEditor();
+		//エディターシーンへ
+		if (input_->TriggerKey(DIK_C))
+		{
+			isToEditor_ = true;
+		}
 	}
 	else
 	{
@@ -174,6 +182,11 @@ void GameTitleScene::Update()
 			GameSceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 		}
 	}
+
+
+
+	ToCameraEditor();
+
 	//天球
 	sky->Update();
 	viewProjection_->UpdateMatrix();
@@ -241,6 +254,23 @@ void GameTitleScene::StartCameraWork(int num)
 		// ワールドトランスフォームの行列更新と転送
 		player->worldTransform_.UpdateMatrix();
 		break;
+	}
+}
+
+void GameTitleScene::ToCameraEditor()
+{
+	if (isToEditor_ == true)
+	{
+		//黒フェードイン
+		if (blackAlpha_ < blackAlphaNumMax_)
+		{
+			blackAlpha_ += blackAlphaNum_;
+			black_.SetAlpha(black_, blackAlpha_);
+		}
+		else
+		{
+			GameSceneManager::GetInstance()->ChangeScene("CAMERAEDITOR");
+		}
 	}
 }
 

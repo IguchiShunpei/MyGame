@@ -224,7 +224,10 @@ void GamePlayScene::Update()
 		player_->GetLaser()->LaserUpdate(player_->GetPosition(), player_->GetRotation());
 		if (isBossInitCamera_ == false && isClearScene_ == false && isBEnemyDeadScene_ == false)
 		{
-			camera_->MoveCamera();
+			if (player_->GetIsDead() == false)
+			{
+				camera_->MoveCamera();
+			}
 
 			player_->Update();
 			player_->ColliderUpdate();
@@ -821,11 +824,11 @@ void GamePlayScene::ToGameOverScene()
 
 void GamePlayScene::Tutorial()
 {
-		//Bキーを押したとき
-		if (input_->TriggerKey(DIK_B))
-		{
-			isEndTutorial_ = true;
-		}
+	//Bキーを押したとき
+	if (input_->TriggerKey(DIK_B))
+	{
+		isEndTutorial_ = true;
+	}
 }
 
 void GamePlayScene::WEnemyDead(WeakEnemy* wEnemy)

@@ -40,8 +40,6 @@ public:
 	//登場モーション
 	void InitMotion();
 
-
-
 	//移動
 	void Move();
 

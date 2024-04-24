@@ -11,6 +11,7 @@
 #include "GamePlayScene.h"
 #include "GameClearScene.h"
 #include "GameOverScene.h"
+#include "CameraEditor.h"
 
 //このゲーム用のシーン工場
 class SceneFactory : public AbstractSceneFactory

@@ -105,6 +105,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame\Application\Camera\Camera.cpp" />
+    <ClCompile Include="DirectXGame\Application\Camera\CameraEditor.cpp" />
+    <ClCompile Include="DirectXGame\Application\Camera\CameraObject.cpp" />
     <ClCompile Include="DirectXGame\Application\Effect\Effect.cpp" />
     <ClCompile Include="DirectXGame\Application\Effect\Explosion.cpp" />
     <ClCompile Include="DirectXGame\Application\Effect\Score.cpp" />
@@ -238,6 +240,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\Camera\Camera.h" />
+    <ClInclude Include="DirectXGame\Application\Camera\CameraEditor.h" />
+    <ClInclude Include="DirectXGame\Application\Camera\CameraObject.h" />
     <ClInclude Include="DirectXGame\Application\Effect\Effect.h" />
     <ClInclude Include="DirectXGame\Application\Effect\Explosion.h" />
     <ClInclude Include="DirectXGame\Application\Effect\Score.h" />

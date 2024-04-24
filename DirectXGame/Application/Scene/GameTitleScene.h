@@ -45,6 +45,9 @@ public: //メンバ関数
 	//タイトルシーンのカメラワーク
 	void StartCameraWork(int num);
 
+	//エディタシーンへ
+	void ToCameraEditor();
+
 	//ロゴ移動
 	void LogoOut();
 
@@ -94,6 +97,9 @@ private: // メンバ変数
 	bool isTitleCameraWork_;
 	//タイトルシーンのカメラワーク
 	int titleTimer_;
+
+	//エディターシーンフラグ
+	bool isToEditor_;
 
 	//カメラ座標を保存する変数
 	Vector3 cameraWorkPos_;

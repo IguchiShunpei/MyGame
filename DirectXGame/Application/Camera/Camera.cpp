@@ -18,7 +18,7 @@ void Camera::Initialize()
 
 	changeTarget_ = 0.3f;
 
-	changeEyeZB_ = 0.1f;
+	changeEyeZB_ = 0.3f;
 	changeEyeZA_ = 0.2f;
 
 	//カメラ初期化
