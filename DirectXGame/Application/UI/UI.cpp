@@ -7,7 +7,7 @@
 #include "UI.h"
 #include "MathFunc.h"
 
-void UI::UIInitialize()
+void UI::GameUIInitialize()
 {
 	dxCommon_ = SIEngine::DirectXCommon::GetInstance();
 
@@ -302,7 +302,7 @@ void UI::UIOutMotion()
 	}
 }
 
-void UI::UIUpdate()
+void UI::GameUIUpdate()
 {
 	//登場後モーション
 	UIMove();
@@ -335,7 +335,7 @@ void UI::UIUpdate()
 	finish_.Update(finish_, spriteCommon_);
 }
 
-void UI::UIDraw()
+void UI::GameUIDraw()
 {
 	//描画前処理
 	SIEngine::Sprite::PreDraw(dxCommon_->GetCommandList(), spriteCommon_);

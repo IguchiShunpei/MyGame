@@ -242,6 +242,8 @@
     <ClInclude Include="DirectXGame\Application\Camera\Camera.h" />
     <ClInclude Include="DirectXGame\Application\Camera\CameraEditor.h" />
     <ClInclude Include="DirectXGame\Application\Camera\CameraObject.h" />
+    <ClInclude Include="DirectXGame\Application\Camera\GameCamera.h" />
+    <ClInclude Include="DirectXGame\Application\Camera\TitleCamera.h" />
     <ClInclude Include="DirectXGame\Application\Effect\Effect.h" />
     <ClInclude Include="DirectXGame\Application\Effect\Explosion.h" />
     <ClInclude Include="DirectXGame\Application\Effect\Score.h" />

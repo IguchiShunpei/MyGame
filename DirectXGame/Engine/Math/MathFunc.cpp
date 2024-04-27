@@ -8,20 +8,17 @@
 
 float MathFunc::easeInSine(float a)
 { 
-	const float PI = 3.141592f;
-	return 1.0f - cos((a * PI) / 2.0f);
+	return 1.0f - cos((a * PI()) / 2.0f);
 }
 
 float MathFunc::easeOutSine(float a)
 {
-	const float PI = 3.141592f;
-	return sin((a * PI) / 2.0f);
+	return sin((a * PI()) / 2.0f);
 }
 
 float MathFunc::easeInOutSine(float a)
 {
-	const float PI = 3.141592f;
-	return cos((PI * a) - 1.0f) / 2.0f;
+	return cos((PI() * a) - 1.0f) / 2.0f;
 }
 
 float MathFunc::easeInBack(float a)
@@ -38,6 +35,21 @@ float MathFunc::easeOutBack(float a)
 	const float  c3 = c1 + 1.0f;
 
 	return 1 + c3 * (float)pow(a - 1, 3) + c1 * (float)pow(a - 1, 2);
+}
+
+float MathFunc::PI()
+{
+	return 3.141592f;
+}
+
+float MathFunc::Degree90()
+{
+	return 90.0f;
+}
+
+float MathFunc::Degree180()
+{
+	return 180.0f;
 }
 
 void MathFunc::HorizontalProjection(WorldTransform& worldTransform, const Vector3& startSpeed, float G, float& flame)

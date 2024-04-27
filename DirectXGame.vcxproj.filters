@@ -124,6 +124,18 @@
     <Filter Include="ソース ファイル\GameObject\PlayerObject">
       <UniqueIdentifier>{20a5b9d1-ce6e-4b56-87bb-837c22948d1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Camera\Application">
+      <UniqueIdentifier>{83926d28-248f-4540-9287-151ab6246eb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Camera\Engine">
+      <UniqueIdentifier>{8c4deff0-ca01-489b-97d8-40060fa1a24e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Camera\Application">
+      <UniqueIdentifier>{99484554-7a45-4ddb-8698-67fb69570613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Camera\Engine">
+      <UniqueIdentifier>{0c09af75-b150-4d96-9006-191e091af17a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp">
@@ -155,9 +167,6 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Base\WinApp.cpp">
       <Filter>ソース ファイル\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Camera\ViewProjection.cpp">
-      <Filter>ソース ファイル\Camera</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Collision\Collision.cpp">
       <Filter>ソース ファイル\Collision</Filter>
@@ -203,9 +212,6 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\UI\UI.cpp">
       <Filter>ソース ファイル\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\Camera\Camera.cpp">
-      <Filter>ソース ファイル\Camera</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\Effect\Explosion.cpp">
       <Filter>ソース ファイル\Effect</Filter>
@@ -294,11 +300,17 @@
     <ClCompile Include="DirectXGame\Application\Scene\GameScene.cpp">
       <Filter>ソース ファイル\Scene\Application</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXGame\Application\Camera\Camera.cpp">
+      <Filter>ソース ファイル\Camera\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Camera\ViewProjection.cpp">
+      <Filter>ソース ファイル\Camera\Engine</Filter>
+    </ClCompile>
     <ClCompile Include="DirectXGame\Application\Camera\CameraEditor.cpp">
-      <Filter>ソース ファイル\Camera</Filter>
+      <Filter>ソース ファイル\Camera\Application</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\Camera\CameraObject.cpp">
-      <Filter>ソース ファイル\Camera</Filter>
+      <Filter>ソース ファイル\Camera\Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -384,9 +396,6 @@
     <ClInclude Include="DirectXGame\Engine\Base\WinApp.h">
       <Filter>ヘッダー ファイル\Base</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Camera\ViewProjection.h">
-      <Filter>ヘッダー ファイル\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Collision\BaseCollider.h">
       <Filter>ヘッダー ファイル\Collision</Filter>
     </ClInclude>
@@ -437,9 +446,6 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\UI\UI.h">
       <Filter>ヘッダー ファイル\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\Camera\Camera.h">
-      <Filter>ヘッダー ファイル\Camera</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\Effect\Explosion.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
@@ -534,11 +540,23 @@
     <ClInclude Include="DirectXGame\Application\Scene\GameScene.h">
       <Filter>ヘッダー ファイル\Scene\Application</Filter>
     </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Camera\ViewProjection.h">
+      <Filter>ヘッダー ファイル\Camera\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Camera\Camera.h">
+      <Filter>ヘッダー ファイル\Camera\Engine</Filter>
+    </ClInclude>
     <ClInclude Include="DirectXGame\Application\Camera\CameraEditor.h">
-      <Filter>ヘッダー ファイル\Camera</Filter>
+      <Filter>ヘッダー ファイル\Camera\Application</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\Camera\CameraObject.h">
-      <Filter>ヘッダー ファイル\Camera</Filter>
+      <Filter>ヘッダー ファイル\Camera\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Camera\GameCamera.h">
+      <Filter>ヘッダー ファイル\Camera\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Camera\TitleCamera.h">
+      <Filter>ヘッダー ファイル\Camera\Application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
