@@ -53,7 +53,7 @@ void GamePlayScene::Initialize()
 
 	//UIの初期化
 	ui_ = std::make_unique<UI>();
-	ui_->UIInitialize();
+	ui_->GameUIInitialize();
 
 	//カメラ
 	camera_ = std::make_unique < Camera>();
@@ -245,7 +245,7 @@ void GamePlayScene::Update()
 		}
 		//UI更新
 		ui_->ScoreCalc(score_);
-		ui_->UIUpdate();
+		ui_->GameUIUpdate();
 	}
 
 	//全ての衝突をチェック
@@ -390,7 +390,7 @@ void GamePlayScene::Draw()
 	effect_->Draw(isBEnemyDeadScene_, isPlayerDead_);
 
 	//UI
-	ui_->UIDraw();
+	ui_->GameUIDraw();
 
 
 	// 描画後処理

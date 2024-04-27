@@ -56,6 +56,9 @@ public:
 	//タイトルに戻る
 	void ToTitle();
 
+	//カメラ旋回
+	void TurnCamera();
+
 private:
 	//入力
 	SIEngine::Input* input_;
@@ -93,5 +96,16 @@ private:
 	//移動前のカメラ座標
 	Vector3 beforeEye_;
 
+	//カメラと対象の距離
+	float eyeZ_;
+
+	//y変動値
+	float yNum_;
+
+	//アングル
+	float angle_;
+	float angleNum_;
+	//角度
+	float r_;
 };
 

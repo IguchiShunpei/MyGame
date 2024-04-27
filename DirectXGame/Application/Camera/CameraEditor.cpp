@@ -33,12 +33,13 @@ void CameraEditor::Initialize()
 	viewProjection_ = std::make_unique <ViewProjection>();
 	viewProjection_->Initialize();
 	viewProjection_->SetTarget(player_->GetPosition());
-	viewProjection_->SetEye(Vector3(0.0f, 20.0f, 30.0f));
+	viewProjection_->SetEye(Vector3(0.0f, 10.0f, 30.0f));
 
 	//UIの初期化
 	ui_ = std::make_unique<UI>();
-	ui_->UIInitialize();
+	ui_->GameUIInitialize();
 
+	//各変数の初期化
 	isToTitle_ = false;
 
 	isTest_ = false;
@@ -47,6 +48,15 @@ void CameraEditor::Initialize()
 	movetimeMax_ = 90.0f;
 
 	beforeEye_ = viewProjection_->eye_;
+
+	eyeZ_ = 20.0f;
+
+	angle_ = 0.0f;
+	angleNum_ = 1.0f;
+
+	yNum_ = 0.5f;
+
+	r_ = 0.0f;
 }
 
 void CameraEditor::Update()
@@ -61,6 +71,8 @@ void CameraEditor::Update()
 
 	//黒フェードアウト
 	ui_->FadeOut(ui_->Black);
+
+	TurnCamera();
 
 	//テスト
 	Test();
@@ -161,7 +173,7 @@ void CameraEditor::Draw()
 	Object3d::PostDraw();
 
 	//UI
-	ui_->UIDraw();
+	ui_->GameUIDraw();
 
 	// 描画後処理
 	dxCommon_->PostDraw();
@@ -190,4 +202,38 @@ void CameraEditor::ToTitle()
 			GameSceneManager::GetInstance()->ChangeScene("TITLE");
 		}
 	}
+}
+
+void CameraEditor::TurnCamera()
+{
+	const float yLim = 12.0f;
+
+	//右キーを押したとき
+	if (input_->PushKey(DIK_RIGHT))
+	{
+		angle_ -= angleNum_;
+	}
+	//左キーを押したとき
+	if (input_->PushKey(DIK_LEFT))
+	{
+		angle_ += angleNum_;
+	}
+	//上キーを押したとき
+	if (input_->PushKey(DIK_UP))
+	{
+		viewProjection_->eye_.y += yNum_;
+	}
+	//下キーを押したとき
+	if (input_->PushKey(DIK_DOWN))
+	{
+		viewProjection_->eye_.y -= yNum_;
+	}
+
+	r_ = angle_ * MathFunc::PI() / MathFunc::Degree90();
+
+	viewProjection_->eye_.x = player_->worldTransform_.position_.x + sinf(r_) * eyeZ_;
+	viewProjection_->eye_.z = player_->worldTransform_.position_.z + cosf(r_) * eyeZ_;
+
+	viewProjection_->eye_.y = max(viewProjection_->eye_.y, -yLim);
+	viewProjection_->eye_.y = min(viewProjection_->eye_.y, yLim);
 }

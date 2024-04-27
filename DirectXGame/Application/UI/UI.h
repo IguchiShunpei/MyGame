@@ -36,16 +36,21 @@ public:
 	};
 
 public:
+	//ゲームシーン
 	//初期化
-	void UIInitialize();
+	void GameUIInitialize();
+	//更新
+	void GameUIUpdate();
+	//描画
+	void GameUIDraw();
+	
+	//タイトル
+
+	
 	//登場モーション
 	void UIInitMotion();
 	//退場モーション
 	void UIOutMotion();
-	//更新
-	void UIUpdate();
-	//描画
-	void UIDraw();
 	//移動
 	void UIMove();
 	//色変化
@@ -113,6 +118,15 @@ private:
 
 	//パワーアップ
 	SIEngine::Sprite powerUp_;
+
+	//タイトル
+	SIEngine::Sprite title_;
+	SIEngine::Sprite space_;
+
+	//ゲームオーバー
+	SIEngine::Sprite gameOver_;
+	//ゲームクリア
+	SIEngine::Sprite gameClear_;
 
 	//画面
 	SIEngine::Sprite black_;
