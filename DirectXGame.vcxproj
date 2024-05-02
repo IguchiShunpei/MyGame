@@ -93,6 +93,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -303,6 +304,11 @@
     <ClInclude Include="DirectXGame\Engine\Scene\SceneFactory.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SIFrameWork.h" />
     <ClInclude Include="DirectXGame\Engine\Sound\Sound.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="imgui\imgui.vcxproj">
+      <Project>{f36e533d-3fde-4426-a14b-37eecca6315e}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
