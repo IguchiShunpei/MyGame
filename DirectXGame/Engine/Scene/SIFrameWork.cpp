@@ -9,24 +9,27 @@
 void SIFrameWork::Initialize()
 {
 	//WindowsAPIの初期化
-	winApp = SIEngine::WinApp::GetInstance();;
-	winApp->Initialize();
+	winApp_ = SIEngine::WinApp::GetInstance();;
+	winApp_->Initialize();
 	//DirectXの初期化
-	dxCommon = SIEngine::DirectXCommon::GetInstance();;
-	dxCommon->Initialize(winApp);
+	dxCommon_ = SIEngine::DirectXCommon::GetInstance();;
+	dxCommon_->Initialize(winApp_);
 	//FBX
-	FbxLoader::GetInstance()->Initialize(dxCommon->GetDevice());
+	FbxLoader::GetInstance()->Initialize(dxCommon_->GetDevice());
 	//入力の初期化
-	input = SIEngine::Input::GetInstance();
-	input->Initialize(winApp);
+	input_ = SIEngine::Input::GetInstance();
+	input_->Initialize(winApp_);
+	// ImGuiの初期化
+	imGuiManager_ = SIEngine::ImGuiManager::GetInstance();
+	imGuiManager_->Initialize(dxCommon_, winApp_);
 	// シーンマネージャの生成
 	sceneManager_ = GameSceneManager::GetInstance();
 	// 3Dオブジェクト静的初期化
-	Object3d::StaticInitialize(dxCommon->GetDevice(), SIEngine::WinApp::window_width, SIEngine::WinApp::window_height);
+	Object3d::StaticInitialize(dxCommon_->GetDevice(), SIEngine::WinApp::window_width, SIEngine::WinApp::window_height);
 	// パーティクル静的初期化
-	ParticleManager::StaticInitialize(dxCommon->GetDevice());
+	ParticleManager::StaticInitialize(dxCommon_->GetDevice());
 	// ビュープロジェクションの初期化
-	ViewProjection::StaticInitialize(dxCommon->GetDevice());
+	ViewProjection::StaticInitialize(dxCommon_->GetDevice());
 	// サウンドの静的初期化
 	Sound::StaticInitialize();
 }
@@ -37,23 +40,26 @@ void SIFrameWork::Finalize()
 	//シーンファクトリの解放
 	delete sceneFactory_;
 
+	// imguiの終了処理
+	imGuiManager_->Finalize();
+
 	// WindowsAPIの終了処理
-	winApp->Finalize();
+	winApp_->Finalize();
 
 	// DirectX解放
-	dxCommon->fpsFixedFinalize();
+	dxCommon_->fpsFixedFinalize();
 }
 
 void SIFrameWork::Update()
 {
 	// Windowsのメッセージ処理
-	if (winApp->ProcessMessage()) {
+	if (winApp_->ProcessMessage()) {
 		// ゲームループを抜ける
-		endRequest = true;
+		endRequest_ = true;
 	}
 
 	// 入力の更新
-	input->Update();
+	input_->Update();
 
 	// シーンマネージャの更新
 	sceneManager_->Update();
@@ -81,7 +87,7 @@ void SIFrameWork::Run()
 			break;
 		}
 		//escでループを抜ける
-		if (input->TriggerKey(DIK_ESCAPE) == true) {
+		if (input_->TriggerKey(DIK_ESCAPE) == true) {
 			break;
 		}
 

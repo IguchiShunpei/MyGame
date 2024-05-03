@@ -5,6 +5,7 @@
 */
 
 #include "CameraEditor.h"
+#include <imgui.h>
 
 CameraEditor::~CameraEditor()
 {
@@ -15,6 +16,7 @@ void CameraEditor::Initialize()
 {
 	input_ = SIEngine::Input::GetInstance();
 	dxCommon_ = SIEngine::DirectXCommon::GetInstance();
+	imGuiManager_ = SIEngine::ImGuiManager::GetInstance();
 
 	//天球
 	sky_ = std::make_unique < SkyDome>();
@@ -89,6 +91,12 @@ void CameraEditor::Update()
 	//カメラ
 	viewProjection_->UpdateMatrix();
 
+	//デバックImGui
+	imGuiManager_->Begin();
+
+	ImGui::ShowDemoWindow();
+
+	imGuiManager_->End();
 }
 
 void CameraEditor::Add()
@@ -174,6 +182,9 @@ void CameraEditor::Draw()
 
 	//UI
 	ui_->GameUIDraw();
+
+	// ImGui描画
+	imGuiManager_->Draw(dxCommon_);
 
 	// 描画後処理
 	dxCommon_->PostDraw();

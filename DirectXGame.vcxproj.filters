@@ -136,6 +136,12 @@
     <Filter Include="ヘッダー ファイル\Camera\Engine">
       <UniqueIdentifier>{0c09af75-b150-4d96-9006-191e091af17a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Imgui">
+      <UniqueIdentifier>{8478c2e6-c9b7-4995-800a-855d08bdda0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Imgui">
+      <UniqueIdentifier>{a5b9a208-d73b-49b6-a5a4-3a9447924eb0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp">
@@ -311,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\Camera\CameraObject.cpp">
       <Filter>ソース ファイル\Camera\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Imgui\ImguiManager.cpp">
+      <Filter>ソース ファイル\Imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -557,6 +566,9 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\Camera\TitleCamera.h">
       <Filter>ヘッダー ファイル\Camera\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Imgui\ImguiManager.h">
+      <Filter>ヘッダー ファイル\Imgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@
 #include "UI.h"
 #include "SkyDome.h"
 #include "MathFunc.h"
+#include "ImguiManager.h"
 
 #pragma once
 class CameraEditor : public GameBaseScene
@@ -82,6 +83,8 @@ private:
 
 	//UI
 	std::unique_ptr <UI> ui_;
+
+	SIEngine::ImGuiManager* imGuiManager_;
 
 	//タイトルフラグ
 	bool isToTitle_;

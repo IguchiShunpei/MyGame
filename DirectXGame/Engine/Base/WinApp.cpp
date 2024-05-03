@@ -5,8 +5,10 @@
 */
 
 #include "WinApp.h"
-
+#include <imgui_impl_win32.h>
 #pragma comment(lib,"winmm.lib")
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 SIEngine::WinApp* SIEngine::WinApp::GetInstance()
 {
@@ -17,6 +19,10 @@ SIEngine::WinApp* SIEngine::WinApp::GetInstance()
 
 LRESULT SIEngine::WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+	// ImGui用ウィンドウプロシージャ呼び出し
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+		return true;
+
 	//メッセージで分岐
 	switch (msg)
 	{

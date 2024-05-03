@@ -69,6 +69,9 @@ namespace SIEngine
 		// 終了処理
 		void fpsFixedFinalize();
 
+		//バックバッファの数を取得
+		size_t GetBackBufferCount() const { return backBuffers_.size(); }
+
 	private: //メンバ関数
 		template <class T>
 		inline void safe_delete(T*& p) {

@@ -16,6 +16,7 @@
 #include "FbxLoader.h"
 #include "AbstractSceneFactory.h"
 #include "GameSceneManager.h"
+#include "ImGuiManager.h"
 #include  "Sound.h"
 
 class SIFrameWork
@@ -30,7 +31,7 @@ public://メンバ関数
 	//描画
 	virtual void Draw();
 	//終了チェック
-	virtual bool IsEndRequest() { return endRequest; }
+	virtual bool IsEndRequest() { return endRequest_; }
 
 public:
 	virtual ~SIFrameWork() = default;
@@ -41,16 +42,18 @@ public:
 
 protected:
 	//WindowsAPIのポインタ
-	SIEngine::WinApp* winApp = nullptr;
+	SIEngine::WinApp* winApp_ = nullptr;
 	//DirectXのポインタ
-	SIEngine::DirectXCommon* dxCommon = nullptr;
+	SIEngine::DirectXCommon* dxCommon_ = nullptr;
 	//入力のポインタ
-	SIEngine::Input* input = nullptr;
+	SIEngine::Input* input_ = nullptr;
 	// シーンマネージャ
 	GameSceneManager* sceneManager_ = nullptr;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+	//imgui
+	SIEngine::ImGuiManager* imGuiManager_ = nullptr;
 private:
-	bool endRequest = false;
+	bool endRequest_ = false;
 };
 
