@@ -50,7 +50,7 @@ protected:
 	// シーンマネージャ
 	GameSceneManager* sceneManager_ = nullptr;
 	// シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr <AbstractSceneFactory> sceneFactory_;
 	//imgui
 	SIEngine::ImGuiManager* imGuiManager_ = nullptr;
 private:

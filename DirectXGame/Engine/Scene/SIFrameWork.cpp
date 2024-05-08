@@ -37,8 +37,6 @@ void SIFrameWork::Initialize()
 void SIFrameWork::Finalize()
 {
 	sceneManager_->Destroy();
-	//シーンファクトリの解放
-	delete sceneFactory_;
 
 	// imguiの終了処理
 	imGuiManager_->Finalize();

@@ -42,6 +42,9 @@ public:
 	//始点と終点追加
 	void Add();
 
+	//リセット
+	void ResetCamera();
+
 	//削除
 	void Delete();
 
@@ -80,6 +83,7 @@ private:
 
 	//始点と終点(セット)
 	std::list<std::unique_ptr<CameraObject>> cameraObjects_;
+	std::unique_ptr<CameraObject > cameraObject_;
 
 	//UI
 	std::unique_ptr <UI> ui_;
@@ -102,13 +106,16 @@ private:
 	//カメラと対象の距離
 	float eyeZ_;
 
-	//y変動値
-	float yNum_;
+	//カメラ限度
+	Vector3 eyeLim_;
 
 	//アングル
 	float angle_;
 	float angleNum_;
 	//角度
 	float r_;
+
+	//オブジェクトの移動限度
+	float posLimit_;
 };
 

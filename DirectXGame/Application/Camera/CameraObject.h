@@ -8,11 +8,23 @@
 #include "Object3d.h"
 
 #pragma once
-class CameraObject : public Object3d
+class CameraObject
 {
 public:
 	//初期化
 	void CObjectInitialize();
+
+	//更新
+	void CObjectUpdate();
+
+	//描画
+	void CObjectDraw(ViewProjection*viewProjection);
+
+	//リセット
+	void Reset();
+
+	Object3d* GetCameraStart() { return cameraObject_[0].get(); }
+	Object3d* GetCameraEnd() { return cameraObject_[1].get(); }
 
 	//削除フラグ
 	bool GetIsDelete() const { return isDelete_; }
@@ -29,7 +41,10 @@ public:
 
 private:
 	// モデル
-	std::unique_ptr <Model> cameraObjectModel_;
+	std::unique_ptr <Model> cameraObjectModel_[2];
+
+	//オブジェクト
+	std::unique_ptr <Object3d> cameraObject_[2];
 
 	//削除フラグ
 	bool isDelete_;
