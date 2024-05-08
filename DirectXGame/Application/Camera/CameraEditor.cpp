@@ -35,7 +35,14 @@ void CameraEditor::Initialize()
 	viewProjection_ = std::make_unique <ViewProjection>();
 	viewProjection_->Initialize();
 	viewProjection_->SetTarget(player_->GetPosition());
-	viewProjection_->SetEye(Vector3(0.0f, 10.0f, 30.0f));
+
+	//カメラオブジェクト
+	//オブジェクトの生成
+	cameraObject_ = std::make_unique<CameraObject>();
+	//オブジェクトの初期化
+	cameraObject_->CObjectInitialize();
+	//登録
+	cameraObjects_.push_back(std::move(cameraObject_));
 
 	//UIの初期化
 	ui_ = std::make_unique<UI>();
@@ -51,14 +58,17 @@ void CameraEditor::Initialize()
 
 	beforeEye_ = viewProjection_->eye_;
 
-	eyeZ_ = 20.0f;
+	eyeZ_ = 40.0f;
 
 	angle_ = 0.0f;
 	angleNum_ = 1.0f;
 
-	yNum_ = 0.5f;
+	eyeLim_.y = 20.0f;
+	eyeLim_.z = 60.0f;
 
 	r_ = 0.0f;
+
+	posLimit_ = 25.0f;
 }
 
 void CameraEditor::Update()
@@ -94,33 +104,95 @@ void CameraEditor::Update()
 	//デバックImGui
 	imGuiManager_->Begin();
 
-	ImGui::ShowDemoWindow();
+	ImGui::Text("CameraEditor");
+
+	////カメラ追加
+	//if (ImGui::Button("SetNewCameraObject"))
+	//{
+	//	Add();
+	//}
+
+	ImGui::Text("Camera");
+
+	ImGui::SliderFloat("Y", &viewProjection_->eye_.y, -eyeLim_.y, eyeLim_.y);
+	ImGui::SliderFloat("Z", &eyeZ_, 20.0f, eyeLim_.z);
+	ImGui::SliderFloat("Angle", &angle_, -180.0f, 180.0f);
+
+
+	ImGui::Text("CameraObject");
+	//全てのカメラオブジェクトの中で
+	for (std::unique_ptr<CameraObject>& cObjects : cameraObjects_)
+	{
+		//開始点の座標
+		ImGui::Text("Start");
+		ImGui::SliderFloat("Start_Position_X", &cObjects->GetCameraStart()->worldTransform_.position_.x, -posLimit_, posLimit_);
+		ImGui::SliderFloat("Start_Position_Y", &cObjects->GetCameraStart()->worldTransform_.position_.y, -posLimit_, posLimit_);
+		ImGui::SliderFloat("Start_Position_Z", &cObjects->GetCameraStart()->worldTransform_.position_.z, -posLimit_, posLimit_);
+		//終着点の座標
+		ImGui::Text("End");
+		ImGui::SliderFloat("End_Position_X", &cObjects->GetCameraEnd()->worldTransform_.position_.x, -posLimit_, posLimit_);
+		ImGui::SliderFloat("End_Position_Y", &cObjects->GetCameraEnd()->worldTransform_.position_.y, -posLimit_, posLimit_);
+		ImGui::SliderFloat("End_Position_Z", &cObjects->GetCameraEnd()->worldTransform_.position_.z, -posLimit_, posLimit_);
+	}
+
+	//カメラ位置リセット
+	if (ImGui::Button("ResetCamera"))
+	{
+		ResetCamera();
+	}
+
+	////カメラ削除
+	//if (ImGui::Button("DeleteCameraObject"))
+	//{
+	//	Delete();
+	//}
+
+	//テスト
+	if (ImGui::Button("Test"))
+	{
+		isTest_ = true;
+	}
+
+	Test();
+
 
 	imGuiManager_->End();
+
+	//全てのカメラオブジェクトの更新
+	for (std::unique_ptr<CameraObject>& cObjects : cameraObjects_)
+	{
+		cObjects->CObjectUpdate();
+	}
 }
 
 void CameraEditor::Add()
 {
-	//Tキーを押したとき
-	if (input_->PushKey(DIK_T))
-	{
+	//オブジェクトの生成
+	std::unique_ptr<CameraObject> newObject = std::make_unique<CameraObject>();
+	//オブジェクトの初期化
+	newObject->CObjectInitialize();
+	// 座標データに追加
+	newObject->CObjectUpdate();
+	//登録
+	cameraObjects_.push_back(std::move(newObject));
+}
 
-	}
+void CameraEditor::ResetCamera()
+{
+	angle_ = 0.0f;
+	viewProjection_->eye_.y = 0.0f;
+	eyeZ_ = 40.0f;
 }
 
 void CameraEditor::Delete()
 {
-	//Dキーを押したとき
-	if (input_->PushKey(DIK_D))
+	//全てのカメラオブジェクトの中で
+	for (std::unique_ptr<CameraObject>& cObjects : cameraObjects_)
 	{
-		//全てのカメラオブジェクトの中で
-		for (std::unique_ptr<CameraObject>& cObjects : cameraObjects_)
+		//選択フラグがtrueのものを削除
+		if (cObjects->GetIsSelect() == true)
 		{
-			//選択フラグがtrueのものを削除
-			if (cObjects->GetIsSelect() == true)
-			{
-				cObjects->SetIsDelete(true);
-			}
+			cObjects->SetIsDelete(true);
 		}
 	}
 }
@@ -130,11 +202,9 @@ void CameraEditor::Test()
 	//全てのカメラオブジェクトの中で
 	for (std::unique_ptr<CameraObject>& cObjects : cameraObjects_)
 	{
-		//選択フラグがtrueのものを削除
-		if (cObjects->GetIsSelect() == true)
+		if (isTest_ == true)
 		{
-			isTest_ = true;
-			/*	Move(cObjects[Start]->GetPosition(), cObjects[End]->GetPosition());*/
+			Move(cObjects->GetCameraStart()->GetPosition(), cObjects->GetCameraEnd()->GetPosition());
 		}
 	}
 }
@@ -172,10 +242,14 @@ void CameraEditor::Draw()
 	//自機
 	player_->Draw(viewProjection_.get());
 
+
 	//カメラオブジェクト
-	for (std::unique_ptr<CameraObject>& cObjects : cameraObjects_)
+	if (isTest_ == false)
 	{
-		cObjects->Draw(viewProjection_.get(), cObjects->GetAlpha(), cObjects->GetColor());
+		for (std::unique_ptr<CameraObject>& cObjects : cameraObjects_)
+		{
+			cObjects->CObjectDraw(viewProjection_.get());
+		}
 	}
 
 	Object3d::PostDraw();
@@ -217,34 +291,8 @@ void CameraEditor::ToTitle()
 
 void CameraEditor::TurnCamera()
 {
-	const float yLim = 12.0f;
-
-	//右キーを押したとき
-	if (input_->PushKey(DIK_RIGHT))
-	{
-		angle_ -= angleNum_;
-	}
-	//左キーを押したとき
-	if (input_->PushKey(DIK_LEFT))
-	{
-		angle_ += angleNum_;
-	}
-	//上キーを押したとき
-	if (input_->PushKey(DIK_UP))
-	{
-		viewProjection_->eye_.y += yNum_;
-	}
-	//下キーを押したとき
-	if (input_->PushKey(DIK_DOWN))
-	{
-		viewProjection_->eye_.y -= yNum_;
-	}
-
-	r_ = angle_ * MathFunc::PI() / MathFunc::Degree90();
+	r_ = angle_ * MathFunc::PI() / MathFunc::Degree180();
 
 	viewProjection_->eye_.x = player_->worldTransform_.position_.x + sinf(r_) * eyeZ_;
 	viewProjection_->eye_.z = player_->worldTransform_.position_.z + cosf(r_) * eyeZ_;
-
-	viewProjection_->eye_.y = max(viewProjection_->eye_.y, -yLim);
-	viewProjection_->eye_.y = min(viewProjection_->eye_.y, yLim);
 }
