@@ -21,8 +21,8 @@ void CameraObject::CObjectInitialize()
 		// オブジェクトにモデルをひも付ける
 		cameraObject_[i]->SetModel(cameraObjectModel_[i].get());
 	}
-	cameraObject_[0]->SetPosition({ 0.0f, 0.0f, 0.0f });
-	cameraObject_[1]->SetPosition({ 10.0f, 0.0f, 0.0f });
+	cameraObject_[0]->SetPosition({ -10.0f, 0.0f, -10.0f });
+	cameraObject_[1]->SetPosition({ 10.0f, 0.0f, -10.0f });
 }
 
 void CameraObject::CObjectUpdate()

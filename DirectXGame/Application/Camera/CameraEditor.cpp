@@ -29,11 +29,13 @@ void CameraEditor::Initialize()
 	player_ = std::make_unique <Player>();
 	player_->PlayerInitialize();
 	player_->worldTransform_.position_ = { 0.0f,0.0f,0.0f };
+	player_->worldTransform_.rotation_ = { 0.0f,180.0f,0.0f };
 	player_->worldTransform_.UpdateMatrix();
 
 	//カメラ
 	viewProjection_ = std::make_unique <ViewProjection>();
 	viewProjection_->Initialize();
+	viewProjection_->SetEye(Vector3(0.0f,10.0f,-20.0f));
 	viewProjection_->SetTarget(player_->GetPosition());
 
 	//カメラオブジェクト
@@ -58,13 +60,13 @@ void CameraEditor::Initialize()
 
 	beforeEye_ = viewProjection_->eye_;
 
-	eyeZ_ = 40.0f;
+	eyeZ_ = 60.0f;
 
-	angle_ = 0.0f;
+	angle_ = -180.0f;
 	angleNum_ = 1.0f;
 
 	eyeLim_.y = 20.0f;
-	eyeLim_.z = 60.0f;
+	eyeLim_.z = 70.0f;
 
 	r_ = 0.0f;
 
@@ -116,8 +118,13 @@ void CameraEditor::Update()
 
 	ImGui::SliderFloat("Y", &viewProjection_->eye_.y, -eyeLim_.y, eyeLim_.y);
 	ImGui::SliderFloat("Z", &eyeZ_, 20.0f, eyeLim_.z);
-	ImGui::SliderFloat("Angle", &angle_, -180.0f, 180.0f);
+	ImGui::SliderFloat("Angle", &angle_, -360.0f, 0.0f);
 
+	//カメラ位置リセット
+	if (ImGui::Button("ResetCamera"))
+	{
+		ResetCamera();
+	}
 
 	ImGui::Text("CameraObject");
 	//全てのカメラオブジェクトの中で
@@ -126,19 +133,43 @@ void CameraEditor::Update()
 		//開始点の座標
 		ImGui::Text("Start");
 		ImGui::SliderFloat("Start_Position_X", &cObjects->GetCameraStart()->worldTransform_.position_.x, -posLimit_, posLimit_);
+		//Xリセット
+		if (ImGui::Button("Start_X_Reset"))
+		{
+			cObjects->GetCameraStart()->worldTransform_.position_.x = 0.0f;
+		}
 		ImGui::SliderFloat("Start_Position_Y", &cObjects->GetCameraStart()->worldTransform_.position_.y, -posLimit_, posLimit_);
+		//Yリセット
+		if (ImGui::Button("Start_Y_Reset"))
+		{
+			cObjects->GetCameraStart()->worldTransform_.position_.y = 0.0f;
+		}
 		ImGui::SliderFloat("Start_Position_Z", &cObjects->GetCameraStart()->worldTransform_.position_.z, -posLimit_, posLimit_);
+		//Zリセット
+		if (ImGui::Button("Start_Z_Reset"))
+		{
+			cObjects->GetCameraStart()->worldTransform_.position_.z = 0.0f;
+		}
 		//終着点の座標
 		ImGui::Text("End");
 		ImGui::SliderFloat("End_Position_X", &cObjects->GetCameraEnd()->worldTransform_.position_.x, -posLimit_, posLimit_);
+		//Zリセット
+		if (ImGui::Button("End_X_Reset"))
+		{
+			cObjects->GetCameraEnd()->worldTransform_.position_.x = 0.0f;
+		}
 		ImGui::SliderFloat("End_Position_Y", &cObjects->GetCameraEnd()->worldTransform_.position_.y, -posLimit_, posLimit_);
+		//Zリセット
+		if (ImGui::Button("End_Y_Reset"))
+		{
+			cObjects->GetCameraEnd()->worldTransform_.position_.y = 0.0f;
+		}
 		ImGui::SliderFloat("End_Position_Z", &cObjects->GetCameraEnd()->worldTransform_.position_.z, -posLimit_, posLimit_);
-	}
-
-	//カメラ位置リセット
-	if (ImGui::Button("ResetCamera"))
-	{
-		ResetCamera();
+		//Zリセット
+		if (ImGui::Button("End_Z_Reset"))
+		{
+			cObjects->GetCameraEnd()->worldTransform_.position_.z = 0.0f;
+		}
 	}
 
 	////カメラ削除
@@ -179,9 +210,9 @@ void CameraEditor::Add()
 
 void CameraEditor::ResetCamera()
 {
-	angle_ = 0.0f;
-	viewProjection_->eye_.y = 0.0f;
-	eyeZ_ = 40.0f;
+	angle_ = -180.0f;
+	viewProjection_->eye_.y = 10.0f;
+	eyeZ_ = 60.0f;
 }
 
 void CameraEditor::Delete()
